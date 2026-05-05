@@ -4,8 +4,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Dashboard | MathComplete Lab</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
   <link rel="stylesheet" href="assets/css/auth.css" />
   <link rel="stylesheet" href="assets/css/progress.css" />
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
   <style>
     :root {
       --ink: #0f172a;
@@ -249,6 +251,7 @@
     </a>
     <div class="links">
       <a href="practice.html" data-i18n="navPractice">Practice Library</a>
+      <a href="mistakes.html" data-auth-show="logged-in" data-i18n="navMistakes">Mistake Book</a>
       <a href="login.html" data-auth-show="logged-out" data-i18n="login">Login</a>
       <span class="auth-chip" data-auth-show="logged-in">
         <span data-auth-greeting></span>
@@ -279,6 +282,7 @@
         <div style="margin-top:10px;">
           <button class="button primary" type="button" id="syncGuestBtn" data-i18n="syncGuest">Sync local attempts</button>
         </div>
+        <p class="sync-status" id="syncGuestStatus" aria-live="polite"></p>
       </div>
 
       <div class="progress-grid">
@@ -328,6 +332,7 @@
     const COPY = {
       en: {
         navPractice: "Practice Library",
+        navMistakes: "Mistake Book",
         navStart: "Start",
         login: "Login",
         logout: "Log out",
@@ -348,6 +353,10 @@
         mistakesTitle: "Active mistakes",
         emptyRecent: "No attempts have been saved yet.",
         emptyMistakes: "No active mistakes yet.",
+        loading: "Loading records...",
+        syncing: "Syncing local records...",
+        syncPartial: (synced, failed) => `Synced ${synced}; ${failed} local record${failed === 1 ? "" : "s"} could not sync and stayed local.`,
+        syncError: "Sync failed. Your local records were kept.",
         markMastered: "Mark mastered",
         correct: "Correct",
         incorrect: "Incorrect",
@@ -355,6 +364,7 @@
       },
       zh: {
         navPractice: "练习库",
+        navMistakes: "\u9519\u9898\u5e93",
         navStart: "开始",
         login: "登录",
         logout: "退出登录",
@@ -375,6 +385,10 @@
         mistakesTitle: "当前错题",
         emptyRecent: "还没有保存任何答题记录。",
         emptyMistakes: "目前没有当前错题。",
+        loading: "\u6b63\u5728\u8bfb\u53d6\u8bb0\u5f55...",
+        syncing: "\u6b63\u5728\u540c\u6b65\u672c\u5730\u8bb0\u5f55...",
+        syncPartial: (synced, failed) => `\u5df2\u540c\u6b65 ${synced} \u6761\uff1b${failed} \u6761\u672a\u6210\u529f\uff0c\u5df2\u7ee7\u7eed\u4fdd\u7559\u5728\u672c\u5730\u3002`,
+        syncError: "\u540c\u6b65\u5931\u8d25\uff0c\u672c\u5730\u8bb0\u5f55\u5df2\u4fdd\u7559\u3002",
         markMastered: "标记已掌握",
         correct: "正确",
         incorrect: "错误",
@@ -387,6 +401,7 @@
     const guestSyncBox = document.getElementById("guestSyncBox");
     const guestSyncText = document.getElementById("guestSyncText");
     const syncGuestBtn = document.getElementById("syncGuestBtn");
+    const syncGuestStatus = document.getElementById("syncGuestStatus");
 
     function getLang() {
       return localStorage.getItem("mathcomplete_lang") === "zh" ? "zh" : "en";
@@ -413,6 +428,22 @@
         .replaceAll("'", "&#039;");
     }
 
+    function mathHtml(value) {
+      const text = String(value || "");
+      if (!text) return "";
+      return `<span class="progress-math" data-latex="${escapeHtml(text)}">${escapeHtml(text)}</span>`;
+    }
+
+    function renderMath(root = document) {
+      root.querySelectorAll("[data-latex]").forEach(el => {
+        try {
+          katex.render(el.dataset.latex, el, { throwOnError: false, displayMode: false });
+        } catch {
+          el.textContent = el.dataset.latex;
+        }
+      });
+    }
+
     function applyLang() {
       const lang = getLang();
       document.documentElement.lang = lang === "zh" ? "zh-CN" : "en";
@@ -436,32 +467,39 @@
       const status = item.is_correct
         ? `<span class="progress-good">${tr("correct")}</span>`
         : `<span class="progress-bad">${tr("incorrect")}</span>`;
+      const question = item.question_latex || item.question_text || item.topic || item.game_id;
 
       return `
         <article class="progress-item">
-          <div class="progress-item-title">${escapeHtml(item.question_latex || item.question_text || item.topic || item.game_id)}</div>
+          <div class="progress-item-title">${mathHtml(question)}</div>
           <div class="progress-item-meta">
-            ${status} · ${escapeHtml(item.game_id)} · ${escapeHtml(item.difficulty || "")} · ${dateText(item.created_at)}
+            ${status} &middot; ${escapeHtml(item.game_id)} &middot; ${escapeHtml(item.difficulty || "")} &middot; ${dateText(item.created_at)}
           </div>
-          <div class="progress-item-meta">
-            ${escapeHtml(item.selected_answer_latex || "—")} → ${escapeHtml(item.correct_answer_latex || "—")}
+          <div class="progress-answer-row">
+            <span class="progress-answer-chip">${mathHtml(item.selected_answer_latex || "?")}</span>
+            <span>-&gt;</span>
+            <span class="progress-answer-chip">${mathHtml(item.correct_answer_latex || "?")}</span>
           </div>
         </article>
       `;
     }
 
     function renderMistake(item) {
+      const question = item.question_latex || item.question_text || item.topic || item.game_id;
       return `
         <article class="progress-item">
-          <div class="progress-item-title">${escapeHtml(item.question_latex || item.question_text || item.topic || item.game_id)}</div>
+          <div class="progress-item-title">${mathHtml(question)}</div>
           <div class="progress-item-meta">
-            ${escapeHtml(item.game_id)} · ${escapeHtml(item.topic || "")} · ${escapeHtml(item.difficulty || "")}
+            ${escapeHtml(item.game_id)} &middot; ${escapeHtml(item.topic || "")} &middot; ${escapeHtml(item.difficulty || "")}
           </div>
-          <div class="progress-item-meta">
-            ${tr("incorrect")}: ${escapeHtml(item.last_selected_answer_latex || "—")} → ${escapeHtml(item.correct_answer_latex || "—")}
+          <div class="progress-answer-row">
+            <span>${tr("incorrect")}:</span>
+            <span class="progress-answer-chip progress-bad">${mathHtml(item.last_selected_answer_latex || "?")}</span>
+            <span>-&gt;</span>
+            <span class="progress-answer-chip progress-good">${mathHtml(item.correct_answer_latex || "?")}</span>
           </div>
-          <div class="progress-item-meta">
-            Mistakes: ${Number(item.mistake_count || 0)} · ${dateText(item.updated_at)}
+          <div class="progress-item-meta" style="margin-top:8px;">
+            Mistakes: ${Number(item.mistake_count || 0)} &middot; ${dateText(item.updated_at)}
           </div>
           <div style="margin-top:10px;">
             <button class="button secondary" type="button" data-master-id="${escapeHtml(item.id)}">${tr("markMastered")}</button>
@@ -470,37 +508,7 @@
       `;
     }
 
-    function renderByGame(row) {
-      return `
-        <article class="progress-item">
-          <div class="progress-item-title">${escapeHtml(row.gameId)}</div>
-          <div class="progress-item-meta">
-            ${row.correct}/${row.total} · ${row.accuracy}%
-          </div>
-        </article>
-      `;
-    }
-
-    async function loadDashboard() {
-      if (!window.MCLAuth?.isConfigured()) {
-        signedOutCard.classList.remove("mcl-hidden");
-        dashboardCard.classList.add("mcl-hidden");
-        return;
-      }
-
-      const { session } = await window.MCLAuth.getSession();
-
-      if (!session?.user) {
-        signedOutCard.classList.remove("mcl-hidden");
-        dashboardCard.classList.add("mcl-hidden");
-        return;
-      }
-
-      signedOutCard.classList.add("mcl-hidden");
-      dashboardCard.classList.remove("mcl-hidden");
-
-      const summary = await window.MCLProgress.getDashboardSummary();
-
+    function renderDashboardSummary(summary) {
       document.getElementById("totalNum").textContent = summary.total;
       document.getElementById("correctNum").textContent = summary.correct;
       document.getElementById("accuracyNum").textContent = `${summary.accuracy}%`;
@@ -522,6 +530,8 @@
         ? summary.mistakes.map(renderMistake).join("")
         : `<p class="empty">${tr("emptyMistakes")}</p>`;
 
+      renderMath(dashboardCard);
+
       document.querySelectorAll("[data-master-id]").forEach(btn => {
         btn.addEventListener("click", async () => {
           await window.MCLProgress.markMistakeMastered(btn.dataset.masterId);
@@ -530,10 +540,69 @@
       });
     }
 
+    function renderByGame(row) {
+      return `
+        <article class="progress-item">
+          <div class="progress-item-title">${escapeHtml(row.gameId)}</div>
+          <div class="progress-item-meta">
+            ${row.correct}/${row.total} · ${row.accuracy}%
+          </div>
+        </article>
+      `;
+    }
+
+    async function loadDashboard() {
+      document.getElementById("byGameList").innerHTML = `<p class="empty">${tr("loading")}</p>`;
+      document.getElementById("recentList").innerHTML = `<p class="empty">${tr("loading")}</p>`;
+      document.getElementById("mistakeList").innerHTML = `<p class="empty">${tr("loading")}</p>`;
+
+      const localSummary = window.MCLProgress?.getLocalDashboardSummary?.();
+      if (localSummary?.total || localSummary?.activeMistakes || localSummary?.guestAttempts?.length) {
+        signedOutCard.classList.add("mcl-hidden");
+        dashboardCard.classList.remove("mcl-hidden");
+        renderDashboardSummary(localSummary);
+      }
+
+      if (!window.MCLAuth?.isConfigured()) {
+        signedOutCard.classList.remove("mcl-hidden");
+        if (!localSummary?.total && !localSummary?.activeMistakes) dashboardCard.classList.add("mcl-hidden");
+        return;
+      }
+
+      const { session } = await window.MCLAuth.getSession();
+
+      if (!session?.user) {
+        signedOutCard.classList.remove("mcl-hidden");
+        dashboardCard.classList.add("mcl-hidden");
+        return;
+      }
+
+      signedOutCard.classList.add("mcl-hidden");
+      dashboardCard.classList.remove("mcl-hidden");
+
+      const summary = await window.MCLProgress.getDashboardSummary();
+      renderDashboardSummary(summary);
+    }
+
     syncGuestBtn.addEventListener("click", async () => {
-      const result = await window.MCLProgress.syncGuestAttempts();
-      alert(tr("synced", result.synced));
-      await loadDashboard();
+      const originalText = syncGuestBtn.textContent;
+      syncGuestBtn.disabled = true;
+      syncGuestBtn.textContent = tr("syncing");
+      syncGuestStatus.textContent = tr("syncing");
+
+      try {
+        const result = await window.MCLProgress.syncGuestAttempts();
+        syncGuestStatus.textContent = result.failed
+          ? tr("syncPartial", result.synced, result.failed)
+          : tr("synced", result.synced);
+      } catch (err) {
+        console.warn("[MathComplete Lab] Sync local attempts failed.", err);
+        syncGuestStatus.textContent = err?.message || tr("syncError");
+      } finally {
+        syncGuestBtn.disabled = false;
+        syncGuestBtn.textContent = originalText;
+        await loadDashboard();
+      }
     });
 
     document.getElementById("langEn").addEventListener("click", () => setLang("en"));

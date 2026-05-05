@@ -719,7 +719,7 @@
       <a href="practice.html" data-i18n="navPractice">Practice Library</a>
       <a href="login.html" data-auth-show="logged-out" data-i18n="navLogin">Login</a>
       <a href="dashboard.html" data-auth-show="logged-in" data-i18n="navDashboard">Dashboard</a>
-      <a href="dashboard.html#mistakes" data-auth-show="logged-in" data-i18n="navMistakes">Mistake Book</a>
+      <a href="mistakes.html" data-auth-show="logged-in" data-i18n="navMistakes">Mistake Book</a>
       <span class="auth-chip" data-auth-show="logged-in">
         <span data-auth-greeting></span>
       </span>
@@ -757,6 +757,7 @@
         <button class="filter-chip" type="button" data-course-filter="pre-algebra" data-i18n="coursePreAlgebra">Pre-Algebra</button>
         <button class="filter-chip" type="button" data-course-filter="algebra-1" data-i18n="courseAlgebra1">Algebra I</button>
         <button class="filter-chip" type="button" data-course-filter="algebra-2" data-i18n="courseAlgebra2">Algebra II</button>
+        <button class="filter-chip" type="button" data-course-filter="precalculus" data-i18n="coursePrecalculus">Precalculus</button>
         <button class="filter-chip" type="button" data-course-filter="geometry-1" data-i18n="courseGeometry1">Geometry I</button>
         <button class="filter-chip" type="button" data-course-filter="single-variable-calculus" data-i18n="courseSingleVariableCalculus">Single Variable Calculus</button>
         <button class="filter-chip" type="button" data-course-filter="linear-algebra" data-i18n="courseLinearAlgebra">Linear Algebra</button>
@@ -862,6 +863,39 @@
         </p>
         <div class="hero-actions">
           <a class="button primary" href="games/logarithmic-functions.html" data-i18n="openTool">Open Tool →</a>
+        </div>
+      </article>
+
+
+
+      <article class="card tool-card" data-game-id="radical-functions" data-courses="algebra-2" data-search-keys="radical function practice square root function cube root function domain range transformation radical equation inverse algebra ii radical-functions &#x6839;&#x5f0f;&#x51fd;&#x6570; &#x5e73;&#x65b9;&#x6839;&#x51fd;&#x6570; &#x7acb;&#x65b9;&#x6839;&#x51fd;&#x6570; &#x5b9a;&#x4e49;&#x57df; &#x503c;&#x57df; &#x56fe;&#x50cf;&#x53d8;&#x6362; &#x6839;&#x5f0f;&#x65b9;&#x7a0b; &#x53cd;&#x51fd;&#x6570; &#x4ee3;&#x6570;&#x4e8c;">
+        <button class="favorite-button mcl-hidden" type="button" data-auth-show="logged-in" data-favorite-button data-game-id="radical-functions" aria-label="Favorite Radical Function Practice" title="Favorite">&#9734;</button>
+        <div class="tag-row">
+          <span class="tag live" data-i18n="live">Live</span>
+          <span class="tag course-tag" data-course-label="algebra-2">Algebra II</span>
+        </div>
+        <h3 data-i18n="radicalTitle">Radical Function Practice</h3>
+        <p data-i18n="radicalDesc">
+          Practice square-root and cube-root functions, including domain, range, transformations, radical equations, inverses, and models.
+        </p>
+        <div class="hero-actions">
+          <a class="button primary" href="games/radical-functions.html" data-i18n="openTool">Open Tool →</a>
+        </div>
+      </article>
+
+      <article class="card tool-card" data-game-id="advanced-equation-solving" data-courses="algebra-2 precalculus" data-search-keys="advanced equation solving solve equations algebra ii precalculus rational equation radical equation logarithmic equation exponential equation absolute value equation trigonometric equation polynomial equation substitution extraneous roots domain solution set advanced-equation-solving 高级解方程 解方程 方程 有理方程 根式方程 对数方程 指数方程 绝对值方程 三角方程 多项式方程 代换 增根 定义域 解集 代数二 预备微积分">
+        <button class="favorite-button mcl-hidden" type="button" data-auth-show="logged-in" data-favorite-button data-game-id="advanced-equation-solving" aria-label="Favorite Advanced Equation Solving" title="Favorite">&#9734;</button>
+        <div class="tag-row">
+          <span class="tag live" data-i18n="live">Live</span>
+          <span class="tag course-tag" data-course-label="algebra-2">Algebra II</span>
+          <span class="tag course-tag" data-course-label="precalculus">Precalculus</span>
+        </div>
+        <h3 data-i18n="advancedEquationTitle">Advanced Equation Solving</h3>
+        <p data-i18n="advancedEquationDesc">
+          Practice advanced equation solving across rational, radical, exponential, logarithmic, absolute-value, polynomial, and trigonometric equations.
+        </p>
+        <div class="hero-actions">
+          <a class="button primary" href="games/advanced-equation-solving.html" data-i18n="openTool">Open Tool →</a>
         </div>
       </article>
 
@@ -1153,6 +1187,7 @@
         coursePreAlgebra: "Pre-Algebra",
         courseAlgebra1: "Algebra I",
         courseAlgebra2: "Algebra II",
+        coursePrecalculus: "Precalculus",
         courseGeometry1: "Geometry I",
         courseSingleVariableCalculus: "Single Variable Calculus",
         courseLinearAlgebra: "Linear Algebra",
@@ -1187,6 +1222,10 @@
         exponentialDesc: "Practice exponential growth, decay, tables, equations, transformations, half-life, and doubling-time models.",
         logarithmicTitle: "Logarithmic Function Practice",
         logarithmicDesc: "Practice logarithmic form, log properties, equations, graph transformations, inverse functions, and change of base.",
+        radicalTitle: "Radical Function Practice",
+        radicalDesc: "Practice square-root and cube-root functions, including domain, range, transformations, radical equations, inverses, and models.",
+        advancedEquationTitle: "Advanced Equation Solving",
+        advancedEquationDesc: "Practice advanced equation solving across rational, radical, exponential, logarithmic, absolute-value, polynomial, and trigonometric equations.",
         vectorOperationsTitle: "Vector Operations Practice",
         vectorOperationsDesc: "Practice vector addition, subtraction, scalar multiplication, and linear combinations in 2D and 3D.",
         matrixMultiplicationTitle: "Matrix Multiplication Practice",
@@ -1246,6 +1285,7 @@
         coursePreAlgebra: "\u9884\u5907\u4ee3\u6570",
         courseAlgebra1: "\u4ee3\u6570 I",
         courseAlgebra2: "\u4ee3\u6570 II",
+        coursePrecalculus: "\u9884\u5907\u5fae\u79ef\u5206",
         courseGeometry1: "\u51e0\u4f55 I",
         courseSingleVariableCalculus: "\u4e00\u5143\u5fae\u79ef\u5206",
         courseLinearAlgebra: "线性代数",
@@ -1280,6 +1320,10 @@
         exponentialDesc: "练习指数增长、指数衰减、表格、方程、函数变换、半衰期和倍增时间模型。",
         logarithmicTitle: "对数函数专项练习",
         logarithmicDesc: "练习对数形式、对数性质、方程、图像变换、反函数和换底公式。",
+        radicalTitle: "\u6839\u5f0f\u51fd\u6570\u4e13\u9879\u7ec3\u4e60",
+        radicalDesc: "\u7ec3\u4e60\u5e73\u65b9\u6839\u51fd\u6570\u548c\u7acb\u65b9\u6839\u51fd\u6570\uff0c\u5305\u542b\u5b9a\u4e49\u57df\u3001\u503c\u57df\u3001\u56fe\u50cf\u53d8\u6362\u3001\u6839\u5f0f\u65b9\u7a0b\u3001\u53cd\u51fd\u6570\u548c\u6a21\u578b\u3002",
+        advancedEquationTitle: "\u9ad8\u7ea7\u89e3\u65b9\u7a0b\u4e13\u9879\u7ec3\u4e60",
+        advancedEquationDesc: "\u7ec3\u4e60\u6709\u7406\u65b9\u7a0b\u3001\u6839\u5f0f\u65b9\u7a0b\u3001\u6307\u6570\u65b9\u7a0b\u3001\u5bf9\u6570\u65b9\u7a0b\u3001\u7edd\u5bf9\u503c\u65b9\u7a0b\u3001\u591a\u9879\u5f0f\u65b9\u7a0b\u548c\u4e09\u89d2\u65b9\u7a0b\u3002",
         vectorOperationsTitle: "向量运算专项练习",
         vectorOperationsDesc: "练习二维和三维向量的加法、减法、标量乘法与线性组合。",
         matrixMultiplicationTitle: "矩阵乘法专项练习",
@@ -1302,6 +1346,7 @@
         "pre-algebra": "Pre-Algebra",
         "algebra-1": "Algebra I",
         "algebra-2": "Algebra II",
+        "precalculus": "Precalculus",
         "geometry-1": "Geometry I",
         "single-variable-calculus": "Single Variable Calculus",
         "linear-algebra": "Linear Algebra"
@@ -1310,6 +1355,7 @@
         "pre-algebra": "预备代数",
         "algebra-1": "代数 I",
         "algebra-2": "代数 II",
+        "precalculus": "预备微积分",
         "geometry-1": "几何 I",
         "single-variable-calculus": "一元微积分",
         "linear-algebra": "线性代数"

@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mistake Book | MathComplete Lab</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <link rel="stylesheet" href="assets/css/auth.css" />
+  <link rel="stylesheet" href="assets/css/progress.css" />
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <style>
+    :root {
+      --ink: #0f172a;
+      --muted: #64748b;
+      --blue: #2563eb;
+      --blue-dark: #1d4ed8;
+      --violet: #7c3aed;
+      --green: #10b981;
+      --shadow: 0 24px 60px rgba(15, 23, 42, 0.14);
+      --radius: 28px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", Arial, sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 12% 4%, rgba(96, 165, 250, 0.34), transparent 30%),
+        radial-gradient(circle at 88% 0%, rgba(167, 139, 250, 0.28), transparent 32%),
+        linear-gradient(180deg, #f8fbff 0%, #f7f7fb 42%, #ffffff 100%);
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.42;
+      background-image:
+        linear-gradient(rgba(15, 23, 42, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(15, 23, 42, 0.05) 1px, transparent 1px);
+      background-size: 42px 42px;
+      mask-image: linear-gradient(180deg, black, transparent 70%);
+    }
+
+    .nav {
+      width: min(1120px, calc(100% - 32px));
+      margin: 18px auto 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 14px 18px;
+      border: 1px solid rgba(255, 255, 255, 0.72);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.80);
+      backdrop-filter: blur(18px);
+      box-shadow: 0 18px 44px rgba(15, 23, 42, 0.10);
+      position: sticky;
+      top: 12px;
+      z-index: 10;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--ink);
+      text-decoration: none;
+      font-weight: 950;
+      letter-spacing: -0.045em;
+      font-size: 22px;
+      white-space: nowrap;
+    }
+
+    .brand-mark {
+      width: 44px;
+      height: 44px;
+      display: grid;
+      place-items: center;
+      border-radius: 15px;
+      color: white;
+      background: linear-gradient(135deg, var(--blue), var(--violet));
+      box-shadow: 0 14px 28px rgba(37, 99, 235, 0.30);
+      font-weight: 950;
+      font-size: 22px;
+    }
+
+    .links {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 7px;
+      flex-wrap: wrap;
+    }
+
+    .links a,
+    .links button,
+    .lang-button {
+      color: #475569;
+      text-decoration: none;
+      font-weight: 850;
+      padding: 8px 11px;
+      border-radius: 999px;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      font: inherit;
+    }
+
+    .links a:hover,
+    .links button:hover,
+    .lang-button:hover {
+      color: var(--blue-dark);
+      background: #eff6ff;
+    }
+
+    .links a.cta,
+    .lang-button.active {
+      color: white;
+      background: linear-gradient(135deg, var(--blue), var(--violet));
+    }
+
+    .container {
+      width: min(1120px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 46px 0 72px;
+      position: relative;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      color: #1d4ed8;
+      background: rgba(239, 246, 255, 0.86);
+      border: 1px solid rgba(191, 219, 254, 0.8);
+      font-weight: 950;
+      margin-bottom: 16px;
+    }
+
+    .eyebrow .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: var(--green);
+      box-shadow: 0 0 0 6px rgba(16, 185, 129, 0.12);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(38px, 6vw, 64px);
+      line-height: 1.08;
+      letter-spacing: -0.065em;
+      padding-bottom: 0.12em;
+      background: linear-gradient(135deg, #0f172a 0%, #1d4ed8 48%, #7c3aed 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    h2 {
+      margin: 0 0 10px;
+      font-size: clamp(24px, 4vw, 36px);
+      letter-spacing: -0.05em;
+    }
+
+    .lead {
+      max-width: 760px;
+      margin-top: 12px;
+      color: var(--muted);
+      line-height: 1.8;
+      font-size: 18px;
+    }
+
+    .card {
+      position: relative;
+      background: rgba(255,255,255,0.80);
+      border: 1px solid rgba(255, 255, 255, 0.72);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+      overflow: hidden;
+      padding: 26px;
+      margin-top: 24px;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      min-height: 42px;
+      padding: 9px 14px;
+      border-radius: 999px;
+      text-decoration: none;
+      font-weight: 950;
+      border: 1px solid transparent;
+      cursor: pointer;
+      font: inherit;
+    }
+
+    .button.primary {
+      color: white;
+      background: linear-gradient(135deg, var(--blue), var(--violet));
+      box-shadow: 0 18px 36px rgba(37, 99, 235, 0.27);
+    }
+
+    .button.secondary {
+      color: var(--ink);
+      background: rgba(255, 255, 255, 0.84);
+      border-color: rgba(148, 163, 184, 0.32);
+    }
+
+    .empty {
+      color: var(--muted);
+      line-height: 1.7;
+      font-weight: 850;
+    }
+
+    @media (max-width: 760px) {
+      .nav {
+        border-radius: 24px;
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .links { justify-content: flex-start; }
+      .container { padding-top: 32px; }
+    }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <a class="brand" href="index.html">
+      <span class="brand-mark">Σ</span>
+      <span>MathComplete Lab</span>
+    </a>
+    <div class="links">
+      <a href="practice.html" data-i18n="navPractice">Practice Library</a>
+      <a href="dashboard.html" data-auth-show="logged-in" data-i18n="navDashboard">Dashboard</a>
+      <a href="login.html" data-auth-show="logged-out" data-i18n="login">Login</a>
+      <span class="auth-chip" data-auth-show="logged-in">
+        <span data-auth-greeting></span>
+      </span>
+      <button class="auth-logout-button" type="button" data-auth-logout data-auth-show="logged-in" data-i18n="navLogout">Log out</button>
+      <button class="lang-button" id="langEn" type="button">EN</button>
+      <button class="lang-button" id="langZh" type="button">中文</button>
+      <a class="cta" href="practice.html" data-i18n="navStart">Start</a>
+    </div>
+  </nav>
+
+  <main class="container">
+    <div class="eyebrow"><span class="dot"></span><span data-i18n="badge">Mistake book</span></div>
+    <h1 data-i18n="title">Review active mistakes.</h1>
+    <p class="lead" data-i18n="lead">Filter your missed questions by tool, course, difficulty, and status. Mark items mastered when you are done reviewing them.</p>
+
+    <section id="signedOutCard" class="card mcl-hidden">
+      <h2 data-i18n="signedOutTitle">Sign in to view your mistake book.</h2>
+      <p class="empty" data-i18n="signedOutLead">Mistakes are saved to your MathComplete Lab account.</p>
+      <p style="margin-top:18px;"><a class="button primary" href="login.html" data-i18n="goLogin">Go to Login</a></p>
+    </section>
+
+    <section id="mistakeCard" class="card mcl-hidden">
+      <div class="progress-toolbar">
+        <div><label for="statusFilter" data-i18n="statusFilter">Status</label><select id="statusFilter"></select></div>
+        <div><label for="gameFilter" data-i18n="gameFilter">Tool</label><select id="gameFilter"></select></div>
+        <div><label for="courseFilter" data-i18n="courseFilter">Course</label><select id="courseFilter"></select></div>
+        <div><label for="difficultyFilter" data-i18n="difficultyFilter">Difficulty</label><select id="difficultyFilter"></select></div>
+      </div>
+      <div id="mistakeList" class="progress-list"></div>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="assets/js/supabase-client.js"></script>
+  <script src="assets/js/auth.js"></script>
+  <script src="assets/js/auth-ui.js"></script>
+  <script src="assets/js/progress.js"></script>
+  <script src="assets/js/home-link.js"></script>
+
+  <script>
+    const COPY = {
+      en: {
+        navPractice: "Practice Library",
+        navDashboard: "Dashboard",
+        navStart: "Start",
+        login: "Login",
+        navLogout: "Log out",
+        badge: "Mistake book",
+        title: "Review active mistakes.",
+        lead: "Filter your missed questions by tool, course, difficulty, and status. Mark items mastered when you are done reviewing them.",
+        signedOutTitle: "Sign in to view your mistake book.",
+        signedOutLead: "Mistakes are saved to your MathComplete Lab account.",
+        goLogin: "Go to Login",
+        statusFilter: "Status",
+        gameFilter: "Tool",
+        courseFilter: "Course",
+        difficultyFilter: "Difficulty",
+        all: "All",
+        active: "Active",
+        mastered: "Mastered",
+        empty: "No mistakes match these filters.",
+        loading: "Loading mistakes...",
+        yourAnswer: "Your answer",
+        correctAnswer: "Correct answer",
+        mistakeCount: "Mistakes",
+        updated: "Updated",
+        markMastered: "Mark mastered",
+        masteredLabel: "Mastered"
+      },
+      zh: {
+        navPractice: "\u7ec3\u4e60\u5e93",
+        navDashboard: "\u5b66\u4e60\u8bb0\u5f55",
+        navStart: "\u5f00\u59cb",
+        login: "\u767b\u5f55",
+        navLogout: "\u9000\u51fa\u767b\u5f55",
+        badge: "\u9519\u9898\u5e93",
+        title: "\u56de\u987e\u5f53\u524d\u9519\u9898\u3002",
+        lead: "\u6309\u5de5\u5177\u3001\u8bfe\u7a0b\u3001\u96be\u5ea6\u548c\u72b6\u6001\u7b5b\u9009\u9519\u9898\u3002\u638c\u63e1\u540e\u53ef\u4ee5\u6807\u8bb0\u4e3a\u5df2\u638c\u63e1\u3002",
+        signedOutTitle: "\u767b\u5f55\u540e\u67e5\u770b\u9519\u9898\u5e93\u3002",
+        signedOutLead: "\u9519\u9898\u4f1a\u4fdd\u5b58\u5230\u4f60\u7684 MathComplete Lab \u8d26\u53f7\u3002",
+        goLogin: "\u524d\u5f80\u767b\u5f55",
+        statusFilter: "\u72b6\u6001",
+        gameFilter: "\u5de5\u5177",
+        courseFilter: "\u8bfe\u7a0b",
+        difficultyFilter: "\u96be\u5ea6",
+        all: "\u5168\u90e8",
+        active: "\u5f53\u524d\u9519\u9898",
+        mastered: "\u5df2\u638c\u63e1",
+        empty: "\u6ca1\u6709\u7b26\u5408\u7b5b\u9009\u6761\u4ef6\u7684\u9519\u9898\u3002",
+        loading: "\u6b63\u5728\u8bfb\u53d6\u9519\u9898...",
+        yourAnswer: "\u4f60\u7684\u7b54\u6848",
+        correctAnswer: "\u6b63\u786e\u7b54\u6848",
+        mistakeCount: "\u9519\u8bef\u6b21\u6570",
+        updated: "\u66f4\u65b0\u65f6\u95f4",
+        markMastered: "\u6807\u8bb0\u5df2\u638c\u63e1",
+        masteredLabel: "\u5df2\u638c\u63e1"
+      }
+    };
+
+    const signedOutCard = document.getElementById("signedOutCard");
+    const mistakeCard = document.getElementById("mistakeCard");
+    const statusFilter = document.getElementById("statusFilter");
+    const gameFilter = document.getElementById("gameFilter");
+    const courseFilter = document.getElementById("courseFilter");
+    const difficultyFilter = document.getElementById("difficultyFilter");
+    const mistakeList = document.getElementById("mistakeList");
+
+    function getLang() { return localStorage.getItem("mathcomplete_lang") === "zh" ? "zh" : "en"; }
+    function tr(key) { return COPY[getLang()][key] || COPY.en[key] || key; }
+    function escapeHtml(text) {
+      return String(text ?? "").replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#039;");
+    }
+    function dateText(value) {
+      if (!value) return "";
+      return new Date(value).toLocaleString(getLang() === "zh" ? "zh-CN" : "en-US");
+    }
+    function mathHtml(value) {
+      const text = String(value || "");
+      if (!text) return "";
+      return `<span class="progress-math" data-latex="${escapeHtml(text)}">${escapeHtml(text)}</span>`;
+    }
+    function renderMath(root = document) {
+      root.querySelectorAll("[data-latex]").forEach(el => {
+        try { katex.render(el.dataset.latex, el, { throwOnError: false, displayMode: false }); }
+        catch { el.textContent = el.dataset.latex; }
+      });
+    }
+    function setLang(lang) {
+      localStorage.setItem("mathcomplete_lang", lang === "zh" ? "zh" : "en");
+      applyLang();
+      window.MCLAuthUI?.refresh?.();
+      loadMistakes();
+    }
+    function applyLang() {
+      const lang = getLang();
+      document.documentElement.lang = lang === "zh" ? "zh-CN" : "en";
+      document.querySelectorAll("[data-i18n]").forEach(el => {
+        const value = COPY[lang][el.dataset.i18n];
+        if (typeof value === "string") el.textContent = value;
+      });
+      document.getElementById("langEn").classList.toggle("active", lang === "en");
+      document.getElementById("langZh").classList.toggle("active", lang === "zh");
+    }
+    function option(label, value, selected) {
+      return `<option value="${escapeHtml(value)}"${value === selected ? " selected" : ""}>${escapeHtml(label)}</option>`;
+    }
+    function fillSelect(select, values, selected, allLabel) {
+      select.innerHTML = option(allLabel, "all", selected) + values.map(value => option(value, value, selected)).join("");
+    }
+    function setLoadingFilters() {
+      [statusFilter, gameFilter, courseFilter, difficultyFilter].forEach(select => {
+        select.innerHTML = option(tr("loading"), "all", "all");
+      });
+    }
+
+    function fillFilterOptions(opts) {
+      const selectedStatus = statusFilter.value || "active";
+      statusFilter.innerHTML =
+        option(tr("all"), "all", selectedStatus) +
+        option(tr("active"), "active", selectedStatus) +
+        option(tr("mastered"), "mastered", selectedStatus);
+      fillSelect(gameFilter, opts.games, gameFilter.value || "all", tr("all"));
+      fillSelect(courseFilter, opts.courses, courseFilter.value || "all", tr("all"));
+      fillSelect(difficultyFilter, opts.difficulties, difficultyFilter.value || "all", tr("all"));
+    }
+
+    async function refreshFilterOptions() {
+      fillFilterOptions(await window.MCLProgress.getMistakeFilterOptions());
+    }
+    function renderMistake(item) {
+      const question = item.question_latex || item.question_text || item.topic || item.game_id;
+      const mastered = item.status === "mastered";
+      return `
+        <article class="progress-item">
+          <div class="progress-item-title">${mathHtml(question)}</div>
+          <div class="progress-item-meta">${escapeHtml(item.game_id)} · ${escapeHtml(item.course || "")} · ${escapeHtml(item.topic || "")} · ${escapeHtml(item.difficulty || "")}</div>
+          <div class="progress-answer-row">
+            <span>${tr("yourAnswer")}:</span><span class="progress-answer-chip progress-bad">${mathHtml(item.last_selected_answer_latex || "—")}</span>
+            <span>${tr("correctAnswer")}:</span><span class="progress-answer-chip progress-good">${mathHtml(item.correct_answer_latex || "—")}</span>
+          </div>
+          <div class="progress-item-meta" style="margin-top:10px;">${tr("mistakeCount")}: ${Number(item.mistake_count || 0)} · ${tr("updated")}: ${dateText(item.updated_at)}</div>
+          <div style="margin-top:12px;">
+            ${mastered ? `<span class="progress-good">${tr("masteredLabel")}</span>` : `<button class="button secondary" type="button" data-master-id="${escapeHtml(item.id)}">${tr("markMastered")}</button>`}
+          </div>
+        </article>
+      `;
+    }
+
+    function renderMistakeList(mistakes) {
+      mistakeList.innerHTML = mistakes.length ? mistakes.map(renderMistake).join("") : `<p class="empty">${tr("empty")}</p>`;
+      renderMath(mistakeList);
+      mistakeList.querySelectorAll("[data-master-id]").forEach(btn => {
+        btn.addEventListener("click", async () => {
+          await window.MCLProgress.markMistakeMastered(btn.dataset.masterId);
+          await loadMistakes();
+        });
+      });
+    }
+
+    function currentFilters() {
+      return {
+        status: statusFilter.value || "active",
+        gameId: gameFilter.value || "all",
+        course: courseFilter.value || "all",
+        difficulty: difficultyFilter.value || "all",
+        limit: 200
+      };
+    }
+
+    async function loadMistakes() {
+      mistakeList.innerHTML = `<p class="empty">${tr("loading")}</p>`;
+
+      const localOptions = window.MCLProgress?.getLocalMistakeFilterOptions?.();
+      const hasLocalOptions = Boolean(localOptions?.games?.length || localOptions?.courses?.length || localOptions?.difficulties?.length);
+      if (hasLocalOptions) fillFilterOptions(localOptions);
+      else if (!statusFilter.options.length) setLoadingFilters();
+
+      const localMistakes = window.MCLProgress?.getLocalMistakes?.(currentFilters()) || [];
+      if (localMistakes.length) {
+        signedOutCard.classList.add("mcl-hidden");
+        mistakeCard.classList.remove("mcl-hidden");
+        renderMistakeList(localMistakes);
+      }
+
+      if (!window.MCLAuth?.isConfigured()) {
+        signedOutCard.classList.remove("mcl-hidden");
+        if (!localMistakes.length) mistakeCard.classList.add("mcl-hidden");
+        return;
+      }
+      const { session } = await window.MCLAuth.getSession();
+      if (!session?.user) {
+        signedOutCard.classList.remove("mcl-hidden");
+        mistakeCard.classList.add("mcl-hidden");
+        return;
+      }
+      signedOutCard.classList.add("mcl-hidden");
+      mistakeCard.classList.remove("mcl-hidden");
+      await refreshFilterOptions();
+      renderMistakeList(await window.MCLProgress.getMistakes(currentFilters()));
+    }
+
+    [statusFilter, gameFilter, courseFilter, difficultyFilter].forEach(select => select.addEventListener("change", loadMistakes));
+    document.getElementById("langEn").addEventListener("click", () => setLang("en"));
+    document.getElementById("langZh").addEventListener("click", () => setLang("zh"));
+    applyLang();
+    window.MCLAuth?.onAuthStateChange(() => loadMistakes());
+    loadMistakes();
+  </script>
+</body>
+</html>

@@ -1,0 +1,1569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Advanced Equation Solving Practice</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../assets/js/supabase-client.js"></script>
+  <script src="../assets/js/auth.js"></script>
+  <script src="../assets/js/auth-ui.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <style>
+    :root {
+      --bg: #f7f7fb;
+      --text: #0f172a;
+      --muted: #64748b;
+      --border: #e5e7eb;
+      --accent: #2563eb;
+      --violet: #7c3aed;
+      --good: #16a34a;
+      --bad: #dc2626;
+      --shadow: 0 18px 42px rgba(15, 23, 42, 0.10);
+      --radius: 22px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", Arial, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(96, 165, 250, 0.35), transparent 34%),
+        radial-gradient(circle at top right, rgba(167, 139, 250, 0.28), transparent 32%),
+        linear-gradient(180deg, #f8fbff 0%, var(--bg) 52%, #ffffff 100%);
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.42;
+      background-image:
+        linear-gradient(rgba(15, 23, 42, 0.045) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(15, 23, 42, 0.045) 1px, transparent 1px);
+      background-size: 42px 42px;
+      mask-image: linear-gradient(180deg, black, transparent 72%);
+    }
+
+    .mc-site-shell {
+      width: min(1180px, calc(100% - 32px));
+      margin: 18px auto 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 12px 14px;
+      border: 1px solid rgba(255, 255, 255, 0.74);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.84);
+      backdrop-filter: blur(18px);
+      box-shadow: 0 16px 36px rgba(15, 23, 42, 0.10);
+      position: sticky;
+      top: 12px;
+      z-index: 20;
+    }
+
+    .mc-brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: #0f172a;
+      font-weight: 950;
+      text-decoration: none;
+      letter-spacing: -0.035em;
+      white-space: nowrap;
+    }
+
+    .mc-brand-mark {
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      border-radius: 12px;
+      color: white;
+      background: linear-gradient(135deg, #2563eb, #7c3aed);
+      box-shadow: 0 12px 24px rgba(37, 99, 235, 0.28);
+    }
+
+    .mc-links {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .mc-link {
+      color: #475569;
+      text-decoration: none;
+      font-weight: 850;
+      padding: 8px 11px;
+      border-radius: 999px;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .mc-link:hover { color: #1d4ed8; background: #eff6ff; }
+    .mc-link.primary { color: white; background: #0f172a; }
+    .mc-link.primary:hover { color: white; background: #1e293b; }
+
+    .container {
+      width: min(1040px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 38px 0 68px;
+      position: relative;
+    }
+
+    header { margin-bottom: 24px; overflow: visible; }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      color: #1d4ed8;
+      background: rgba(239, 246, 255, 0.86);
+      border: 1px solid rgba(191, 219, 254, 0.8);
+      font-weight: 950;
+      margin-bottom: 14px;
+    }
+
+    .eyebrow-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: #10b981;
+      box-shadow: 0 0 0 6px rgba(16, 185, 129, 0.12);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(34px, 5.2vw, 56px);
+      line-height: 1.16;
+      letter-spacing: -0.055em;
+      background: linear-gradient(135deg, #0f172a 0%, #1d4ed8 48%, #7c3aed 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      padding-bottom: 0.18em;
+      overflow: visible;
+    }
+
+    h2 { margin: 0 0 12px; font-size: clamp(24px, 4vw, 34px); letter-spacing: -0.045em; }
+    h3 { margin: 0 0 8px; letter-spacing: -0.025em; }
+
+    .subtitle {
+      margin: 14px 0 0;
+      color: var(--muted);
+      line-height: 1.75;
+      max-width: 780px;
+      font-size: 17px;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.90);
+      border: 1px solid rgba(255, 255, 255, 0.76);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 24px;
+      backdrop-filter: blur(16px);
+    }
+
+    .setup-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+      margin: 22px 0;
+    }
+
+    label { display: block; font-weight: 900; margin-bottom: 8px; }
+
+    select,
+    input {
+      width: 100%;
+      min-height: 46px;
+      padding: 12px 14px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      font-size: 16px;
+      background: white;
+      outline: none;
+    }
+
+    select:focus,
+    input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+    }
+
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 46px;
+      padding: 12px 14px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: white;
+      cursor: pointer;
+      margin-bottom: 6px;
+    }
+
+    .checkbox-label input {
+      width: auto;
+      min-height: 0;
+      transform: scale(1.15);
+      accent-color: var(--accent);
+    }
+
+    .mini-hint { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.45; }
+
+    button {
+      appearance: none;
+      border: none;
+      background: linear-gradient(135deg, var(--accent), var(--violet));
+      color: white;
+      font-weight: 950;
+      padding: 12px 18px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: transform 0.14s, filter 0.2s, box-shadow 0.2s;
+      box-shadow: 0 12px 24px rgba(37, 99, 235, 0.24);
+    }
+
+    button:hover { transform: translateY(-1px); filter: brightness(0.98); }
+    button.secondary { background: #111827; box-shadow: 0 8px 18px rgba(17, 24, 39, 0.16); }
+    button.ghost { background: white; color: var(--text); border: 1px solid var(--border); box-shadow: none; }
+    button:disabled { cursor: not-allowed; opacity: 0.55; transform: none; }
+
+    .hidden { display: none !important; }
+    .actions { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+
+    .explain-box {
+      margin-top: 18px;
+      padding: 16px;
+      background: #f8fafc;
+      border: 1px dashed #cbd5e1;
+      border-radius: 18px;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .topbar {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: white;
+      color: var(--muted);
+      font-weight: 850;
+      font-size: 14px;
+      margin-right: 6px;
+      margin-bottom: 6px;
+    }
+
+    .timer-pill { color: #1d4ed8; background: #eff6ff; border-color: #bfdbfe; }
+    .timer-danger { color: #991b1b; background: #fef2f2; border-color: #fecaca; }
+
+    .progress-wrap {
+      width: 100%;
+      height: 10px;
+      background: #e5e7eb;
+      border-radius: 999px;
+      overflow: hidden;
+      margin: 10px 0 22px;
+    }
+
+    .progress {
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(90deg, #2563eb, #7c3aed);
+      transition: width 0.25s ease;
+    }
+
+    .question-title { color: var(--muted); font-weight: 950; margin-bottom: 8px; }
+    .question-extra { color: var(--muted); font-weight: 900; margin: -4px 0 14px; line-height: 1.6; }
+
+    .question-main {
+      font-size: clamp(28px, 5.4vw, 54px);
+      line-height: 1.2;
+      font-weight: 950;
+      letter-spacing: -0.045em;
+      margin: 10px 0 24px;
+      overflow-wrap: anywhere;
+    }
+
+    .math-render { display: inline-block; }
+    .question-main.math-render { display: block; width: 100%; }
+    .question-main .katex { font-size: 1.08em; line-height: 1.2; }
+    .option .katex { font-size: 1.1em; line-height: 1.25; }
+    .chain-math .katex, .answer-math .katex, .feedback-math .katex, .sample-math .katex, .wrong-math .katex { font-size: 1.06em; line-height: 1.25; }
+    .math-render .katex { color: #0f172a; }
+
+    .options {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .option {
+      border: 2px solid var(--border);
+      background: white;
+      color: var(--text);
+      box-shadow: none;
+      border-radius: 18px;
+      min-height: 64px;
+      font-size: 20px;
+      text-align: center;
+      padding: 12px;
+      overflow-wrap: anywhere;
+    }
+
+    .option:hover { border-color: var(--accent); background: #f8fbff; }
+    .option.correct { border-color: rgba(22, 163, 74, 0.5); background: #ecfdf5; color: #065f46; }
+    .option.wrong { border-color: rgba(220, 38, 38, 0.5); background: #fef2f2; color: #991b1b; }
+    .option.correct .katex { color: #065f46; }
+    .option.wrong .katex { color: #991b1b; }
+    .options.long-options { grid-template-columns: 1fr; }
+    .option.text-option {
+      text-align: center;
+      white-space: normal;
+      overflow-wrap: anywhere;
+      word-break: normal;
+      line-height: 1.45;
+      font-size: clamp(17px, 2vw, 20px);
+    }
+    .option.text-option.long-text-option {
+      justify-content: flex-start;
+      text-align: left;
+    }
+
+    .feedback { min-height: 30px; font-weight: 950; margin: 8px 0 16px; }
+    .feedback.good { color: var(--good); }
+    .feedback.bad { color: var(--bad); }
+    .feedback.bad .katex { color: #dc2626; }
+
+    .solution-box {
+      margin: 14px 0 18px;
+      padding: 18px;
+      border-radius: 20px;
+      border: 1px solid #dbeafe;
+      background: linear-gradient(180deg, #f8fbff, #fff);
+      color: #1f2937;
+      line-height: 1.7;
+    }
+
+    .solution-box h4 { margin: 0 0 12px; font-size: 18px; }
+    .solution-chain { background: white; border: 1px solid #e5e7eb; border-radius: 16px; padding: 14px 16px; overflow-x: auto; }
+
+    .chain-line {
+      display: grid;
+      grid-template-columns: minmax(250px, 1fr) minmax(170px, 0.65fr);
+      align-items: baseline;
+      gap: 18px;
+      margin: 8px 0;
+      font-size: 17px;
+      font-weight: 850;
+      white-space: nowrap;
+    }
+
+    .chain-note { color: #64748b; font-size: 13px; font-weight: 850; white-space: normal; }
+    .solution-answer { margin-top: 12px; font-weight: 950; color: #111827; }
+    .solution-answer > .answer-math { display: inline-block; background: #ecfdf5; color: #065f46; border: 1px solid #bbf7d0; border-radius: 999px; padding: 3px 10px; margin-left: 4px; vertical-align: middle; }
+
+    .result-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin: 18px 0 24px; }
+    .stat { background: #f9fafb; border: 1px solid var(--border); border-radius: 18px; padding: 18px; }
+    .stat .num { font-size: 34px; font-weight: 950; letter-spacing: -0.05em; }
+    .stat .label { color: var(--muted); margin-top: 4px; font-weight: 850; }
+    .wrong-list { display: grid; gap: 14px; }
+    .wrong-item { border: 1px solid var(--border); border-radius: 18px; background: white; padding: 16px; }
+    .wrong-item .expr { font-size: 22px; font-weight: 950; margin-bottom: 8px; overflow-wrap: anywhere; }
+    .wrong-item p { margin: 6px 0; color: var(--muted); line-height: 1.6; }
+    .tag-good { color: var(--good); font-weight: 950; }
+    .tag-bad { color: var(--bad); font-weight: 950; }
+
+    @media (max-width: 760px) {
+      .mc-site-shell { border-radius: 22px; align-items: flex-start; flex-direction: column; }
+      .mc-links { justify-content: flex-start; }
+      .setup-grid, .options, .result-grid { grid-template-columns: 1fr; }
+      .card { padding: 18px; }
+      .container { width: min(100% - 22px, 1040px); padding-top: 26px; }
+      .chain-line { grid-template-columns: 1fr; gap: 2px; white-space: normal; }
+      .chain-note { padding-left: 12px; }
+    }
+  
+
+  /* MathComplete Lab shared tool question layout override */
+  .question-main,
+  .expression,
+  .equation {
+    max-width: 100%;
+    font-size: clamp(28px, 5.4vw, 54px) !important;
+    line-height: 1.2 !important;
+    font-weight: 500 !important;
+    letter-spacing: -0.045em !important;
+    margin: 10px 0 24px !important;
+    text-align: left !important;
+    overflow-wrap: anywhere !important;
+    word-break: normal !important;
+    text-wrap: pretty;
+    white-space: normal;
+    justify-content: flex-start !important;
+    align-items: flex-start !important;
+  }
+
+  .question-main.math-render,
+  .expression.math-render,
+  .equation.math-render {
+    display: block !important;
+    width: 100% !important;
+    text-align: left !important;
+  }
+
+  .question-main .katex,
+  .expression .katex,
+  .equation .katex {
+    white-space: normal !important;
+    text-align: left !important;
+    font-weight: 400 !important;
+    max-width: 100% !important;
+  }
+
+  .question-main .katex *,
+  .expression .katex *,
+  .equation .katex * {
+    font-weight: 400 !important;
+  }
+
+  .question-line,
+  .question-text {
+    max-width: 100%;
+    text-align: left !important;
+    overflow-wrap: anywhere;
+    word-break: normal;
+    text-wrap: pretty;
+  }
+
+  .question-main .katex-display {
+    margin: 0 !important;
+    max-width: 100% !important;
+    overflow-x: auto;
+    overflow-y: hidden;
+    text-align: left !important;
+  }
+</style>
+</head>
+<body>
+  <nav class="mc-site-shell">
+    <a class="mc-brand" href="../index.html"><span class="mc-brand-mark">∑</span><span>MathComplete Lab</span></a>
+    <div class="mc-links">
+      <a class="mc-link" href="../practice.html" data-i18n="navPractice">Practice Library</a>
+      <a class="mc-link primary" href="../index.html" data-i18n="navHome">Home</a>
+    </div>
+  </nav>
+
+  <main class="container">
+    <header>
+      <div class="eyebrow"><span class="eyebrow-dot"></span><span id="toolBadge"></span></div>
+      <h1 id="pageTitle"></h1>
+      <p id="pageSubtitle" class="subtitle"></p>
+    </header>
+
+    <section id="setupCard" class="card">
+      <h2 id="setupTitle"></h2>
+      <div class="setup-grid">
+        <div><label id="topicLabel" for="topic"></label><select id="topic"></select></div>
+        <div><label id="difficultyLabel" for="difficulty"></label><select id="difficulty"></select></div>
+        <div><label id="questionCountLabel" for="questionCount"></label><input id="questionCount" type="number" min="1" max="100" value="10" /></div>
+        <div><label id="optionCountLabel" for="optionCount"></label><select id="optionCount"></select></div>
+        <div><label class="checkbox-label" for="timedMode"><input id="timedMode" type="checkbox" /><span id="timedModeText"></span></label><p id="timedModeHint" class="mini-hint"></p></div>
+        <div><label id="timerLevelLabel" for="timerLevel"></label><select id="timerLevel"></select></div>
+      </div>
+      <div class="actions"><button id="startBtn"></button><button id="sampleBtn" class="ghost"></button></div>
+      <div id="sampleBox" class="explain-box hidden"></div>
+      <div id="noteBox" class="explain-box"></div>
+    </section>
+
+    <section id="quizCard" class="card hidden">
+      <div class="topbar">
+        <div><span class="pill" id="progressText"></span><span class="pill" id="difficultyText"></span><span class="pill timer-pill hidden" id="timerDisplay"></span></div>
+        <button id="quitBtn" class="ghost"></button>
+      </div>
+      <div class="progress-wrap"><div id="progressBar" class="progress"></div></div>
+      <div id="questionTitle" class="question-title"></div>
+      <div id="questionExtra" class="question-extra"></div>
+      <div id="questionMain" class="question-main"></div>
+      <div id="options" class="options"></div>
+      <div id="feedback" class="feedback"></div>
+      <div id="solutionBox" class="solution-box hidden"></div>
+      <div class="actions"><button id="nextBtn" disabled></button></div>
+    </section>
+
+    <section id="resultCard" class="card hidden">
+      <h2 id="resultTitle"></h2>
+      <div class="result-grid">
+        <div class="stat"><div id="scoreNum" class="num">0/0</div><div id="scoreLabel" class="label"></div></div>
+        <div class="stat"><div id="accuracyNum" class="num">0%</div><div id="accuracyLabel" class="label"></div></div>
+        <div class="stat"><div id="wrongNum" class="num">0</div><div id="wrongLabel" class="label"></div></div>
+      </div>
+      <h3 id="wrongReviewTitle"></h3>
+      <div id="wrongList" class="wrong-list"></div>
+      <div class="actions" style="margin-top:22px;"><button id="restartBtn"></button><button id="reviewWrongBtn" class="secondary"></button></div>
+    </section>
+  </main>
+
+  <script>
+(() => {
+  const GAME_ID = "advanced-equation-solving";
+  const $ = (id) => document.getElementById(id);
+
+  const els = {
+    toolBadge: $("toolBadge"),
+    pageTitle: $("pageTitle"),
+    pageSubtitle: $("pageSubtitle"),
+    setupTitle: $("setupTitle"),
+    topicLabel: $("topicLabel"),
+    topic: $("topic"),
+    difficultyLabel: $("difficultyLabel"),
+    difficulty: $("difficulty"),
+    questionCountLabel: $("questionCountLabel"),
+    questionCount: $("questionCount"),
+    optionCountLabel: $("optionCountLabel"),
+    optionCount: $("optionCount"),
+    timedMode: $("timedMode"),
+    timedModeText: $("timedModeText"),
+    timedModeHint: $("timedModeHint"),
+    timerLevelLabel: $("timerLevelLabel"),
+    timerLevel: $("timerLevel"),
+    startBtn: $("startBtn"),
+    sampleBtn: $("sampleBtn"),
+    sampleBox: $("sampleBox"),
+    noteBox: $("noteBox"),
+    setupCard: $("setupCard"),
+    quizCard: $("quizCard"),
+    resultCard: $("resultCard"),
+    progressText: $("progressText"),
+    difficultyText: $("difficultyText"),
+    timerDisplay: $("timerDisplay"),
+    progressBar: $("progressBar"),
+    questionTitle: $("questionTitle"),
+    questionExtra: $("questionExtra"),
+    questionMain: $("questionMain"),
+    options: $("options"),
+    feedback: $("feedback"),
+    solutionBox: $("solutionBox"),
+    nextBtn: $("nextBtn"),
+    quitBtn: $("quitBtn"),
+    resultTitle: $("resultTitle"),
+    scoreNum: $("scoreNum"),
+    scoreLabel: $("scoreLabel"),
+    accuracyNum: $("accuracyNum"),
+    accuracyLabel: $("accuracyLabel"),
+    wrongNum: $("wrongNum"),
+    wrongLabel: $("wrongLabel"),
+    wrongReviewTitle: $("wrongReviewTitle"),
+    wrongList: $("wrongList"),
+    restartBtn: $("restartBtn"),
+    reviewWrongBtn: $("reviewWrongBtn")
+  };
+
+  const TOPICS = [
+    ["mixed", "Mixed topics"],
+    ["polynomial", "Polynomial / quadratic"],
+    ["rational", "Rational equations"],
+    ["radical", "Radical equations"],
+    ["exponential", "Exponential equations"],
+    ["logarithmic", "Logarithmic equations"],
+    ["absolute", "Absolute-value equations"],
+    ["trigonometric", "Trigonometric equations"]
+  ];
+
+  const DIFFICULTIES = [
+    ["mixed", "Mixed"],
+    ["easy", "Easy"],
+    ["medium", "Medium"],
+    ["hard", "Hard"]
+  ];
+
+  const OPTION_COUNTS = [["4", "4 choices"], ["5", "5 choices"], ["6", "6 choices"]];
+  const TIMER_LEVELS = [["relaxed", "Relaxed · 90s"], ["standard", "Standard · 60s"], ["challenge", "Challenge · 35s"]];
+  const TIMER_SECONDS = { relaxed: 90, standard: 60, challenge: 35 };
+
+  const state = {
+    questions: [],
+    current: 0,
+    score: 0,
+    wrong: [],
+    totalAnswered: 0,
+    selected: null,
+    hasAnswered: false,
+    timerId: null,
+    timeLeft: 0,
+    reviewMode: false
+  };
+
+  function init() {
+    setStaticText();
+    fillSelect(els.topic, TOPICS, "mixed");
+    fillSelect(els.difficulty, DIFFICULTIES, "mixed");
+    fillSelect(els.optionCount, OPTION_COUNTS, "4");
+    fillSelect(els.timerLevel, TIMER_LEVELS, "standard");
+    els.startBtn.addEventListener("click", startQuiz);
+    els.sampleBtn.addEventListener("click", showSample);
+    els.nextBtn.addEventListener("click", nextQuestion);
+    els.quitBtn.addEventListener("click", finishQuiz);
+    els.restartBtn.addEventListener("click", resetToSetup);
+    els.reviewWrongBtn.addEventListener("click", startWrongReview);
+    els.timedMode.addEventListener("change", updateTimerControl);
+    updateTimerControl();
+  }
+
+  function setStaticText() {
+    els.toolBadge.textContent = "Algebra II · Precalculus";
+    els.pageTitle.textContent = "Advanced Equation Solving";
+    els.pageSubtitle.textContent = "Randomly generated equation-solving practice with clean constraints, domain checks, realistic distractors, and step-by-step solutions.";
+    els.setupTitle.textContent = "Build a practice set";
+    els.topicLabel.textContent = "Practice focus";
+    els.difficultyLabel.textContent = "Difficulty";
+    els.questionCountLabel.textContent = "Number of questions";
+    els.optionCountLabel.textContent = "Answer choices";
+    els.timedModeText.textContent = "Timed mode";
+    els.timedModeHint.textContent = "Optional per-question timer. When time runs out, the question is counted wrong and the solution appears.";
+    els.timerLevelLabel.textContent = "Timer speed";
+    els.startBtn.textContent = "Start practice";
+    els.sampleBtn.textContent = "Show sample question";
+    els.quitBtn.textContent = "Quit";
+    els.nextBtn.textContent = "Next question";
+    els.resultTitle.textContent = "Practice results";
+    els.scoreLabel.textContent = "Score";
+    els.accuracyLabel.textContent = "Accuracy";
+    els.wrongLabel.textContent = "Wrong answers";
+    els.wrongReviewTitle.textContent = "Wrong-answer review";
+    els.restartBtn.textContent = "New practice";
+    els.reviewWrongBtn.textContent = "Redo wrong questions";
+    els.noteBox.innerHTML = "<strong>No fixed question bank.</strong> Every question is generated from a controlled family: small coefficients, clean integer or standard-angle answers, domain restrictions checked automatically, and distractors based on common algebra mistakes.";
+  }
+
+  function fillSelect(select, pairs, defaultValue) {
+    select.innerHTML = pairs.map(([value, label]) => `<option value="${value}">${label}</option>`).join("");
+    select.value = defaultValue;
+  }
+
+  function updateTimerControl() {
+    els.timerLevel.disabled = !els.timedMode.checked;
+  }
+
+  function startQuiz() {
+    const count = clamp(parseInt(els.questionCount.value, 10) || 10, 1, 100);
+    els.questionCount.value = count;
+    state.questions = generateQuestions(count, els.difficulty.value, els.topic.value);
+    state.current = 0;
+    state.score = 0;
+    state.wrong = [];
+    state.totalAnswered = 0;
+    state.reviewMode = false;
+    showOnly("quiz");
+    renderQuestion();
+  }
+
+  function startWrongReview() {
+    if (!state.wrong.length) return;
+    state.questions = state.wrong.map((item) => item.question);
+    state.current = 0;
+    state.score = 0;
+    state.totalAnswered = 0;
+    state.wrong = [];
+    state.reviewMode = true;
+    showOnly("quiz");
+    renderQuestion();
+  }
+
+  function resetToSetup() {
+    clearTimer();
+    showOnly("setup");
+  }
+
+  function showOnly(which) {
+    els.setupCard.classList.toggle("hidden", which !== "setup");
+    els.quizCard.classList.toggle("hidden", which !== "quiz");
+    els.resultCard.classList.toggle("hidden", which !== "result");
+  }
+
+  function generateQuestions(count, difficulty, topic) {
+    const questions = [];
+    const seen = new Set();
+    let guard = 0;
+    while (questions.length < count && guard < count * 80) {
+      guard += 1;
+      const q = buildQuestion(difficulty, topic);
+      if (!q || seen.has(q.equationLatex + q.extra)) continue;
+      seen.add(q.equationLatex + q.extra);
+      q.choices = makeChoices(q, parseInt(els.optionCount.value, 10) || 4);
+      questions.push(q);
+    }
+    while (questions.length < count) {
+      const q = buildQuestion("mixed", "mixed");
+      q.choices = makeChoices(q, parseInt(els.optionCount.value, 10) || 4);
+      questions.push(q);
+    }
+    return questions;
+  }
+
+  function buildQuestion(difficulty, topic) {
+    const resolvedDifficulty = difficulty === "mixed" ? choice(["easy", "medium", "hard"]) : difficulty;
+    const topicPool = topic === "mixed" ? TOPICS.slice(1).map(([value]) => value) : [topic];
+    const shuffledTopics = shuffle([...topicPool]);
+    for (const currentTopic of shuffledTopics) {
+      const generators = getGenerators(currentTopic, resolvedDifficulty);
+      if (!generators.length) continue;
+      for (let i = 0; i < 16; i += 1) {
+        const q = choice(generators)();
+        if (q) return normalizeQuestion(q, currentTopic, resolvedDifficulty);
+      }
+    }
+    return normalizeQuestion(genQuadratic(), "polynomial", "easy");
+  }
+
+  function getGenerators(topic, difficulty) {
+    const map = {
+      polynomial: {
+        easy: [genQuadratic],
+        medium: [genQuadratic, genCubic],
+        hard: [genCubic, genQuadratic]
+      },
+      rational: {
+        easy: [genRationalReciprocal],
+        medium: [genRationalReciprocal, genRationalLinearFraction],
+        hard: [genRationalCancellation, genRationalTwoStep]
+      },
+      radical: {
+        easy: [genRadicalSimple],
+        medium: [genRadicalSquaring],
+        hard: [genRadicalSquaring]
+      },
+      exponential: {
+        easy: [genExponentialSameBase],
+        medium: [genExponentialSameBase, genExponentialSubstitution],
+        hard: [genExponentialSubstitution]
+      },
+      logarithmic: {
+        easy: [genLogSimple],
+        medium: [genLogSimple, genLogQuadratic],
+        hard: [genLogQuadratic]
+      },
+      absolute: {
+        easy: [genAbsoluteSimple],
+        medium: [genAbsoluteLinear],
+        hard: [genAbsoluteLinear, genAbsoluteBothSides]
+      },
+      trigonometric: {
+        easy: [genTrigEquation],
+        medium: [genTrigEquation],
+        hard: [genTrigEquation]
+      }
+    };
+    return (map[topic] && map[topic][difficulty]) || [];
+  }
+
+  function normalizeQuestion(q, topic, difficulty) {
+    return {
+      topic,
+      difficulty,
+      title: q.title,
+      extra: q.extra || "Solve for all real solutions unless an interval is stated.",
+      equationLatex: q.equationLatex,
+      answerLatex: q.answerLatex,
+      distractors: q.distractors || [],
+      steps: q.steps || []
+    };
+  }
+
+  function makeChoices(q, desiredCount) {
+    const bank = [q.answerLatex, ...q.distractors];
+    const generic = genericDistractors(q.answerLatex);
+    bank.push(...generic);
+    const unique = [];
+    const seen = new Set();
+    for (const item of bank) {
+      if (!item || seen.has(cleanKey(item))) continue;
+      seen.add(cleanKey(item));
+      unique.push(item);
+      if (unique.length >= desiredCount) break;
+    }
+    while (unique.length < desiredCount) {
+      const fallback = randomAnswerLatex();
+      if (!seen.has(cleanKey(fallback))) {
+        seen.add(cleanKey(fallback));
+        unique.push(fallback);
+      }
+    }
+    return shuffle(unique).map((latex) => ({ latex, correct: cleanKey(latex) === cleanKey(q.answerLatex) }));
+  }
+
+  function genericDistractors(answerLatex) {
+    return [
+      "x=0",
+      "x=1",
+      "x=-1",
+      "\\varnothing",
+      "x\\in\\{0,1\\}",
+      answerLatex.includes("\\varnothing") ? "x=0" : "\\varnothing"
+    ];
+  }
+
+  function randomAnswerLatex() {
+    const a = randInt(-9, 9);
+    const b = randInt(-9, 9);
+    if (Math.random() < 0.35 && a !== b) return answerSet([numRoot(a), numRoot(b)]);
+    return answerSet([numRoot(a)]);
+  }
+
+  function renderQuestion() {
+    clearTimer();
+    const q = state.questions[state.current];
+    state.hasAnswered = false;
+    state.selected = null;
+    els.feedback.textContent = "";
+    els.feedback.className = "feedback";
+    els.solutionBox.classList.add("hidden");
+    els.solutionBox.innerHTML = "";
+    els.nextBtn.disabled = true;
+    els.progressText.textContent = `Question ${state.current + 1} / ${state.questions.length}`;
+    els.difficultyText.textContent = `${labelFor(TOPICS, q.topic)} · ${capitalize(q.difficulty)}`;
+    els.progressBar.style.width = `${(state.current / state.questions.length) * 100}%`;
+    els.questionTitle.textContent = q.title;
+    els.questionExtra.textContent = q.extra;
+    renderMath(els.questionMain, q.equationLatex, true);
+    renderOptions(q);
+    if (els.timedMode.checked) startTimer();
+  }
+
+  function renderOptions(q) {
+    els.options.innerHTML = "";
+    els.options.classList.toggle("long-options", q.choices.some((choiceItem) => choiceItem.latex.length > 36));
+    q.choices.forEach((choiceItem, index) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "option";
+      button.dataset.index = String(index);
+      button.dataset.correct = choiceItem.correct ? "true" : "false";
+      button.addEventListener("click", () => answerQuestion(index));
+      const span = document.createElement("span");
+      span.className = "math-render";
+      button.appendChild(span);
+      els.options.appendChild(button);
+      renderMath(span, choiceItem.latex, false);
+    });
+  }
+
+  function answerQuestion(choiceIndex, timedOut = false) {
+    if (state.hasAnswered) return;
+    clearTimer();
+    const q = state.questions[state.current];
+    const buttons = [...els.options.querySelectorAll("button")];
+    const selectedButton = Number.isInteger(choiceIndex) ? buttons[choiceIndex] : null;
+    const correct = selectedButton ? selectedButton.dataset.correct === "true" : false;
+    state.hasAnswered = true;
+    state.selected = selectedButton ? q.choices[choiceIndex].latex : "Time expired";
+    state.totalAnswered += 1;
+    if (correct) state.score += 1;
+    buttons.forEach((button) => {
+      button.disabled = true;
+      if (button.dataset.correct === "true") button.classList.add("correct");
+    });
+    if (selectedButton && !correct) selectedButton.classList.add("wrong");
+    if (!correct) {
+      state.wrong.push({ question: q, selected: state.selected });
+    }
+    els.feedback.classList.add(correct ? "good" : "bad");
+    els.feedback.textContent = correct ? "Correct." : timedOut ? "Time is up. Review the solution below." : "Not quite. Review the solution below.";
+    renderSolution(q);
+    els.nextBtn.disabled = false;
+    els.progressBar.style.width = `${((state.current + 1) / state.questions.length) * 100}%`;
+    saveAttempt(q, correct, state.selected);
+  }
+
+  function renderSolution(q) {
+    const stepHtml = q.steps.map((step) => `
+      <div class="chain-line">
+        <span class="chain-math" data-latex="${escapeAttr(step.latex)}"></span>
+        <span class="chain-note">${escapeHTML(step.note || "")}</span>
+      </div>
+    `).join("");
+    els.solutionBox.innerHTML = `
+      <h4>Step-by-step solution</h4>
+      <div class="solution-chain">${stepHtml}</div>
+      <div class="solution-answer">Final answer: <span class="answer-math" data-latex="${escapeAttr(q.answerLatex)}"></span></div>
+    `;
+    renderMathChildren(els.solutionBox);
+    els.solutionBox.classList.remove("hidden");
+  }
+
+  function nextQuestion() {
+    if (state.current + 1 >= state.questions.length) {
+      finishQuiz();
+      return;
+    }
+    state.current += 1;
+    renderQuestion();
+  }
+
+  function finishQuiz() {
+    clearTimer();
+    const total = state.questions.length || 1;
+    const wrongCount = state.wrong.length;
+    const accuracy = Math.round((state.score / total) * 100);
+    els.scoreNum.textContent = `${state.score}/${total}`;
+    els.accuracyNum.textContent = `${accuracy}%`;
+    els.wrongNum.textContent = String(wrongCount);
+    renderWrongList();
+    els.reviewWrongBtn.disabled = wrongCount === 0;
+    showOnly("result");
+  }
+
+  function renderWrongList() {
+    if (!state.wrong.length) {
+      els.wrongList.innerHTML = `<div class="wrong-item"><p><span class="tag-good">Great work.</span> No wrong answers in this round.</p></div>`;
+      return;
+    }
+    els.wrongList.innerHTML = state.wrong.map((item, index) => `
+      <div class="wrong-item">
+        <div class="expr"><span class="wrong-math" data-latex="${escapeAttr(item.question.equationLatex)}"></span></div>
+        <p><span class="tag-bad">Your answer:</span> <span class="wrong-math" data-latex="${escapeAttr(item.selected)}"></span></p>
+        <p><span class="tag-good">Correct answer:</span> <span class="wrong-math" data-latex="${escapeAttr(item.question.answerLatex)}"></span></p>
+        <button class="ghost" type="button" data-show-solution="${index}">Show solution</button>
+        <div class="solution-box hidden" data-wrong-solution="${index}"></div>
+      </div>
+    `).join("");
+    renderMathChildren(els.wrongList);
+    [...els.wrongList.querySelectorAll("[data-show-solution]")].forEach((button) => {
+      button.addEventListener("click", () => {
+        const i = parseInt(button.dataset.showSolution, 10);
+        const box = els.wrongList.querySelector(`[data-wrong-solution="${i}"]`);
+        const q = state.wrong[i].question;
+        const stepHtml = q.steps.map((step) => `
+          <div class="chain-line">
+            <span class="chain-math" data-latex="${escapeAttr(step.latex)}"></span>
+            <span class="chain-note">${escapeHTML(step.note || "")}</span>
+          </div>
+        `).join("");
+        box.innerHTML = `<h4>Solution</h4><div class="solution-chain">${stepHtml}</div>`;
+        renderMathChildren(box);
+        box.classList.toggle("hidden");
+      });
+    });
+  }
+
+  function showSample() {
+    const q = buildQuestion(els.difficulty.value, els.topic.value);
+    q.choices = makeChoices(q, parseInt(els.optionCount.value, 10) || 4);
+    const stepHtml = q.steps.slice(0, 3).map((step) => `
+      <div class="chain-line">
+        <span class="chain-math" data-latex="${escapeAttr(step.latex)}"></span>
+        <span class="chain-note">${escapeHTML(step.note || "")}</span>
+      </div>
+    `).join("");
+    els.sampleBox.innerHTML = `
+      <strong>Sample generated question</strong>
+      <div style="margin-top:12px;"><span class="sample-math" data-latex="${escapeAttr(q.equationLatex)}"></span></div>
+      <div class="solution-chain" style="margin-top:12px;">${stepHtml}</div>
+      <p style="margin-top:10px;">Answer: <span class="sample-math" data-latex="${escapeAttr(q.answerLatex)}"></span></p>
+    `;
+    els.sampleBox.classList.remove("hidden");
+    renderMathChildren(els.sampleBox);
+  }
+
+  function startTimer() {
+    state.timeLeft = TIMER_SECONDS[els.timerLevel.value] || 60;
+    els.timerDisplay.classList.remove("hidden", "timer-danger");
+    updateTimerDisplay();
+    state.timerId = setInterval(() => {
+      state.timeLeft -= 1;
+      updateTimerDisplay();
+      if (state.timeLeft <= 0) answerQuestion(null, true);
+    }, 1000);
+  }
+
+  function updateTimerDisplay() {
+    els.timerDisplay.textContent = `${state.timeLeft}s`;
+    els.timerDisplay.classList.toggle("timer-danger", state.timeLeft <= 10);
+  }
+
+  function clearTimer() {
+    if (state.timerId) clearInterval(state.timerId);
+    state.timerId = null;
+    els.timerDisplay.classList.add("hidden");
+  }
+
+  async function saveAttempt(q, correct, selected) {
+    const payload = {
+      game_id: GAME_ID,
+      topic: q.topic,
+      difficulty: q.difficulty,
+      prompt: q.equationLatex,
+      correct_answer: q.answerLatex,
+      selected_answer: selected,
+      is_correct: correct,
+      created_at: new Date().toISOString()
+    };
+    try {
+      const progress = window.MathCompleteProgress || window.MCLProgress || window.progress;
+      if (progress && typeof progress.recordAttempt === "function") {
+        await progress.recordAttempt(payload);
+      } else if (typeof window.recordPracticeAttempt === "function") {
+        await window.recordPracticeAttempt(payload);
+      } else if (typeof window.savePracticeAttempt === "function") {
+        await window.savePracticeAttempt(payload);
+      }
+    } catch (error) {
+      console.warn("Progress save skipped:", error);
+    }
+  }
+
+  function normalizeLatex(latex) {
+    return String(latex || "")
+      .replace(/\\sinx/g, "\\sin x")
+      .replace(/\\cosx/g, "\\cos x")
+      .replace(/\\tanx/g, "\\tan x")
+      .replace(/\\secx/g, "\\sec x")
+      .replace(/\\cscx/g, "\\csc x")
+      .replace(/\\cotx/g, "\\cot x");
+  }
+
+  function renderMath(el, latex, displayMode = false) {
+    const safeLatex = normalizeLatex(latex);
+    if (!window.katex) {
+      el.textContent = safeLatex;
+      return;
+    }
+    try {
+      katex.render(safeLatex, el, { displayMode, throwOnError: false, trust: true, strict: "ignore" });
+    } catch (error) {
+      el.textContent = safeLatex;
+    }
+  }
+
+  function renderMathChildren(root) {
+    root.querySelectorAll("[data-latex]").forEach((node) => renderMath(node, node.dataset.latex, false));
+  }
+
+  function genQuadratic() {
+    const r1 = randIntExclude(-8, 8, [0]);
+    let r2 = randIntExclude(-8, 8, [0, r1]);
+    if (r1 === r2) r2 += 1;
+    const sum = r1 + r2;
+    const prod = r1 * r2;
+    return {
+      title: "Solve a factorable quadratic equation.",
+      equationLatex: `${polyLatex([1, -sum, prod])}=0`,
+      answerLatex: answerSet([numRoot(r1), numRoot(r2)]),
+      distractors: [
+        answerSet([numRoot(-r1), numRoot(-r2)]),
+        answerSet([numRoot(sum), numRoot(prod)]),
+        answerSet([numRoot(r1)]),
+        answerSet([numRoot(r2)])
+      ],
+      steps: [
+        { latex: `${polyLatex([1, -sum, prod])}=0`, note: "Start with the quadratic equation." },
+        { latex: `(x${signed(-r1)})(x${signed(-r2)})=0`, note: "Factor using the generated integer roots." },
+        { latex: `x${signed(-r1)}=0\\quad\\text{or}\\quad x${signed(-r2)}=0`, note: "Use the zero product property." },
+        { latex: answerSet([numRoot(r1), numRoot(r2)]), note: "Solve each linear equation." }
+      ]
+    };
+  }
+
+  function genCubic() {
+    const roots = uniqueInts(3, -5, 6, [0]);
+    const [a, b, c] = roots;
+    const s1 = a + b + c;
+    const s2 = a * b + a * c + b * c;
+    const s3 = a * b * c;
+    return {
+      title: "Solve a factorable polynomial equation.",
+      equationLatex: `${polyLatex([1, -s1, s2, -s3])}=0`,
+      answerLatex: answerSet(roots.map(numRoot)),
+      distractors: [
+        answerSet(roots.map((r) => numRoot(-r))),
+        answerSet([numRoot(a), numRoot(b)]),
+        answerSet([numRoot(s1)]),
+        "\\varnothing"
+      ],
+      steps: [
+        { latex: `${polyLatex([1, -s1, s2, -s3])}=0`, note: "Start with the polynomial." },
+        { latex: `(x${signed(-a)})(x${signed(-b)})(x${signed(-c)})=0`, note: "Factor into linear factors." },
+        { latex: answerSet(roots.map(numRoot)), note: "Set each factor equal to zero." }
+      ]
+    };
+  }
+
+  function genRationalReciprocal() {
+    const h = randInt(-5, 5);
+    const k = randIntExclude(-5, 5, [0, 1, -1]);
+    const m = randIntExclude(2, 8, []);
+    const a = k * m;
+    const sol = h + m;
+    return {
+      title: "Solve a rational equation with a domain restriction.",
+      extra: `Solve for real x. Domain restriction: x ≠ ${h}.`,
+      equationLatex: `\\frac{${a}}{x${signed(-h)}}=${k}`,
+      answerLatex: answerSet([numRoot(sol)]),
+      distractors: [answerSet([numRoot(h)]), answerSet([numRoot(h - m)]), answerSet([numRoot(m)]), "\\varnothing"],
+      steps: [
+        { latex: `x${signed(-h)}\\ne 0`, note: `Record the restriction: x cannot equal ${h}.` },
+        { latex: `\\frac{${a}}{x${signed(-h)}}=${k}`, note: "Start with the rational equation." },
+        { latex: `${a}=${k}(x${signed(-h)})`, note: "Multiply both sides by the denominator." },
+        { latex: `x${signed(-h)}=${m}`, note: "Divide by the nonzero coefficient." },
+        { latex: answerSet([numRoot(sol)]), note: "The solution does not violate the restriction." }
+      ]
+    };
+  }
+
+  function genRationalLinearFraction() {
+    const s = randIntExclude(-8, 8, [0]);
+    const a = randIntExclude(2, 7, [0]);
+    const b = randInt(-9, 9);
+    const c = randIntExclude(2, 6, [0]);
+    const d = a * s + b;
+    return {
+      title: "Solve a linear equation written as a fraction.",
+      equationLatex: `\\frac{${a}x${signed(b)}}{${c}}=\\frac{${d}}{${c}}`,
+      answerLatex: answerSet([numRoot(s)]),
+      distractors: [answerSet([numRoot(-s)]), answerSet([numRoot(s + c)]), answerSet([numRoot(s - 1)]), answerSet([numRoot(d)])],
+      steps: [
+        { latex: `\\frac{${a}x${signed(b)}}{${c}}=\\frac{${d}}{${c}}`, note: "Both sides have the same denominator." },
+        { latex: `${a}x${signed(b)}=${d}`, note: "Multiply both sides by the denominator." },
+        { latex: `${a}x=${d - b}`, note: "Move the constant term." },
+        { latex: answerSet([numRoot(s)]), note: "Divide by the coefficient of x." }
+      ]
+    };
+  }
+
+  function genRationalTwoStep() {
+    const h = randIntExclude(-4, 4, [0]);
+    const sol = randIntExclude(-8, 8, [h]);
+    const a = randIntExclude(2, 9, [0]);
+    const k = makeFrac(a, sol - h);
+    return {
+      title: "Solve a rational equation and check the excluded value.",
+      extra: `Solve for real x. Domain restriction: x ≠ ${h}.`,
+      equationLatex: `\\frac{${a}}{x${signed(-h)}}=${fracLatex(k)}`,
+      answerLatex: answerSet([numRoot(sol)]),
+      distractors: [answerSet([numRoot(h)]), answerSet([numRoot(-sol)]), answerSet([numRoot(sol + h)]), "\\varnothing"],
+      steps: [
+        { latex: `x${signed(-h)}\\ne0`, note: `The denominator cannot be zero, so x cannot equal ${h}.` },
+        { latex: `\\frac{${a}}{x${signed(-h)}}=${fracLatex(k)}`, note: "Start with the equation." },
+        { latex: `${a}=${fracLatex(k)}(x${signed(-h)})`, note: "Multiply by the denominator." },
+        { latex: `x${signed(-h)}=${fracLatex(makeFrac(a * k.d, k.n))}`, note: "Divide by the fraction." },
+        { latex: answerSet([numRoot(sol)]), note: "Add the shift and check the restriction." }
+      ]
+    };
+  }
+
+  function genRationalCancellation() {
+    const r = randIntExclude(-6, 6, [0]);
+    const noSolution = Math.random() < 0.28;
+    const t = noSolution ? 2 * r : randIntExclude(-10, 10, [2 * r]);
+    const candidate = t - r;
+    const answer = noSolution ? "\\varnothing" : answerSet([numRoot(candidate)]);
+    return {
+      title: "Solve a rational equation with a removable restriction.",
+      extra: `Solve for real x. Remember: x ≠ ${r}.`,
+      equationLatex: `\\frac{x^2-${r * r}}{x${signed(-r)}}=${t}`,
+      answerLatex: answer,
+      distractors: [answerSet([numRoot(r)]), answerSet([numRoot(candidate)]), answerSet([numRoot(-r)]), answerSet([numRoot(t + r)])],
+      steps: [
+        { latex: `x${signed(-r)}\\ne0`, note: `The original denominator excludes x=${r}.` },
+        { latex: `\\frac{(x${signed(-r)})(x${signed(r)})}{x${signed(-r)}}=${t}`, note: "Factor the numerator as a difference of squares." },
+        { latex: `x${signed(r)}=${t}\\quad (x\\ne ${r})`, note: "Cancel only after keeping the restriction." },
+        { latex: `x=${candidate}`, note: "Solve the simplified equation." },
+        { latex: answer, note: noSolution ? "The candidate is excluded by the original denominator, so there is no solution." : "The candidate is allowed, so it is the solution." }
+      ]
+    };
+  }
+
+  function genRadicalSimple() {
+    const s = randInt(0, 10);
+    const a = randInt(-4, 8);
+    const r = randInt(1, 8);
+    const target = r * r;
+    const h = target - s;
+    return {
+      title: "Solve a square-root equation.",
+      extra: `Solve for real x. The radicand must be nonnegative.`,
+      equationLatex: `\\sqrt{x${signed(h)}}=${r}`,
+      answerLatex: answerSet([numRoot(target - h)]),
+      distractors: [answerSet([numRoot(target + h)]), answerSet([numRoot(r - h)]), answerSet([numRoot(-target - h)]), "\\varnothing"],
+      steps: [
+        { latex: `\\sqrt{x${signed(h)}}=${r}`, note: "Start with the radical equation." },
+        { latex: `x${signed(h)}=${target}`, note: "Square both sides." },
+        { latex: answerSet([numRoot(target - h)]), note: "Solve and check in the original equation." }
+      ]
+    };
+  }
+
+  function genRadicalSquaring() {
+    const b = randInt(-3, 4);
+    const s = randInt(b + 1, b + 8);
+    const a = (s - b) * (s - b) - s;
+    const sum = 2 * b + 1;
+    const other = sum - s;
+    const candidates = uniqueNumbers([s, other]);
+    const valid = candidates.filter((x) => x + a >= 0 && x - b >= 0 && Math.abs(Math.sqrt(x + a) - (x - b)) < 1e-9);
+    return {
+      title: "Solve a radical equation and reject extraneous roots.",
+      extra: `Solve for real x. Check any solution in the original equation.`,
+      equationLatex: `\\sqrt{x${signed(a)}}=x${signed(-b)}`,
+      answerLatex: valid.length ? answerSet(valid.map(numRoot)) : "\\varnothing",
+      distractors: [answerSet(candidates.map(numRoot)), answerSet([numRoot(s)]), answerSet([numRoot(other)]), "\\varnothing"],
+      steps: [
+        { latex: `\\sqrt{x${signed(a)}}=x${signed(-b)}`, note: "Start with the radical equation." },
+        { latex: `x${signed(a)}=(x${signed(-b)})^2`, note: "Square both sides, which may introduce extraneous roots." },
+        { latex: `${polyLatex([1, -(2 * b + 1), b * b - a])}=0`, note: "Move everything to one side." },
+        { latex: candidates.length === 1 ? `x=${candidates[0]}` : answerSet(candidates.map(numRoot)), note: "Solve the resulting quadratic candidate equation." },
+        { latex: valid.length ? answerSet(valid.map(numRoot)) : "\\varnothing", note: "Check candidates in the original equation and keep only valid ones." }
+      ]
+    };
+  }
+
+  function genExponentialSameBase() {
+    const base = choice([2, 3, 4, 5]);
+    const m = randInt(-5, 5);
+    const n = randInt(-3, 7);
+    const sol = n - m;
+    return {
+      title: "Solve an exponential equation with equal bases.",
+      equationLatex: `${base}^{x${signed(m)}}=${base}^{${n}}`,
+      answerLatex: answerSet([numRoot(sol)]),
+      distractors: [answerSet([numRoot(n + m)]), answerSet([numRoot(m - n)]), answerSet([numRoot(n)]), answerSet([numRoot(m)])],
+      steps: [
+        { latex: `${base}^{x${signed(m)}}=${base}^{${n}}`, note: "The bases are equal and positive, so compare exponents." },
+        { latex: `x${signed(m)}=${n}`, note: "Set exponents equal." },
+        { latex: answerSet([numRoot(sol)]), note: "Solve the linear equation." }
+      ]
+    };
+  }
+
+  function genExponentialSubstitution() {
+    const base = choice([2, 3]);
+    const p = randInt(0, 4);
+    let q = randInt(0, 4);
+    if (q === p) q = (q + 2) % 5;
+    const y1 = Math.pow(base, p);
+    const y2 = Math.pow(base, q);
+    const sum = y1 + y2;
+    const prod = y1 * y2;
+    return {
+      title: "Solve an exponential equation by substitution.",
+      equationLatex: `${base}^{2x}${signed(-sum)}\\cdot ${base}^{x}${signed(prod)}=0`,
+      answerLatex: answerSet([numRoot(p), numRoot(q)]),
+      distractors: [answerSet([numRoot(y1), numRoot(y2)]), answerSet([numRoot(-p), numRoot(-q)]), answerSet([numRoot(sum), numRoot(prod)]), "\\varnothing"],
+      steps: [
+        { latex: `y=${base}^x`, note: "Use a substitution. Since base^x is always positive, y>0." },
+        { latex: `y^2${signed(-sum)}y${signed(prod)}=0`, note: "Rewrite the equation as a quadratic in y." },
+        { latex: `(y-${y1})(y-${y2})=0`, note: "Factor the quadratic." },
+        { latex: `${base}^x=${y1}\\quad\\text{or}\\quad ${base}^x=${y2}`, note: "Substitute back." },
+        { latex: answerSet([numRoot(p), numRoot(q)]), note: "Convert powers of the same base to exponents." }
+      ]
+    };
+  }
+
+  function genLogSimple() {
+    const base = choice([2, 3, 4, 5]);
+    const shift = randInt(-6, 6);
+    const k = randInt(1, 4);
+    const sol = shift + Math.pow(base, k);
+    return {
+      title: "Solve a logarithmic equation.",
+      extra: `Solve for real x. Domain restriction: x${plainSigned(-shift)} > 0.`,
+      equationLatex: `\\log_{${base}}(x${signed(-shift)})=${k}`,
+      answerLatex: answerSet([numRoot(sol)]),
+      distractors: [answerSet([numRoot(Math.pow(base, k))]), answerSet([numRoot(shift - Math.pow(base, k))]), answerSet([numRoot(k + shift)]), "\\varnothing"],
+      steps: [
+        { latex: `x${signed(-shift)}>0`, note: "Record the logarithm domain restriction." },
+        { latex: `\\log_{${base}}(x${signed(-shift)})=${k}`, note: "Start with the log equation." },
+        { latex: `x${signed(-shift)}=${base}^{${k}}=${Math.pow(base, k)}`, note: "Convert logarithmic form to exponential form." },
+        { latex: answerSet([numRoot(sol)]), note: "Solve and check the domain." }
+      ]
+    };
+  }
+
+  function genLogQuadratic() {
+    const base = choice([2, 3]);
+    const p = randInt(0, 4);
+    let q = randInt(0, 4);
+    if (q === p) q = (q + 1) % 5;
+    const sum = p + q;
+    const prod = p * q;
+    const x1 = Math.pow(base, p);
+    const x2 = Math.pow(base, q);
+    return {
+      title: "Solve a logarithmic equation by substitution.",
+      extra: `Solve for real x. Domain restriction: x > 0.`,
+      equationLatex: `(\\log_{${base}}x)^2${signed(-sum)}\\log_{${base}}x${signed(prod)}=0`,
+      answerLatex: answerSet([numRoot(x1), numRoot(x2)]),
+      distractors: [answerSet([numRoot(p), numRoot(q)]), answerSet([numRoot(-x1), numRoot(-x2)]), answerSet([numRoot(sum), numRoot(prod)]), "\\varnothing"],
+      steps: [
+        { latex: `x>0`, note: "Logarithms require a positive argument." },
+        { latex: `y=\\log_{${base}}x`, note: "Use a substitution." },
+        { latex: `y^2${signed(-sum)}y${signed(prod)}=0`, note: "Rewrite as a quadratic in y." },
+        { latex: `(y-${p})(y-${q})=0`, note: "Factor." },
+        { latex: `\\log_{${base}}x=${p}\\quad\\text{or}\\quad\\log_{${base}}x=${q}`, note: "Substitute back." },
+        { latex: answerSet([numRoot(x1), numRoot(x2)]), note: "Convert to exponential form." }
+      ]
+    };
+  }
+
+  function genAbsoluteSimple() {
+    const h = randInt(-8, 8);
+    const r = randInt(1, 8);
+    return {
+      title: "Solve an absolute-value equation.",
+      equationLatex: `|x${signed(-h)}|=${r}`,
+      answerLatex: answerSet([numRoot(h - r), numRoot(h + r)]),
+      distractors: [answerSet([numRoot(h)]), answerSet([numRoot(-h - r), numRoot(-h + r)]), answerSet([numRoot(r)]), "\\varnothing"],
+      steps: [
+        { latex: `|x${signed(-h)}|=${r}`, note: "An absolute value equals a positive number." },
+        { latex: `x${signed(-h)}=${r}\\quad\\text{or}\\quad x${signed(-h)}=-${r}`, note: "Split into two linear equations." },
+        { latex: answerSet([numRoot(h - r), numRoot(h + r)]), note: "Solve both equations." }
+      ]
+    };
+  }
+
+  function genAbsoluteLinear() {
+    const a = randIntExclude(2, 5, []);
+    const h = randInt(-5, 5);
+    const r = randInt(1, 7);
+    const constant = -a * h;
+    const rhs = a * r;
+    return {
+      title: "Solve an absolute-value equation with a coefficient.",
+      equationLatex: `|${a}x${signed(constant)}|=${rhs}`,
+      answerLatex: answerSet([numRoot(h - r), numRoot(h + r)]),
+      distractors: [answerSet([numRoot(-h - r), numRoot(-h + r)]), answerSet([numRoot(h)]), answerSet([numRoot(rhs)]), "\\varnothing"],
+      steps: [
+        { latex: `|${a}x${signed(constant)}|=${rhs}`, note: "Start with the absolute-value equation." },
+        { latex: `${a}x${signed(constant)}=${rhs}\\quad\\text{or}\\quad ${a}x${signed(constant)}=-${rhs}`, note: "Split into positive and negative cases." },
+        { latex: answerSet([numRoot(h - r), numRoot(h + r)]), note: "Solve both linear equations." }
+      ]
+    };
+  }
+
+  function genAbsoluteBothSides() {
+    const h = randInt(-8, 8);
+    let k = randInt(-8, 8);
+    let guard = 0;
+    while ((k === h || (h + k) % 2 !== 0) && guard < 100) {
+      k = randInt(-8, 8);
+      guard += 1;
+    }
+    const sol = (h + k) / 2;
+    return {
+      title: "Solve an absolute-value equation by distance meaning.",
+      equationLatex: `|x${signed(-h)}|=|x${signed(-k)}|`,
+      answerLatex: answerSet([numRoot(sol)]),
+      distractors: [answerSet([numRoot(h), numRoot(k)]), answerSet([numRoot(h - k)]), answerSet([numRoot(h + k)]), "\\varnothing"],
+      steps: [
+        { latex: `|x${signed(-h)}|=|x${signed(-k)}|`, note: "The point x is equally far from h and k." },
+        { latex: `x=\\frac{${h}+${k}}{2}`, note: "The solution is the midpoint of the two centers." },
+        { latex: answerSet([numRoot(sol)]), note: "Compute the midpoint." }
+      ]
+    };
+  }
+
+  function genTrigEquation() {
+    const table = [
+      { fn: "\\sin", value: "0", sols: ["0", "\\pi"] },
+      { fn: "\\sin", value: "1", sols: ["\\frac{\\pi}{2}"] },
+      { fn: "\\sin", value: "-1", sols: ["\\frac{3\\pi}{2}"] },
+      { fn: "\\sin", value: "\\frac{1}{2}", sols: ["\\frac{\\pi}{6}", "\\frac{5\\pi}{6}"] },
+      { fn: "\\sin", value: "-\\frac{1}{2}", sols: ["\\frac{7\\pi}{6}", "\\frac{11\\pi}{6}"] },
+      { fn: "\\sin", value: "\\frac{\\sqrt{2}}{2}", sols: ["\\frac{\\pi}{4}", "\\frac{3\\pi}{4}"] },
+      { fn: "\\sin", value: "-\\frac{\\sqrt{2}}{2}", sols: ["\\frac{5\\pi}{4}", "\\frac{7\\pi}{4}"] },
+      { fn: "\\cos", value: "0", sols: ["\\frac{\\pi}{2}", "\\frac{3\\pi}{2}"] },
+      { fn: "\\cos", value: "1", sols: ["0"] },
+      { fn: "\\cos", value: "-1", sols: ["\\pi"] },
+      { fn: "\\cos", value: "\\frac{1}{2}", sols: ["\\frac{\\pi}{3}", "\\frac{5\\pi}{3}"] },
+      { fn: "\\cos", value: "-\\frac{1}{2}", sols: ["\\frac{2\\pi}{3}", "\\frac{4\\pi}{3}"] },
+      { fn: "\\cos", value: "\\frac{\\sqrt{2}}{2}", sols: ["\\frac{\\pi}{4}", "\\frac{7\\pi}{4}"] },
+      { fn: "\\cos", value: "-\\frac{\\sqrt{2}}{2}", sols: ["\\frac{3\\pi}{4}", "\\frac{5\\pi}{4}"] }
+    ];
+    const item = choice(table);
+    const wrongMirror = item.sols.map((s) => s.replace("5\\pi", "7\\pi").replace("7\\pi", "5\\pi"));
+    return {
+      title: "Solve a trigonometric equation on one full cycle.",
+      extra: "Solve on the interval 0 ≤ x < 2π.",
+      equationLatex: `${item.fn} x=${item.value}`,
+      answerLatex: trigAnswerSet(item.sols),
+      distractors: [trigAnswerSet(item.sols.slice(0, 1)), trigAnswerSet(wrongMirror), "x=0", "\\varnothing"],
+      steps: [
+        { latex: `${item.fn} x=${item.value},\\quad 0\\le x<2\\pi`, note: "Use the unit circle on one full interval." },
+        { latex: trigAnswerSet(item.sols), note: "Choose every angle in the interval with the required trig value." }
+      ]
+    };
+  }
+
+  function answerSet(roots) {
+    const normalized = roots.filter(Boolean).map((root) => root.latex ? root : numRoot(root));
+    const unique = [];
+    const seen = new Set();
+    normalized.sort((a, b) => (a.value ?? 0) - (b.value ?? 0)).forEach((root) => {
+      if (!seen.has(root.latex)) {
+        seen.add(root.latex);
+        unique.push(root);
+      }
+    });
+    if (!unique.length) return "\\varnothing";
+    if (unique.length === 1) return `x=${unique[0].latex}`;
+    return `x\\in\\{${unique.map((r) => r.latex).join(",")}\\}`;
+  }
+
+  function trigAnswerSet(solutions) {
+    if (!solutions.length) return "\\varnothing";
+    if (solutions.length === 1) return `x=${solutions[0]}`;
+    return `x\\in\\{${solutions.join(",")}\\}`;
+  }
+
+  function numRoot(value) {
+    if (Number.isInteger(value)) return { value, latex: String(value) };
+    const doubled = Math.round(value * 2);
+    if (Math.abs(value * 2 - doubled) < 1e-9) return { value, latex: fracLatex(makeFrac(doubled, 2)) };
+    return { value, latex: String(value) };
+  }
+
+  function polyLatex(coeffs) {
+    const degree = coeffs.length - 1;
+    const terms = [];
+    coeffs.forEach((coeff, index) => {
+      if (coeff === 0) return;
+      const power = degree - index;
+      const abs = Math.abs(coeff);
+      const signText = coeff < 0 ? "-" : terms.length ? "+" : "";
+      let body = "";
+      if (power === 0) body = String(abs);
+      else if (power === 1) body = `${abs === 1 ? "" : abs}x`;
+      else body = `${abs === 1 ? "" : abs}x^${power}`;
+      terms.push(`${signText}${body}`);
+    });
+    return terms.join("") || "0";
+  }
+
+  function plainSigned(n) {
+    if (n === 0) return "";
+    return n > 0 ? ` + ${n}` : ` - ${Math.abs(n)}`;
+  }
+
+  function signed(n) {
+    if (n === 0) return "";
+    return n > 0 ? `+${n}` : `${n}`;
+  }
+
+  function makeFrac(n, d) {
+    if (d === 0) return { n, d: 1 };
+    if (d < 0) { n = -n; d = -d; }
+    const g = gcd(Math.abs(n), Math.abs(d));
+    return { n: n / g, d: d / g };
+  }
+
+  function fracLatex(frac) {
+    if (frac.d === 1) return String(frac.n);
+    if (frac.n < 0) return `-\\frac{${Math.abs(frac.n)}}{${frac.d}}`;
+    return `\\frac{${frac.n}}{${frac.d}}`;
+  }
+
+  function gcd(a, b) {
+    while (b) [a, b] = [b, a % b];
+    return a || 1;
+  }
+
+  function uniqueInts(count, min, max, excluded = []) {
+    const values = [];
+    let guard = 0;
+    while (values.length < count && guard < 200) {
+      guard += 1;
+      const n = randInt(min, max);
+      if (!values.includes(n) && !excluded.includes(n)) values.push(n);
+    }
+    return values;
+  }
+
+  function uniqueNumbers(values) {
+    return [...new Set(values)];
+  }
+
+  function randInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+
+  function randIntExclude(min, max, excluded) {
+    let n = randInt(min, max);
+    let guard = 0;
+    while (excluded.includes(n) && guard < 100) {
+      n = randInt(min, max);
+      guard += 1;
+    }
+    return n;
+  }
+
+  function choice(array) {
+    return array[Math.floor(Math.random() * array.length)];
+  }
+
+  function shuffle(array) {
+    for (let i = array.length - 1; i > 0; i -= 1) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+  }
+
+  function clamp(value, min, max) {
+    return Math.min(max, Math.max(min, value));
+  }
+
+  function labelFor(pairs, value) {
+    const found = pairs.find(([key]) => key === value);
+    return found ? found[1] : value;
+  }
+
+  function capitalize(text) {
+    return text.charAt(0).toUpperCase() + text.slice(1);
+  }
+
+  function cleanKey(text) {
+    return String(text).replace(/\s+/g, "").replace(/\\left|\\right/g, "");
+  }
+
+  function escapeHTML(value) {
+    return String(value).replace(/[&<>"]/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[char]));
+  }
+
+  function escapeAttr(value) {
+    return escapeHTML(value).replace(/'/g, "&#39;");
+  }
+
+  document.addEventListener("DOMContentLoaded", init);
+})();
+
+  </script>
+  <script src="../assets/js/home-link.js"></script>
+</body>
+</html>

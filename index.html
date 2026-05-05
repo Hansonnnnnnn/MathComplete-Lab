@@ -1,0 +1,825 @@
+<!<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MathComplete Lab</title>
+  <link rel="stylesheet" href="assets/css/auth.css" />
+  <style>
+    :root {
+      --ink: #0f172a;
+      --muted: #64748b;
+      --line: rgba(148, 163, 184, 0.24);
+      --glass: rgba(255, 255, 255, 0.76);
+      --glass-strong: rgba(255, 255, 255, 0.94);
+      --blue: #2563eb;
+      --blue-dark: #1d4ed8;
+      --violet: #7c3aed;
+      --green: #10b981;
+      --shadow: 0 24px 60px rgba(15, 23, 42, 0.14);
+      --radius: 28px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", Arial, sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 12% 4%, rgba(96, 165, 250, 0.34), transparent 30%),
+        radial-gradient(circle at 88% 0%, rgba(167, 139, 250, 0.28), transparent 32%),
+        linear-gradient(180deg, #f8fbff 0%, #f7f7fb 42%, #ffffff 100%);
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.42;
+      background-image:
+        linear-gradient(rgba(15, 23, 42, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(15, 23, 42, 0.05) 1px, transparent 1px);
+      background-size: 42px 42px;
+      mask-image: linear-gradient(180deg, black, transparent 70%);
+    }
+
+    .nav {
+      width: min(1120px, calc(100% - 32px));
+      margin: 18px auto 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 14px 18px;
+      border: 1px solid rgba(255, 255, 255, 0.72);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.80);
+      backdrop-filter: blur(18px);
+      box-shadow: 0 18px 44px rgba(15, 23, 42, 0.10);
+      position: sticky;
+      top: 12px;
+      z-index: 10;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--ink);
+      text-decoration: none;
+      font-weight: 950;
+      letter-spacing: -0.045em;
+      font-size: 22px;
+      white-space: nowrap;
+    }
+
+    .brand-mark {
+      width: 44px;
+      height: 44px;
+      display: grid;
+      place-items: center;
+      border-radius: 15px;
+      color: white;
+      background: linear-gradient(135deg, var(--blue), var(--violet));
+      box-shadow: 0 14px 28px rgba(37, 99, 235, 0.30);
+      font-weight: 950;
+      font-size: 22px;
+    }
+
+    .brand-wordmark {
+      display: inline-flex;
+      align-items: baseline;
+      gap: 5px;
+      line-height: 1;
+    }
+
+    .brand-main {
+      font-weight: 950;
+    }
+
+    .brand-sub {
+      color: #475569;
+      font-weight: 900;
+    }
+
+    .links {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 7px;
+      flex-wrap: wrap;
+    }
+
+    .links a, .links button, .lang-button {
+      color: #475569;
+      text-decoration: none;
+      font-weight: 850;
+      padding: 8px 11px;
+      border-radius: 999px;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      font: inherit;
+      transition: color 0.2s, background 0.2s, transform 0.2s;
+    }
+
+    .links a:hover, .links button:hover, .lang-button:hover {
+      color: var(--blue-dark);
+      background: #eff6ff;
+      transform: translateY(-1px);
+    }
+
+    .links a.cta {
+      color: white;
+      background: var(--ink);
+    }
+
+    .links a.cta:hover {
+      color: white;
+      background: #1e293b;
+    }
+
+    .lang-button.active {
+      color: white;
+      background: linear-gradient(135deg, var(--blue), var(--violet));
+      box-shadow: 0 10px 20px rgba(37, 99, 235, 0.2);
+    }
+
+    .container {
+      width: min(1120px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 42px 0 72px;
+      position: relative;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(320px, 0.9fr);
+      gap: 28px;
+      align-items: center;
+      min-height: calc(100vh - 140px);
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      color: #1d4ed8;
+      background: rgba(239, 246, 255, 0.86);
+      border: 1px solid rgba(191, 219, 254, 0.8);
+      font-weight: 950;
+      margin-bottom: 16px;
+    }
+
+    .eyebrow .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: var(--green);
+      box-shadow: 0 0 0 6px rgba(16, 185, 129, 0.12);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(44px, 6.4vw, 78px);
+      line-height: 1.08;
+      letter-spacing: -0.075em;
+      padding-bottom: 0.16em;
+      overflow: visible;
+    }
+
+
+    .gradient-text[data-i18n="heroTitle"] {
+      white-space: pre-line;
+      display: inline-block;
+      line-height: 1.08;
+      padding-bottom: 0.16em;
+      overflow: visible;
+    }
+
+    .gradient-text {
+      background: linear-gradient(135deg, #0f172a 0%, #1d4ed8 48%, #7c3aed 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      overflow: visible;
+    }
+
+    h2 {
+      margin: 0 0 12px;
+      font-size: clamp(28px, 4.5vw, 44px);
+      letter-spacing: -0.06em;
+      line-height: 1.03;
+    }
+
+    h3 {
+      margin: 0 0 8px;
+      font-size: 23px;
+      letter-spacing: -0.035em;
+    }
+
+    p {
+      color: var(--muted);
+      line-height: 1.75;
+      margin: 0;
+    }
+
+    .lead {
+      max-width: 620px;
+      margin-top: 18px;
+      font-size: 18px;
+    }
+
+    .hero-actions {
+      margin-top: 24px;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      min-height: 48px;
+      padding: 12px 18px;
+      border-radius: 999px;
+      text-decoration: none;
+      font-weight: 950;
+      border: 1px solid transparent;
+      transition: transform 0.18s, box-shadow 0.18s, background 0.18s;
+    }
+
+    .button:hover { transform: translateY(-2px); }
+
+    .button.primary {
+      color: white;
+      background: linear-gradient(135deg, var(--blue), var(--violet));
+      box-shadow: 0 18px 36px rgba(37, 99, 235, 0.27);
+    }
+
+    .button.secondary {
+      color: var(--ink);
+      background: rgba(255, 255, 255, 0.84);
+      border-color: rgba(148, 163, 184, 0.32);
+      box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+    }
+
+    .card {
+      position: relative;
+      background: var(--glass);
+      border: 1px solid rgba(255, 255, 255, 0.72);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+      overflow: hidden;
+    }
+
+    .card-pad { padding: 26px; }
+
+    .showcase {
+      max-width: 470px;
+      min-height: 460px;
+      justify-self: center;
+      padding: 18px;
+      background:
+        linear-gradient(145deg, rgba(15, 23, 42, 0.92), rgba(30, 41, 59, 0.88)),
+        radial-gradient(circle at top right, rgba(124, 58, 237, 0.65), transparent 36%);
+      color: white;
+    }
+
+    .showcase-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .window-dots { display: flex; gap: 7px; }
+    .window-dots span {
+      width: 11px;
+      height: 11px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.35);
+    }
+
+    .small-pill {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 6px 10px;
+      color: #bfdbfe;
+      background: rgba(37, 99, 235, 0.22);
+      border: 1px solid rgba(147, 197, 253, 0.28);
+      font-weight: 900;
+      font-size: 12px;
+    }
+
+    .mock-question {
+      margin-top: 20px;
+      padding: 22px;
+      border-radius: 24px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .mock-question .expr {
+      font-size: clamp(32px, 4.4vw, 50px);
+      font-weight: 950;
+      letter-spacing: -0.05em;
+      margin: 10px 0;
+    }
+
+    .mock-values {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .mock-values span {
+      padding: 7px 10px;
+      border-radius: 999px;
+      color: #c7d2fe;
+      background: rgba(99, 102, 241, 0.18);
+      border: 1px solid rgba(199, 210, 254, 0.18);
+      font-weight: 900;
+    }
+
+    .mock-options {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .mock-options div {
+      min-height: 54px;
+      display: grid;
+      place-items: center;
+      border-radius: 16px;
+      font-weight: 950;
+      background: rgba(255, 255, 255, 0.10);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .mock-options .correct {
+      background: rgba(16, 185, 129, 0.20);
+      border-color: rgba(110, 231, 183, 0.35);
+      color: #bbf7d0;
+    }
+
+    .mock-solution {
+      margin-top: 18px;
+      padding: 16px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.92);
+      color: var(--ink);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-weight: 850;
+      line-height: 1.75;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-top: 18px;
+    }
+
+    .stat {
+      padding: 18px;
+      border-radius: 22px;
+      background: rgba(255, 255, 255, 0.72);
+      border: 1px solid rgba(148, 163, 184, 0.22);
+    }
+
+    .stat .num {
+      font-size: 36px;
+      font-weight: 950;
+      letter-spacing: -0.06em;
+      color: #1d4ed8;
+      margin-bottom: 3px;
+    }
+
+    .section { margin-top: 62px; }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 18px;
+      margin-bottom: 22px;
+    }
+
+    .section-head p { max-width: 640px; }
+
+    .tools-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .tool-card {
+      min-height: 310px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      isolation: isolate;
+    }
+
+    .tool-card::before {
+      content: "";
+      position: absolute;
+      width: 210px;
+      height: 210px;
+      top: -92px;
+      right: -82px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, rgba(96, 165, 250, 0.38), rgba(167, 139, 250, 0.26));
+      z-index: -1;
+    }
+
+    .tag-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      padding: 6px 9px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 950;
+      background: rgba(241, 245, 249, 0.9);
+      color: #475569;
+      border: 1px solid rgba(148, 163, 184, 0.24);
+    }
+
+    .tag.live {
+      background: rgba(236, 253, 245, 0.9);
+      color: #047857;
+      border-color: rgba(167, 243, 208, 0.7);
+    }
+
+    .tag.soon {
+      background: rgba(239, 246, 255, 0.94);
+      color: #1d4ed8;
+      border-color: rgba(191, 219, 254, 0.9);
+    }
+
+    .tool-card p {
+      flex: 1;
+      margin-top: 8px;
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+
+    .feature {
+      padding: 22px;
+      min-height: 210px;
+    }
+
+    .icon {
+      width: 44px;
+      height: 44px;
+      display: grid;
+      place-items: center;
+      border-radius: 16px;
+      color: white;
+      background: linear-gradient(135deg, var(--blue), var(--violet));
+      font-weight: 950;
+      margin-bottom: 14px;
+      box-shadow: 0 14px 28px rgba(37, 99, 235, 0.22);
+    }
+
+    .footer {
+      width: min(1120px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 32px 0 42px;
+      border-top: 1px solid rgba(148, 163, 184, 0.28);
+      color: var(--muted);
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      font-weight: 800;
+      position: relative;
+    }
+
+    @media (max-width: 980px) {
+      .hero { grid-template-columns: 1fr; }
+      .tools-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .feature-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 650px) {
+      .nav {
+        border-radius: 24px;
+        align-items: flex-start;
+        flex-direction: column;
+      }
+      .links { justify-content: flex-start; }
+      .container { padding-top: 32px; }
+      .tools-grid, .feature-grid, .stats { grid-template-columns: 1fr; }
+      .showcase { min-height: auto; }
+      .mock-options { grid-template-columns: 1fr; }
+      .section-head {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <a class="brand" href="index.html">
+      <span class="brand-mark">∑</span>
+      <span class="brand-wordmark">
+        <span class="brand-main">MathComplete</span>
+        <span class="brand-sub">Lab</span>
+      </span>
+    </a>
+    <div class="links">
+      <a href="practice.html" data-i18n="navPractice">Practice Library</a>
+      <a href="login.html" data-auth-show="logged-out" data-i18n="navLogin">Login</a>
+      <a href="dashboard.html" data-auth-show="logged-in" data-i18n="navDashboard">Dashboard</a>
+      <a href="dashboard.html#mistakes" data-auth-show="logged-in" data-i18n="navMistakes">Mistake Book</a>
+      <span class="auth-chip" data-auth-show="logged-in">
+        <span data-auth-greeting></span>
+      </span>
+      <button class="auth-logout-button" type="button" data-auth-logout data-auth-show="logged-in" data-i18n="navLogout">Log out</button>
+      <button class="lang-button" id="langEn" type="button">EN</button>
+      <button class="lang-button" id="langZh" type="button">中文</button>
+      <a class="cta" href="games/algebra-expression.html" data-i18n="navStart">Start</a>
+    </div>
+  </nav>
+
+  <main class="container">
+    <section class="hero">
+      <div>
+        <div class="eyebrow"><span class="dot"></span><span data-i18n="heroBadge">Built for tutors and students</span></div>
+        <h1><span class="gradient-text" data-i18n="heroTitle">Math practice, made playable.</span></h1>
+        <p class="lead" data-i18n="heroLead">
+          MathComplete Lab collects clean, replayable math practice tools for tutors and students.
+          Start with algebra expression evaluation, timed modes, instant feedback, and step-by-step solutions.
+        </p>
+        <div class="hero-actions">
+          <a class="button primary" href="games/algebra-expression.html" data-i18n="heroPrimary">Launch Algebra Tool →</a>
+          <a class="button secondary" href="practice.html" data-i18n="heroSecondary">Explore Practice Library</a>
+        </div>
+
+        <div class="stats">
+          <div class="stat">
+            <div class="num">70+</div>
+            <p data-i18n="statTemplates">random templates</p>
+          </div>
+          <div class="stat">
+            <div class="num">5</div>
+            <p data-i18n="statTimers">timer levels</p>
+          </div>
+          <div class="stat">
+            <div class="num">2</div>
+            <p data-i18n="statLanguages">global languages</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card showcase">
+        <div class="showcase-top">
+          <div class="window-dots"><span></span><span></span><span></span></div>
+          <div class="small-pill" data-i18n="previewBadge">Live tool preview</div>
+        </div>
+
+        <div class="mock-question">
+          <p style="color:#cbd5e1;font-weight:850;" data-i18n="previewPrompt">Evaluate the expression</p>
+          <div class="expr">2x - 4y + 6z</div>
+          <div class="mock-values">
+            <span>x = -5</span>
+            <span>y = 1</span>
+            <span>z = 6</span>
+          </div>
+          <div class="mock-options">
+            <div>12</div>
+            <div class="correct">22</div>
+            <div>-50</div>
+            <div>28</div>
+          </div>
+          <div class="mock-solution">
+            2x - 4y + 6z<br>
+            = 2(-5) - 4(1) + 6(6)<br>
+            = -10 - 4 + 36<br>
+            = 22
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <div>
+          <div class="eyebrow"><span class="dot"></span><span data-i18n="flowBadge">Built for class flow</span></div>
+          <h2 data-i18n="flowTitle">Fast enough for tutoring. Clean enough for students.</h2>
+        </div>
+        <p data-i18n="flowLead">
+          Start a drill in seconds, project it during class, or let a student practice independently.
+          Each question ends with a clear solution chain instead of just a right-or-wrong label.
+        </p>
+      </div>
+
+      <div class="feature-grid">
+        <article class="card feature">
+          <div class="icon">∞</div>
+          <h3 data-i18n="featureRandomTitle">Randomized</h3>
+          <p data-i18n="featureRandomText">Templates generate fresh values and expressions, so students cannot memorize answer keys.</p>
+        </article>
+        <article class="card feature">
+          <div class="icon">⏱</div>
+          <h3 data-i18n="featureTimerTitle">Timed modes</h3>
+          <p data-i18n="featureTimerText">Use easy timing for practice or hell mode for quick fluency challenges.</p>
+        </article>
+        <article class="card feature">
+          <div class="icon">✓</div>
+          <h3 data-i18n="featureFeedbackTitle">Immediate feedback</h3>
+          <p data-i18n="featureFeedbackText">Students see right or wrong instantly, then review the correct method.</p>
+        </article>
+        <article class="card feature">
+          <div class="icon">↻</div>
+          <h3 data-i18n="featureWrongTitle">Wrong-type practice</h3>
+          <p data-i18n="featureWrongText">Missed question types can become a targeted follow-up round.</p>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <span data-i18n="footerLeft">© 2026 MathComplete Lab</span>
+    <span data-i18n="footerRight">Randomized practice tools for tutors and students</span>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="assets/js/supabase-client.js"></script>
+  <script src="assets/js/auth.js"></script>
+  <script src="assets/js/auth-ui.js"></script>
+
+  <script>
+    const COPY = {
+      en: {
+        navPractice: "Practice Library",
+        navLogin: "Login",
+        navDashboard: "Dashboard",
+        navMistakes: "Mistake Book",
+        navLogout: "Log out",
+        navStart: "Start",
+        footerLeft: "© 2026 MathComplete Lab",
+        footerRight: "Randomized practice tools for tutors and students",
+
+        heroBadge: "Built for tutors and students",
+        heroTitle: "Math practice, \nmade playable.",
+        heroLead: "MathComplete Lab collects clean, replayable math practice tools for tutors and students. Start with algebra expression evaluation, timed modes, instant feedback, and step-by-step solutions.",
+        heroPrimary: "Launch Algebra Tool →",
+        heroSecondary: "Explore Practice Library",
+        statTemplates: "random templates",
+        statTimers: "timer levels",
+        statLanguages: "global languages",
+        previewBadge: "Live tool preview",
+        previewPrompt: "Evaluate the expression",
+
+        flowBadge: "Built for class flow",
+        flowTitle: "Fast enough for tutoring. Clean enough for students.",
+        flowLead: "Start a drill in seconds, project it during class, or let a student practice independently. Each question ends with a clear solution chain instead of just a right-or-wrong label.",
+        featureRandomTitle: "Randomized",
+        featureRandomText: "Templates generate fresh values and expressions, so students cannot memorize answer keys.",
+        featureTimerTitle: "Timed modes",
+        featureTimerText: "Use easy timing for practice or hell mode for quick fluency challenges.",
+        featureFeedbackTitle: "Immediate feedback",
+        featureFeedbackText: "Students see right or wrong instantly, then review the correct method.",
+        featureWrongTitle: "Wrong-type practice",
+        featureWrongText: "Missed question types can become a targeted follow-up round.",
+
+        libraryBadge: "Practice Library",
+        libraryTitle: "Choose a practice tool.",
+        libraryLead: "Open a practice game, choose your settings, and start solving. More tools will be added over time.",
+        openTool: "Open Tool →",
+        previewTool: "Preview",
+        live: "Live",
+        globalLanguage: "Global language",
+        comingSoon: "Coming soon",
+        algebraTitle: "Algebra Expression Evaluator",
+        algebraDesc: "Evaluate randomized algebra expressions with variable substitution, multiple-choice answers, timer modes, adaptive solutions, and wrong-answer review.",
+        linearTitle: "Linear Equation Solver",
+        linearDesc: "Practice one-step and multi-step equations, including parentheses, negative coefficients, and common mistake-based distractors.",
+        slopeTitle: "Slope from Two Points",
+        slopeDesc: "Practice slope using randomly generated coordinate pairs, with clear step-by-step explanations.",
+        functionTitle: "Function Evaluation",
+        functionDesc: "Practice f(x), f(-a), and simple function substitution with automatic step-by-step simplification.",
+        fractionTitle: "Fraction & Percent Lab",
+        fractionDesc: "Convert between fractions, decimals, and percentages with quick fluency drills.",
+        geometryTitle: "Geometry Formula Arena",
+        geometryDesc: "Practice area, perimeter, circumference, and volume formulas through randomized mini challenges."
+      },
+      zh: {
+        navPractice: "练习库",
+        navLogin: "登录",
+        navDashboard: "学习记录",
+        navMistakes: "错题库",
+        navLogout: "退出登录",
+        navStart: "开始",
+        footerLeft: "© 2026 MathComplete Lab",
+        footerRight: "给老师和学生使用的随机数学练习工具",
+
+        heroBadge: "为老师和学生设计",
+        heroTitle: "数学练习，\n寓教于乐。",
+        heroLead: "MathComplete Lab 汇集干净、可重复练习的数学随机题工具，面向老师和学生。现在可以从代数表达式求值开始，体验计时模式、即时反馈和逐步解法。",
+        heroPrimary: "打开代数练习 →",
+        heroSecondary: "浏览练习库",
+        statTemplates: "随机模板",
+        statTimers: "计时等级",
+        statLanguages: "全站语言",
+        previewBadge: "工具预览",
+        previewPrompt: "计算表达式的值",
+
+        flowBadge: "适合课堂节奏",
+        flowTitle: "老师上课够快，学生使用够清楚。",
+        flowLead: "几秒钟开始练习，可以课堂投屏，也可以让学生独立练习。每题结束后不仅显示对错，还会显示清楚的解法链。",
+        featureRandomTitle: "随机生成",
+        featureRandomText: "模板会随机生成新数值和表达式，学生不能靠背答案完成练习。",
+        featureTimerTitle: "计时模式",
+        featureTimerText: "可以用宽松计时训练，也可以用地狱模式挑战熟练度。",
+        featureFeedbackTitle: "即时反馈",
+        featureFeedbackText: "学生答题后马上知道对错，并看到正确解法。",
+        featureWrongTitle: "错题同类练习",
+        featureWrongText: "错过的题型可以生成同类型新题，适合针对性补弱。",
+
+        libraryBadge: "练习库",
+        libraryTitle: "选择一个练习工具。",
+        libraryLead: "打开一个练习游戏，选择设置，然后开始做题。之后可以继续加入更多工具。",
+        openTool: "打开工具 →",
+        previewTool: "预览",
+        live: "已上线",
+        globalLanguage: "全站语言",
+        comingSoon: "即将推出",
+        algebraTitle: "代数表达式求值",
+        algebraDesc: "随机生成代数表达式，给定变量值，选择答案；支持计时模式、自适应解法和错题整理。",
+        linearTitle: "一元一次方程练习",
+        linearDesc: "练习一步和多步方程，包括括号、负系数，以及基于常见错误的误导选项。",
+        slopeTitle: "两点斜率练习",
+        slopeDesc: "随机生成坐标点，练习斜率计算，并提供清晰的逐步解释。",
+        functionTitle: "函数代入练习",
+        functionDesc: "练习 f(x)、f(-a) 和简单函数代入，并自动展示逐步化简。",
+        fractionTitle: "分数与百分数实验室",
+        fractionDesc: "练习分数、小数、百分数互化，适合快速熟练度训练。",
+        geometryTitle: "几何公式挑战",
+        geometryDesc: "通过随机小挑战练习面积、周长、圆周长和体积公式。"
+      }
+    };
+
+    function getLang() {
+      return localStorage.getItem("mathcomplete_lang") === "zh" ? "zh" : "en";
+    }
+
+    function setLang(lang) {
+      localStorage.setItem("mathcomplete_lang", lang === "zh" ? "zh" : "en");
+      applyLang();
+      window.MCLAuthUI?.refresh?.();
+    }
+
+    function applyLang() {
+      const lang = getLang();
+      document.documentElement.lang = lang === "zh" ? "zh-CN" : "en";
+      document.querySelectorAll("[data-i18n]").forEach(el => {
+        const key = el.getAttribute("data-i18n");
+        if (COPY[lang][key]) el.textContent = COPY[lang][key];
+      });
+      const en = document.getElementById("langEn");
+      const zh = document.getElementById("langZh");
+      if (en && zh) {
+        en.classList.toggle("active", lang === "en");
+        zh.classList.toggle("active", lang === "zh");
+      }
+    }
+
+    document.getElementById("langEn")?.addEventListener("click", () => setLang("en"));
+    document.getElementById("langZh")?.addEventListener("click", () => setLang("zh"));
+    applyLang();
+  </script>
+
+</body>
+</html>

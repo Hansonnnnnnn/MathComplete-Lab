@@ -1,0 +1,1868 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Derivative Practice</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../assets/js/supabase-client.js"></script>
+  <script src="../assets/js/auth.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <style>
+    :root {
+      --bg: #f7f7fb;
+      --text: #0f172a;
+      --muted: #64748b;
+      --border: #e5e7eb;
+      --accent: #2563eb;
+      --violet: #7c3aed;
+      --good: #16a34a;
+      --bad: #dc2626;
+      --shadow: 0 18px 42px rgba(15, 23, 42, 0.10);
+      --radius: 22px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", Arial, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(96, 165, 250, 0.35), transparent 34%),
+        radial-gradient(circle at top right, rgba(167, 139, 250, 0.28), transparent 32%),
+        linear-gradient(180deg, #f8fbff 0%, var(--bg) 50%, #ffffff 100%);
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.42;
+      background-image:
+        linear-gradient(rgba(15, 23, 42, 0.045) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(15, 23, 42, 0.045) 1px, transparent 1px);
+      background-size: 42px 42px;
+      mask-image: linear-gradient(180deg, black, transparent 72%);
+    }
+
+    .mc-site-shell {
+      width: min(1180px, calc(100% - 32px));
+      margin: 18px auto 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 12px 14px;
+      border: 1px solid rgba(255, 255, 255, 0.74);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.84);
+      backdrop-filter: blur(18px);
+      box-shadow: 0 16px 36px rgba(15, 23, 42, 0.10);
+      position: sticky;
+      top: 12px;
+      z-index: 20;
+    }
+
+    .mc-brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: #0f172a;
+      font-weight: 950;
+      text-decoration: none;
+      letter-spacing: -0.035em;
+      white-space: nowrap;
+    }
+
+    .mc-brand-mark {
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      border-radius: 12px;
+      color: white;
+      background: linear-gradient(135deg, #2563eb, #7c3aed);
+      box-shadow: 0 12px 24px rgba(37, 99, 235, 0.28);
+    }
+
+    .mc-links {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .mc-link {
+      color: #475569;
+      text-decoration: none;
+      font-weight: 850;
+      padding: 8px 11px;
+      border-radius: 999px;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .mc-link:hover { color: #1d4ed8; background: #eff6ff; }
+    .mc-link.primary { color: white; background: #0f172a; }
+    .mc-link.primary:hover { color: white; background: #1e293b; }
+
+    .container {
+      width: min(1040px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 38px 0 68px;
+      position: relative;
+    }
+
+    header { margin-bottom: 24px; overflow: visible; }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      color: #1d4ed8;
+      background: rgba(239, 246, 255, 0.86);
+      border: 1px solid rgba(191, 219, 254, 0.8);
+      font-weight: 950;
+      margin-bottom: 14px;
+    }
+
+    .eyebrow-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: #10b981;
+      box-shadow: 0 0 0 6px rgba(16, 185, 129, 0.12);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(34px, 5.2vw, 56px);
+      line-height: 1.16;
+      letter-spacing: -0.055em;
+      background: linear-gradient(135deg, #0f172a 0%, #1d4ed8 48%, #7c3aed 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      padding-bottom: 0.18em;
+      overflow: visible;
+    }
+
+    h2 {
+      margin: 0 0 12px;
+      font-size: clamp(24px, 4vw, 34px);
+      letter-spacing: -0.045em;
+    }
+
+    h3 {
+      margin: 0 0 8px;
+      letter-spacing: -0.025em;
+    }
+
+    .subtitle {
+      margin: 14px 0 0;
+      color: var(--muted);
+      line-height: 1.75;
+      max-width: 780px;
+      font-size: 17px;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.90);
+      border: 1px solid rgba(255, 255, 255, 0.76);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 24px;
+      backdrop-filter: blur(16px);
+    }
+
+    .setup-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+      margin: 22px 0;
+    }
+
+    label {
+      display: block;
+      font-weight: 900;
+      margin-bottom: 8px;
+    }
+
+    select,
+    input {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      font-size: 16px;
+      background: white;
+      outline: none;
+    }
+
+    select:focus,
+    input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+    }
+
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 46px;
+      padding: 12px 14px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: white;
+      cursor: pointer;
+      margin-bottom: 6px;
+    }
+
+    .checkbox-label input {
+      width: auto;
+      transform: scale(1.15);
+      accent-color: var(--accent);
+    }
+
+    .mini-hint {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    button {
+      appearance: none;
+      border: none;
+      background: linear-gradient(135deg, var(--accent), var(--violet));
+      color: white;
+      font-weight: 950;
+      padding: 12px 18px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: transform 0.14s, filter 0.2s, box-shadow 0.2s;
+      box-shadow: 0 12px 24px rgba(37, 99, 235, 0.24);
+    }
+
+    button:hover { transform: translateY(-1px); filter: brightness(0.98); }
+    button.secondary { background: #111827; box-shadow: 0 8px 18px rgba(17, 24, 39, 0.16); }
+    button.ghost { background: white; color: var(--text); border: 1px solid var(--border); box-shadow: none; }
+    button:disabled { cursor: not-allowed; opacity: 0.55; transform: none; }
+
+    .hidden { display: none !important; }
+
+    .actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .explain-box {
+      margin-top: 18px;
+      padding: 16px;
+      background: #f8fafc;
+      border: 1px dashed #cbd5e1;
+      border-radius: 18px;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    code {
+      background: #eef2ff;
+      padding: 2px 6px;
+      border-radius: 8px;
+      color: #3730a3;
+      font-weight: 900;
+    }
+
+    .topbar {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: white;
+      color: var(--muted);
+      font-weight: 850;
+      font-size: 14px;
+      margin-right: 6px;
+    }
+
+    .timer-pill { color: #1d4ed8; background: #eff6ff; border-color: #bfdbfe; }
+    .timer-danger { color: #991b1b; background: #fef2f2; border-color: #fecaca; }
+
+    .progress-wrap {
+      width: 100%;
+      height: 10px;
+      background: #e5e7eb;
+      border-radius: 999px;
+      overflow: hidden;
+      margin: 10px 0 22px;
+    }
+
+    .progress {
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(90deg, #2563eb, #7c3aed);
+      transition: width 0.25s ease;
+    }
+
+    .question-title {
+      color: var(--muted);
+      font-weight: 950;
+      margin-bottom: 8px;
+    }
+
+    .question-main {
+      font-size: clamp(26px, 5vw, 46px);
+      line-height: 1.22;
+      font-weight: 950;
+      letter-spacing: -0.045em;
+      margin: 10px 0 20px;
+      overflow-wrap: anywhere;
+    }
+
+    .question-extra {
+      color: var(--muted);
+      font-weight: 850;
+      margin: -8px 0 18px;
+      line-height: 1.6;
+    }
+
+    .options {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .option {
+      border: 2px solid var(--border);
+      background: white;
+      color: var(--text);
+      box-shadow: none;
+      border-radius: 18px;
+      min-height: 64px;
+      font-size: 19px;
+      text-align: center;
+      padding: 12px;
+      overflow-wrap: anywhere;
+    }
+
+    .option:hover { border-color: var(--accent); background: #f8fbff; }
+    .option.correct { border-color: rgba(22, 163, 74, 0.5); background: #ecfdf5; color: #065f46; }
+    .option.wrong { border-color: rgba(220, 38, 38, 0.5); background: #fef2f2; color: #991b1b; }
+
+    .feedback {
+      min-height: 30px;
+      font-weight: 950;
+      margin: 8px 0 16px;
+    }
+
+    .feedback.good { color: var(--good); }
+    .feedback.bad { color: var(--bad); }
+
+    .solution-box {
+      margin: 14px 0 18px;
+      padding: 18px;
+      border-radius: 20px;
+      border: 1px solid #dbeafe;
+      background: linear-gradient(180deg, #f8fbff, #ffffff);
+      color: #1f2937;
+      line-height: 1.7;
+    }
+
+    .solution-box h4 { margin: 0 0 12px; font-size: 18px; }
+
+    .solution-chain {
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
+      border-radius: 16px;
+      padding: 14px 16px;
+      overflow-x: auto;
+    }
+
+    .chain-line {
+      display: grid;
+      grid-template-columns: minmax(250px, 1fr) minmax(170px, 0.65fr);
+      align-items: baseline;
+      gap: 18px;
+      margin: 8px 0;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size: 16px;
+      font-weight: 850;
+      white-space: nowrap;
+    }
+
+    .chain-note {
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", Arial, sans-serif;
+      color: #64748b;
+      font-size: 13px;
+      font-weight: 850;
+      white-space: normal;
+    }
+
+    .solution-answer {
+      margin-top: 12px;
+      font-weight: 950;
+      color: #111827;
+    }
+
+    .solution-answer > .answer-math {
+      display: inline-block;
+      background: #ecfdf5;
+      color: #065f46;
+      border: 1px solid #bbf7d0;
+      border-radius: 999px;
+      padding: 3px 10px;
+      margin-left: 4px;
+      vertical-align: middle;
+    }
+
+    .result-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin: 18px 0 24px;
+    }
+
+    .stat {
+      background: #f9fafb;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 18px;
+    }
+
+    .stat .num {
+      font-size: 34px;
+      font-weight: 950;
+      letter-spacing: -0.05em;
+    }
+
+    .stat .label {
+      color: var(--muted);
+      margin-top: 4px;
+      font-weight: 850;
+    }
+
+    .wrong-list { display: grid; gap: 14px; }
+
+    .wrong-item {
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      background: #fff;
+      padding: 16px;
+    }
+
+    .wrong-item .expr {
+      font-size: 22px;
+      font-weight: 950;
+      margin-bottom: 8px;
+      overflow-wrap: anywhere;
+    }
+
+    .wrong-item p {
+      margin: 6px 0;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .tag-good { color: var(--good); font-weight: 950; }
+    .tag-bad { color: var(--bad); font-weight: 950; }
+
+
+    .math-render,
+    .chain-math,
+    .answer-math,
+    .feedback-math {
+      display: inline-block;
+    }
+
+    .question-main .katex {
+      font-size: 1.14em;
+      line-height: 1.2;
+    }
+
+    .option .katex {
+      font-size: 1.14em;
+      line-height: 1.25;
+    }
+
+    .chain-math .katex {
+      font-size: 1.08em;
+      line-height: 1.35;
+    }
+
+    .feedback-math .katex,
+    .answer-math .katex {
+      font-size: 1.08em;
+      line-height: 1.25;
+    }
+
+    .math-render .katex {
+      color: #0f172a;
+    }
+
+    .option.correct .katex {
+      color: #065f46;
+    }
+
+    .option.wrong .katex {
+      color: #991b1b;
+    }
+
+    .feedback.bad .katex {
+      color: #dc2626;
+    }
+
+    .chain-line {
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", Arial, sans-serif;
+    }
+
+    @media (max-width: 760px) {
+      .mc-site-shell {
+        border-radius: 22px;
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .mc-links { justify-content: flex-start; }
+      .setup-grid, .options, .result-grid { grid-template-columns: 1fr; }
+      .card { padding: 18px; }
+      .container { width: min(100% - 22px, 1040px); padding-top: 26px; }
+      .chain-line { grid-template-columns: 1fr; gap: 2px; }
+      .chain-note { padding-left: 12px; }
+    }
+  
+
+  /* MathComplete Lab shared tool question layout override */
+  .question-main,
+  .expression,
+  .equation {
+    max-width: 100%;
+    font-size: clamp(28px, 5.4vw, 54px) !important;
+    line-height: 1.2 !important;
+    font-weight: 500 !important;
+    letter-spacing: -0.045em !important;
+    margin: 10px 0 24px !important;
+    text-align: left !important;
+    overflow-wrap: anywhere !important;
+    word-break: normal !important;
+    text-wrap: pretty;
+    white-space: normal;
+    justify-content: flex-start !important;
+    align-items: flex-start !important;
+  }
+
+  .question-main.math-render,
+  .expression.math-render,
+  .equation.math-render {
+    display: block !important;
+    width: 100% !important;
+    text-align: left !important;
+  }
+
+  .question-main .katex,
+  .expression .katex,
+  .equation .katex {
+    white-space: normal !important;
+    text-align: left !important;
+    font-weight: 400 !important;
+  }
+
+  .question-main .katex *,
+  .expression .katex *,
+  .equation .katex * {
+    font-weight: 400 !important;
+  }
+
+  .question-line,
+  .question-text {
+    max-width: 100%;
+    text-align: left !important;
+    overflow-wrap: anywhere;
+    word-break: normal;
+    text-wrap: pretty;
+  }
+</style>
+</head>
+<body>
+  <nav class="mc-site-shell">
+    <a class="mc-brand" href="../index.html"><span class="mc-brand-mark">∑</span><span>MathComplete Lab</span></a>
+    <div class="mc-links">
+      <a class="mc-link" href="../practice.html" data-i18n="navPractice">Practice Library</a>
+      <a class="mc-link primary" href="../index.html" data-i18n="navHome">Home</a>
+    </div>
+  </nav>
+
+  <main class="container">
+    <header>
+      <div class="eyebrow"><span class="eyebrow-dot"></span><span id="toolBadge"></span></div>
+      <h1 id="pageTitle"></h1>
+      <p id="pageSubtitle" class="subtitle"></p>
+    </header>
+
+    <section id="setupCard" class="card">
+      <h2 id="setupTitle"></h2>
+      <div class="setup-grid">
+        <div><label id="difficultyLabel" for="difficulty"></label><select id="difficulty"></select></div>
+        <div><label id="questionCountLabel" for="questionCount"></label><input id="questionCount" type="number" min="1" max="100" value="10" /></div>
+        <div><label id="optionCountLabel" for="optionCount"></label><select id="optionCount"></select></div>
+        <div><label class="checkbox-label" for="timedMode"><input id="timedMode" type="checkbox" /><span id="timedModeText"></span></label><p id="timedModeHint" class="mini-hint"></p></div>
+        <div><label id="timerLevelLabel" for="timerLevel"></label><select id="timerLevel"></select></div>
+      </div>
+      <div class="actions"><button id="startBtn"></button><button id="sampleBtn" class="ghost"></button></div>
+      <div id="sampleBox" class="explain-box hidden"></div>
+      <div id="noteBox" class="explain-box"></div>
+    </section>
+
+    <section id="quizCard" class="card hidden">
+      <div class="topbar"><div><span class="pill" id="progressText"></span><span class="pill" id="difficultyText"></span><span class="pill timer-pill hidden" id="timerDisplay"></span></div><button id="quitBtn" class="ghost"></button></div>
+      <div class="progress-wrap"><div id="progressBar" class="progress"></div></div>
+      <div id="questionTitle" class="question-title"></div>
+      <div id="questionMain" class="question-main"></div>
+      <div id="questionExtra" class="question-extra"></div>
+      <div id="options" class="options"></div>
+      <div id="feedback" class="feedback"></div>
+      <div id="solutionBox" class="solution-box hidden"></div>
+      <div class="actions"><button id="nextBtn" disabled></button></div>
+    </section>
+
+    <section id="resultCard" class="card hidden">
+      <h2 id="resultTitle"></h2>
+      <div class="result-grid">
+        <div class="stat"><div id="scoreNum" class="num">0/0</div><div id="scoreLabel" class="label"></div></div>
+        <div class="stat"><div id="accuracyNum" class="num">0%</div><div id="accuracyLabel" class="label"></div></div>
+        <div class="stat"><div id="wrongNum" class="num">0</div><div id="wrongLabel" class="label"></div></div>
+      </div>
+      <h3 id="wrongReviewTitle"></h3>
+      <div id="wrongList" class="wrong-list"></div>
+      <div class="actions" style="margin-top:22px;"><button id="restartBtn"></button><button id="reviewWrongBtn" class="secondary"></button></div>
+    </section>
+  </main>
+
+  <script>
+    const GAME_TEXT = {
+      en: {
+        toolBadge: "Single Variable Calculus",
+        title: "Derivative Practice",
+        subtitle: "Practice finding f'(x) for single-variable functions. Covers power rule, radicals, negative powers, trig, exponential, logarithmic, product rule, quotient rule, and chain rule.",
+        note: "First version focuses on explicit functions f(x). Mixed mode balances all five difficulty levels.",
+        questionTitle: "Find the derivative:",
+        difficultyOptions: {
+          easy: "Easy: power rule and constants",
+          medium: "Medium: negative powers, fractions, and radicals",
+          hard: "Hard: trig, exponential, and logarithmic derivatives",
+          expert: "Expert: product rule and quotient rule",
+          hell: "Hell: chain rule and mixed rules",
+          mixed: "Mixed: balanced practice from all difficulty levels"
+        },
+        suggestion: "Suggestion: identify the rule first, then check constants, signs, inner derivatives, and whether product or quotient rule is needed.",
+        notes: {
+          given: "given",
+          power: "power rule",
+          rewrite: "rewrite first",
+          trig: "basic derivative rule",
+          product: "product rule",
+          quotient: "quotient rule",
+          chain: "chain rule",
+          inner: "inner derivative",
+          simplify: "simplify"
+        }
+      },
+      zh: {
+        toolBadge: "一元微积分",
+        title: "一元函数求导练习",
+        subtitle: "练习对一元函数求 f'(x)，包含幂函数、根式、负幂、三角函数、指数函数、对数函数、乘积法则、商法则和链式法则。",
+        note: "第一版专注于显式函数 f(x)。混合模式会均衡抽取五个难度。",
+        questionTitle: "求导：",
+        difficultyOptions: {
+          easy: "简单：幂法则和常数",
+          medium: "中等：负幂、分式和根式",
+          hard: "困难：三角、指数和对数求导",
+          expert: "专家：乘积法则和商法则",
+          hell: "地狱：链式法则和混合法则",
+          mixed: "混合：从所有难度中均衡出题"
+        },
+        suggestion: "建议：先判断使用哪条求导规则，再检查常数、符号、内层导数，以及是否需要乘积法则或商法则。",
+        notes: {
+          given: "原函数",
+          power: "幂法则",
+          rewrite: "先改写",
+          trig: "基本求导公式",
+          product: "乘积法则",
+          quotient: "商法则",
+          chain: "链式法则",
+          inner: "内层导数",
+          simplify: "化简"
+        }
+      }
+    };
+
+    const T = {
+      en: {
+        htmlLang: "en",
+        navPractice: "Practice Library",
+        navHome: "Home",
+        setupTitle: "Start Practice",
+        difficultyLabel: "Difficulty",
+        questionCountLabel: "Number of Questions",
+        optionCountLabel: "Number of Choices",
+        timedModeText: "Enable Timed Mode",
+        timedModeHint: "Off means no countdown. On means each question has its own timer.",
+        timerLevelLabel: "Timer Level",
+        startBtn: "Start",
+        sampleBtn: "Generate Sample Question",
+        quitBtn: "End This Round",
+        nextBtn: "Next Question",
+        resultBtn: "See Results",
+        correctFeedback: "Correct!",
+        wrongFeedback: a => `Incorrect. The correct answer is ${a}.`,
+        timeUpFeedback: a => `Time is up. The correct answer is ${a}.`,
+        solutionTitle: "Correct Solution",
+        solutionFinal: "Answer:",
+        resultTitle: "Practice Results",
+        scoreLabel: "Correct Answers",
+        accuracyLabel: "Accuracy",
+        wrongLabel: "Wrong Answers",
+        wrongReviewTitle: "Wrong Answer Review",
+        restartBtn: "Practice Again",
+        reviewWrongBtn: "Practice Similar Wrong Types",
+        noWrong: "No wrong answers this round.",
+        noWrongTip: "Great job. Try a harder level next.",
+        yourAnswer: "Your answer",
+        correctAnswer: "Correct answer",
+        timeUpAnswer: "No answer: time is up",
+        sampleTitle: "Sample Question",
+        sampleQuestion: "Question",
+        sampleAnswer: "Correct answer",
+        sampleOptions: "Sample choices",
+        progress: (a,b) => `Question ${a} / ${b}`,
+        optionCount: n => `${n} choices`,
+        timerDisplay: s => `Time left: ${formatTime(s)}`,
+        difficulties: { easy:"Easy", medium:"Medium", hard:"Hard", expert:"Expert", hell:"Hell", mixed:"Mixed" },
+        timerOptions: {
+          timer_easy: "Easy: 2 minutes per question",
+          timer_medium: "Medium: 1 minute per question",
+          timer_hard: "Hard: 30 seconds per question",
+          timer_expert: "Expert: 15 seconds per question",
+          timer_hell: "Hell: 10 seconds per question"
+        },
+        noWrongAlert: "There are no wrong answers from this round, so similar wrong-type practice cannot be generated.",
+        ...GAME_TEXT.en
+      },
+      zh: {
+        htmlLang: "zh-CN",
+        navPractice: "练习库",
+        navHome: "主页",
+        setupTitle: "开始练习",
+        difficultyLabel: "难度",
+        questionCountLabel: "题目数量",
+        optionCountLabel: "选项数量",
+        timedModeText: "开启计时模式",
+        timedModeHint: "关闭后不会倒计时；开启后每题单独计时。",
+        timerLevelLabel: "计时难度",
+        startBtn: "开始",
+        sampleBtn: "生成一道样题",
+        quitBtn: "结束本轮",
+        nextBtn: "下一题",
+        resultBtn: "查看结果",
+        correctFeedback: "正确！",
+        wrongFeedback: a => `错误。正确答案是 ${a}。`,
+        timeUpFeedback: a => `时间到。正确答案是 ${a}。`,
+        solutionTitle: "正确解法",
+        solutionFinal: "答案：",
+        resultTitle: "练习结果",
+        scoreLabel: "正确题数",
+        accuracyLabel: "正确率",
+        wrongLabel: "错题数量",
+        wrongReviewTitle: "错题整理",
+        restartBtn: "再练一轮",
+        reviewWrongBtn: "只练错题同类型",
+        noWrong: "本轮没有错题。",
+        noWrongTip: "非常好，可以尝试更高难度。",
+        yourAnswer: "你的答案",
+        correctAnswer: "正确答案",
+        timeUpAnswer: "未作答（时间到）",
+        sampleTitle: "样题",
+        sampleQuestion: "题目",
+        sampleAnswer: "正确答案",
+        sampleOptions: "选项示例",
+        progress: (a,b) => `第 ${a} / ${b} 题`,
+        optionCount: n => `${n} 个选项`,
+        timerDisplay: s => `剩余时间：${formatTime(s)}`,
+        difficulties: { easy:"简单", medium:"中等", hard:"困难", expert:"专家", hell:"地狱", mixed:"混合" },
+        timerOptions: {
+          timer_easy: "简单：每题 2 分钟",
+          timer_medium: "中等：每题 1 分钟",
+          timer_hard: "困难：每题 30 秒",
+          timer_expert: "专家：每题 15 秒",
+          timer_hell: "地狱：每题 10 秒"
+        },
+        noWrongAlert: "本轮没有错题，不能生成错题同类型练习。",
+        ...GAME_TEXT.zh
+      }
+    };
+
+    function ans(value){ return { kind:"value", value:String(value) }; }
+    function answerKey(a){ return `${a.kind}:${a.value}`; }
+    function randInt(min,max){ return Math.floor(Math.random()*(max-min+1))+min; }
+    function choose(arr){ return arr[randInt(0,arr.length-1)]; }
+    function shuffle(arr){ const copy=[...arr]; for(let i=copy.length-1;i>0;i--){ const j=randInt(0,i); [copy[i],copy[j]]=[copy[j],copy[i]]; } return copy; }
+    function clamp(n,min,max){ return Math.max(min, Math.min(max, n)); }
+    function formatTime(totalSeconds){ const s=Math.max(0,totalSeconds); const m=Math.floor(s/60); const r=s%60; return `${m}:${String(r).padStart(2,"0")}`; }
+    function escapeHtml(text){ return String(text).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;"); }
+
+    function splitTopLevel(input, delimiter){
+      const parts = [];
+      let depth = 0;
+      let start = 0;
+      for(let i=0; i<input.length; i++){
+        const ch = input[i];
+        if(ch === "(") depth++;
+        if(ch === ")") depth = Math.max(0, depth - 1);
+        if(ch === delimiter && depth === 0){
+          parts.push(input.slice(start, i).trim());
+          start = i + 1;
+        }
+      }
+      parts.push(input.slice(start).trim());
+      return parts.filter(Boolean);
+    }
+
+    function findTopLevel(input, target){
+      let depth = 0;
+      for(let i=0; i<input.length; i++){
+        const ch = input[i];
+        if(ch === "(") depth++;
+        else if(ch === ")") depth = Math.max(0, depth - 1);
+        else if(ch === target && depth === 0) return i;
+      }
+      return -1;
+    }
+
+    function stripOuterParens(input){
+      const s = String(input).trim();
+      if(!s.startsWith("(") || !s.endsWith(")")) return s;
+      let depth = 0;
+      for(let i=0; i<s.length; i++){
+        if(s[i] === "(") depth++;
+        if(s[i] === ")") depth--;
+        if(depth === 0 && i < s.length - 1) return s;
+      }
+      return s.slice(1, -1).trim();
+    }
+
+    function mathToLatex(expr){
+      let s = String(expr || "").trim();
+      if(!s) return "";
+
+      const commaParts = splitTopLevel(s, ",");
+      if(commaParts.length > 1){
+        return commaParts.map(part => mathToLatex(part)).join(",\\quad ");
+      }
+
+      const equalParts = splitTopLevel(s, "=");
+      if(equalParts.length > 1){
+        return equalParts.map(part => mathToLatex(part)).join(" = ");
+      }
+
+      const slashIndex = findTopLevel(s, "/");
+      if(slashIndex > -1){
+        const numerator = stripOuterParens(s.slice(0, slashIndex));
+        const denominator = stripOuterParens(s.slice(slashIndex + 1));
+        return `\\frac{${mathToLatex(numerator)}}{${mathToLatex(denominator)}}`;
+      }
+
+      s = s.replace(/\*/g, "\\cdot ");
+      s = s.replace(/·/g, "\\cdot ");
+
+      s = s.replace(/sqrt\(([^()]*)\)/g, (_, inner) => `\\sqrt{${mathToLatex(inner)}}`);
+      s = s.replace(/sec\^2\(([^()]*)\)/g, (_, inner) => `\\sec^{2}\\left(${mathToLatex(inner)}\\right)`);
+      s = s.replace(/(sin|cos|tan|sec|ln)\(([^()]*)\)/g, (_, fn, inner) => `\\${fn}\\left(${mathToLatex(inner)}\\right)`);
+      s = s.replace(/e\^\(([^()]*)\)/g, (_, inner) => `e^{${mathToLatex(inner)}}`);
+      s = s.replace(/e\^x/g, "e^{x}");
+
+      s = s.replace(/\^\(([^)]+)\)/g, (_, exponent) => `^{${mathToLatex(exponent)}}`);
+      s = s.replace(/\^(-?\d+)/g, "^{$1}");
+      s = s.replace(/\^([a-zA-Z]+)/g, "^{$1}");
+
+      s = s.replace(/x\^\{1\}/g, "x");
+      s = s.replace(/x\^\{0\}/g, "1");
+      s = s.replace(/(^|[^\d])1x/g, "$1x");
+      s = s.replace(/(^|[^\d])1e\^\{x\}/g, "$1e^{x}");
+      s = s.replace(/\bln\b/g, "\\ln");
+
+      return s;
+    }
+
+    function renderLatex(el, latex, displayMode=false){
+      el.classList.add("math-render");
+      const boldLatex = `\\boldsymbol{${latex}}`;
+      if(window.katex){
+        katex.render(boldLatex, el, {
+          throwOnError: false,
+          displayMode
+        });
+      } else {
+        el.textContent = latex;
+      }
+    }
+
+    function renderMath(el, expr, displayMode=false){
+      renderLatex(el, mathToLatex(expr), displayMode);
+    }
+
+    function renderTaggedMath(root){
+      root.querySelectorAll("[data-latex]").forEach(el => {
+        renderLatex(el, el.getAttribute("data-latex") || "");
+      });
+    }
+
+    function signTerm(term){
+      if(String(term).startsWith("-")) return ` - ${String(term).slice(1)}`;
+      return ` + ${term}`;
+    }
+
+    function joinTerms(first, rest=[]){
+      let output = first;
+      rest.forEach(t => output += signTerm(t));
+      return output;
+    }
+
+    function coeffPower(coef, power){
+      if(coef === 0) return "0";
+      const sign = coef < 0 ? "-" : "";
+      const abs = Math.abs(coef);
+      let base = "";
+      if(power === 0) base = "1";
+      else if(power === 1) base = "x";
+      else base = `x^${power}`;
+      if(abs === 1 && power !== 0) return `${sign}${base}`;
+      return `${sign}${abs}${base}`;
+    }
+
+    function frac(n,d){
+      if(d < 0){ n = -n; d = -d; }
+      const g = gcd(Math.abs(n), Math.abs(d));
+      n /= g; d /= g;
+      if(d === 1) return String(n);
+      return `${n}/${d}`;
+    }
+
+    function gcd(a,b){
+      while(b){ const t=b; b=a%b; a=t; }
+      return a || 1;
+    }
+
+    function rationalCoeffPower(n,d,power){
+      const c = frac(n,d);
+      const base = power === 1 ? "x" : `x^(${power})`;
+      if(c === "1") return base;
+      if(c === "-1") return `-${base}`;
+      return `${c}${base}`;
+    }
+
+    function makeQuestion(difficulty,type,fx,answer,lines,distractors,extra=""){
+      const q = {
+        difficulty,
+        type,
+        main: `f(x) = ${fx}`,
+        plain: `f(x) = ${fx}`,
+        extra,
+        answer: ans(answer),
+        lines,
+        distractors: [...new Set(distractors.filter(x => x && x !== answer))]
+      };
+      q.options = GAME.options(q, Number(optionCountEl.value || 4));
+      return q;
+    }
+
+    const BUILDERS = {
+      easy: [
+        () => {
+          const a = randInt(2,8), n = randInt(2,6), c = randInt(-9,9);
+          const fx = c === 0 ? coeffPower(a,n) : joinTerms(coeffPower(a,n), [String(c)]);
+          const correct = coeffPower(a*n, n-1);
+          const lines = [
+            {line:`f(x) = ${fx}`, note:tr().notes.given},
+            {line:`f'(x) = ${a}·${n}x^${n-1}${c===0 ? "" : " + 0"}`, note:tr().notes.power},
+            {line:`f'(x) = ${correct}`, note:tr().notes.simplify}
+          ];
+          const distractors = [
+            coeffPower(a, n-1),
+            coeffPower(a*n, n),
+            c === 0 ? coeffPower(a,n) : joinTerms(correct,[String(c)]),
+            coeffPower(n, n-1)
+          ];
+          return makeQuestion("easy","power-polynomial",fx,correct,lines,distractors);
+        },
+        () => {
+          const a = randInt(2,9), b = randInt(2,9), n = randInt(3,6);
+          const fx = joinTerms(coeffPower(a,n), [coeffPower(-b,1), String(randInt(2,10))]);
+          const correct = joinTerms(coeffPower(a*n,n-1), [String(-b)]);
+          const lines = [
+            {line:`f(x) = ${fx}`, note:tr().notes.given},
+            {line:`f'(x) = ${a}·${n}x^${n-1} - ${b} + 0`, note:tr().notes.power},
+            {line:`f'(x) = ${correct}`, note:tr().notes.simplify}
+          ];
+          const distractors = [
+            joinTerms(coeffPower(a,n-1), [String(-b)]),
+            joinTerms(coeffPower(a*n,n), [String(-b)]),
+            joinTerms(coeffPower(a*n,n-1), [coeffPower(-b,1)]),
+            coeffPower(a*n-b,n-1)
+          ];
+          return makeQuestion("easy","power-sum",fx,correct,lines,distractors);
+        },
+        () => {
+          const a = randInt(2,10);
+          const fx = `${a}x`;
+          const correct = String(a);
+          const lines = [
+            {line:`f(x) = ${fx}`, note:tr().notes.given},
+            {line:`f'(x) = ${a}`, note:tr().notes.power}
+          ];
+          const distractors = [`${a}x`, "x", "0", String(a+1)];
+          return makeQuestion("easy","linear",fx,correct,lines,distractors);
+        }
+      ],
+      medium: [
+        () => {
+          const a = randInt(2,7), n = randInt(1,4);
+          const fx = `${a}x^(-${n})`;
+          const correct = coeffPower(-a*n, -(n+1));
+          const lines = [
+            {line:`f(x) = ${fx}`, note:tr().notes.given},
+            {line:`f'(x) = ${a}(-${n})x^(-${n}-1)`, note:tr().notes.power},
+            {line:`f'(x) = ${correct}`, note:tr().notes.simplify}
+          ];
+          const distractors = [
+            coeffPower(a*n, -(n+1)),
+            coeffPower(-a*n, -n),
+            coeffPower(a, -(n+1)),
+            `${-a*n}/x^${n}`
+          ];
+          return makeQuestion("medium","negative-power",fx,correct,lines,distractors);
+        },
+        () => {
+          const a = randInt(2,9), n = randInt(1,4);
+          const fx = `${a}/x^${n}`;
+          const correct = coeffPower(-a*n, -(n+1));
+          const lines = [
+            {line:`f(x) = ${a}x^(-${n})`, note:tr().notes.rewrite},
+            {line:`f'(x) = ${a}(-${n})x^(-${n}-1)`, note:tr().notes.power},
+            {line:`f'(x) = ${correct}`, note:tr().notes.simplify}
+          ];
+          const distractors = [
+            coeffPower(a*n, -(n+1)),
+            coeffPower(-a, -n),
+            `${-a*n}/x^${n}`,
+            `${a*n}/x^${n+1}`
+          ];
+          return makeQuestion("medium","reciprocal-power",fx,correct,lines,distractors);
+        },
+        () => {
+          const a = choose([2,4,6,8,10]);
+          const fx = `${a}sqrt(x)`;
+          const correct = rationalCoeffPower(a,2,"-1/2");
+          const lines = [
+            {line:`f(x) = ${a}x^(1/2)`, note:tr().notes.rewrite},
+            {line:`f'(x) = ${a}·(1/2)x^(-1/2)`, note:tr().notes.power},
+            {line:`f'(x) = ${correct}`, note:tr().notes.simplify}
+          ];
+          const distractors = [
+            `${a}x^(-1/2)`,
+            `${a/2}x^(1/2)`,
+            `${a}sqrt(x)`,
+            `${a/2}sqrt(x)`
+          ];
+          return makeQuestion("medium","sqrt",fx,correct,lines,distractors);
+        }
+      ],
+      hard: [
+        () => {
+          const a = randInt(2,6), b = randInt(2,6);
+          const fx = `${a}sin(x) - ${b}cos(x)`;
+          const correct = `${a}cos(x) + ${b}sin(x)`;
+          const lines = [
+            {line:`f(x) = ${fx}`, note:tr().notes.given},
+            {line:`f'(x) = ${a}cos(x) - ${b}(-sin(x))`, note:tr().notes.trig},
+            {line:`f'(x) = ${correct}`, note:tr().notes.simplify}
+          ];
+          const distractors = [
+            `${a}cos(x) - ${b}sin(x)`,
+            `${a}sin(x) + ${b}cos(x)`,
+            `${a}cos(x) + ${b}cos(x)`,
+            `${a}sin(x) - ${b}cos(x)`
+          ];
+          return makeQuestion("hard","trig-sin-cos",fx,correct,lines,distractors);
+        },
+        () => {
+          const a = randInt(2,7), b = randInt(1,6);
+          const fx = `${a}e^x + ${b}ln(x)`;
+          const correct = `${a}e^x + ${b}/x`;
+          const lines = [
+            {line:`f(x) = ${fx}`, note:tr().notes.given},
+            {line:`(e^x)' = e^x, (ln x)' = 1/x`, note:tr().notes.trig},
+            {line:`f'(x) = ${correct}`, note:tr().notes.simplify}
+          ];
+          const distractors = [
+            `${a}xe^(x-1) + ${b}/x`,
+            `${a}e^x + ${b}ln(x)`,
+            `${a}e^x + ${b}x`,
+            `${a}/x + ${b}e^x`
+          ];
+          return makeQuestion("hard","exp-log",fx,correct,lines,distractors);
+        },
+        () => {
+          const a = randInt(2,8);
+          const fx = `${a}tan(x)`;
+          const correct = `${a}sec^2(x)`;
+          const lines = [
+            {line:`f(x) = ${fx}`, note:tr().notes.given},
+            {line:`(tan x)' = sec^2(x)`, note:tr().notes.trig},
+            {line:`f'(x) = ${correct}`, note:tr().notes.simplify}
+          ];
+          const distractors = [`${a}sec(x)`, `${a}tan^2(x)`, `${a}cos^2(x)`, `${a}sin(x)`];
+          return makeQuestion("hard","tan",fx,correct,lines,distractors);
+        }
+      ],
+      expert: [
+        () => {
+          const n = randInt(2,5);
+          const fx = `x^${n}sin(x)`;
+          const correct = `${n}x^${n-1}sin(x) + x^${n}cos(x)`;
+          const lines = [
+            {line:`u = x^${n}, v = sin(x)`, note:tr().notes.product},
+            {line:`u' = ${n}x^${n-1}, v' = cos(x)`, note:tr().notes.product},
+            {line:`f'(x) = u'v + uv'`, note:tr().notes.product},
+            {line:`f'(x) = ${correct}`, note:tr().notes.simplify}
+          ];
+          const distractors = [
+            `${n}x^${n-1}cos(x)`,
+            `${n}x^${n-1}sin(x)`,
+            `x^${n}cos(x)`,
+            `${n}x^${n-1}sin(x) - x^${n}cos(x)`
+          ];
+          return makeQuestion("expert","product-trig",fx,correct,lines,distractors);
+        },
+        () => {
+          const n = randInt(2,4);
+          const fx = `x^${n}e^x`;
+          const correct = `${n}x^${n-1}e^x + x^${n}e^x`;
+          const lines = [
+            {line:`u = x^${n}, v = e^x`, note:tr().notes.product},
+            {line:`u' = ${n}x^${n-1}, v' = e^x`, note:tr().notes.product},
+            {line:`f'(x) = u'v + uv'`, note:tr().notes.product},
+            {line:`f'(x) = ${correct}`, note:tr().notes.simplify}
+          ];
+          const distractors = [
+            `${n}x^${n-1}e^x`,
+            `x^${n}e^x`,
+            `${n}x^${n}e^x`,
+            `${n}x^${n-1} + e^x`
+          ];
+          return makeQuestion("expert","product-exp",fx,correct,lines,distractors);
+        },
+        () => {
+          const c = randInt(1,8);
+          const d = randInt(1,5);
+          const fx = `(x^2 + ${c})/(x + ${d})`;
+          const correct = `(2x(x + ${d}) - (x^2 + ${c}))/(x + ${d})^2`;
+          const lines = [
+            {line:`u = x^2 + ${c}, v = x + ${d}`, note:tr().notes.quotient},
+            {line:`u' = 2x, v' = 1`, note:tr().notes.quotient},
+            {line:`f'(x) = (u'v - uv')/v^2`, note:tr().notes.quotient},
+            {line:`f'(x) = ${correct}`, note:tr().notes.simplify}
+          ];
+          const distractors = [
+            `(2x(x + ${d}) + (x^2 + ${c}))/(x + ${d})^2`,
+            `2x/(1)`,
+            `(2x)/(x + ${d})`,
+            `(x^2 + ${c})/(x + ${d})^2`
+          ];
+          return makeQuestion("expert","quotient-polynomial",fx,correct,lines,distractors);
+        },
+        () => {
+          const fx = `sin(x)/x`;
+          const correct = `(xcos(x) - sin(x))/x^2`;
+          const lines = [
+            {line:`u = sin(x), v = x`, note:tr().notes.quotient},
+            {line:`u' = cos(x), v' = 1`, note:tr().notes.quotient},
+            {line:`f'(x) = (u'v - uv')/v^2`, note:tr().notes.quotient},
+            {line:`f'(x) = ${correct}`, note:tr().notes.simplify}
+          ];
+          const distractors = [
+            `(xcos(x) + sin(x))/x^2`,
+            `cos(x)`,
+            `cos(x)/1`,
+            `(sin(x) - xcos(x))/x^2`
+          ];
+          return makeQuestion("expert","quotient-trig",fx,correct,lines,distractors);
+        }
+      ],
+      hell: [
+        () => {
+          const a = randInt(2,5), n = randInt(2,4), b = randInt(-5,5), m = randInt(3,6);
+          const inner = `${a}x^${n}${b>=0 ? " + " + b : " - " + Math.abs(b)}`;
+          const fx = `(${inner})^${m}`;
+          const coef = m*a*n;
+          const correct = `${coef}x^${n-1}(${inner})^${m-1}`;
+          const lines = [
+            {line:`u = ${inner}`, note:tr().notes.chain},
+            {line:`u' = ${a*n}x^${n-1}`, note:tr().notes.inner},
+            {line:`f'(x) = ${m}u^${m-1} · u'`, note:tr().notes.chain},
+            {line:`f'(x) = ${correct}`, note:tr().notes.simplify}
+          ];
+          const distractors = [
+            `${m}(${inner})^${m-1}`,
+            `${a*n}x^${n-1}(${inner})^${m}`,
+            `${coef}x^${n-1}(${inner})^${m}`,
+            `${m*a}x^${n}(${inner})^${m-1}`
+          ];
+          return makeQuestion("hell","chain-power",fx,correct,lines,distractors);
+        },
+        () => {
+          const a = randInt(2,6), n = randInt(2,4);
+          const inner = `${a}x^${n}`;
+          const fx = `sin(${inner})`;
+          const coef = a*n;
+          const correct = `${coef}x^${n-1}cos(${inner})`;
+          const lines = [
+            {line:`u = ${inner}`, note:tr().notes.chain},
+            {line:`u' = ${coef}x^${n-1}`, note:tr().notes.inner},
+            {line:`f'(x) = cos(u) · u'`, note:tr().notes.chain},
+            {line:`f'(x) = ${correct}`, note:tr().notes.simplify}
+          ];
+          const distractors = [
+            `cos(${inner})`,
+            `${coef}x^${n-1}sin(${inner})`,
+            `cos(${coef}x^${n-1})`,
+            `${a}x^${n}cos(x)`
+          ];
+          return makeQuestion("hell","chain-trig",fx,correct,lines,distractors);
+        },
+        () => {
+          const a = randInt(2,6), n = randInt(2,4), b = randInt(1,5);
+          const inner = `${a}x^${n} + ${b}`;
+          const fx = `e^(${inner})`;
+          const coef = a*n;
+          const correct = `${coef}x^${n-1}e^(${inner})`;
+          const lines = [
+            {line:`u = ${inner}`, note:tr().notes.chain},
+            {line:`u' = ${coef}x^${n-1}`, note:tr().notes.inner},
+            {line:`(e^u)' = e^u · u'`, note:tr().notes.chain},
+            {line:`f'(x) = ${correct}`, note:tr().notes.simplify}
+          ];
+          const distractors = [
+            `e^(${inner})`,
+            `${coef}x^${n-1}`,
+            `${a}x^${n}e^(${inner})`,
+            `${coef}x^${n}e^(${inner})`
+          ];
+          return makeQuestion("hell","chain-exp",fx,correct,lines,distractors);
+        },
+        () => {
+          const a = randInt(2,8), b = randInt(1,9);
+          const inner = `${a}x + ${b}`;
+          const fx = `ln(${inner})`;
+          const correct = `${a}/(${inner})`;
+          const lines = [
+            {line:`u = ${inner}`, note:tr().notes.chain},
+            {line:`u' = ${a}`, note:tr().notes.inner},
+            {line:`(ln u)' = u'/u`, note:tr().notes.chain},
+            {line:`f'(x) = ${correct}`, note:tr().notes.simplify}
+          ];
+          const distractors = [
+            `1/(${inner})`,
+            `${a}ln(${inner})`,
+            `${a}/x`,
+            `${inner}/${a}`
+          ];
+          return makeQuestion("hell","chain-log",fx,correct,lines,distractors);
+        },
+        () => {
+          const n = randInt(2,4), a = randInt(2,5);
+          const fx = `x^${n}e^(${a}x)`;
+          const correct = `${n}x^${n-1}e^(${a}x) + ${a}x^${n}e^(${a}x)`;
+          const lines = [
+            {line:`u = x^${n}, v = e^(${a}x)`, note:tr().notes.product},
+            {line:`u' = ${n}x^${n-1}, v' = ${a}e^(${a}x)`, note:tr().notes.chain},
+            {line:`f'(x) = u'v + uv'`, note:tr().notes.product},
+            {line:`f'(x) = ${correct}`, note:tr().notes.simplify}
+          ];
+          const distractors = [
+            `${n}x^${n-1}e^(${a}x) + x^${n}e^(${a}x)`,
+            `${n}x^${n-1}e^(${a}x)`,
+            `${a}x^${n}e^(${a}x)`,
+            `${n*a}x^${n-1}e^(${a}x)`
+          ];
+          return makeQuestion("hell","product-chain-exp",fx,correct,lines,distractors);
+        }
+      ]
+    };
+
+    const GAME = {
+      answerToString(a){ return a.value; },
+
+      generateQuestion(difficulty, forcedType=null){
+        let builders = BUILDERS[difficulty] || BUILDERS.medium;
+
+        if(forcedType){
+          const filtered = [];
+          for(const fn of builders){
+            const q = fn();
+            if(q.type === forcedType) filtered.push(fn);
+          }
+          if(filtered.length > 0) builders = filtered;
+        }
+
+        for(let attempt=0; attempt<60; attempt++){
+          const q = choose(builders)();
+          if(forcedType && q.type !== forcedType) continue;
+          q.options = this.options(q, Number(optionCountEl.value || 4));
+          return q;
+        }
+
+        return BUILDERS.easy[0]();
+      },
+
+      options(q,count){
+        const correct = q.answer;
+        const distractors = new Map();
+
+        const addDistractor = value => {
+          const item = ans(value);
+          if(answerKey(item) !== answerKey(correct)) distractors.set(answerKey(item), item);
+        };
+
+        q.distractors.forEach(addDistractor);
+
+        while(distractors.size < count - 1){
+          addDistractor(choose([
+            "0",
+            "x",
+            "1/x",
+            "cos(x)",
+            "-sin(x)",
+            "e^x",
+            "ln(x)",
+            "x^2"
+          ]));
+        }
+
+        return shuffle([
+          correct,
+          ...shuffle([...distractors.values()]).slice(0, count - 1)
+        ]);
+      },
+
+      solutionLines(q){
+        return q.lines;
+      }
+    };
+
+    function readGlobalLanguage(){ return localStorage.getItem("mathcomplete_lang") === "zh" ? "zh" : "en"; }
+    let lang = readGlobalLanguage();
+
+    const setupCard = document.getElementById("setupCard");
+    const quizCard = document.getElementById("quizCard");
+    const resultCard = document.getElementById("resultCard");
+    const difficultyEl = document.getElementById("difficulty");
+    const questionCountEl = document.getElementById("questionCount");
+    const optionCountEl = document.getElementById("optionCount");
+    const timedModeEl = document.getElementById("timedMode");
+    const timerLevelEl = document.getElementById("timerLevel");
+    const startBtn = document.getElementById("startBtn");
+    const sampleBtn = document.getElementById("sampleBtn");
+    const sampleBox = document.getElementById("sampleBox");
+    const progressText = document.getElementById("progressText");
+    const difficultyText = document.getElementById("difficultyText");
+    const timerDisplay = document.getElementById("timerDisplay");
+    const progressBar = document.getElementById("progressBar");
+    const qTitle = document.getElementById("questionTitle");
+    const qMain = document.getElementById("questionMain");
+    const qExtra = document.getElementById("questionExtra");
+    const optionsEl = document.getElementById("options");
+    const feedbackEl = document.getElementById("feedback");
+    const solutionBox = document.getElementById("solutionBox");
+    const nextBtn = document.getElementById("nextBtn");
+    const quitBtn = document.getElementById("quitBtn");
+    const scoreNum = document.getElementById("scoreNum");
+    const accuracyNum = document.getElementById("accuracyNum");
+    const wrongNum = document.getElementById("wrongNum");
+    const wrongList = document.getElementById("wrongList");
+    const restartBtn = document.getElementById("restartBtn");
+    const reviewWrongBtn = document.getElementById("reviewWrongBtn");
+
+    let quiz = [];
+    let currentIndex = 0;
+    let correctCount = 0;
+    let wrongAnswers = [];
+    let answered = false;
+    let lastDifficulty = "medium";
+    let lastFeedback = null;
+    let timerId = null;
+    let timeLeft = 0;
+
+    const REAL_DIFFICULTIES = ["easy", "medium", "hard", "expert", "hell"];
+    const TIMER_DURATIONS = { timer_easy:120, timer_medium:60, timer_hard:30, timer_expert:15, timer_hell:10 };
+
+    function tr(){ return T[lang]; }
+
+    function buildDifficultyPlan(count, selectedDifficulty){
+      if(selectedDifficulty !== "mixed") return Array(count).fill(selectedDifficulty);
+      const plan = [];
+      while(plan.length < count) plan.push(...shuffle(REAL_DIFFICULTIES));
+      return plan.slice(0,count);
+    }
+
+    function pickDifficultyForSample(selectedDifficulty){
+      return selectedDifficulty === "mixed" ? choose(REAL_DIFFICULTIES) : selectedDifficulty;
+    }
+
+    function clearTimer(){
+      if(timerId !== null){
+        clearInterval(timerId);
+        timerId = null;
+      }
+    }
+
+    function updateTimerControls(){
+      timerLevelEl.disabled = !timedModeEl.checked;
+    }
+
+    function updateTimerDisplay(){
+      if(!timedModeEl.checked || quizCard.classList.contains("hidden")){
+        timerDisplay.classList.add("hidden");
+        return;
+      }
+      timerDisplay.classList.remove("hidden");
+      timerDisplay.textContent = tr().timerDisplay(timeLeft);
+      timerDisplay.classList.toggle("timer-danger", timeLeft <= 10);
+    }
+
+    function startTimerForQuestion(){
+      clearTimer();
+      if(!timedModeEl.checked){
+        timerDisplay.classList.add("hidden");
+        return;
+      }
+      timeLeft = TIMER_DURATIONS[timerLevelEl.value] || 60;
+      updateTimerDisplay();
+      timerId = setInterval(() => {
+        timeLeft -= 1;
+        updateTimerDisplay();
+        if(timeLeft <= 0) handleTimeUp();
+      }, 1000);
+    }
+
+    function applyLanguage(){
+      lang = readGlobalLanguage();
+      const t = tr();
+      document.documentElement.lang = t.htmlLang;
+      document.title = t.title;
+
+      document.querySelectorAll("[data-i18n]").forEach(el => {
+        const key = el.getAttribute("data-i18n");
+        if(t[key]) el.textContent = t[key];
+      });
+
+      document.getElementById("toolBadge").textContent = t.toolBadge;
+      document.getElementById("pageTitle").textContent = t.title;
+      document.getElementById("pageSubtitle").textContent = t.subtitle;
+      document.getElementById("setupTitle").textContent = t.setupTitle;
+      document.getElementById("difficultyLabel").textContent = t.difficultyLabel;
+      document.getElementById("questionCountLabel").textContent = t.questionCountLabel;
+      document.getElementById("optionCountLabel").textContent = t.optionCountLabel;
+      document.getElementById("timedModeText").textContent = t.timedModeText;
+      document.getElementById("timedModeHint").textContent = t.timedModeHint;
+      document.getElementById("timerLevelLabel").textContent = t.timerLevelLabel;
+      startBtn.textContent = t.startBtn;
+      sampleBtn.textContent = t.sampleBtn;
+      document.getElementById("noteBox").textContent = t.note;
+      qTitle.textContent = t.questionTitle;
+      quitBtn.textContent = t.quitBtn;
+      document.getElementById("resultTitle").textContent = t.resultTitle;
+      document.getElementById("scoreLabel").textContent = t.scoreLabel;
+      document.getElementById("accuracyLabel").textContent = t.accuracyLabel;
+      document.getElementById("wrongLabel").textContent = t.wrongLabel;
+      document.getElementById("wrongReviewTitle").textContent = t.wrongReviewTitle;
+      restartBtn.textContent = t.restartBtn;
+      reviewWrongBtn.textContent = t.reviewWrongBtn;
+
+      rebuildDifficultyOptions();
+      rebuildOptionCountOptions();
+      rebuildTimerLevelOptions();
+      updateTimerControls();
+
+      if(quiz.length > 0 && !quizCard.classList.contains("hidden")) renderQuestion(false);
+      if(!resultCard.classList.contains("hidden")) renderResultBody();
+      if(lastFeedback){
+        renderFeedback(lastFeedback.correct, lastFeedback.answer, lastFeedback.timeUp);
+        renderSolutionBox();
+      }
+      updateTimerDisplay();
+    }
+
+    function rebuildDifficultyOptions(){
+      const current = difficultyEl.value || "medium";
+      difficultyEl.innerHTML = "";
+      ["easy","medium","hard","expert","hell","mixed"].forEach(v => {
+        const o = document.createElement("option");
+        o.value = v;
+        o.textContent = tr().difficultyOptions[v];
+        difficultyEl.appendChild(o);
+      });
+      difficultyEl.value = tr().difficultyOptions[current] ? current : "medium";
+    }
+
+    function rebuildOptionCountOptions(){
+      const current = optionCountEl.value || "4";
+      optionCountEl.innerHTML = "";
+      [4,5,6].forEach(v => {
+        const o = document.createElement("option");
+        o.value = String(v);
+        o.textContent = tr().optionCount(v);
+        optionCountEl.appendChild(o);
+      });
+      optionCountEl.value = current;
+    }
+
+    function rebuildTimerLevelOptions(){
+      const current = timerLevelEl.value || "timer_medium";
+      timerLevelEl.innerHTML = "";
+      ["timer_easy","timer_medium","timer_hard","timer_expert","timer_hell"].forEach(v => {
+        const o = document.createElement("option");
+        o.value = v;
+        o.textContent = tr().timerOptions[v];
+        timerLevelEl.appendChild(o);
+      });
+      timerLevelEl.value = TIMER_DURATIONS[current] ? current : "timer_medium";
+    }
+
+    function answerToString(a){ return GAME.answerToString(a); }
+    function correctAnswer(q){ return q.answer; }
+    function isSameAnswer(a,b){ return answerKey(a) === answerKey(b); }
+
+    function buildQuiz(){
+      const selectedDifficulty = difficultyEl.value;
+      const count = clamp(Number(questionCountEl.value || 10), 1, 100);
+      lastDifficulty = selectedDifficulty;
+      quiz = [];
+
+      const difficultyPlan = buildDifficultyPlan(count, selectedDifficulty);
+      for(let i=0; i<count; i++) quiz.push(GAME.generateQuestion(difficultyPlan[i]));
+
+      currentIndex = 0;
+      correctCount = 0;
+      wrongAnswers = [];
+      answered = false;
+      lastFeedback = null;
+      showQuiz();
+      renderQuestion(true);
+    }
+
+    function buildWrongTypeQuiz(){
+      if(wrongAnswers.length === 0){
+        alert(tr().noWrongAlert);
+        return;
+      }
+
+      const count = Math.max(wrongAnswers.length * 2, 5);
+      quiz = [];
+
+      for(let i=0; i<count; i++){
+        const source = choose(wrongAnswers);
+        const difficulty = lastDifficulty === "mixed" ? source.difficulty : lastDifficulty;
+        quiz.push(GAME.generateQuestion(difficulty, source.type));
+      }
+
+      currentIndex = 0;
+      correctCount = 0;
+      wrongAnswers = [];
+      answered = false;
+      lastFeedback = null;
+      showQuiz();
+      renderQuestion(true);
+    }
+
+    function showQuiz(){
+      setupCard.classList.add("hidden");
+      resultCard.classList.add("hidden");
+      quizCard.classList.remove("hidden");
+    }
+
+    function renderQuestion(resetOptions){
+      const q = quiz[currentIndex];
+      if(!q) return;
+
+      if(resetOptions){
+        answered = false;
+        lastFeedback = null;
+        feedbackEl.textContent = "";
+        feedbackEl.className = "feedback";
+        solutionBox.classList.add("hidden");
+        solutionBox.innerHTML = "";
+        nextBtn.disabled = true;
+      }
+
+      progressText.textContent = tr().progress(currentIndex + 1, quiz.length);
+      difficultyText.textContent = lastDifficulty === "mixed" ? `${tr().difficulties.mixed} · ${tr().difficulties[q.difficulty]}` : tr().difficulties[q.difficulty];
+      progressBar.style.width = `${(currentIndex / quiz.length) * 100}%`;
+      renderMath(qMain, q.main, true);
+      qExtra.textContent = q.extra || "";
+      qExtra.classList.toggle("hidden", !q.extra);
+
+      if(resetOptions){
+        optionsEl.innerHTML = "";
+        q.options.forEach(opt => {
+          const btn = document.createElement("button");
+          btn.className = "option";
+          btn.dataset.answerKey = answerKey(opt);
+          btn.setAttribute("aria-label", answerToString(opt));
+          renderMath(btn, answerToString(opt));
+          btn.addEventListener("click", () => chooseOption(btn, opt));
+          optionsEl.appendChild(btn);
+        });
+      }
+
+      nextBtn.textContent = currentIndex === quiz.length - 1 ? tr().resultBtn : tr().nextBtn;
+
+      if(resetOptions) startTimerForQuestion();
+      else updateTimerDisplay();
+    }
+
+    function renderFeedback(correct, answer, timeUp=false){
+      feedbackEl.className = "feedback";
+      if(correct){
+        feedbackEl.textContent = tr().correctFeedback;
+        feedbackEl.classList.add("good");
+      } else {
+        const prefix = timeUp
+          ? (lang === "zh" ? "时间到。正确答案是" : "Time is up. The correct answer is")
+          : (lang === "zh" ? "错误。正确答案是" : "Incorrect. The correct answer is");
+        feedbackEl.innerHTML = `${prefix} <span class="feedback-math" data-latex="${escapeHtml(mathToLatex(answer))}"></span>.`;
+        renderTaggedMath(feedbackEl);
+        feedbackEl.classList.add("bad");
+      }
+    }
+
+    function renderSolutionBox(){
+      const q = quiz[currentIndex];
+      if(!q || !answered){
+        solutionBox.classList.add("hidden");
+        solutionBox.innerHTML = "";
+        return;
+      }
+
+      const lines = GAME.solutionLines(q);
+      const correct = answerToString(correctAnswer(q));
+      solutionBox.classList.remove("hidden");
+      solutionBox.innerHTML = `
+        <h4>${tr().solutionTitle}</h4>
+        <div class="solution-chain">
+          ${lines.map(s => `
+            <div class="chain-line">
+              <span class="chain-math" data-latex="${escapeHtml(mathToLatex(s.line))}"></span>
+              <span class="chain-note">${escapeHtml(s.note || "")}</span>
+            </div>
+          `).join("")}
+        </div>
+        <div class="solution-answer">${tr().solutionFinal} <span class="answer-math" data-latex="${escapeHtml(mathToLatex(correct))}"></span></div>
+      `;
+      renderTaggedMath(solutionBox);
+    }
+
+    function chooseOption(button, selected){
+      if(answered) return;
+      answered = true;
+      clearTimer();
+
+      const q = quiz[currentIndex];
+      const correct = correctAnswer(q);
+      const correctDisplay = answerToString(correct);
+      const buttons = [...optionsEl.querySelectorAll(".option")];
+
+      buttons.forEach(btn => {
+        btn.disabled = true;
+        if(btn.dataset.answerKey === answerKey(correct)) btn.classList.add("correct");
+      });
+
+      if(isSameAnswer(selected, correct)){
+        correctCount++;
+        lastFeedback = { correct:true, answer:correctDisplay, timeUp:false };
+        renderFeedback(true, correctDisplay, false);
+      } else {
+        button.classList.add("wrong");
+        lastFeedback = { correct:false, answer:correctDisplay, timeUp:false };
+        renderFeedback(false, correctDisplay, false);
+        wrongAnswers.push({
+          main: q.plain,
+          answer: correctDisplay,
+          selected: answerToString(selected),
+          type: q.type,
+          difficulty: q.difficulty
+        });
+      }
+
+      void window.MCLProgress?.recordGameAttempt?.({
+        question: q,
+        correctAnswer: correctDisplay,
+        selectedAnswer: answerToString(selected),
+        isCorrect: isSameAnswer(selected, correct)
+      });
+
+      renderSolutionBox();
+      nextBtn.disabled = false;
+      progressBar.style.width = `${((currentIndex + 1) / quiz.length) * 100}%`;
+    }
+
+    function handleTimeUp(){
+      if(answered) return;
+      clearTimer();
+      answered = true;
+
+      const q = quiz[currentIndex];
+      const correct = correctAnswer(q);
+      const correctDisplay = answerToString(correct);
+      const buttons = [...optionsEl.querySelectorAll(".option")];
+
+      buttons.forEach(btn => {
+        btn.disabled = true;
+        if(btn.dataset.answerKey === answerKey(correct)) btn.classList.add("correct");
+      });
+
+      lastFeedback = { correct:false, answer:correctDisplay, timeUp:true };
+      renderFeedback(false, correctDisplay, true);
+      wrongAnswers.push({
+        main: q.plain,
+        answer: correctDisplay,
+        selected: null,
+        timeUp: true,
+        type: q.type,
+        difficulty: q.difficulty
+      });
+
+      void window.MCLProgress?.recordGameAttempt?.({
+        question: q,
+        correctAnswer: correctDisplay,
+        selectedAnswer: "",
+        isCorrect: false,
+        timeUp: true
+      });
+
+      renderSolutionBox();
+      nextBtn.disabled = false;
+      progressBar.style.width = `${((currentIndex + 1) / quiz.length) * 100}%`;
+    }
+
+    function nextQuestion(){
+      if(!answered) return;
+      if(currentIndex < quiz.length - 1){
+        currentIndex++;
+        renderQuestion(true);
+      } else {
+        showResult();
+      }
+    }
+
+    function showResult(){
+      clearTimer();
+      quizCard.classList.add("hidden");
+      resultCard.classList.remove("hidden");
+      renderResultBody();
+    }
+
+    function renderResultBody(){
+      const total = quiz.length;
+      const accuracy = total === 0 ? 0 : Math.round((correctCount / total) * 100);
+      scoreNum.textContent = `${correctCount}/${total}`;
+      accuracyNum.textContent = `${accuracy}%`;
+      wrongNum.textContent = `${wrongAnswers.length}`;
+      wrongList.innerHTML = "";
+
+      if(wrongAnswers.length === 0){
+        const item = document.createElement("div");
+        item.className = "wrong-item";
+        item.innerHTML = `<div class="expr">${tr().noWrong}</div><p class="tag-good">${tr().noWrongTip}</p>`;
+        wrongList.appendChild(item);
+      } else {
+        wrongAnswers.forEach((w,i) => {
+          const item = document.createElement("div");
+          item.className = "wrong-item";
+          item.innerHTML = `
+            <div class="expr">${i+1}. ${escapeHtml(w.main)}</div>
+            <p>${tr().yourAnswer}: <span class="tag-bad">${escapeHtml(w.timeUp ? tr().timeUpAnswer : w.selected)}</span></p>
+            <p>${tr().correctAnswer}: <span class="tag-good">${escapeHtml(w.answer)}</span></p>
+            <p>${tr().suggestion}</p>
+          `;
+          wrongList.appendChild(item);
+        });
+      }
+    }
+
+    function resetToSetup(){
+      clearTimer();
+      setupCard.classList.remove("hidden");
+      quizCard.classList.add("hidden");
+      resultCard.classList.add("hidden");
+      progressBar.style.width = "0%";
+      sampleBox.classList.add("hidden");
+      sampleBox.innerHTML = "";
+      solutionBox.classList.add("hidden");
+      solutionBox.innerHTML = "";
+      lastFeedback = null;
+    }
+
+    function quitQuiz(){
+      if(answered || currentIndex > 0) showResult();
+      else resetToSetup();
+    }
+
+    function showSample(){
+      const sampleDifficulty = pickDifficultyForSample(difficultyEl.value);
+      const q = GAME.generateQuestion(sampleDifficulty);
+      const correct = answerToString(correctAnswer(q));
+      sampleBox.classList.remove("hidden");
+      sampleBox.innerHTML = `
+        <strong>${tr().sampleTitle}:</strong><br>
+        ${tr().sampleQuestion}: <span data-latex="${escapeHtml(mathToLatex(q.plain))}"></span><br>
+        ${tr().sampleAnswer}: <span data-latex="${escapeHtml(mathToLatex(correct))}"></span><br>
+        ${tr().sampleOptions}: ${q.options.map(x => `<span style="margin-right:10px;" data-latex="${escapeHtml(mathToLatex(answerToString(x)))}"></span>`).join(" ")}
+      `;
+      renderTaggedMath(sampleBox);
+    }
+
+    timedModeEl.addEventListener("change", updateTimerControls);
+    startBtn.addEventListener("click", buildQuiz);
+    sampleBtn.addEventListener("click", showSample);
+    nextBtn.addEventListener("click", nextQuestion);
+    quitBtn.addEventListener("click", quitQuiz);
+    restartBtn.addEventListener("click", resetToSetup);
+    reviewWrongBtn.addEventListener("click", buildWrongTypeQuiz);
+
+    applyLanguage();
+  </script>
+  <script src="../assets/js/home-link.js"></script>
+</body>
+</html>

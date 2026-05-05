@@ -1,0 +1,1565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Logarithmic Functions Practice</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../assets/js/supabase-client.js"></script>
+  <script src="../assets/js/auth.js"></script>
+  <script src="../assets/js/auth-ui.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <style>
+    :root {
+      --bg: #f7f7fb;
+      --text: #0f172a;
+      --muted: #64748b;
+      --border: #e5e7eb;
+      --accent: #2563eb;
+      --violet: #7c3aed;
+      --good: #16a34a;
+      --bad: #dc2626;
+      --shadow: 0 18px 42px rgba(15, 23, 42, 0.10);
+      --radius: 22px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", Arial, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(96, 165, 250, 0.35), transparent 34%),
+        radial-gradient(circle at top right, rgba(167, 139, 250, 0.28), transparent 32%),
+        linear-gradient(180deg, #f8fbff 0%, var(--bg) 52%, #ffffff 100%);
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.42;
+      background-image:
+        linear-gradient(rgba(15, 23, 42, 0.045) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(15, 23, 42, 0.045) 1px, transparent 1px);
+      background-size: 42px 42px;
+      mask-image: linear-gradient(180deg, black, transparent 72%);
+    }
+
+    .mc-site-shell {
+      width: min(1180px, calc(100% - 32px));
+      margin: 18px auto 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 12px 14px;
+      border: 1px solid rgba(255, 255, 255, 0.74);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.84);
+      backdrop-filter: blur(18px);
+      box-shadow: 0 16px 36px rgba(15, 23, 42, 0.10);
+      position: sticky;
+      top: 12px;
+      z-index: 20;
+    }
+
+    .mc-brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: #0f172a;
+      font-weight: 950;
+      text-decoration: none;
+      letter-spacing: -0.035em;
+      white-space: nowrap;
+    }
+
+    .mc-brand-mark {
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      border-radius: 12px;
+      color: white;
+      background: linear-gradient(135deg, #2563eb, #7c3aed);
+      box-shadow: 0 12px 24px rgba(37, 99, 235, 0.28);
+    }
+
+    .mc-links {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .mc-link {
+      color: #475569;
+      text-decoration: none;
+      font-weight: 850;
+      padding: 8px 11px;
+      border-radius: 999px;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .mc-link:hover { color: #1d4ed8; background: #eff6ff; }
+    .mc-link.primary { color: white; background: #0f172a; }
+    .mc-link.primary:hover { color: white; background: #1e293b; }
+
+    .container {
+      width: min(1040px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 38px 0 68px;
+      position: relative;
+    }
+
+    header { margin-bottom: 24px; overflow: visible; }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      color: #1d4ed8;
+      background: rgba(239, 246, 255, 0.86);
+      border: 1px solid rgba(191, 219, 254, 0.8);
+      font-weight: 950;
+      margin-bottom: 14px;
+    }
+
+    .eyebrow-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: #10b981;
+      box-shadow: 0 0 0 6px rgba(16, 185, 129, 0.12);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(34px, 5.2vw, 56px);
+      line-height: 1.16;
+      letter-spacing: -0.055em;
+      background: linear-gradient(135deg, #0f172a 0%, #1d4ed8 48%, #7c3aed 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      padding-bottom: 0.18em;
+      overflow: visible;
+    }
+
+    h2 { margin: 0 0 12px; font-size: clamp(24px, 4vw, 34px); letter-spacing: -0.045em; }
+    h3 { margin: 0 0 8px; letter-spacing: -0.025em; }
+
+    .subtitle {
+      margin: 14px 0 0;
+      color: var(--muted);
+      line-height: 1.75;
+      max-width: 780px;
+      font-size: 17px;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.90);
+      border: 1px solid rgba(255, 255, 255, 0.76);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 24px;
+      backdrop-filter: blur(16px);
+    }
+
+    .setup-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+      margin: 22px 0;
+    }
+
+    label { display: block; font-weight: 900; margin-bottom: 8px; }
+
+    select,
+    input {
+      width: 100%;
+      min-height: 46px;
+      padding: 12px 14px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      font-size: 16px;
+      background: white;
+      outline: none;
+    }
+
+    select:focus,
+    input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+    }
+
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 46px;
+      padding: 12px 14px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: white;
+      cursor: pointer;
+      margin-bottom: 6px;
+    }
+
+    .checkbox-label input {
+      width: auto;
+      min-height: 0;
+      transform: scale(1.15);
+      accent-color: var(--accent);
+    }
+
+    .mini-hint { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.45; }
+
+    button {
+      appearance: none;
+      border: none;
+      background: linear-gradient(135deg, var(--accent), var(--violet));
+      color: white;
+      font-weight: 950;
+      padding: 12px 18px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: transform 0.14s, filter 0.2s, box-shadow 0.2s;
+      box-shadow: 0 12px 24px rgba(37, 99, 235, 0.24);
+    }
+
+    button:hover { transform: translateY(-1px); filter: brightness(0.98); }
+    button.secondary { background: #111827; box-shadow: 0 8px 18px rgba(17, 24, 39, 0.16); }
+    button.ghost { background: white; color: var(--text); border: 1px solid var(--border); box-shadow: none; }
+    button:disabled { cursor: not-allowed; opacity: 0.55; transform: none; }
+
+    .hidden { display: none !important; }
+    .actions { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+
+    .explain-box {
+      margin-top: 18px;
+      padding: 16px;
+      background: #f8fafc;
+      border: 1px dashed #cbd5e1;
+      border-radius: 18px;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .topbar {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: white;
+      color: var(--muted);
+      font-weight: 850;
+      font-size: 14px;
+      margin-right: 6px;
+      margin-bottom: 6px;
+    }
+
+    .timer-pill { color: #1d4ed8; background: #eff6ff; border-color: #bfdbfe; }
+    .timer-danger { color: #991b1b; background: #fef2f2; border-color: #fecaca; }
+
+    .progress-wrap {
+      width: 100%;
+      height: 10px;
+      background: #e5e7eb;
+      border-radius: 999px;
+      overflow: hidden;
+      margin: 10px 0 22px;
+    }
+
+    .progress {
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(90deg, #2563eb, #7c3aed);
+      transition: width 0.25s ease;
+    }
+
+    .question-title { color: var(--muted); font-weight: 950; margin-bottom: 8px; }
+    .question-extra { color: var(--muted); font-weight: 900; margin: -4px 0 14px; line-height: 1.6; }
+
+    .question-main {
+      font-size: clamp(28px, 5.4vw, 54px);
+      line-height: 1.2;
+      font-weight: 950;
+      letter-spacing: -0.045em;
+      margin: 10px 0 24px;
+      overflow-wrap: anywhere;
+    }
+
+    .math-render { display: inline-block; }
+    .question-main.math-render { display: block; width: 100%; }
+    .question-main .katex { font-size: 1.08em; line-height: 1.2; }
+    .option .katex { font-size: 1.1em; line-height: 1.25; }
+    .chain-math .katex, .answer-math .katex, .feedback-math .katex, .sample-math .katex, .wrong-math .katex { font-size: 1.06em; line-height: 1.25; }
+    .math-render .katex { color: #0f172a; }
+
+    .options {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .option {
+      border: 2px solid var(--border);
+      background: white;
+      color: var(--text);
+      box-shadow: none;
+      border-radius: 18px;
+      min-height: 64px;
+      font-size: 20px;
+      text-align: center;
+      padding: 12px;
+      overflow-wrap: anywhere;
+    }
+
+    .option:hover { border-color: var(--accent); background: #f8fbff; }
+    .option.correct { border-color: rgba(22, 163, 74, 0.5); background: #ecfdf5; color: #065f46; }
+    .option.wrong { border-color: rgba(220, 38, 38, 0.5); background: #fef2f2; color: #991b1b; }
+    .option.correct .katex { color: #065f46; }
+    .option.wrong .katex { color: #991b1b; }
+
+    .feedback { min-height: 30px; font-weight: 950; margin: 8px 0 16px; }
+    .feedback.good { color: var(--good); }
+    .feedback.bad { color: var(--bad); }
+    .feedback.bad .katex { color: #dc2626; }
+
+    .solution-box {
+      margin: 14px 0 18px;
+      padding: 18px;
+      border-radius: 20px;
+      border: 1px solid #dbeafe;
+      background: linear-gradient(180deg, #f8fbff, #fff);
+      color: #1f2937;
+      line-height: 1.7;
+    }
+
+    .solution-box h4 { margin: 0 0 12px; font-size: 18px; }
+    .solution-chain { background: white; border: 1px solid #e5e7eb; border-radius: 16px; padding: 14px 16px; overflow-x: auto; }
+
+    .chain-line {
+      display: grid;
+      grid-template-columns: minmax(250px, 1fr) minmax(170px, 0.65fr);
+      align-items: baseline;
+      gap: 18px;
+      margin: 8px 0;
+      font-size: 17px;
+      font-weight: 850;
+      white-space: nowrap;
+    }
+
+    .chain-note { color: #64748b; font-size: 13px; font-weight: 850; white-space: normal; }
+    .solution-answer { margin-top: 12px; font-weight: 950; color: #111827; }
+    .solution-answer > .answer-math { display: inline-block; background: #ecfdf5; color: #065f46; border: 1px solid #bbf7d0; border-radius: 999px; padding: 3px 10px; margin-left: 4px; vertical-align: middle; }
+
+    .result-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin: 18px 0 24px; }
+    .stat { background: #f9fafb; border: 1px solid var(--border); border-radius: 18px; padding: 18px; }
+    .stat .num { font-size: 34px; font-weight: 950; letter-spacing: -0.05em; }
+    .stat .label { color: var(--muted); margin-top: 4px; font-weight: 850; }
+    .wrong-list { display: grid; gap: 14px; }
+    .wrong-item { border: 1px solid var(--border); border-radius: 18px; background: white; padding: 16px; }
+    .wrong-item .expr { font-size: 22px; font-weight: 950; margin-bottom: 8px; overflow-wrap: anywhere; }
+    .wrong-item p { margin: 6px 0; color: var(--muted); line-height: 1.6; }
+    .tag-good { color: var(--good); font-weight: 950; }
+    .tag-bad { color: var(--bad); font-weight: 950; }
+
+    @media (max-width: 760px) {
+      .mc-site-shell { border-radius: 22px; align-items: flex-start; flex-direction: column; }
+      .mc-links { justify-content: flex-start; }
+      .setup-grid, .options, .result-grid { grid-template-columns: 1fr; }
+      .card { padding: 18px; }
+      .container { width: min(100% - 22px, 1040px); padding-top: 26px; }
+      .chain-line { grid-template-columns: 1fr; gap: 2px; white-space: normal; }
+      .chain-note { padding-left: 12px; }
+    }
+  
+
+  /* MathComplete Lab shared tool question layout override */
+  .question-main,
+  .expression,
+  .equation {
+    max-width: 100%;
+    font-size: clamp(28px, 5.4vw, 54px) !important;
+    line-height: 1.2 !important;
+    font-weight: 500 !important;
+    letter-spacing: -0.045em !important;
+    margin: 10px 0 24px !important;
+    text-align: left !important;
+    overflow-wrap: anywhere !important;
+    word-break: normal !important;
+    text-wrap: pretty;
+    white-space: normal;
+    justify-content: flex-start !important;
+    align-items: flex-start !important;
+  }
+
+  .question-main.math-render,
+  .expression.math-render,
+  .equation.math-render {
+    display: block !important;
+    width: 100% !important;
+    text-align: left !important;
+  }
+
+  .question-main .katex,
+  .expression .katex,
+  .equation .katex {
+    white-space: normal !important;
+    text-align: left !important;
+    font-weight: 400 !important;
+  }
+
+  .question-main .katex *,
+  .expression .katex *,
+  .equation .katex * {
+    font-weight: 400 !important;
+  }
+
+  .question-line,
+  .question-text {
+    max-width: 100%;
+    text-align: left !important;
+    overflow-wrap: anywhere;
+    word-break: normal;
+    text-wrap: pretty;
+  }
+</style>
+</head>
+<body>
+  <nav class="mc-site-shell">
+    <a class="mc-brand" href="../index.html"><span class="mc-brand-mark">∑</span><span>MathComplete Lab</span></a>
+    <div class="mc-links">
+      <a class="mc-link" href="../practice.html" data-i18n="navPractice">Practice Library</a>
+      <a class="mc-link primary" href="../index.html" data-i18n="navHome">Home</a>
+    </div>
+  </nav>
+
+  <main class="container">
+    <header>
+      <div class="eyebrow"><span class="eyebrow-dot"></span><span id="toolBadge"></span></div>
+      <h1 id="pageTitle"></h1>
+      <p id="pageSubtitle" class="subtitle"></p>
+    </header>
+
+    <section id="setupCard" class="card">
+      <h2 id="setupTitle"></h2>
+      <div class="setup-grid">
+        <div><label id="difficultyLabel" for="difficulty"></label><select id="difficulty"></select></div>
+        <div><label id="questionCountLabel" for="questionCount"></label><input id="questionCount" type="number" min="1" max="100" value="10" /></div>
+        <div><label id="optionCountLabel" for="optionCount"></label><select id="optionCount"></select></div>
+        <div><label class="checkbox-label" for="timedMode"><input id="timedMode" type="checkbox" /><span id="timedModeText"></span></label><p id="timedModeHint" class="mini-hint"></p></div>
+        <div><label id="timerLevelLabel" for="timerLevel"></label><select id="timerLevel"></select></div>
+      </div>
+      <div class="actions"><button id="startBtn"></button><button id="sampleBtn" class="ghost"></button></div>
+      <div id="sampleBox" class="explain-box hidden"></div>
+      <div id="noteBox" class="explain-box"></div>
+    </section>
+
+    <section id="quizCard" class="card hidden">
+      <div class="topbar">
+        <div><span class="pill" id="progressText"></span><span class="pill" id="difficultyText"></span><span class="pill timer-pill hidden" id="timerDisplay"></span></div>
+        <button id="quitBtn" class="ghost"></button>
+      </div>
+      <div class="progress-wrap"><div id="progressBar" class="progress"></div></div>
+      <div id="questionTitle" class="question-title"></div>
+      <div id="questionExtra" class="question-extra"></div>
+      <div id="questionMain" class="question-main"></div>
+      <div id="options" class="options"></div>
+      <div id="feedback" class="feedback"></div>
+      <div id="solutionBox" class="solution-box hidden"></div>
+      <div class="actions"><button id="nextBtn" disabled></button></div>
+    </section>
+
+    <section id="resultCard" class="card hidden">
+      <h2 id="resultTitle"></h2>
+      <div class="result-grid">
+        <div class="stat"><div id="scoreNum" class="num">0/0</div><div id="scoreLabel" class="label"></div></div>
+        <div class="stat"><div id="accuracyNum" class="num">0%</div><div id="accuracyLabel" class="label"></div></div>
+        <div class="stat"><div id="wrongNum" class="num">0</div><div id="wrongLabel" class="label"></div></div>
+      </div>
+      <h3 id="wrongReviewTitle"></h3>
+      <div id="wrongList" class="wrong-list"></div>
+      <div class="actions" style="margin-top:22px;"><button id="restartBtn"></button><button id="reviewWrongBtn" class="secondary"></button></div>
+    </section>
+  </main>
+
+  <script>
+    const GAME_TEXT = {
+      en: {
+        toolBadge: "Algebra II",
+        title: "Logarithmic Functions Practice",
+        subtitle: "Practice logarithmic form, log properties, equations, transformations, inverse functions, and logarithmic models.",
+        note: "This tool uses randomized topic templates with typed answer choices. Numeric, equation, statement, and comparison choices are kept separate.",
+        questionTitle: "Choose the correct answer.",
+        promptConvertExp: "Convert to exponential form.",
+        promptConvertLog: "Convert to logarithmic form.",
+        promptEvaluate: "Evaluate the logarithm.",
+        promptIdentifyBase: "Identify the base.",
+        promptIdentifyArgument: "Identify the argument.",
+        promptIdentifyValue: "Identify the value.",
+        promptDefined: "Choose the correct definition statement.",
+        promptSimplify: "Simplify the expression.",
+        promptExpand: "Expand the logarithmic expression.",
+        promptCondense: "Condense into one logarithm.",
+        promptGraphFeature: "Choose the correct graph feature.",
+        promptEquation: "Solve the logarithmic equation.",
+        promptTransform: "Choose the correct transformation statement.",
+        promptChooseFunction: "Choose the logarithmic function that matches the description.",
+        promptChangeBase: "Choose the correct change-of-base form.",
+        promptInverse: "Find the inverse function.",
+        promptModel: "Use the logarithmic model.",
+        promptCompare: "Compare the logarithmic values.",
+        promptStatement: "Choose the correct statement.",
+        difficultyOptions: {
+          easy: "Easy: log meaning, simple values, components, and definition rules",
+          medium: "Medium: properties, expand/condense, basic graph facts, and simple equations",
+          hard: "Hard: shifted equations, property equations, graph transformations, and change of base",
+          expert: "Expert: extraneous solutions, inverse functions, models, comparisons, and mixed statements",
+          mixed: "Mixed: balanced practice from all difficulty levels"
+        },
+        suggestion: "Suggestion: translate logs to exponentials, check the domain, and keep each answer type consistent.",
+        notes: {
+          logMeaning: "use log_b(A)=c iff b^c=A",
+          evaluate: "rewrite the argument as a power of the base",
+          components: "read base, argument, and value from the log statement",
+          defined: "base must be positive and not 1; argument must be positive",
+          product: "use the product rule",
+          quotient: "use the quotient rule",
+          power: "use the power rule",
+          condense: "combine logs using the inverse property of log rules",
+          graph: "read domain and asymptote from the inside expression",
+          equation: "convert to exponential form, then solve",
+          domainCheck: "check that every log argument is positive",
+          transform: "x-h shifts right h; +k shifts up k",
+          inverse: "swap x and y, then solve for y",
+          compare: "use monotonicity or rewrite as exact values"
+        }
+      },
+      zh: {
+        toolBadge: "Algebra II",
+        title: "对数函数专项练习",
+        subtitle: "练习对数形式、对数性质、对数方程、函数变换、反函数和对数模型。",
+        note: "这个工具使用随机题型模板，并按答案类型生成选项：数字、方程、说法和比较类选项不会混在一起。",
+        questionTitle: "请阅读题干，并选择正确答案。",
+        promptConvertExp: "转换成指数形式。",
+        promptConvertLog: "转换成对数形式。",
+        promptEvaluate: "计算对数的值。",
+        promptIdentifyBase: "指出 base。",
+        promptIdentifyArgument: "指出 argument。",
+        promptIdentifyValue: "指出 value。",
+        promptDefined: "选择正确的定义域判断。",
+        promptSimplify: "化简表达式。",
+        promptExpand: "展开对数表达式。",
+        promptCondense: "合并成一个对数。",
+        promptGraphFeature: "选择正确的图像特征。",
+        promptEquation: "解对数方程。",
+        promptTransform: "选择正确的函数变换说法。",
+        promptChooseFunction: "选择符合描述的对数函数。",
+        promptChangeBase: "选择正确的换底公式形式。",
+        promptInverse: "求反函数。",
+        promptModel: "使用对数模型。",
+        promptCompare: "比较两个对数值。",
+        promptStatement: "选择正确说法。",
+        difficultyOptions: {
+          easy: "简单：log 的含义、基础求值、组成部分和定义条件",
+          medium: "中等：对数性质、展开合并、基础图像特征和简单方程",
+          hard: "困难：带平移的方程、性质方程、图像变换和换底公式",
+          expert: "专家：增根检查、反函数、模型、大小比较和综合判断",
+          mixed: "混合：从所有难度中均衡出题"
+        },
+        suggestion: "建议：把对数转成指数形式，检查 argument 是否为正，并保持选项类型一致。",
+        notes: {
+          logMeaning: "使用 log_b(A)=c 等价于 b^c=A",
+          evaluate: "把 argument 写成 base 的幂",
+          components: "从对数式中读出 base、argument 和 value",
+          defined: "base 必须为正且不等于 1，argument 必须为正",
+          product: "使用乘法法则",
+          quotient: "使用除法法则",
+          power: "使用幂法则",
+          condense: "反向使用对数性质来合并",
+          graph: "从括号内部读 domain 和 vertical asymptote",
+          equation: "先转成指数形式，再解方程",
+          domainCheck: "检查每一个 log 的 argument 都必须为正",
+          transform: "x-h 表示右移 h，+k 表示上移 k",
+          inverse: "交换 x 和 y，然后解出 y",
+          compare: "用单调性或化成精确值比较"
+        }
+      }
+    };
+
+    const T = {
+      en: {
+        htmlLang: "en",
+        navPractice: "Practice Library",
+        navHome: "Home",
+        setupTitle: "Start Practice",
+        difficultyLabel: "Difficulty",
+        questionCountLabel: "Number of Questions",
+        optionCountLabel: "Number of Choices",
+        timedModeText: "Enable Timed Mode",
+        timedModeHint: "Off means no countdown. On means each question has its own timer.",
+        timerLevelLabel: "Timer Level",
+        startBtn: "Start",
+        sampleBtn: "Generate Sample Question",
+        quitBtn: "End This Round",
+        nextBtn: "Next Question",
+        resultBtn: "See Results",
+        correctFeedback: "Correct!",
+        solutionTitle: "Correct Solution",
+        solutionFinal: "Answer:",
+        resultTitle: "Practice Results",
+        scoreLabel: "Correct Answers",
+        accuracyLabel: "Accuracy",
+        wrongLabel: "Wrong Answers",
+        wrongReviewTitle: "Wrong Answer Review",
+        restartBtn: "Practice Again",
+        reviewWrongBtn: "Practice Similar Wrong Types",
+        noWrong: "No wrong answers this round.",
+        noWrongTip: "Great job. Try a harder level next.",
+        yourAnswer: "Your answer",
+        correctAnswer: "Correct answer",
+        timeUpAnswer: "No answer: time is up",
+        sampleTitle: "Sample Question",
+        sampleQuestion: "Question",
+        sampleAnswer: "Correct answer",
+        sampleOptions: "Sample choices",
+        incorrectPrefix: "Incorrect. The correct answer is",
+        timeUpPrefix: "Time is up. The correct answer is",
+        progress: (a, b) => `Question ${a} / ${b}`,
+        optionCount: n => `${n} choices`,
+        timerDisplay: s => `Time left: ${formatTime(s)}`,
+        difficulties: { easy: "Easy", medium: "Medium", hard: "Hard", expert: "Expert", mixed: "Mixed" },
+        timerOptions: {
+          timer_easy: "Easy: 2 minutes per question",
+          timer_medium: "Medium: 1 minute per question",
+          timer_hard: "Hard: 30 seconds per question",
+          timer_expert: "Expert: 15 seconds per question"
+        }
+      },
+      zh: {
+        htmlLang: "zh-CN",
+        navPractice: "练习库",
+        navHome: "主页",
+        setupTitle: "开始练习",
+        difficultyLabel: "难度",
+        questionCountLabel: "题目数量",
+        optionCountLabel: "选项数量",
+        timedModeText: "开启计时模式",
+        timedModeHint: "关闭时没有倒计时；开启后每题都有独立计时。",
+        timerLevelLabel: "计时等级",
+        startBtn: "开始",
+        sampleBtn: "生成样题",
+        quitBtn: "结束本轮",
+        nextBtn: "下一题",
+        resultBtn: "查看结果",
+        correctFeedback: "正确！",
+        solutionTitle: "正确解法",
+        solutionFinal: "答案：",
+        resultTitle: "练习结果",
+        scoreLabel: "答对题数",
+        accuracyLabel: "正确率",
+        wrongLabel: "错题数",
+        wrongReviewTitle: "错题回顾",
+        restartBtn: "再练一轮",
+        reviewWrongBtn: "练习相似错题",
+        noWrong: "本轮没有错题。",
+        noWrongTip: "很好，可以挑战更高难度。",
+        yourAnswer: "你的答案",
+        correctAnswer: "正确答案",
+        timeUpAnswer: "未作答：时间到",
+        sampleTitle: "样题",
+        sampleQuestion: "题目",
+        sampleAnswer: "正确答案",
+        sampleOptions: "样例选项",
+        incorrectPrefix: "不正确。正确答案是",
+        timeUpPrefix: "时间到。正确答案是",
+        progress: (a, b) => `第 ${a} / ${b} 题`,
+        optionCount: n => `${n} 个选项`,
+        timerDisplay: s => `剩余时间：${formatTime(s)}`,
+        difficulties: { easy: "简单", medium: "中等", hard: "困难", expert: "专家", mixed: "混合" },
+        timerOptions: {
+          timer_easy: "简单：每题 2 分钟",
+          timer_medium: "中等：每题 1 分钟",
+          timer_hard: "困难：每题 30 秒",
+          timer_expert: "专家：每题 15 秒"
+        }
+      }
+    };
+
+    const TIMER_DURATIONS = { timer_easy: 120, timer_medium: 60, timer_hard: 30, timer_expert: 15 };
+
+    const setupCard = document.getElementById("setupCard");
+    const quizCard = document.getElementById("quizCard");
+    const resultCard = document.getElementById("resultCard");
+    const difficultyEl = document.getElementById("difficulty");
+    const questionCountEl = document.getElementById("questionCount");
+    const optionCountEl = document.getElementById("optionCount");
+    const timedModeEl = document.getElementById("timedMode");
+    const timerLevelEl = document.getElementById("timerLevel");
+    const startBtn = document.getElementById("startBtn");
+    const sampleBtn = document.getElementById("sampleBtn");
+    const quitBtn = document.getElementById("quitBtn");
+    const nextBtn = document.getElementById("nextBtn");
+    const restartBtn = document.getElementById("restartBtn");
+    const reviewWrongBtn = document.getElementById("reviewWrongBtn");
+    const progressText = document.getElementById("progressText");
+    const difficultyText = document.getElementById("difficultyText");
+    const timerDisplay = document.getElementById("timerDisplay");
+    const progressBar = document.getElementById("progressBar");
+    const questionTitle = document.getElementById("questionTitle");
+    const questionExtra = document.getElementById("questionExtra");
+    const questionMain = document.getElementById("questionMain");
+    const optionsEl = document.getElementById("options");
+    const feedback = document.getElementById("feedback");
+    const solutionBox = document.getElementById("solutionBox");
+    const sampleBox = document.getElementById("sampleBox");
+    const noteBox = document.getElementById("noteBox");
+    const resultTitle = document.getElementById("resultTitle");
+    const scoreNum = document.getElementById("scoreNum");
+    const accuracyNum = document.getElementById("accuracyNum");
+    const wrongNum = document.getElementById("wrongNum");
+    const wrongList = document.getElementById("wrongList");
+
+    let quiz = [];
+    let wrongAnswers = [];
+    let currentIndex = 0;
+    let correctCount = 0;
+    let answered = false;
+    let timerId = null;
+    let secondsLeft = 0;
+    let lastWrongTypes = [];
+
+    function getLang() { return localStorage.getItem("mathcomplete_lang") === "zh" ? "zh" : "en"; }
+    function tr() { return T[getLang()]; }
+    function gt() { return GAME_TEXT[getLang()]; }
+    function formatTime(seconds) {
+      const m = Math.floor(seconds / 60);
+      const s = seconds % 60;
+      return `${m}:${String(s).padStart(2, "0")}`;
+    }
+    function escapeHtml(value) {
+      return String(value).replace(/[&<>"]/g, ch => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[ch]));
+    }
+    function escapeTexText(value) {
+      return String(value)
+        .replace(/\\/g, "\\textbackslash{}")
+        .replace(/([#$%&_{}])/g, "\\$1")
+        .replace(/~/g, "\\textasciitilde{}")
+        .replace(/\^/g, "\\textasciicircum{}");
+    }
+    function textLatex(value) { return `\\text{${escapeTexText(value)}}`; }
+    function displayLatex(value) {
+      let s = String(value);
+      if (getLang() !== "zh") return s;
+      const exact = [
+        ["\\text{Undefined: argument must be positive}", "\\text{无定义：argument 必须为正}"],
+        ["\\text{Undefined: base must be positive}", "\\text{无定义：base 必须为正}"],
+        ["\\text{Undefined: base cannot be 1}", "\\text{无定义：base 不能等于 1}"],
+        ["\\text{Undefined: base must be greater than 1}", "\\text{无定义：base 必须大于 1}"],
+        ["\\text{Undefined: argument may be zero}", "\\text{无定义：argument 不能为 0}"],
+        ["\\text{Undefined: value must be positive}", "\\text{错误说法：value 不需要为正}"],
+        ["\\text{Undefined: base and argument are both invalid}", "\\text{无定义：base 和 argument 都不合法}"],
+        ["\\text{Range: all real numbers}", "\\text{值域：全体实数}"],
+        ["\\text{Domain: all real numbers}", "\\text{定义域：全体实数}"],
+        ["\\text{No horizontal shift}", "\\text{无水平平移}"],
+        ["\\text{No vertical shift}", "\\text{无竖直平移}"],
+        ["\\text{Defined}", "\\text{已定义}"],
+        ["\\text{Increasing}", "\\text{递增}"],
+        ["\\text{Decreasing}", "\\text{递减}"],
+        ["\\text{increasing}", "\\text{递增}"],
+        ["\\text{decreasing}", "\\text{递减}"],
+        ["\\text{no solution}", "\\text{无解}"],
+        ["\\text{none of these}", "\\text{以上都不是}"],
+        ["\\text{cannot be determined}", "\\text{无法判断}"],
+        ["\\text{base}", "\\text{base}"],
+        ["\\text{argument}", "\\text{argument}"],
+        ["\\text{value}", "\\text{value}"],
+        ["\\text{valid}", "\\text{合法}"],
+        ["\\text{invalid}", "\\text{不合法}"]
+      ];
+      exact.forEach(([from, to]) => { s = s.split(from).join(to); });
+      s = s
+        .replace(/\\text\{Domain: \}/g, "\\text{定义域：}")
+        .replace(/\\text\{Range: \}/g, "\\text{值域：}")
+        .replace(/\\text\{Vertical asymptote: \}/g, "\\text{垂直渐近线：}")
+        .replace(/\\text\{Horizontal asymptote: \}/g, "\\text{水平渐近线：}")
+        .replace(/\\text\{x-intercept: \}/g, "\\text{x 截距：}")
+        .replace(/\\text\{Shift right \}/g, "\\text{向右平移 }")
+        .replace(/\\text\{Shift left \}/g, "\\text{向左平移 }")
+        .replace(/\\text\{Shift up \}/g, "\\text{向上平移 }")
+        .replace(/\\text\{Shift down \}/g, "\\text{向下平移 }")
+        .replace(/\\text\{Passes through \}/g, "\\text{经过 }")
+        .replace(/\\text\{Richter difference if amplitude ratio is \}/g, "\\text{当振幅比为 }")
+        .replace(/\\text\{same argument greater than \}/g, "\\text{同底时 argument 更大：}")
+        .replace(/\\text\{smaller base gives larger log value here\}/g, "\\text{此处 base 越小 log 值越大}")
+        .replace(/\\text\{choice \}/g, "\\text{选项 }");
+      return s;
+    }
+
+    function mathSpan(latex, cls = "") {
+      const display = displayLatex(answerToString(latex));
+      return `<span class="math-render ${cls}" data-latex="${escapeHtml(display)}">${escapeHtml(display)}</span>`;
+    }
+    function renderTaggedMath(root = document) {
+      root.querySelectorAll(".math-render").forEach(el => {
+        const latex = el.dataset.latex || el.textContent || "";
+        try {
+          katex.render(latex, el, { throwOnError: false, displayMode: false });
+        } catch (e) {
+          el.textContent = latex;
+        }
+      });
+    }
+    function renderMainLatex(latex) {
+      const display = displayLatex(latex);
+      questionMain.dataset.latex = display;
+      try {
+        katex.render(display, questionMain, { throwOnError: false, displayMode: true });
+      } catch (e) {
+        questionMain.textContent = display;
+      }
+    }
+    function gcd(a, b) { a = Math.abs(a); b = Math.abs(b); while (b) [a, b] = [b, a % b]; return a || 1; }
+    function frac(n, d) {
+      if (d < 0) { n = -n; d = -d; }
+      const g = gcd(n, d); n /= g; d /= g;
+      return d === 1 ? `${n}` : `\\frac{${n}}{${d}}`;
+    }
+    function randInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+    function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+    function shuffle(arr) {
+      const out = [...arr];
+      for (let i = out.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [out[i], out[j]] = [out[j], out[i]];
+      }
+      return out;
+    }
+    function normalizeAnswer(value) { return String(value).replace(/\s+/g, "").replace(/\\left|\\right/g, ""); }
+    function isOptionObject(value) { return value && typeof value === "object" && Object.prototype.hasOwnProperty.call(value, "value"); }
+    function answerToString(value) { return isOptionObject(value) ? String(value.value) : String(value); }
+    function answerKey(value) { return normalizeAnswer(answerToString(value)); }
+    function optionFamily(value) { return isOptionObject(value) ? value.family || "" : ""; }
+    function sameReasonFamily(a, b) {
+      const fa = optionFamily(a);
+      const fb = optionFamily(b);
+      return Boolean(fa && fb && fa === fb);
+    }
+    function opt(value, code, family) { return { value, code, family }; }
+    function definedChoice(code) {
+      const choices = {
+        DEFINED: opt("\\text{Defined}", "DEFINED", "VALID"),
+        ARGUMENT_DOMAIN: opt("\\text{Undefined: argument must be positive}", "ARGUMENT_DOMAIN", "ARGUMENT_DOMAIN"),
+        BASE_POSITIVE: opt("\\text{Undefined: base must be positive}", "BASE_POSITIVE", "BASE_DOMAIN"),
+        BASE_ONE: opt("\\text{Undefined: base cannot be 1}", "BASE_ONE", "BASE_ONE"),
+        MULTIPLE_INVALID: opt("\\text{Undefined: base and argument are both invalid}", "MULTIPLE_INVALID", "MULTIPLE_INVALID")
+      };
+      return choices[code];
+    }
+    function powInt(b, e) { return Math.round(Math.pow(b, e)); }
+    function logb(b, arg) { return `\\log_{${b}}(${arg})`; }
+    function makeQuestion({ type, difficulty, answerKind, promptKey, main, answer, distractors = [], solution = [] }) {
+      return { type, difficulty, answerKind, promptKey, main, plain: main, answer, distractors, solution, options: [] };
+    }
+    function line(math, noteKey) { return { math, noteKey }; }
+
+    function addUnique(list, item) {
+      if (item === undefined || item === null) return;
+      const key = answerKey(item);
+      if (!key) return;
+      if (!list.some(x => answerKey(x) === key)) list.push(item);
+    }
+    function fallbackOptions(q) {
+      const kind = q.answerKind;
+      if (kind === "number") return ["0", "1", "-1", "2", "3", "4", "5"];
+      if (kind === "equation") return ["x=0", "x=1", "x=-1", "\\text{no solution}", "x>0", "x<0"];
+      if (kind === "conversion") return ["2^3=8", "3^2=9", "\\log_{2}(8)=3", "\\log_{3}(9)=2"];
+      if (kind === "defined") return [definedChoice("DEFINED"), definedChoice("ARGUMENT_DOMAIN"), definedChoice("BASE_POSITIVE"), definedChoice("BASE_ONE"), definedChoice("MULTIPLE_INVALID")];
+      if (kind === "logExpression") return ["\\log_b(x)+\\log_b(y)", "\\log_b(x)-\\log_b(y)", "2\\log_b(x)", "\\log_b(xy)", "\\log_b\\left(\\frac{x}{y}\\right)"];
+      if (kind === "graph") return ["\\text{Domain: }x>0", "\\text{Range: all real numbers}", "\\text{Vertical asymptote: }x=0", "\\text{x-intercept: }(1,0)"];
+      if (kind === "statement") return ["\\text{Domain: }x>0", "\\text{Range: all real numbers}", "\\text{Vertical asymptote: }x=0", "\\text{Increasing}", "\\text{Decreasing}"];
+      if (kind === "function") return ["y=\\log_{2}(x)", "y=\\log_{3}(x)", "y=\\log_{2}(x-1)", "y=\\log_{2}(x)+1"];
+      if (kind === "comparison") return ["A>B", "A<B", "A=B", "\\text{cannot be determined}"];
+      if (kind === "inverse") return ["f^{-1}(x)=\\log_{2}(x)", "f^{-1}(x)=2^x", "f^{-1}(x)=\\log_{2}(x)+1", "f^{-1}(x)=2^x-1"];
+      return ["0", "1", "-1", "\\text{none of these}"];
+    }
+    function isValidDistractorForQuestion(item, q) {
+      if (answerKey(item) === answerKey(q.answer)) return false;
+      if (sameReasonFamily(item, q.answer)) return false;
+      return true;
+    }
+    function generateOptions(q, count) {
+      const primary = [];
+      q.distractors.forEach(item => addUnique(primary, item));
+      const options = [q.answer];
+      shuffle(primary.filter(item => isValidDistractorForQuestion(item, q))).forEach(item => {
+        if (options.length < count) addUnique(options, item);
+      });
+      if (options.length < count) {
+        const backup = [];
+        fallbackOptions(q).forEach(item => addUnique(backup, item));
+        shuffle(backup.filter(item => isValidDistractorForQuestion(item, q))).forEach(item => {
+          if (options.length < count) addUnique(options, item);
+        });
+      }
+      let filler = 1;
+      while (options.length < count && filler <= 20) {
+        addUnique(options, `\text{none of these}`);
+        addUnique(options, `\text{cannot be determined}`);
+        addUnique(options, `\text{choice }${filler}`);
+        filler += 1;
+      }
+      return shuffle(options).slice(0, count);
+    }
+
+    function qEasyConvert() {
+      const sub = randInt(0, 2);
+      const b = pick([2, 3, 4, 5, 10]);
+      const e = randInt(2, b === 10 ? 4 : 5);
+      const val = powInt(b, e);
+      if (sub === 0) {
+        const main = `\\log_{${b}}(${val})=${e}`;
+        return makeQuestion({
+          type: "easy-convert", difficulty: "easy", answerKind: "conversion", promptKey: "promptConvertExp", main,
+          answer: `${b}^{${e}}=${val}`,
+          distractors: [`${e}^{${b}}=${val}`, `${b}^{${val}}=${e}`, `${val}^{${e}}=${b}`, `${e}^{${val}}=${b}`, `${b}\\cdot ${e}=${val}`],
+          solution: [line(`\\log_{${b}}(${val})=${e}`, "logMeaning"), line(`${b}^{${e}}=${val}`, "logMeaning")]
+        });
+      }
+      if (sub === 1) {
+        const main = `${b}^{${e}}=${val}`;
+        return makeQuestion({
+          type: "easy-convert", difficulty: "easy", answerKind: "conversion", promptKey: "promptConvertLog", main,
+          answer: `\\log_{${b}}(${val})=${e}`,
+          distractors: [`\\log_{${e}}(${val})=${b}`, `\\log_{${b}}(${e})=${val}`, `\\log_{${val}}(${b})=${e}`, `\\log_{${val}}(${e})=${b}`],
+          solution: [line(`${b}^{${e}}=${val}`, "logMeaning"), line(`\\log_{${b}}(${val})=${e}`, "logMeaning")]
+        });
+      }
+      const main = `\\log_{${b}}(${val})=c`;
+      return makeQuestion({
+        type: "easy-convert", difficulty: "easy", answerKind: "conversion", promptKey: "promptConvertExp", main,
+        answer: `${b}^{c}=${val}`,
+        distractors: [`c^{${b}}=${val}`, `${val}^{c}=${b}`, `${b}^{${val}}=c`, `${b}c=${val}`],
+        solution: [line(`\\log_b(A)=c\\iff b^c=A`, "logMeaning"), line(`${b}^{c}=${val}`, "logMeaning")]
+      });
+    }
+    function qEasyEvaluate() {
+      const sub = randInt(0, 3);
+      let b, e, val, main, ans;
+      if (sub === 0) { b = pick([2,3,4,5]); e = randInt(2,5); val = powInt(b,e); main = `\\log_{${b}}(${val})`; ans = `${e}`; }
+      else if (sub === 1) { b = pick([2,3,5,7,10]); main = `\\log_{${b}}(1)`; ans = "0"; e = 0; val = 1; }
+      else if (sub === 2) { b = pick([2,3,5,7,10]); main = `\\log_{${b}}(${b})`; ans = "1"; e = 1; val = b; }
+      else { b = 10; e = randInt(2,6); val = powInt(10,e); main = `\\log(${val})`; ans = `${e}`; }
+      return makeQuestion({
+        type: "easy-evaluate", difficulty: "easy", answerKind: "number", promptKey: "promptEvaluate", main, answer: ans,
+        distractors: [`${Number(ans)+1}`, `${Number(ans)-1}`, `${b}`, `${val}`, `${Math.max(0, Number(ans)+2)}`],
+        solution: [line(val === 1 ? `${b}^{0}=1` : `${b}^{${ans}}=${val}`, "evaluate"), line(`${main}=${ans}`, "evaluate")]
+      });
+    }
+    function qEasyIdentify() {
+      const b = pick([2,3,4,5,6,10]);
+      const e = randInt(2,4);
+      const val = powInt(b,e);
+      const ask = pick(["base", "argument", "value"]);
+      const promptKey = ask === "base" ? "promptIdentifyBase" : ask === "argument" ? "promptIdentifyArgument" : "promptIdentifyValue";
+      const answer = ask === "base" ? `${b}` : ask === "argument" ? `${val}` : `${e}`;
+      const main = `\\log_{${b}}(${val})=${e}`;
+      return makeQuestion({
+        type: "easy-identify", difficulty: "easy", answerKind: "number", promptKey, main, answer,
+        distractors: [`${b}`, `${val}`, `${e}`, `${b*e}`, `${val/b}`],
+        solution: [line(`\\log_{\\text{base}}(\\text{argument})=\\text{value}`, "components"), line(main, "components")]
+      });
+    }
+    function qEasyDefined() {
+      const sub = randInt(0, 3);
+      let b, arg, answer, solutionLines;
+      if (sub === 0) {
+        b = pick([2, 3, 5, 10]);
+        arg = pick([2, 8, 25, 100]);
+        answer = definedChoice("DEFINED");
+        solutionLines = [line(`b=${b}>0,\\ b\\ne1`, "defined"), line(`A=${arg}>0`, "defined")];
+      } else if (sub === 1) {
+        b = 1;
+        arg = pick([5, 10, 20]);
+        answer = definedChoice("BASE_ONE");
+        solutionLines = [line(`b=${b}`, "defined"), line("b=1\\text{ is not allowed}", "defined")];
+      } else if (sub === 2) {
+        b = -pick([2, 3, 5]);
+        arg = pick([4, 9, 25]);
+        answer = definedChoice("BASE_POSITIVE");
+        solutionLines = [line(`b=${b}<0`, "defined"), line(`A=${arg}>0`, "defined")];
+      } else {
+        b = pick([2, 3, 5]);
+        arg = pick([0, -1, -4, -9]);
+        answer = definedChoice("ARGUMENT_DOMAIN");
+        solutionLines = [line(`b=${b}>0,\\ b\\ne1`, "defined"), line(`A=${arg}\\le0`, "domainCheck")];
+      }
+      const main = `\\log_{${b}}(${arg})`;
+      return makeQuestion({
+        type: "easy-defined", difficulty: "easy", answerKind: "defined", promptKey: "promptDefined", main, answer,
+        distractors: [definedChoice("DEFINED"), definedChoice("ARGUMENT_DOMAIN"), definedChoice("BASE_POSITIVE"), definedChoice("BASE_ONE")],
+        solution: [line("\\log_b(A)\\text{ requires }b>0,\\ b\\ne1,\\ A>0", "defined"), ...solutionLines]
+      });
+    }
+
+    function qMediumSimplify() {
+      const sub = randInt(0, 3);
+      const b = pick([2,3,4,5]);
+      if (sub === 0) {
+        const m = randInt(1,3), n = randInt(1,3);
+        const A = powInt(b,m), B = powInt(b,n);
+        return makeQuestion({ type:"medium-simplify", difficulty:"medium", answerKind:"number", promptKey:"promptSimplify", main:`\\log_{${b}}(${A})+\\log_{${b}}(${B})`, answer:`${m+n}`,
+          distractors:[`${m*n}`, `${m+n+1}`, `${Math.abs(m-n)}`, `${m}`, `${n}`],
+          solution:[line(`\\log_{${b}}(${A})+\\log_{${b}}(${B})=\\log_{${b}}(${A*B})`, "product"), line(`\\log_{${b}}(${A*B})=${m+n}`, "evaluate")]
+        });
+      }
+      if (sub === 1) {
+        const m = randInt(3,5), n = randInt(1,m-1);
+        const A = powInt(b,m), B = powInt(b,n);
+        return makeQuestion({ type:"medium-simplify", difficulty:"medium", answerKind:"number", promptKey:"promptSimplify", main:`\\log_{${b}}(${A})-\\log_{${b}}(${B})`, answer:`${m-n}`,
+          distractors:[`${m+n}`, `${n-m}`, `${m}`, `${n}`, `${m-n+1}`],
+          solution:[line(`\\log_{${b}}(${A})-\\log_{${b}}(${B})=\\log_{${b}}(${A/B})`, "quotient"), line(`\\log_{${b}}(${A/B})=${m-n}`, "evaluate")]
+        });
+      }
+      if (sub === 2) {
+        const r = randInt(2,4), n = randInt(1,3);
+        const A = powInt(b,n);
+        return makeQuestion({ type:"medium-simplify", difficulty:"medium", answerKind:"number", promptKey:"promptSimplify", main:`${r}\\log_{${b}}(${A})`, answer:`${r*n}`,
+          distractors:[`${r+n}`, `${r}`, `${n}`, `${r*n+1}`, `${Math.abs(r-n)}`],
+          solution:[line(`${r}\\log_{${b}}(${A})=\\log_{${b}}(${A}^{${r}})`, "power"), line(`${r}\\cdot ${n}=${r*n}`, "evaluate")]
+        });
+      }
+      const n = randInt(2,5);
+      return makeQuestion({ type:"medium-simplify", difficulty:"medium", answerKind:"number", promptKey:"promptSimplify", main:`\\log_{${b}}(${b}^{${n}})`, answer:`${n}`,
+        distractors:[`${b}`, `${b*n}`, `${n+1}`, `${n-1}`, `${powInt(b,n)}`],
+        solution:[line(`\\log_{${b}}(${b}^{${n}})=${n}`, "evaluate")]
+      });
+    }
+    function qMediumExpand() {
+      const sub = randInt(0, 4);
+      const b = pick([2,3,5,7]);
+      let main, answer, distractors;
+      if (sub === 0) { main = `\\log_{${b}}(xy)`; answer = `\\log_{${b}}x+\\log_{${b}}y`; distractors = [`\\log_{${b}}x-\\log_{${b}}y`, `\\log_{${b}}(x+y)`, `\\log_{${b}}x\\cdot\\log_{${b}}y`, `2\\log_{${b}}(xy)`]; }
+      else if (sub === 1) { main = `\\log_{${b}}\\left(\\frac{x}{y}\\right)`; answer = `\\log_{${b}}x-\\log_{${b}}y`; distractors = [`\\log_{${b}}x+\\log_{${b}}y`, `\\log_{${b}}y-\\log_{${b}}x`, `\\frac{\\log_{${b}}x}{\\log_{${b}}y}`, `\\log_{${b}}(x-y)`]; }
+      else if (sub === 2) { const n = randInt(2,5); main = `\\log_{${b}}(x^{${n}}y)`; answer = `${n}\\log_{${b}}x+\\log_{${b}}y`; distractors = [`\\log_{${b}}x+${n}\\log_{${b}}y`, `${n}(\\log_{${b}}x+\\log_{${b}}y)`, `\\log_{${b}}x+\\log_{${b}}y+${n}`, `${n}\\log_{${b}}(xy)`]; }
+      else if (sub === 3) { main = `\\log_{${b}}(\\sqrt{x})`; answer = `\\frac{1}{2}\\log_{${b}}x`; distractors = [`2\\log_{${b}}x`, `\\log_{${b}}x-\\log_{${b}}2`, `\\log_{${b}}(x^2)`, `\\sqrt{\\log_{${b}}x}`]; }
+      else { const n = randInt(2,4); main = `\\log_{${b}}\\left(\\frac{x}{y^{${n}}}\\right)`; answer = `\\log_{${b}}x-${n}\\log_{${b}}y`; distractors = [`\\log_{${b}}x+${n}\\log_{${b}}y`, `${n}\\log_{${b}}x-\\log_{${b}}y`, `\\log_{${b}}x-\\log_{${b}}y^{${n}}`, `\\log_{${b}}(x-y^{${n}})`]; }
+      return makeQuestion({ type:"medium-expand", difficulty:"medium", answerKind:"logExpression", promptKey:"promptExpand", main, answer, distractors,
+        solution:[line(main, sub === 1 || sub === 4 ? "quotient" : sub === 3 ? "power" : "product"), line(answer, "power")]
+      });
+    }
+    function qMediumCondense() {
+      const sub = randInt(0, 4);
+      const b = pick([2,3,5,7]);
+      let main, answer, distractors;
+      if (sub === 0) { main = `\\log_{${b}}x+\\log_{${b}}y`; answer = `\\log_{${b}}(xy)`; distractors = [`\\log_{${b}}(x+y)`, `\\log_{${b}}\\left(\\frac{x}{y}\\right)`, `\\log_{${b}}x\\log_{${b}}y`, `2\\log_{${b}}(xy)`]; }
+      else if (sub === 1) { main = `\\log_{${b}}x-\\log_{${b}}y`; answer = `\\log_{${b}}\\left(\\frac{x}{y}\\right)`; distractors = [`\\log_{${b}}(x-y)`, `\\log_{${b}}\\left(\\frac{y}{x}\\right)`, `\\log_{${b}}(xy)`, `\\frac{\\log_{${b}}x}{\\log_{${b}}y}`]; }
+      else if (sub === 2) { const n = randInt(2,5); main = `${n}\\log_{${b}}x`; answer = `\\log_{${b}}(x^{${n}})`; distractors = [`\\log_{${b}}(${n}x)`, `\\log_{${b}}x^{ }+${n}`, `\\log_{${b}}(x+${n})`, `\\log_{${b}}(${n}^{x})`]; }
+      else if (sub === 3) { const n = randInt(2,4); main = `${n}\\log_{${b}}x+\\log_{${b}}y`; answer = `\\log_{${b}}(x^{${n}}y)`; distractors = [`\\log_{${b}}(xy^{${n}})`, `\\log_{${b}}(x^{${n}}+y)`, `\\log_{${b}}(x^{${n}}/y)`, `${n}\\log_{${b}}(xy)`]; }
+      else { const n = randInt(2,4); main = `\\log_{${b}}x-${n}\\log_{${b}}y`; answer = `\\log_{${b}}\\left(\\frac{x}{y^{${n}}}\\right)`; distractors = [`\\log_{${b}}\\left(\\frac{x^{${n}}}{y}\\right)`, `\\log_{${b}}(xy^{${n}})`, `\\log_{${b}}(x-y^{${n}})`, `\\log_{${b}}\\left(\\frac{y^{${n}}}{x}\\right)`]; }
+      return makeQuestion({ type:"medium-condense", difficulty:"medium", answerKind:"logExpression", promptKey:"promptCondense", main, answer, distractors,
+        solution:[line(main, "condense"), line(answer, "condense")]
+      });
+    }
+    function qMediumGraph() {
+      const b = pick([2,3,5]);
+      const ask = pick(["domain", "range", "asymptote", "intercept", "mono"]);
+      const main = `y=\\log_{${b}}(x)`;
+      let answer;
+      if (ask === "domain") answer = "\\text{Domain: }x>0";
+      else if (ask === "range") answer = "\\text{Range: all real numbers}";
+      else if (ask === "asymptote") answer = "\\text{Vertical asymptote: }x=0";
+      else if (ask === "intercept") answer = "\\text{x-intercept: }(1,0)";
+      else answer = "\\text{Increasing}";
+      return makeQuestion({ type:"medium-graph", difficulty:"medium", answerKind:"graph", promptKey:"promptGraphFeature", main, answer,
+        distractors:["\\text{Domain: }x<0", "\\text{Range: }y>0", "\\text{Vertical asymptote: }y=0", "\\text{x-intercept: }(0,1)", "\\text{Decreasing}", "\\text{Domain: all real numbers}"],
+        solution:[line(main, "graph"), line("x>0,\\ y\\in\\mathbb{R},\\ x=0", "graph")]
+      });
+    }
+    function qMediumEquation() {
+      const b = pick([2,3,4,5]);
+      const e = randInt(0,4);
+      const val = powInt(b,e);
+      const main = `\\log_{${b}}(x)=${e}`;
+      return makeQuestion({ type:"medium-equation", difficulty:"medium", answerKind:"equation", promptKey:"promptEquation", main, answer:`x=${val}`,
+        distractors:[`x=${e}`, `x=${b*e}`, `x=${val+b}`, `x=${Math.max(0,val-b)}`, "\\text{no solution}"],
+        solution:[line(main, "equation"), line(`${b}^{${e}}=x`, "logMeaning"), line(`x=${val}`, "equation")]
+      });
+    }
+
+    function qHardShiftedEquation() {
+      const sub = randInt(0,2), b = pick([2,3,5]), e = randInt(2,4), val = powInt(b,e);
+      if (sub === 0) {
+        const h = randInt(1,8), ans = val + h;
+        return makeQuestion({ type:"hard-shifted-equation", difficulty:"hard", answerKind:"equation", promptKey:"promptEquation", main:`\\log_{${b}}(x-${h})=${e}`, answer:`x=${ans}`,
+          distractors:[`x=${val-h}`, `x=${val}`, `x=${ans+1}`, `x=${h-val}`, "\\text{no solution}"],
+          solution:[line(`x-${h}=${b}^{${e}}`, "equation"), line(`x-${h}=${val}`, "evaluate"), line(`x=${ans}`, "equation")]
+        });
+      }
+      if (sub === 1) {
+        const h = randInt(1,8), ans = val - h;
+        return makeQuestion({ type:"hard-shifted-equation", difficulty:"hard", answerKind:"equation", promptKey:"promptEquation", main:`\\log_{${b}}(x+${h})=${e}`, answer:`x=${ans}`,
+          distractors:[`x=${val+h}`, `x=${val}`, `x=${ans-1}`, `x=${-ans}`, "\\text{no solution}"],
+          solution:[line(`x+${h}=${b}^{${e}}`, "equation"), line(`x+${h}=${val}`, "evaluate"), line(`x=${ans}`, "equation")]
+        });
+      }
+      const m = randInt(2,5), c = randInt(1,9);
+      const ansNum = val + c;
+      const ans = frac(ansNum, m);
+      return makeQuestion({ type:"hard-shifted-equation", difficulty:"hard", answerKind:"equation", promptKey:"promptEquation", main:`\\log_{${b}}(${m}x-${c})=${e}`, answer:`x=${ans}`,
+        distractors:[`x=${frac(val-c,m)}`, `x=${frac(val,m)}`, `x=${val+c}`, `x=${frac(c-val,m)}`, "\\text{no solution}"],
+        solution:[line(`${m}x-${c}=${b}^{${e}}`, "equation"), line(`${m}x-${c}=${val}`, "evaluate"), line(`x=${ans}`, "equation")]
+      });
+    }
+    function qHardPropertyEquation() {
+      const sub = randInt(0,2);
+      const b = pick([2,3,5]);
+      if (sub === 0) {
+        const k = pick([1,2,3]);
+        const s = pick([4,5,6,7]);
+        const N = s*(s-k);
+        const main = `\\log_{${b}}(x)+\\log_{${b}}(x-${k})=\\log_{${b}}(${N})`;
+        return makeQuestion({ type:"hard-property-equation", difficulty:"hard", answerKind:"equation", promptKey:"promptEquation", main, answer:`x=${s}`,
+          distractors:[`x=${k-s}`, `x=${N}`, `x=${s-k}`, `x=${s+k}`, "\\text{no solution}"],
+          solution:[line(`\\log_{${b}}(x(x-${k}))=\\log_{${b}}(${N})`, "product"), line(`x(x-${k})=${N}`, "equation"), line(`x=${s}\\quad(\\text{valid})`, "domainCheck")]
+        });
+      }
+      if (sub === 1) {
+        const c = pick([2,3,4,5]), e = randInt(1,3), ans = c*powInt(b,e);
+        const main = `\\log_{${b}}(x)-\\log_{${b}}(${c})=${e}`;
+        return makeQuestion({ type:"hard-property-equation", difficulty:"hard", answerKind:"equation", promptKey:"promptEquation", main, answer:`x=${ans}`,
+          distractors:[`x=${powInt(b,e)}`, `x=${c+powInt(b,e)}`, `x=${Math.max(1, ans-c)}`, `x=${c}`, "\\text{no solution}"],
+          solution:[line(`\\log_{${b}}\\left(\\frac{x}{${c}}\\right)=${e}`, "quotient"), line(`\\frac{x}{${c}}=${b}^{${e}}`, "equation"), line(`x=${ans}`, "equation")]
+        });
+      }
+      const k = randInt(2,6), r = randInt(2,4), ans = frac(k, r-1);
+      const main = `\\log_{${b}}(x+${k})-\\log_{${b}}(x)=\\log_{${b}}(${r})`;
+      return makeQuestion({ type:"hard-property-equation", difficulty:"hard", answerKind:"equation", promptKey:"promptEquation", main, answer:`x=${ans}`,
+        distractors:[`x=${k+r}`, `x=${frac(k,r)}`, `x=${frac(k,r+1)}`, `x=${-k}`, "\\text{no solution}"],
+        solution:[line(`\\log_{${b}}\\left(\\frac{x+${k}}{x}\\right)=\\log_{${b}}(${r})`, "quotient"), line(`\\frac{x+${k}}{x}=${r}`, "equation"), line(`x=${ans}`, "domainCheck")]
+      });
+    }
+    function qHardTransform() {
+      const b = pick([2,3,5]), h = randInt(-5,5), k = randInt(-4,4);
+      const inside = h === 0 ? "x" : h > 0 ? `x-${h}` : `x+${-h}`;
+      const v = `y=\\log_{${b}}(${inside})${k >= 0 ? `+${k}` : k}`;
+      const corrects = [
+        `\\text{Vertical asymptote: }x=${h}`,
+        `\\text{Domain: }x>${h}`,
+        `\\text{Range: all real numbers}`,
+        h > 0 ? `\\text{Shift right }${h}` : h < 0 ? `\\text{Shift left }${-h}` : `\\text{No horizontal shift}`,
+        k > 0 ? `\\text{Shift up }${k}` : k < 0 ? `\\text{Shift down }${-k}` : `\\text{No vertical shift}`
+      ];
+      const answer = pick(corrects);
+      return makeQuestion({ type:"hard-transform", difficulty:"hard", answerKind:"statement", promptKey:"promptTransform", main:v, answer,
+        distractors:[`\\text{Vertical asymptote: }x=${-h}`, `\\text{Vertical asymptote: }y=${h}`, `\\text{Domain: }x<${h}`, `\\text{Range: }y>${k}`, h > 0 ? `\\text{Shift left }${h}` : `\\text{Shift right }${Math.abs(h)}`, k > 0 ? `\\text{Shift down }${k}` : `\\text{Shift up }${Math.abs(k)}`],
+        solution:[line(v, "transform"), line(`x-${h}=0\\Rightarrow x=${h}`, "graph")]
+      });
+    }
+    function qHardChooseFunction() {
+      const b = pick([2,3,5]), h = randInt(-4,4), k = randInt(-3,3);
+      const inside = h === 0 ? "x" : h > 0 ? `x-${h}` : `x+${-h}`;
+      const answer = `y=\\log_{${b}}(${inside})${k >= 0 ? `+${k}` : k}`;
+      const main = `\\begin{array}{c}\\text{Vertical asymptote: }x=${h}\\\\ \\text{Passes through }(${h+1},${k})\\\\ \\text{Increasing}\\end{array}`;
+      return makeQuestion({ type:"hard-choose-function", difficulty:"hard", answerKind:"function", promptKey:"promptChooseFunction", main, answer,
+        distractors:[`y=\\log_{${b}}(${h === 0 ? "x" : h > 0 ? `x+${h}` : `x-${-h}`})${k >= 0 ? `+${k}` : k}`, `y=\\log_{${b}}(${inside})${-k >= 0 ? `+${-k}` : -k}`, `y=\\log_{${b+1}}(${inside})${k >= 0 ? `+${k}` : k}`, `y=\\log_{${b}}(x)${k >= 0 ? `+${k}` : k}`],
+        solution:[line(`x=${h}\\Rightarrow ${inside}=0`, "graph"), line(`\\log_{${b}}(1)+${k}=${k}`, "graph")]
+      });
+    }
+    function qHardChangeBase() {
+      const b = pick([2,3,5,7]), a = pick([6,8,10,12,15,17,20]);
+      const main = `\\log_{${b}}(${a})`;
+      const answer = `\\frac{\\ln(${a})}{\\ln(${b})}`;
+      return makeQuestion({ type:"hard-change-base", difficulty:"hard", answerKind:"logExpression", promptKey:"promptChangeBase", main, answer,
+        distractors:[`\\frac{\\ln(${b})}{\\ln(${a})}`, `\\frac{\\ln(${a})}{${b}}`, `\\frac{${a}}{\\ln(${b})}`, `\\ln(${a}-${b})`, `\\ln(${a})-\\ln(${b})`],
+        solution:[line(`\\log_b(A)=\\frac{\\ln A}{\\ln b}`, "condense"), line(answer, "condense")]
+      });
+    }
+
+    function qExpertComplexEquation() {
+      const sub = randInt(0,2);
+      if (sub === 0) {
+        return makeQuestion({ type:"expert-complex-equation", difficulty:"expert", answerKind:"equation", promptKey:"promptEquation", main:`\\log_{2}(x+1)+\\log_{2}(x-1)=3`, answer:`x=3`,
+          distractors:[`x=\\pm 3`, `x=-3`, `x=4`, `x=2`, "\\text{no solution}"],
+          solution:[line(`\\log_2((x+1)(x-1))=3`, "product"), line(`x^2-1=8`, "equation"), line(`x=3\\quad(-3\\text{ invalid})`, "domainCheck")]
+        });
+      }
+      if (sub === 1) {
+        return makeQuestion({ type:"expert-complex-equation", difficulty:"expert", answerKind:"equation", promptKey:"promptEquation", main:`\\log_{2}(3x-3)-\\log_{2}(x+1)=1`, answer:`x=5`,
+          distractors:[`x=1`, `x=3`, `x=-5`, `x=\\frac{5}{2}`, "\\text{no solution}"],
+          solution:[line(`\\log_2\\left(\\frac{3x-3}{x+1}\\right)=1`, "quotient"), line(`\\frac{3x-3}{x+1}=2`, "equation"), line(`x=5`, "domainCheck")]
+        });
+      }
+      return makeQuestion({ type:"expert-complex-equation", difficulty:"expert", answerKind:"equation", promptKey:"promptEquation", main:`\\log_{5}(x^2-4)=2`, answer:`x=\\pm\\sqrt{29}`,
+        distractors:[`x=\\sqrt{29}`, `x=\\pm 7`, `x=29`, `x=\\pm\\sqrt{21}`, "\\text{no solution}"],
+        solution:[line(`x^2-4=5^2`, "equation"), line(`x^2=29`, "equation"), line(`x=\\pm\\sqrt{29}`, "domainCheck")]
+      });
+    }
+    function qExpertInverse() {
+      const sub = randInt(0,2), b = pick([2,3,5]);
+      if (sub === 0) {
+        const h = randInt(1,5);
+        const main = `f(x)=${b}^{x}+${h}`;
+        const answer = `f^{-1}(x)=\\log_{${b}}(x-${h})`;
+        return makeQuestion({ type:"expert-inverse", difficulty:"expert", answerKind:"inverse", promptKey:"promptInverse", main, answer,
+          distractors:[`f^{-1}(x)=\\log_{${b}}(x)+${h}`, `f^{-1}(x)=${b}^{x-${h}}`, `f^{-1}(x)=\\log_{${b}}(x+${h})`, `f^{-1}(x)=\\frac{x-${h}}{${b}}`],
+          solution:[line(`y=${b}^{x}+${h}`, "inverse"), line(`x=${b}^{y}+${h}`, "inverse"), line(`y=\\log_{${b}}(x-${h})`, "inverse")]
+        });
+      }
+      if (sub === 1) {
+        const h = randInt(1,5), k = randInt(1,4);
+        const main = `g(x)=\\log_{${b}}(x-${h})+${k}`;
+        const answer = `g^{-1}(x)=${b}^{x-${k}}+${h}`;
+        return makeQuestion({ type:"expert-inverse", difficulty:"expert", answerKind:"inverse", promptKey:"promptInverse", main, answer,
+          distractors:[`g^{-1}(x)=${b}^{x+${k}}+${h}`, `g^{-1}(x)=\\log_{${b}}(x-${k})+${h}`, `g^{-1}(x)=${b}^{x-${k}}-${h}`, `g^{-1}(x)=${b}^{x}+${h}+${k}`],
+          solution:[line(`y=\\log_{${b}}(x-${h})+${k}`, "inverse"), line(`x-${k}=\\log_{${b}}(y-${h})`, "inverse"), line(`y=${b}^{x-${k}}+${h}`, "inverse")]
+        });
+      }
+      const a = pick([2,3,4]);
+      const main = `f(x)=${a}\\log_{${b}}(x)`;
+      const answer = `f^{-1}(x)=${b}^{x/${a}}`;
+      return makeQuestion({ type:"expert-inverse", difficulty:"expert", answerKind:"inverse", promptKey:"promptInverse", main, answer,
+        distractors:[`f^{-1}(x)=\\log_{${b}}(${a}x)`, `f^{-1}(x)=${b}^{${a}x}`, `f^{-1}(x)=${a}${b}^{x}`, `f^{-1}(x)=\\frac{${b}^{x}}{${a}}`],
+        solution:[line(`y=${a}\\log_{${b}}x`, "inverse"), line(`\\frac{x}{${a}}=\\log_{${b}}y`, "inverse"), line(`y=${b}^{x/${a}}`, "inverse")]
+      });
+    }
+    function qExpertModel() {
+      const sub = randInt(0,2);
+      if (sub === 0) {
+        const pH = randInt(2,6);
+        const conc = `10^{-${pH}}`;
+        return makeQuestion({ type:"expert-model", difficulty:"expert", answerKind:"number", promptKey:"promptModel", main:`pH=-\\log([H^+]),\\quad [H^+]=${conc}`, answer:`${pH}`,
+          distractors:[`${-pH}`, `${pH+1}`, `${pH-1}`, `${10-pH}`, `${powInt(10,pH)}`],
+          solution:[line(`pH=-\\log(10^{-${pH}})`, "evaluate"), line(`pH=-(-${pH})=${pH}`, "evaluate")]
+        });
+      }
+      if (sub === 1) {
+        const d = randInt(2,5);
+        return makeQuestion({ type:"expert-model", difficulty:"expert", answerKind:"number", promptKey:"promptModel", main:`\\text{Richter difference if amplitude ratio is }10^{${d}}`, answer:`${d}`,
+          distractors:[`${powInt(10,d)}`, `${d+1}`, `${d-1}`, `${2*d}`, `${10*d}`],
+          solution:[line(`d=\\log(10^{${d}})`, "evaluate"), line(`d=${d}`, "evaluate")]
+        });
+      }
+      const I = randInt(2,5);
+      return makeQuestion({ type:"expert-model", difficulty:"expert", answerKind:"number", promptKey:"promptModel", main:`L=10\\log\\left(\\frac{I}{I_0}\\right),\\quad I=10^{${I}}I_0`, answer:`${10*I}`,
+        distractors:[`${I}`, `${powInt(10,I)}`, `${10*(I+1)}`, `${10*(I-1)}`, `${I+10}`],
+        solution:[line(`L=10\\log(10^{${I}})`, "evaluate"), line(`L=${10*I}`, "evaluate")]
+      });
+    }
+    function qExpertCompare() {
+      const sub = randInt(0,2);
+      if (sub === 0) {
+        const b = pick([2,3,5]), a = randInt(2,5), c = a + randInt(1,4);
+        const A = powInt(b,a), C = powInt(b,c);
+        return makeQuestion({ type:"expert-compare", difficulty:"expert", answerKind:"comparison", promptKey:"promptCompare", main:`A=\\log_{${b}}(${A}),\\quad B=\\log_{${b}}(${C})`, answer:`A<B`,
+          distractors:["A>B", "A=B", "\\text{cannot be determined}", "A\\le 0"],
+          solution:[line(`A=${a},\\quad B=${c}`, "compare"), line(`A<B`, "compare")]
+        });
+      }
+      if (sub === 1) {
+        const val = pick([16,64,81]);
+        const pair = val === 81 ? [3,9] : [2,4];
+        return makeQuestion({ type:"expert-compare", difficulty:"expert", answerKind:"comparison", promptKey:"promptCompare", main:`A=\\log_{${pair[0]}}(${val}),\\quad B=\\log_{${pair[1]}}(${val})`, answer:`A>B`,
+          distractors:["A<B", "A=B", "\\text{cannot be determined}", "B<0"],
+          solution:[line(`\\text{same argument greater than }1`, "compare"), line(`\\text{smaller base gives larger log value here}`, "compare")]
+        });
+      }
+      return makeQuestion({ type:"expert-compare", difficulty:"expert", answerKind:"comparison", promptKey:"promptCompare", main:`A=\\log_{2}(8),\\quad B=\\log_{3}(27)`, answer:`A=B`,
+        distractors:["A>B", "A<B", "\\text{cannot be determined}", "A=0"],
+        solution:[line(`A=3,\\quad B=3`, "compare"), line(`A=B`, "compare")]
+      });
+    }
+    function qExpertStatement() {
+      const b = pick([2,3,5]), h = randInt(-5,5), k = randInt(-3,3), a = pick([-2,-1,1,2]);
+      const inside = h === 0 ? "x" : h > 0 ? `x-${h}` : `x+${-h}`;
+      const prefix = a === 1 ? "" : a === -1 ? "-" : `${a}`;
+      const main = `y=${prefix}\\log_{${b}}(${inside})${k >= 0 ? `+${k}` : k}`;
+      const corrects = [`\\text{Vertical asymptote: }x=${h}`, `\\text{Domain: }x>${h}`, "\\text{Range: all real numbers}", a > 0 ? "\\text{Increasing}" : "\\text{Decreasing}"];
+      const answer = pick(corrects);
+      return makeQuestion({ type:"expert-statement", difficulty:"expert", answerKind:"statement", promptKey:"promptStatement", main, answer,
+        distractors:[`\\text{Vertical asymptote: }x=${-h}`, `\\text{Domain: }x<${h}`, `\\text{Range: }y>${k}`, a > 0 ? "\\text{Decreasing}" : "\\text{Increasing}", `\\text{Horizontal asymptote: }y=${k}`],
+        solution:[line(main, "graph"), line(`x=${h},\\quad x>${h}`, "graph"), line(a > 0 ? "\\text{increasing}" : "\\text{decreasing}", "graph")]
+      });
+    }
+
+    const BUILDERS = [
+      qEasyConvert, qEasyEvaluate, qEasyIdentify, qEasyDefined,
+      qMediumSimplify, qMediumExpand, qMediumCondense, qMediumGraph, qMediumEquation,
+      qHardShiftedEquation, qHardPropertyEquation, qHardTransform, qHardChooseFunction, qHardChangeBase,
+      qExpertComplexEquation, qExpertInverse, qExpertModel, qExpertCompare, qExpertStatement
+    ];
+    const TYPES = [
+      [qEasyConvert, "easy-convert"], [qEasyEvaluate, "easy-evaluate"], [qEasyIdentify, "easy-identify"], [qEasyDefined, "easy-defined"],
+      [qMediumSimplify, "medium-simplify"], [qMediumExpand, "medium-expand"], [qMediumCondense, "medium-condense"], [qMediumGraph, "medium-graph"], [qMediumEquation, "medium-equation"],
+      [qHardShiftedEquation, "hard-shifted-equation"], [qHardPropertyEquation, "hard-property-equation"], [qHardTransform, "hard-transform"], [qHardChooseFunction, "hard-choose-function"], [qHardChangeBase, "hard-change-base"],
+      [qExpertComplexEquation, "expert-complex-equation"], [qExpertInverse, "expert-inverse"], [qExpertModel, "expert-model"], [qExpertCompare, "expert-compare"], [qExpertStatement, "expert-statement"]
+    ];
+    TYPES.forEach(([fn, type]) => { fn._type = type; });
+
+    function generateQuestion(difficulty, forcedType = null) {
+      let candidates = BUILDERS;
+      if (forcedType) {
+        candidates = BUILDERS.filter(fn => fn._type === forcedType);
+      } else if (difficulty !== "mixed") {
+        candidates = BUILDERS.filter(fn => fn().difficulty === difficulty);
+      }
+      if (!candidates.length) candidates = BUILDERS;
+      const builder = pick(candidates);
+      const q = builder();
+      q.options = generateOptions(q, Number(optionCountEl.value || 4));
+      return q;
+    }
+    function pickDifficultyForSample(value) { return value === "mixed" ? pick(["easy", "medium", "hard", "expert"]) : value; }
+    function clearTimer() {
+      if (timerId) clearInterval(timerId);
+      timerId = null;
+      timerDisplay.classList.add("hidden");
+      timerDisplay.classList.remove("timer-danger");
+    }
+    function updateTimerControls() {
+      timerLevelEl.disabled = !timedModeEl.checked;
+    }
+    function applyLanguage() {
+      const lang = getLang();
+      document.documentElement.lang = tr().htmlLang;
+      document.querySelectorAll("[data-i18n]").forEach(el => {
+        const key = el.dataset.i18n;
+        if (tr()[key]) el.textContent = tr()[key];
+      });
+      document.getElementById("toolBadge").textContent = gt().toolBadge;
+      document.getElementById("pageTitle").textContent = gt().title;
+      document.getElementById("pageSubtitle").textContent = gt().subtitle;
+      document.getElementById("setupTitle").textContent = tr().setupTitle;
+      document.getElementById("difficultyLabel").textContent = tr().difficultyLabel;
+      document.getElementById("questionCountLabel").textContent = tr().questionCountLabel;
+      document.getElementById("optionCountLabel").textContent = tr().optionCountLabel;
+      document.getElementById("timedModeText").textContent = tr().timedModeText;
+      document.getElementById("timedModeHint").textContent = tr().timedModeHint;
+      document.getElementById("timerLevelLabel").textContent = tr().timerLevelLabel;
+      startBtn.textContent = tr().startBtn;
+      sampleBtn.textContent = tr().sampleBtn;
+      quitBtn.textContent = tr().quitBtn;
+      nextBtn.textContent = tr().nextBtn;
+      resultTitle.textContent = tr().resultTitle;
+      document.getElementById("scoreLabel").textContent = tr().scoreLabel;
+      document.getElementById("accuracyLabel").textContent = tr().accuracyLabel;
+      document.getElementById("wrongLabel").textContent = tr().wrongLabel;
+      document.getElementById("wrongReviewTitle").textContent = tr().wrongReviewTitle;
+      restartBtn.textContent = tr().restartBtn;
+      reviewWrongBtn.textContent = tr().reviewWrongBtn;
+      noteBox.textContent = gt().note;
+      difficultyEl.innerHTML = ["easy", "medium", "hard", "expert", "mixed"].map(k => `<option value="${k}">${gt().difficultyOptions[k]}</option>`).join("");
+      optionCountEl.innerHTML = [2,3,4,5,6].map(n => `<option value="${n}" ${n===4?"selected":""}>${tr().optionCount(n)}</option>`).join("");
+      timerLevelEl.innerHTML = Object.keys(TIMER_DURATIONS).map(k => `<option value="${k}">${tr().timerOptions[k]}</option>`).join("");
+      updateTimerControls();
+    }
+    function buildQuiz() {
+      const count = Math.max(1, Math.min(100, Number(questionCountEl.value || 10)));
+      const difficulty = difficultyEl.value;
+      quiz = Array.from({ length: count }, () => generateQuestion(difficulty));
+      wrongAnswers = [];
+      currentIndex = 0;
+      correctCount = 0;
+      setupCard.classList.add("hidden");
+      resultCard.classList.add("hidden");
+      quizCard.classList.remove("hidden");
+      renderQuestion(false);
+    }
+    function buildWrongTypeQuiz() {
+      if (!lastWrongTypes.length) return;
+      const count = Math.max(1, Math.min(30, Number(questionCountEl.value || 10)));
+      quiz = Array.from({ length: count }, (_, i) => generateQuestion("mixed", lastWrongTypes[i % lastWrongTypes.length]));
+      wrongAnswers = [];
+      currentIndex = 0;
+      correctCount = 0;
+      resultCard.classList.add("hidden");
+      quizCard.classList.remove("hidden");
+      renderQuestion(false);
+    }
+    function startTimer() {
+      clearTimer();
+      if (!timedModeEl.checked) return;
+      secondsLeft = TIMER_DURATIONS[timerLevelEl.value] || 60;
+      timerDisplay.classList.remove("hidden");
+      timerDisplay.textContent = tr().timerDisplay(secondsLeft);
+      timerId = setInterval(() => {
+        secondsLeft -= 1;
+        timerDisplay.textContent = tr().timerDisplay(secondsLeft);
+        timerDisplay.classList.toggle("timer-danger", secondsLeft <= 10);
+        if (secondsLeft <= 0) handleTimeUp();
+      }, 1000);
+    }
+    function renderQuestion(resetTimer = true) {
+      answered = false;
+      nextBtn.disabled = true;
+      feedback.textContent = "";
+      feedback.className = "feedback";
+      solutionBox.classList.add("hidden");
+      solutionBox.innerHTML = "";
+      const q = quiz[currentIndex];
+      progressText.textContent = tr().progress(currentIndex + 1, quiz.length);
+      difficultyText.textContent = `${tr().difficulties[q.difficulty] || q.difficulty}`;
+      questionTitle.textContent = gt().questionTitle;
+      questionExtra.textContent = tr()[q.promptKey] || gt()[q.promptKey] || "";
+      renderMainLatex(q.main);
+      optionsEl.innerHTML = "";
+      q.options.forEach(opt => {
+        const btn = document.createElement("button");
+        btn.className = "option";
+        btn.dataset.answerKey = answerKey(opt);
+        btn.innerHTML = mathSpan(answerToString(opt));
+        btn.addEventListener("click", () => chooseAnswer(btn, opt));
+        optionsEl.appendChild(btn);
+      });
+      renderTaggedMath(optionsEl);
+      progressBar.style.width = `${(currentIndex / quiz.length) * 100}%`;
+      if (resetTimer) startTimer(); else startTimer();
+    }
+    function renderFeedback(isCorrect, correctDisplay, timeUp = false) {
+      feedback.className = `feedback ${isCorrect ? "good" : "bad"}`;
+      if (isCorrect) feedback.textContent = tr().correctFeedback;
+      else feedback.innerHTML = `${timeUp ? tr().timeUpPrefix : tr().incorrectPrefix} ${mathSpan(correctDisplay, "feedback-math")}`;
+      renderTaggedMath(feedback);
+    }
+    function renderSolutionBox() {
+      const q = quiz[currentIndex];
+      const lines = q.solution.map(step => {
+        const note = gt().notes[step.noteKey] || step.noteKey || "";
+        return `<div class="chain-line"><span class="chain-math">${mathSpan(step.math, "chain-math")}</span><span class="chain-note">${escapeHtml(note)}</span></div>`;
+      }).join("");
+      solutionBox.classList.remove("hidden");
+      solutionBox.innerHTML = `<h4>${tr().solutionTitle}</h4><div class="solution-chain">${lines}</div><div class="solution-answer">${tr().solutionFinal} <span class="answer-math">${mathSpan(q.answer, "answer-math")}</span></div>`;
+      renderTaggedMath(solutionBox);
+    }
+    function chooseAnswer(btn, selected) {
+      if (answered) return;
+      answered = true;
+      clearTimer();
+      const q = quiz[currentIndex];
+      const correctKey = answerKey(q.answer);
+      const selectedKey = answerKey(selected);
+      const isCorrect = selectedKey === correctKey;
+      if (isCorrect) correctCount += 1;
+      optionsEl.querySelectorAll("button").forEach(option => {
+        option.disabled = true;
+        if (option.dataset.answerKey === correctKey) option.classList.add("correct");
+      });
+      if (!isCorrect) {
+        btn.classList.add("wrong");
+        wrongAnswers.push({ main: q.plain, answer: q.answer, selected, type: q.type, difficulty: q.difficulty, timeUp: false });
+      }
+      renderFeedback(isCorrect, q.answer);
+      void window.MCLProgress?.recordGameAttempt?.({ question: q, course: "algebra-2", topic: q.type, correctAnswer: answerToString(q.answer), selectedAnswer: answerToString(selected), isCorrect });
+      renderSolutionBox();
+      nextBtn.disabled = false;
+      progressBar.style.width = `${((currentIndex + 1) / quiz.length) * 100}%`;
+    }
+    function handleTimeUp() {
+      if (answered) return;
+      answered = true;
+      clearTimer();
+      const q = quiz[currentIndex];
+      const correctKey = answerKey(q.answer);
+      optionsEl.querySelectorAll("button").forEach(btn => {
+        btn.disabled = true;
+        if (btn.dataset.answerKey === correctKey) btn.classList.add("correct");
+      });
+      wrongAnswers.push({ main: q.plain, answer: q.answer, selected: null, type: q.type, difficulty: q.difficulty, timeUp: true });
+      renderFeedback(false, q.answer, true);
+      void window.MCLProgress?.recordGameAttempt?.({ question: q, course: "algebra-2", topic: q.type, correctAnswer: answerToString(q.answer), selectedAnswer: "", isCorrect: false, timeUp: true });
+      renderSolutionBox();
+      nextBtn.disabled = false;
+      progressBar.style.width = `${((currentIndex + 1) / quiz.length) * 100}%`;
+    }
+    function nextQuestion() {
+      if (!answered) return;
+      if (currentIndex < quiz.length - 1) { currentIndex += 1; renderQuestion(true); }
+      else showResult();
+    }
+    function showResult() {
+      clearTimer();
+      quizCard.classList.add("hidden");
+      resultCard.classList.remove("hidden");
+      renderResultBody();
+    }
+    function renderResultBody() {
+      const total = quiz.length;
+      const accuracy = total ? Math.round((correctCount / total) * 100) : 0;
+      scoreNum.textContent = `${correctCount}/${total}`;
+      accuracyNum.textContent = `${accuracy}%`;
+      wrongNum.textContent = `${wrongAnswers.length}`;
+      lastWrongTypes = [...new Set(wrongAnswers.map(x => x.type))];
+      reviewWrongBtn.disabled = !lastWrongTypes.length;
+      wrongList.innerHTML = "";
+      if (!wrongAnswers.length) {
+        const item = document.createElement("div");
+        item.className = "wrong-item";
+        item.innerHTML = `<div class="expr">${tr().noWrong}</div><p class="tag-good">${tr().noWrongTip}</p>`;
+        wrongList.appendChild(item);
+        return;
+      }
+      wrongAnswers.forEach((wrong, index) => {
+        const item = document.createElement("div");
+        item.className = "wrong-item";
+        item.innerHTML = `<div class="expr">${index + 1}. ${mathSpan(wrong.main, "wrong-math")}</div><p>${tr().yourAnswer}: <span class="tag-bad">${wrong.timeUp ? escapeHtml(tr().timeUpAnswer) : mathSpan(wrong.selected, "wrong-math")}</span></p><p>${tr().correctAnswer}: ${mathSpan(wrong.answer, "wrong-math")}</p><p>${escapeHtml(gt().suggestion)}</p>`;
+        wrongList.appendChild(item);
+        renderTaggedMath(item);
+      });
+    }
+    function resetToSetup() {
+      clearTimer();
+      setupCard.classList.remove("hidden");
+      quizCard.classList.add("hidden");
+      resultCard.classList.add("hidden");
+      progressBar.style.width = "0%";
+      sampleBox.classList.add("hidden");
+      sampleBox.innerHTML = "";
+      solutionBox.classList.add("hidden");
+      solutionBox.innerHTML = "";
+    }
+    function quitQuiz() { if (answered || currentIndex > 0) showResult(); else resetToSetup(); }
+    function showSample() {
+      const q = generateQuestion(pickDifficultyForSample(difficultyEl.value));
+      sampleBox.classList.remove("hidden");
+      sampleBox.innerHTML = `<strong>${tr().sampleTitle}:</strong><br>${tr().sampleQuestion}: ${mathSpan(q.plain, "sample-math")}<br>${tr()[q.promptKey] || ""}<br>${tr().sampleAnswer}: ${mathSpan(q.answer, "sample-math")}<br>${tr().sampleOptions}: ${q.options.map(item => mathSpan(item, "sample-math")).join(" ")}`;
+      renderTaggedMath(sampleBox);
+    }
+
+    timedModeEl.addEventListener("change", updateTimerControls);
+    startBtn.addEventListener("click", buildQuiz);
+    sampleBtn.addEventListener("click", showSample);
+    nextBtn.addEventListener("click", nextQuestion);
+    quitBtn.addEventListener("click", quitQuiz);
+    restartBtn.addEventListener("click", resetToSetup);
+    reviewWrongBtn.addEventListener("click", buildWrongTypeQuiz);
+    window.addEventListener("storage", event => { if (event.key === "mathcomplete_lang") applyLanguage(); });
+    applyLanguage();
+  </script>
+  <script src="../assets/js/home-link.js"></script>
+</body>
+</html>

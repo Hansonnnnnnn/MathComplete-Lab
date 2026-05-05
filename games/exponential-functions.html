@@ -1,0 +1,1898 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Exponential Function Practice</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../assets/js/supabase-client.js"></script>
+  <script src="../assets/js/auth.js"></script>
+  <script src="../assets/js/auth-ui.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <style>
+    :root {
+      --bg: #f7f7fb;
+      --text: #0f172a;
+      --muted: #64748b;
+      --border: #e5e7eb;
+      --accent: #2563eb;
+      --violet: #7c3aed;
+      --good: #16a34a;
+      --bad: #dc2626;
+      --shadow: 0 18px 42px rgba(15, 23, 42, 0.10);
+      --radius: 22px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", Arial, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(96, 165, 250, 0.35), transparent 34%),
+        radial-gradient(circle at top right, rgba(167, 139, 250, 0.28), transparent 32%),
+        linear-gradient(180deg, #f8fbff 0%, var(--bg) 52%, #ffffff 100%);
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.42;
+      background-image:
+        linear-gradient(rgba(15, 23, 42, 0.045) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(15, 23, 42, 0.045) 1px, transparent 1px);
+      background-size: 42px 42px;
+      mask-image: linear-gradient(180deg, black, transparent 72%);
+    }
+
+    .mc-site-shell {
+      width: min(1180px, calc(100% - 32px));
+      margin: 18px auto 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 12px 14px;
+      border: 1px solid rgba(255, 255, 255, 0.74);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.84);
+      backdrop-filter: blur(18px);
+      box-shadow: 0 16px 36px rgba(15, 23, 42, 0.10);
+      position: sticky;
+      top: 12px;
+      z-index: 20;
+    }
+
+    .mc-brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: #0f172a;
+      font-weight: 950;
+      text-decoration: none;
+      letter-spacing: -0.035em;
+      white-space: nowrap;
+    }
+
+    .mc-brand-mark {
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      border-radius: 12px;
+      color: white;
+      background: linear-gradient(135deg, #2563eb, #7c3aed);
+      box-shadow: 0 12px 24px rgba(37, 99, 235, 0.28);
+    }
+
+    .mc-links {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .mc-link {
+      color: #475569;
+      text-decoration: none;
+      font-weight: 850;
+      padding: 8px 11px;
+      border-radius: 999px;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .mc-link:hover { color: #1d4ed8; background: #eff6ff; }
+    .mc-link.primary { color: white; background: #0f172a; }
+    .mc-link.primary:hover { color: white; background: #1e293b; }
+
+    .container {
+      width: min(1040px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 38px 0 68px;
+      position: relative;
+    }
+
+    header { margin-bottom: 24px; overflow: visible; }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      color: #1d4ed8;
+      background: rgba(239, 246, 255, 0.86);
+      border: 1px solid rgba(191, 219, 254, 0.8);
+      font-weight: 950;
+      margin-bottom: 14px;
+    }
+
+    .eyebrow-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: #10b981;
+      box-shadow: 0 0 0 6px rgba(16, 185, 129, 0.12);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(34px, 5.2vw, 56px);
+      line-height: 1.16;
+      letter-spacing: -0.055em;
+      background: linear-gradient(135deg, #0f172a 0%, #1d4ed8 48%, #7c3aed 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      padding-bottom: 0.18em;
+      overflow: visible;
+    }
+
+    h2 { margin: 0 0 12px; font-size: clamp(24px, 4vw, 34px); letter-spacing: -0.045em; }
+    h3 { margin: 0 0 8px; letter-spacing: -0.025em; }
+
+    .subtitle {
+      margin: 14px 0 0;
+      color: var(--muted);
+      line-height: 1.75;
+      max-width: 780px;
+      font-size: 17px;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.90);
+      border: 1px solid rgba(255, 255, 255, 0.76);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 24px;
+      backdrop-filter: blur(16px);
+    }
+
+    .setup-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+      margin: 22px 0;
+    }
+
+    label { display: block; font-weight: 900; margin-bottom: 8px; }
+
+    select,
+    input {
+      width: 100%;
+      min-height: 46px;
+      padding: 12px 14px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      font-size: 16px;
+      background: white;
+      outline: none;
+    }
+
+    select:focus,
+    input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+    }
+
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 46px;
+      padding: 12px 14px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: white;
+      cursor: pointer;
+      margin-bottom: 6px;
+    }
+
+    .checkbox-label input {
+      width: auto;
+      min-height: 0;
+      transform: scale(1.15);
+      accent-color: var(--accent);
+    }
+
+    .mini-hint { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.45; }
+
+    button {
+      appearance: none;
+      border: none;
+      background: linear-gradient(135deg, var(--accent), var(--violet));
+      color: white;
+      font-weight: 950;
+      padding: 12px 18px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: transform 0.14s, filter 0.2s, box-shadow 0.2s;
+      box-shadow: 0 12px 24px rgba(37, 99, 235, 0.24);
+    }
+
+    button:hover { transform: translateY(-1px); filter: brightness(0.98); }
+    button.secondary { background: #111827; box-shadow: 0 8px 18px rgba(17, 24, 39, 0.16); }
+    button.ghost { background: white; color: var(--text); border: 1px solid var(--border); box-shadow: none; }
+    button:disabled { cursor: not-allowed; opacity: 0.55; transform: none; }
+
+    .hidden { display: none !important; }
+    .actions { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+
+    .explain-box {
+      margin-top: 18px;
+      padding: 16px;
+      background: #f8fafc;
+      border: 1px dashed #cbd5e1;
+      border-radius: 18px;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .topbar {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: white;
+      color: var(--muted);
+      font-weight: 850;
+      font-size: 14px;
+      margin-right: 6px;
+      margin-bottom: 6px;
+    }
+
+    .timer-pill { color: #1d4ed8; background: #eff6ff; border-color: #bfdbfe; }
+    .timer-danger { color: #991b1b; background: #fef2f2; border-color: #fecaca; }
+
+    .progress-wrap {
+      width: 100%;
+      height: 10px;
+      background: #e5e7eb;
+      border-radius: 999px;
+      overflow: hidden;
+      margin: 10px 0 22px;
+    }
+
+    .progress {
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(90deg, #2563eb, #7c3aed);
+      transition: width 0.25s ease;
+    }
+
+    .question-title { color: var(--muted); font-weight: 950; margin-bottom: 8px; }
+    .question-extra { color: var(--muted); font-weight: 900; margin: -4px 0 14px; line-height: 1.6; }
+
+    .question-main {
+      font-size: clamp(28px, 5.4vw, 54px);
+      line-height: 1.2;
+      font-weight: 950;
+      letter-spacing: -0.045em;
+      margin: 10px 0 24px;
+      overflow-wrap: anywhere;
+    }
+
+    .math-render { display: inline-block; }
+    .question-main.math-render { display: block; width: 100%; }
+    .question-main .katex { font-size: 1.08em; line-height: 1.2; }
+    .option .katex { font-size: 1.1em; line-height: 1.25; }
+    .chain-math .katex, .answer-math .katex, .feedback-math .katex, .sample-math .katex, .wrong-math .katex { font-size: 1.06em; line-height: 1.25; }
+    .math-render .katex { color: #0f172a; }
+
+    .options {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .option {
+      border: 2px solid var(--border);
+      background: white;
+      color: var(--text);
+      box-shadow: none;
+      border-radius: 18px;
+      min-height: 64px;
+      font-size: 20px;
+      text-align: center;
+      padding: 12px;
+      overflow-wrap: anywhere;
+    }
+
+    .option:hover { border-color: var(--accent); background: #f8fbff; }
+    .option.correct { border-color: rgba(22, 163, 74, 0.5); background: #ecfdf5; color: #065f46; }
+    .option.wrong { border-color: rgba(220, 38, 38, 0.5); background: #fef2f2; color: #991b1b; }
+    .option.correct .katex { color: #065f46; }
+    .option.wrong .katex { color: #991b1b; }
+
+    .feedback { min-height: 30px; font-weight: 950; margin: 8px 0 16px; }
+    .feedback.good { color: var(--good); }
+    .feedback.bad { color: var(--bad); }
+    .feedback.bad .katex { color: #dc2626; }
+
+    .solution-box {
+      margin: 14px 0 18px;
+      padding: 18px;
+      border-radius: 20px;
+      border: 1px solid #dbeafe;
+      background: linear-gradient(180deg, #f8fbff, #fff);
+      color: #1f2937;
+      line-height: 1.7;
+    }
+
+    .solution-box h4 { margin: 0 0 12px; font-size: 18px; }
+    .solution-chain { background: white; border: 1px solid #e5e7eb; border-radius: 16px; padding: 14px 16px; overflow-x: auto; }
+
+    .chain-line {
+      display: grid;
+      grid-template-columns: minmax(250px, 1fr) minmax(170px, 0.65fr);
+      align-items: baseline;
+      gap: 18px;
+      margin: 8px 0;
+      font-size: 17px;
+      font-weight: 850;
+      white-space: nowrap;
+    }
+
+    .chain-note { color: #64748b; font-size: 13px; font-weight: 850; white-space: normal; }
+    .solution-answer { margin-top: 12px; font-weight: 950; color: #111827; }
+    .solution-answer > .answer-math { display: inline-block; background: #ecfdf5; color: #065f46; border: 1px solid #bbf7d0; border-radius: 999px; padding: 3px 10px; margin-left: 4px; vertical-align: middle; }
+
+    .result-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin: 18px 0 24px; }
+    .stat { background: #f9fafb; border: 1px solid var(--border); border-radius: 18px; padding: 18px; }
+    .stat .num { font-size: 34px; font-weight: 950; letter-spacing: -0.05em; }
+    .stat .label { color: var(--muted); margin-top: 4px; font-weight: 850; }
+    .wrong-list { display: grid; gap: 14px; }
+    .wrong-item { border: 1px solid var(--border); border-radius: 18px; background: white; padding: 16px; }
+    .wrong-item .expr { font-size: 22px; font-weight: 950; margin-bottom: 8px; overflow-wrap: anywhere; }
+    .wrong-item p { margin: 6px 0; color: var(--muted); line-height: 1.6; }
+    .tag-good { color: var(--good); font-weight: 950; }
+    .tag-bad { color: var(--bad); font-weight: 950; }
+
+    @media (max-width: 760px) {
+      .mc-site-shell { border-radius: 22px; align-items: flex-start; flex-direction: column; }
+      .mc-links { justify-content: flex-start; }
+      .setup-grid, .options, .result-grid { grid-template-columns: 1fr; }
+      .card { padding: 18px; }
+      .container { width: min(100% - 22px, 1040px); padding-top: 26px; }
+      .chain-line { grid-template-columns: 1fr; gap: 2px; white-space: normal; }
+      .chain-note { padding-left: 12px; }
+    }
+  
+
+  /* MathComplete Lab shared tool question layout override */
+  .question-main,
+  .expression,
+  .equation {
+    max-width: 100%;
+    font-size: clamp(28px, 5.4vw, 54px) !important;
+    line-height: 1.2 !important;
+    font-weight: 500 !important;
+    letter-spacing: -0.045em !important;
+    margin: 10px 0 24px !important;
+    text-align: left !important;
+    overflow-wrap: anywhere !important;
+    word-break: normal !important;
+    text-wrap: pretty;
+    white-space: normal;
+    justify-content: flex-start !important;
+    align-items: flex-start !important;
+  }
+
+  .question-main.math-render,
+  .expression.math-render,
+  .equation.math-render {
+    display: block !important;
+    width: 100% !important;
+    text-align: left !important;
+  }
+
+  .question-main .katex,
+  .expression .katex,
+  .equation .katex {
+    white-space: normal !important;
+    text-align: left !important;
+    font-weight: 400 !important;
+  }
+
+  .question-main .katex *,
+  .expression .katex *,
+  .equation .katex * {
+    font-weight: 400 !important;
+  }
+
+  .question-line,
+  .question-text {
+    max-width: 100%;
+    text-align: left !important;
+    overflow-wrap: anywhere;
+    word-break: normal;
+    text-wrap: pretty;
+  }
+</style>
+</head>
+<body>
+  <nav class="mc-site-shell">
+    <a class="mc-brand" href="../index.html"><span class="mc-brand-mark">∑</span><span>MathComplete Lab</span></a>
+    <div class="mc-links">
+      <a class="mc-link" href="../practice.html" data-i18n="navPractice">Practice Library</a>
+      <a class="mc-link primary" href="../index.html" data-i18n="navHome">Home</a>
+    </div>
+  </nav>
+
+  <main class="container">
+    <header>
+      <div class="eyebrow"><span class="eyebrow-dot"></span><span id="toolBadge"></span></div>
+      <h1 id="pageTitle"></h1>
+      <p id="pageSubtitle" class="subtitle"></p>
+    </header>
+
+    <section id="setupCard" class="card">
+      <h2 id="setupTitle"></h2>
+      <div class="setup-grid">
+        <div><label id="difficultyLabel" for="difficulty"></label><select id="difficulty"></select></div>
+        <div><label id="questionCountLabel" for="questionCount"></label><input id="questionCount" type="number" min="1" max="100" value="10" /></div>
+        <div><label id="optionCountLabel" for="optionCount"></label><select id="optionCount"></select></div>
+        <div><label class="checkbox-label" for="timedMode"><input id="timedMode" type="checkbox" /><span id="timedModeText"></span></label><p id="timedModeHint" class="mini-hint"></p></div>
+        <div><label id="timerLevelLabel" for="timerLevel"></label><select id="timerLevel"></select></div>
+      </div>
+      <div class="actions"><button id="startBtn"></button><button id="sampleBtn" class="ghost"></button></div>
+      <div id="sampleBox" class="explain-box hidden"></div>
+      <div id="noteBox" class="explain-box"></div>
+    </section>
+
+    <section id="quizCard" class="card hidden">
+      <div class="topbar">
+        <div><span class="pill" id="progressText"></span><span class="pill" id="difficultyText"></span><span class="pill timer-pill hidden" id="timerDisplay"></span></div>
+        <button id="quitBtn" class="ghost"></button>
+      </div>
+      <div class="progress-wrap"><div id="progressBar" class="progress"></div></div>
+      <div id="questionTitle" class="question-title"></div>
+      <div id="questionExtra" class="question-extra"></div>
+      <div id="questionMain" class="question-main"></div>
+      <div id="options" class="options"></div>
+      <div id="feedback" class="feedback"></div>
+      <div id="solutionBox" class="solution-box hidden"></div>
+      <div class="actions"><button id="nextBtn" disabled></button></div>
+    </section>
+
+    <section id="resultCard" class="card hidden">
+      <h2 id="resultTitle"></h2>
+      <div class="result-grid">
+        <div class="stat"><div id="scoreNum" class="num">0/0</div><div id="scoreLabel" class="label"></div></div>
+        <div class="stat"><div id="accuracyNum" class="num">0%</div><div id="accuracyLabel" class="label"></div></div>
+        <div class="stat"><div id="wrongNum" class="num">0</div><div id="wrongLabel" class="label"></div></div>
+      </div>
+      <h3 id="wrongReviewTitle"></h3>
+      <div id="wrongList" class="wrong-list"></div>
+      <div class="actions" style="margin-top:22px;"><button id="restartBtn"></button><button id="reviewWrongBtn" class="secondary"></button></div>
+    </section>
+  </main>
+
+  <script>
+    const GAME_TEXT = {
+      en: {
+        toolBadge: "Algebra II",
+        title: "Exponential Function Practice",
+        subtitle: "Practice exponential growth, decay, tables, equations, transformations, and real-world models.",
+        note: "This tool uses randomized topic templates. Each main type has multiple subtemplates, so students practice the same idea in different forms.",
+        questionTitle: "Choose the correct answer.",
+        promptEvaluate: "Evaluate the exponential function.",
+        promptIdentifyPart: "Identify the requested part of the exponential function.",
+        promptGrowthDecay: "Decide whether the function shows growth or decay.",
+        promptWhichExponential: "Choose the exponential function.",
+        promptWriteEquation: "Write the exponential equation.",
+        promptTableEquation: "Find the equation that matches the table.",
+        promptWordValue: "Use the model to find the requested value.",
+        promptMissingTable: "Find the missing table value.",
+        promptCompare: "Compare the two exponential functions.",
+        promptTransform: "Identify the transformation or feature.",
+        promptSolveEquation: "Solve the exponential equation.",
+        promptTwoPoints: "Find the exponential function through the given points.",
+        promptPercentModel: "Use the percent growth or decay model.",
+        promptFeature: "Identify the domain, range, or asymptote.",
+        promptHalfLife: "Use the half-life or doubling-time model.",
+        promptLongRun: "Choose the function that eventually grows faster.",
+        promptStatement: "Choose the correct statement.",
+        difficultyOptions: {
+          easy: "Easy: evaluate, identify parts, growth vs decay",
+          medium: "Medium: percent models, tables, and basic comparisons",
+          hard: "Hard: transformations, equations, two-point models, features",
+          expert: "Expert: complex equations, half-life, nonconsecutive points, long-run reasoning",
+          mixed: "Mixed: balanced practice from all difficulty levels"
+        },
+        suggestion: "Suggestion: check the initial value, base, exponent, and whether the base is greater than 1 or between 0 and 1.",
+        notes: {
+          substitute: "substitute the given x-value",
+          exponentFirst: "evaluate the exponent first",
+          initial: "the initial value is the value when x = 0",
+          base: "the base is the repeated multiplier",
+          growth: "a base greater than 1 gives growth",
+          decay: "a base between 0 and 1 gives decay",
+          exponential: "the variable must appear in the exponent",
+          percentGrowth: "growth by r% means multiply by 1 + r",
+          percentDecay: "decay by r% means multiply by 1 - r",
+          ratio: "divide consecutive y-values to get the common ratio",
+          table: "use y = ab^x with a from x = 0",
+          compare: "evaluate both functions at the same x-value",
+          shift: "read shifts from the exponent and the outside constant",
+          asymptote: "the horizontal asymptote is the vertical shift",
+          sameBase: "rewrite both sides using the same base",
+          exponentsEqual: "with the same positive base, set exponents equal",
+          twoPoints: "use the ratio between y-values to find b",
+          model: "build the model first, then substitute the time",
+          halfLife: "each half-life multiplies the amount by 1/2",
+          doubling: "each doubling time multiplies the amount by 2",
+          longRun: "for exponential growth, the larger base eventually dominates",
+          combined: "check each statement against y = a b^(x-h) + k"
+        }
+      },
+      zh: {
+        toolBadge: "Algebra II",
+        title: "指数函数专项练习",
+        subtitle: "练习指数增长、指数衰减、表格、方程、函数变换和实际模型。",
+        note: "这个工具使用随机题型模板。每个主题型下面都有多个子模板，所以不是只换数字，而是同一知识点用不同形式反复训练。",
+        questionTitle: "请阅读题干，并选择正确答案。",
+        promptEvaluate: "计算指数函数的值。",
+        promptIdentifyPart: "识别指数函数中的指定部分。",
+        promptGrowthDecay: "判断函数表示增长还是衰减。",
+        promptWhichExponential: "选择指数函数。",
+        promptWriteEquation: "写出指数函数模型。",
+        promptTableEquation: "找出符合表格的函数。",
+        promptWordValue: "根据文字模型计算指定数值。",
+        promptMissingTable: "求表格中的缺失值。",
+        promptCompare: "比较两个指数函数。",
+        promptTransform: "识别函数变换或函数特征。",
+        promptSolveEquation: "解指数方程。",
+        promptTwoPoints: "求经过给定点的指数函数。",
+        promptPercentModel: "使用百分比增长或衰减模型。",
+        promptFeature: "识别定义域、值域或渐近线。",
+        promptHalfLife: "使用半衰期或倍增时间模型。",
+        promptLongRun: "选择最终增长更快的函数。",
+        promptStatement: "选择正确说法。",
+        difficultyOptions: {
+          easy: "简单：代入求值、识别组成部分、判断增长衰减",
+          medium: "中等：百分比模型、表格和基础比较",
+          hard: "困难：函数变换、指数方程、两点建模、函数特征",
+          expert: "专家：复杂方程、半衰期、非连续点、长期增长比较",
+          mixed: "混合：从所有难度中均衡出题"
+        },
+        suggestion: "建议：检查初始值、底数、指数，以及底数是大于 1 还是介于 0 和 1 之间。",
+        notes: {
+          substitute: "代入给定的 x 值",
+          exponentFirst: "先计算指数部分",
+          initial: "初始值就是 x = 0 时的函数值",
+          base: "底数表示每一步重复乘上的倍数",
+          growth: "底数大于 1 表示增长",
+          decay: "底数在 0 和 1 之间表示衰减",
+          exponential: "变量必须出现在指数位置",
+          percentGrowth: "增长 r% 表示每次乘以 1 + r",
+          percentDecay: "衰减 r% 表示每次乘以 1 - r",
+          ratio: "用相邻 y 值相除得到共同倍数",
+          table: "使用 y = ab^x，其中 a 来自 x = 0",
+          compare: "在同一个 x 值处分别计算两个函数",
+          shift: "从指数内部和外部常数读取平移",
+          asymptote: "水平渐近线就是竖直平移后的那条线",
+          sameBase: "把两边改写成相同底数",
+          exponentsEqual: "同底且底数为正时，令指数相等",
+          twoPoints: "利用 y 值的比例求 b",
+          model: "先建立模型，再代入时间",
+          halfLife: "每经过一个半衰期，数量乘以 1/2",
+          doubling: "每经过一个倍增时间，数量乘以 2",
+          longRun: "指数增长中，底数更大的函数最终增长更快",
+          combined: "逐条对照 y = a b^(x-h) + k 检查说法"
+        }
+      }
+    };
+
+    const T = {
+      en: {
+        htmlLang: "en",
+        navPractice: "Practice Library",
+        navHome: "Home",
+        setupTitle: "Start Practice",
+        difficultyLabel: "Difficulty",
+        questionCountLabel: "Number of Questions",
+        optionCountLabel: "Number of Choices",
+        timedModeText: "Enable Timed Mode",
+        timedModeHint: "Off means no countdown. On means each question has its own timer.",
+        timerLevelLabel: "Timer Level",
+        startBtn: "Start",
+        sampleBtn: "Generate Sample Question",
+        quitBtn: "End This Round",
+        nextBtn: "Next Question",
+        resultBtn: "See Results",
+        correctFeedback: "Correct!",
+        solutionTitle: "Correct Solution",
+        solutionFinal: "Answer:",
+        resultTitle: "Practice Results",
+        scoreLabel: "Correct Answers",
+        accuracyLabel: "Accuracy",
+        wrongLabel: "Wrong Answers",
+        wrongReviewTitle: "Wrong Answer Review",
+        restartBtn: "Practice Again",
+        reviewWrongBtn: "Practice Similar Wrong Types",
+        noWrong: "No wrong answers this round.",
+        noWrongTip: "Great job. Try a harder level next.",
+        noWrongAlert: "There are no wrong answers to review.",
+        yourAnswer: "Your answer",
+        correctAnswer: "Correct answer",
+        timeUpAnswer: "No answer: time is up",
+        sampleTitle: "Sample Question",
+        sampleQuestion: "Question",
+        sampleAnswer: "Correct answer",
+        sampleOptions: "Sample choices",
+        incorrectPrefix: "Incorrect. The correct answer is",
+        timeUpPrefix: "Time is up. The correct answer is",
+        progress: (a, b) => `Question ${a} / ${b}`,
+        optionCount: n => `${n} choices`,
+        timerDisplay: s => `Time left: ${formatTime(s)}`,
+        difficulties: { easy: "Easy", medium: "Medium", hard: "Hard", expert: "Expert", mixed: "Mixed" },
+        timerOptions: {
+          timer_easy: "Easy: 2 minutes per question",
+          timer_medium: "Medium: 1 minute per question",
+          timer_hard: "Hard: 30 seconds per question",
+          timer_expert: "Hell: 15 seconds per question"
+        },
+        ...GAME_TEXT.en
+      },
+      zh: {
+        htmlLang: "zh-CN",
+        navPractice: "练习库",
+        navHome: "首页",
+        setupTitle: "开始练习",
+        difficultyLabel: "难度",
+        questionCountLabel: "题目数量",
+        optionCountLabel: "选项数量",
+        timedModeText: "开启计时模式",
+        timedModeHint: "关闭时没有倒计时；开启后每题都有单独计时。",
+        timerLevelLabel: "计时等级",
+        startBtn: "开始",
+        sampleBtn: "生成样题",
+        quitBtn: "结束本轮",
+        nextBtn: "下一题",
+        resultBtn: "查看结果",
+        correctFeedback: "正确！",
+        solutionTitle: "正确解法",
+        solutionFinal: "答案：",
+        resultTitle: "练习结果",
+        scoreLabel: "正确题数",
+        accuracyLabel: "正确率",
+        wrongLabel: "错题数",
+        wrongReviewTitle: "错题回顾",
+        restartBtn: "重新练习",
+        reviewWrongBtn: "练习相似错题",
+        noWrong: "本轮没有错题。",
+        noWrongTip: "很好，可以尝试更高难度。",
+        noWrongAlert: "没有错题可以复练。",
+        yourAnswer: "你的答案",
+        correctAnswer: "正确答案",
+        timeUpAnswer: "未作答：时间到",
+        sampleTitle: "样题",
+        sampleQuestion: "题目",
+        sampleAnswer: "正确答案",
+        sampleOptions: "样例选项",
+        incorrectPrefix: "错误。正确答案是",
+        timeUpPrefix: "时间到。正确答案是",
+        progress: (a, b) => `第 ${a} / ${b} 题`,
+        optionCount: n => `${n} 个选项`,
+        timerDisplay: s => `剩余时间：${formatTime(s)}`,
+        difficulties: { easy: "简单", medium: "中等", hard: "困难", expert: "专家", mixed: "混合" },
+        timerOptions: {
+          timer_easy: "简单：每题 2 分钟",
+          timer_medium: "中等：每题 1 分钟",
+          timer_hard: "困难：每题 30 秒",
+          timer_expert: "地狱：每题 15 秒"
+        },
+        ...GAME_TEXT.zh
+      }
+    };
+
+    const setupCard = document.getElementById("setupCard");
+    const quizCard = document.getElementById("quizCard");
+    const resultCard = document.getElementById("resultCard");
+    const difficultyEl = document.getElementById("difficulty");
+    const questionCountEl = document.getElementById("questionCount");
+    const optionCountEl = document.getElementById("optionCount");
+    const timedModeEl = document.getElementById("timedMode");
+    const timerLevelEl = document.getElementById("timerLevel");
+    const startBtn = document.getElementById("startBtn");
+    const sampleBtn = document.getElementById("sampleBtn");
+    const sampleBox = document.getElementById("sampleBox");
+    const progressText = document.getElementById("progressText");
+    const difficultyText = document.getElementById("difficultyText");
+    const timerDisplay = document.getElementById("timerDisplay");
+    const progressBar = document.getElementById("progressBar");
+    const qTitle = document.getElementById("questionTitle");
+    const qExtra = document.getElementById("questionExtra");
+    const qMain = document.getElementById("questionMain");
+    const optionsEl = document.getElementById("options");
+    const feedbackEl = document.getElementById("feedback");
+    const solutionBox = document.getElementById("solutionBox");
+    const nextBtn = document.getElementById("nextBtn");
+    const quitBtn = document.getElementById("quitBtn");
+    const scoreNum = document.getElementById("scoreNum");
+    const accuracyNum = document.getElementById("accuracyNum");
+    const wrongNum = document.getElementById("wrongNum");
+    const wrongList = document.getElementById("wrongList");
+    const restartBtn = document.getElementById("restartBtn");
+    const reviewWrongBtn = document.getElementById("reviewWrongBtn");
+
+    let lang = readGlobalLanguage();
+    let quiz = [];
+    let currentIndex = 0;
+    let correctCount = 0;
+    let wrongAnswers = [];
+    let answered = false;
+    let lastDifficulty = "medium";
+    let timerId = null;
+    let timeLeft = 0;
+
+    const REAL_DIFFICULTIES = ["easy", "medium", "hard", "expert"];
+    const TIMER_DURATIONS = { timer_easy: 120, timer_medium: 60, timer_hard: 30, timer_expert: 15 };
+
+    function readGlobalLanguage() { return localStorage.getItem("mathcomplete_lang") === "zh" ? "zh" : "en"; }
+    function tr() { return T[lang]; }
+    function randInt(a, b) { return Math.floor(Math.random() * (b - a + 1)) + a; }
+    function choose(arr) { return arr[randInt(0, arr.length - 1)]; }
+    function shuffle(arr) {
+      const copy = [...arr];
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = randInt(0, i);
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+    function clamp(n, a, b) { return Math.max(a, Math.min(b, n)); }
+    function formatTime(s) { s = Math.max(0, s); return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`; }
+    function gcd(a, b) { a = Math.abs(a); b = Math.abs(b); while (b) [a, b] = [b, a % b]; return a || 1; }
+    function simplifyFrac(n, d = 1) {
+      if (d < 0) { n = -n; d = -d; }
+      const g = gcd(n, d);
+      return { n: n / g, d: d / g };
+    }
+    function powInt(a, n) { return Math.round(Math.pow(a, n)); }
+    function fracLatex(f) {
+      const s = simplifyFrac(f.n, f.d);
+      if (s.d === 1) return String(s.n);
+      if (s.n < 0) return `-\\frac{${Math.abs(s.n)}}{${s.d}}`;
+      return `\\frac{${s.n}}{${s.d}}`;
+    }
+    function signedInt(n) { return n < 0 ? `-${Math.abs(n)}` : `+${n}`; }
+    function signedOutside(n) { return n === 0 ? "" : signedInt(n); }
+    function trimNumber(n, places = 2) {
+      if (Number.isInteger(n)) return String(n);
+      return String(Number(n.toFixed(places)));
+    }
+    function coefficient(n) {
+      if (n === 1) return "";
+      if (n === -1) return "-";
+      return String(n);
+    }
+    function expTerm(base, exponent = "x") { return `${base}^{${exponent}}`; }
+    function modelLatex(a, b, variable = "x") {
+      return `${a === 1 ? "" : a === -1 ? "-" : a}\\cdot ${expTerm(b, variable)}`;
+    }
+    function modelWithShift(a, b, h = 0, k = 0) {
+      const inner = h === 0 ? "x" : h > 0 ? `x-${h}` : `x+${Math.abs(h)}`;
+      return `${coefficient(a)}${expTerm(b, inner)}${signedOutside(k)}`;
+    }
+    function percentBase(r, growth = true) {
+      return trimNumber(growth ? 1 + r / 100 : 1 - r / 100, 2);
+    }
+    function fracBaseLatex(n, d) { return `\\left(\\frac{${n}}{${d}}\\right)`; }
+    function escapeHtml(text) {
+      return String(text).replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#039;");
+    }
+    function escapeLatexText(text) {
+      return String(text)
+        .replaceAll("\\", "\\textbackslash ")
+        .replaceAll("%", "\\%")
+        .replaceAll("&", "\\&")
+        .replaceAll("#", "\\#")
+        .replaceAll("_", "\\_")
+        .replaceAll("$", "\\$")
+        .replaceAll("{", "\\{")
+        .replaceAll("}", "\\}");
+    }
+    function textLatex(text) { return `\\text{${escapeLatexText(text)}}`; }
+    function renderLatex(el, latex, displayMode = false) {
+      el.classList.add("math-render");
+      if (window.katex) katex.render(latex, el, { throwOnError: false, displayMode });
+      else el.textContent = latex;
+    }
+    function mathSpan(latex, cls = "") { return `<span${cls ? ` class="${cls}"` : ""} data-latex="${escapeHtml(latex)}"></span>`; }
+    function renderTaggedMath(root) { root.querySelectorAll("[data-latex]").forEach(el => renderLatex(el, el.getAttribute("data-latex") || "")); }
+    function ans(latex) { return { latex: String(latex) }; }
+    function answerKey(a) {
+      return a.latex.replace(/\s+/g, "").replaceAll("\\left", "").replaceAll("\\right", "").replaceAll("\\cdot", "*").toLowerCase();
+    }
+    function answerToString(a) { return a.latex; }
+    function isSameAnswer(a, b) { return answerKey(a) === answerKey(b); }
+
+    function makeQuestion(difficulty, type, promptKey, main, answer, lines, distractors) {
+      const q = {
+        difficulty,
+        type,
+        promptKey,
+        main,
+        answer: ans(answer),
+        plain: main,
+        lines,
+        distractors: [...new Set(distractors.filter(Boolean).filter(x => answerKey(ans(x)) !== answerKey(ans(answer))))]
+      };
+      q.options = generateOptions(q, Number(optionCountEl.value || 4));
+      return q;
+    }
+
+    function generateOptions(q, count) {
+      const correct = q.answer;
+      const distractorMap = new Map();
+      const add = value => {
+        if (value === undefined || value === null || value === "") return;
+        const item = ans(value);
+        if (answerKey(item) !== answerKey(correct)) distractorMap.set(answerKey(item), item);
+      };
+
+      // First priority: every question template provides its own mistake-based choices.
+      // Do NOT mix generic numbers like 2 or 10 into every problem; that creates choices
+      // that are unrelated to statement, comparison, transformation, or growth/decay questions.
+      q.distractors.forEach(add);
+
+      const needed = Math.max(0, count - 1);
+      let picked = shuffle([...distractorMap.values()]).slice(0, needed);
+
+      // Only if the selected option count requires more choices do we add same-kind fallbacks.
+      // These fallbacks are grouped by prompt/type so numerical answers, statements,
+      // comparisons, transformations, and equations do not get mixed together.
+      if (picked.length < needed) {
+        contextualFallbacks(q).forEach(add);
+        const used = new Set(picked.map(item => answerKey(item)));
+        const remaining = shuffle([...distractorMap.values()].filter(item => !used.has(answerKey(item))));
+        picked = [...picked, ...remaining.slice(0, needed - picked.length)];
+      }
+
+      return shuffle([correct, ...picked]);
+    }
+
+    function parseSimpleNumber(latex) {
+      const clean = String(latex).replaceAll("\,", "").trim();
+      if (/^-?\d+(?:\.\d+)?$/.test(clean)) return Number(clean);
+      return null;
+    }
+
+    function nearbyNumberFallbacks(correct) {
+      const n = parseSimpleNumber(correct.latex);
+      if (n === null || !Number.isFinite(n)) return [];
+      const candidates = [n + 1, n - 1, n + 2, n - 2, n * 2, Math.round(n / 2), -n, 0, 1];
+      return candidates
+        .filter(x => Number.isFinite(x) && x !== n)
+        .map(x => Number.isInteger(x) ? String(x) : trimNumber(x, 2));
+    }
+
+    function contextualFallbacks(q) {
+      const growth = textLatex(growthText());
+      const decay = textLatex(decayText());
+      const linear = textLatex(lang === "zh" ? "线性" : "Linear");
+      const quadratic = textLatex(lang === "zh" ? "二次" : "Quadratic");
+      const cannotDetermine = textLatex(lang === "zh" ? "无法判断" : "cannot determine");
+
+      if (q.promptKey === "promptGrowthDecay") return [growth, decay, linear, quadratic, textLatex(lang === "zh" ? "没有变化" : "No change")];
+
+      if (q.promptKey === "promptCompare" || q.promptKey === "promptLongRun" || q.type.includes("long-run")) {
+        return [
+          `f(x)>g(x)`, `g(x)>f(x)`, `f(x)=g(x)`,
+          `f(0)>g(0)`, `g(0)>f(0)`, cannotDetermine,
+          `f(x)>g(x)\text{ for large }x`, `g(x)>f(x)\text{ for large }x`
+        ];
+      }
+
+      if (q.promptKey === "promptWhichExponential") {
+        return [`y=2^x`, `y=3\cdot 2^x`, `y=2x+3`, `y=x^2+1`, `y=\sqrt{x}`, `y=x^3`];
+      }
+
+      if (q.promptKey === "promptTransform") {
+        return [
+          textLatex(`${rightText(2)}, ${upText(3)}`),
+          textLatex(`${leftText(2)}, ${upText(3)}`),
+          textLatex(`${rightText(2)}, ${downText(-3)}`),
+          textLatex(`${leftText(2)}, ${downText(-3)}`),
+          `y=0`, `y=1`, `x=0`
+        ];
+      }
+
+      if (q.promptKey === "promptFeature" || q.promptKey === "promptStatement") {
+        return [
+          `y=0`, `y=1`, `x=0`, `x=1`, `y>0`, `y<0`,
+          textLatex(lang === "zh" ? "定义域是所有实数" : "domain is all real numbers"),
+          textLatex(lang === "zh" ? "值域是 y>0" : "range is y>0"),
+          textLatex(lang === "zh" ? "这是增长函数" : "this is growth"),
+          textLatex(lang === "zh" ? "这是衰减函数" : "this is decay"),
+          cannotDetermine
+        ];
+      }
+
+      if (
+        q.promptKey === "promptWriteEquation" ||
+        q.promptKey === "promptTableEquation" ||
+        q.promptKey === "promptTwoPoints" ||
+        q.promptKey === "promptPercentModel"
+      ) {
+        return [`y=2^x`, `y=2\cdot 3^x`, `y=3\cdot 2^x`, `y=2x+3`, `y=3x+2`];
+      }
+
+      return nearbyNumberFallbacks(q.answer);
+    }
+
+    function tableLatex(rows) {
+      return `\\begin{array}{c|${"c".repeat(rows.length)}}x&${rows.map(r => r[0]).join("&")}\\\\\\hline y&${rows.map(r => r[1]).join("&")}\\end{array}`;
+    }
+    function comparisonLatex(left, rel, right) { return `${left}${rel}${right}`; }
+    function growthText() { return lang === "zh" ? "增长" : "Growth"; }
+    function decayText() { return lang === "zh" ? "衰减" : "Decay"; }
+    function rightText(h) { return lang === "zh" ? `向右 ${h}` : `right ${h}`; }
+    function leftText(h) { return lang === "zh" ? `向左 ${h}` : `left ${h}`; }
+    function upText(k) { return lang === "zh" ? `向上 ${k}` : `up ${k}`; }
+    function downText(k) { return lang === "zh" ? `向下 ${Math.abs(k)}` : `down ${Math.abs(k)}`; }
+    function allRealText() { return lang === "zh" ? "所有实数" : "all real numbers"; }
+
+    const BUILDERS = {
+      easy: [
+        // 1. Evaluate exponential expressions.
+        () => {
+          const a = randInt(2, 7), b = choose([2, 3, 4, 5]), x = randInt(2, 4);
+          const value = a * powInt(b, x);
+          return makeQuestion("easy", "evaluate-basic", "promptEvaluate", `f(x)=${modelLatex(a, b)},\\quad f(${x})=?`, String(value), [
+            { line: `f(${x})=${a}\\cdot ${b}^{${x}}`, note: tr().notes.substitute },
+            { line: `${b}^{${x}}=${powInt(b, x)}`, note: tr().notes.exponentFirst },
+            { line: `f(${x})=${value}`, note: tr().notes.exponentFirst }
+          ], [String(powInt(b, x)), String(a * b * x), String(a + powInt(b, x)), String(powInt(a * b, x))]);
+        },
+        () => {
+          const b = choose([2, 3, 4]), k = randInt(-8, 8), x = randInt(1, 4);
+          const value = powInt(b, x) + k;
+          return makeQuestion("easy", "evaluate-outside-shift", "promptEvaluate", `g(x)=${expTerm(b)}${signedOutside(k)},\\quad g(${x})=?`, String(value), [
+            { line: `g(${x})=${b}^{${x}}${signedOutside(k)}`, note: tr().notes.substitute },
+            { line: `${b}^{${x}}=${powInt(b, x)}`, note: tr().notes.exponentFirst },
+            { line: `g(${x})=${value}`, note: tr().notes.exponentFirst }
+          ], [String(powInt(b, x)), String(powInt(b, x + k)), String(b * x + k), String(value + k)]);
+        },
+        () => {
+          const a = randInt(2, 6), b = choose([2, 3]), h = choose([-2, -1, 1, 2]);
+          const x = h < 0 ? randInt(Math.abs(h), 5) : randInt(1, 4);
+          const exp = x + h;
+          const value = a * powInt(b, exp);
+          return makeQuestion("easy", "evaluate-inside-exponent", "promptEvaluate", `f(x)=${a}\\cdot ${b}^{x${signedInt(h)}},\\quad f(${x})=?`, String(value), [
+            { line: `f(${x})=${a}\\cdot ${b}^{${x}${signedInt(h)}}`, note: tr().notes.substitute },
+            { line: `${x}${signedInt(h)}=${exp}`, note: tr().notes.exponentFirst },
+            { line: `f(${x})=${value}`, note: tr().notes.exponentFirst }
+          ], [String(a * powInt(b, x)), String(powInt(b, exp)), String(a * b * exp), String(a * powInt(b, Math.abs(exp)))]);
+        },
+        // 2. Identify parts.
+        () => {
+          const a = randInt(2, 12), b = choose([2, 3, 4, 5, 6]);
+          return makeQuestion("easy", "identify-initial", "promptIdentifyPart", `y=${modelLatex(a, b)}.\\quad ${textLatex(lang === "zh" ? "初始值是多少？" : "What is the initial value?")}`, String(a), [
+            { line: `y=${a}\\cdot ${b}^{x}`, note: tr().notes.initial },
+            { line: `y(0)=${a}\\cdot ${b}^{0}=${a}`, note: tr().notes.initial }
+          ], [String(b), String(a * b), "1", String(a + b)]);
+        },
+        () => {
+          const a = randInt(2, 9), b = choose([2, 3, 4, 5, 7]);
+          return makeQuestion("easy", "identify-base", "promptIdentifyPart", `y=${modelLatex(a, b)}.\\quad ${textLatex(lang === "zh" ? "增长因子是多少？" : "What is the growth factor?")}`, String(b), [
+            { line: `y=a\\cdot b^x`, note: tr().notes.base },
+            { line: `b=${b}`, note: tr().notes.base }
+          ], [String(a), String(a * b), String(b - 1), String(a + b)]);
+        },
+        () => {
+          const a = randInt(2, 12), b = choose([2, 3, 5]);
+          return makeQuestion("easy", "identify-yintercept", "promptIdentifyPart", `y=${modelLatex(a, b)}.\\quad ${textLatex(lang === "zh" ? "y 截距是多少？" : "What is the y-intercept?")}`, `\\left(0,${a}\\right)`, [
+            { line: `x=0`, note: tr().notes.initial },
+            { line: `y=${a}\\cdot ${b}^{0}=${a}`, note: tr().notes.initial },
+            { line: `\\left(0,${a}\\right)`, note: tr().notes.initial }
+          ], [`\\left(${a},0\\right)`, `\\left(0,${b}\\right)`, `\\left(1,${a * b}\\right)`, String(a)]);
+        },
+        // 3. Growth vs decay.
+        () => {
+          const a = randInt(2, 9), b = choose([2, 3, 4, 5]);
+          return makeQuestion("easy", "growth-decay-integer-base", "promptGrowthDecay", `y=${modelLatex(a, b)}`, textLatex(growthText()), [
+            { line: `${b}>1`, note: tr().notes.growth },
+            { line: textLatex(growthText()), note: tr().notes.growth }
+          ], [textLatex(decayText()), textLatex(lang === "zh" ? "线性" : "Linear"), textLatex(lang === "zh" ? "常数" : "Constant")]);
+        },
+        () => {
+          const a = randInt(2, 9), pair = choose([[1, 2], [1, 3], [2, 3], [3, 4]]);
+          const base = fracBaseLatex(pair[0], pair[1]);
+          return makeQuestion("easy", "growth-decay-fraction-base", "promptGrowthDecay", `y=${a}\\cdot ${base}^{x}`, textLatex(decayText()), [
+            { line: `0<\\frac{${pair[0]}}{${pair[1]}}<1`, note: tr().notes.decay },
+            { line: textLatex(decayText()), note: tr().notes.decay }
+          ], [textLatex(growthText()), textLatex(lang === "zh" ? "线性" : "Linear"), textLatex(lang === "zh" ? "二次" : "Quadratic")]);
+        },
+        () => {
+          const a = randInt(20, 90), r = choose([5, 10, 15, 20, 25]);
+          const growing = Math.random() < 0.5;
+          const b = percentBase(r, growing);
+          return makeQuestion("easy", "growth-decay-percent-base", "promptGrowthDecay", `y=${a}(${b})^x`, textLatex(growing ? growthText() : decayText()), [
+            { line: growing ? `${b}>1` : `0<${b}<1`, note: growing ? tr().notes.growth : tr().notes.decay },
+            { line: textLatex(growing ? growthText() : decayText()), note: growing ? tr().notes.growth : tr().notes.decay }
+          ], [textLatex(growing ? decayText() : growthText()), textLatex(lang === "zh" ? "没有变化" : "No change"), textLatex(lang === "zh" ? "线性" : "Linear")]);
+        },
+        // 4. Which one is exponential?
+        () => {
+          const b = choose([2, 3, 4, 5]), a = randInt(2, 8);
+          return makeQuestion("easy", "which-exponential-basic", "promptWhichExponential", textLatex(lang === "zh" ? "哪一个是指数函数？" : "Which one is exponential?"), `y=${modelLatex(a, b)}`, [
+            { line: `y=${a}\\cdot ${b}^{x}`, note: tr().notes.exponential },
+            { line: textLatex(lang === "zh" ? "变量 x 在指数位置" : "x is in the exponent"), note: tr().notes.exponential }
+          ], [`y=${a}x+${b}`, `y=${a}x^${b}`, `y=${b}x^2`, `y=${a}+x^${b}`]);
+        },
+        () => {
+          const b = choose([2, 3, 5]);
+          return makeQuestion("easy", "which-exponential-table-style", "promptWhichExponential", textLatex(lang === "zh" ? "哪一个是指数函数？" : "Which one is exponential?"), `f(x)=${b}^{x}`, [
+            { line: `f(x)=${b}^{x}`, note: tr().notes.exponential },
+            { line: textLatex(lang === "zh" ? "底数固定，指数含 x" : "fixed base, x in the exponent"), note: tr().notes.exponential }
+          ], [`f(x)=x^${b}`, `f(x)=${b}x`, `f(x)=x+${b}`, `f(x)=x^2+${b}`]);
+        },
+        () => {
+          const b = choose([2, 3, 4]);
+          return makeQuestion("easy", "which-exponential-decay", "promptWhichExponential", textLatex(lang === "zh" ? "哪一个是指数函数？" : "Which one is exponential?"), `y=${fracBaseLatex(1, b)}^{x}`, [
+            { line: `y=\\left(\\frac{1}{${b}}\\right)^x`, note: tr().notes.exponential },
+            { line: textLatex(lang === "zh" ? "变量在指数位置，所以是指数函数" : "the variable is in the exponent"), note: tr().notes.exponential }
+          ], [`y=\\frac{1}{${b}}x`, `y=x^{${b}}`, `y=${b}x+1`, `y=x^2-${b}`]);
+        }
+      ],
+      medium: [
+        // 1. Write percent equations.
+        () => {
+          const a = choose([50, 80, 100, 200, 500]), r = choose([5, 8, 10, 12, 15, 20]);
+          const b = percentBase(r, true);
+          return makeQuestion("medium", "percent-growth-equation", "promptWriteEquation", textLatex(lang === "zh" ? `初始值 ${a}，每期增长 ${r}%` : `Starts at ${a} and grows by ${r}% each period.`), `y=${a}(${b})^t`, [
+            { line: `1+${r}\\%=1+${trimNumber(r / 100)}=${b}`, note: tr().notes.percentGrowth },
+            { line: `y=${a}(${b})^t`, note: tr().notes.model }
+          ], [`y=${a}(${trimNumber(r / 100)})^t`, `y=${a}(${percentBase(r, false)})^t`, `y=${b}(${a})^t`, `y=${a}+${r}t`]);
+        },
+        () => {
+          const a = choose([100, 250, 400, 800, 1200]), r = choose([5, 10, 15, 20, 25, 30]);
+          const b = percentBase(r, false);
+          return makeQuestion("medium", "percent-decay-equation", "promptWriteEquation", textLatex(lang === "zh" ? `初始值 ${a}，每期减少 ${r}%` : `Starts at ${a} and decreases by ${r}% each period.`), `y=${a}(${b})^t`, [
+            { line: `1-${r}\\%=1-${trimNumber(r / 100)}=${b}`, note: tr().notes.percentDecay },
+            { line: `y=${a}(${b})^t`, note: tr().notes.model }
+          ], [`y=${a}(${trimNumber(r / 100)})^t`, `y=${a}(${percentBase(r, true)})^t`, `y=${b}(${a})^t`, `y=${a}-${r}t`]);
+        },
+        () => {
+          const a = choose([20, 40, 60, 90]), factor = choose([2, 3, 4]);
+          return makeQuestion("medium", "verbal-multiplier-equation", "promptWriteEquation", textLatex(lang === "zh" ? `初始值 ${a}，每期乘以 ${factor}` : `Starts at ${a} and is multiplied by ${factor} each period.`), `y=${a}\\cdot ${factor}^{t}`, [
+            { line: `b=${factor}`, note: tr().notes.base },
+            { line: `y=${a}\\cdot ${factor}^{t}`, note: tr().notes.model }
+          ], [`y=${factor}\\cdot ${a}^{t}`, `y=${a}+${factor}t`, `y=${a}${factor}^{t+1}`, `y=${a}(${factor - 1})^t`]);
+        },
+        // 2. Table equations.
+        () => {
+          const a = randInt(2, 9), b = choose([2, 3, 4, 5]);
+          const rows = [[0, a], [1, a * b], [2, a * b * b]];
+          return makeQuestion("medium", "table-equation-consecutive", "promptTableEquation", tableLatex(rows), `y=${modelLatex(a, b)}`, [
+            { line: `a=${a}`, note: tr().notes.table },
+            { line: `b=\\frac{${a * b}}{${a}}=${b}`, note: tr().notes.ratio },
+            { line: `y=${modelLatex(a, b)}`, note: tr().notes.table }
+          ], [`y=${modelLatex(b, a)}`, `y=${a}+${b}x`, `y=${a * b}^{x}`, `y=${a}x^${b}`]);
+        },
+        () => {
+          const a = choose([3, 4, 5, 6, 8]), b = choose([2, 3]);
+          const rows = [[1, a * b], [2, a * b * b], [3, a * b * b * b]];
+          return makeQuestion("medium", "table-equation-start-at-one", "promptTableEquation", tableLatex(rows), `y=${modelLatex(a, b)}`, [
+            { line: `b=\\frac{${a * b * b}}{${a * b}}=${b}`, note: tr().notes.ratio },
+            { line: `a=\\frac{${a * b}}{${b}}=${a}`, note: tr().notes.table },
+            { line: `y=${modelLatex(a, b)}`, note: tr().notes.table }
+          ], [`y=${modelLatex(a * b, b)}`, `y=${modelLatex(a, b + 1)}`, `y=${a}+${b}x`, `y=${modelLatex(b, a)}`]);
+        },
+        () => {
+          const a = choose([40, 60, 80, 100]), d = choose([2, 4, 5]);
+          const rows = [[0, a], [1, a / d], [2, a / (d * d)]];
+          return makeQuestion("medium", "table-equation-decay", "promptTableEquation", tableLatex(rows), `y=${a}${fracBaseLatex(1, d)}^x`, [
+            { line: `b=\\frac{${a / d}}{${a}}=\\frac{1}{${d}}`, note: tr().notes.ratio },
+            { line: `y=${a}\\left(\\frac{1}{${d}}\\right)^x`, note: tr().notes.table }
+          ], [`y=${a}(${d})^x`, `y=${d}${fracBaseLatex(1, a)}^x`, `y=${a}-${d}x`, `y=${a / d}${fracBaseLatex(1, d)}^x`]);
+        },
+        // 3. Word value.
+        () => {
+          const a = choose([10, 20, 50, 100]), factor = choose([2, 3]), t = randInt(3, 6);
+          const value = a * powInt(factor, t);
+          return makeQuestion("medium", "word-value-doubling", "promptWordValue", textLatex(lang === "zh" ? `${a} 开始，每期乘以 ${factor}，${t} 期后是多少？` : `Starts at ${a}, multiplied by ${factor} each period. Find the value after ${t} periods.`), String(value), [
+            { line: `y=${a}\\cdot ${factor}^{t}`, note: tr().notes.model },
+            { line: `y=${a}\\cdot ${factor}^{${t}}`, note: tr().notes.substitute },
+            { line: `y=${value}`, note: tr().notes.exponentFirst }
+          ], [String(a * factor * t), String(a + factor * t), String(powInt(factor, t)), String(value / factor)]);
+        },
+        () => {
+          const a = choose([160, 240, 320, 640, 960]), d = choose([2, 4]), t = randInt(2, 4);
+          const value = a / powInt(d, t);
+          return makeQuestion("medium", "word-value-decay", "promptWordValue", textLatex(lang === "zh" ? `${a} 开始，每期乘以 1/${d}，${t} 期后是多少？` : `Starts at ${a}, multiplied by 1/${d} each period. Find the value after ${t} periods.`), String(value), [
+            { line: `y=${a}\\left(\\frac{1}{${d}}\\right)^t`, note: tr().notes.model },
+            { line: `y=${a}\\left(\\frac{1}{${d}}\\right)^{${t}}`, note: tr().notes.substitute },
+            { line: `y=${value}`, note: tr().notes.exponentFirst }
+          ], [String(a / d), String(a - d * t), String(a * d * t), String(powInt(d, t))]);
+        },
+        () => {
+          const a = choose([100, 200, 500]), r = choose([10, 20, 25]), t = choose([2, 3]);
+          const b = 1 + r / 100;
+          const value = trimNumber(a * Math.pow(b, t), 2);
+          return makeQuestion("medium", "word-value-percent-growth", "promptWordValue", textLatex(lang === "zh" ? `${a} 开始，每期增长 ${r}%，${t} 期后是多少？` : `Starts at ${a} and grows by ${r}% each period. Find the value after ${t} periods.`), value, [
+            { line: `y=${a}(${trimNumber(b)})^t`, note: tr().notes.percentGrowth },
+            { line: `y=${a}(${trimNumber(b)})^{${t}}`, note: tr().notes.substitute },
+            { line: `y=${value}`, note: tr().notes.exponentFirst }
+          ], [String(a + a * r / 100 * t), String(a * b * t), String(a * r * t), String(a)]);
+        },
+        // 4. Missing table.
+        () => {
+          const a = choose([2, 3, 4, 5, 6]), b = choose([2, 3, 4]);
+          const missing = a * powInt(b, 3);
+          const rows = [[0, a], [1, a * b], [2, a * b * b], [3, "\\Box"]];
+          return makeQuestion("medium", "missing-table-forward", "promptMissingTable", tableLatex(rows), String(missing), [
+            { line: `b=\\frac{${a * b}}{${a}}=${b}`, note: tr().notes.ratio },
+            { line: `${a * b * b}\\cdot ${b}=${missing}`, note: tr().notes.table }
+          ], [String(a * b * b + b), String(a * b * b), String(missing + b), String(a + 3 * b)]);
+        },
+        () => {
+          const b = choose([2, 3, 4]), a = choose([3, 5, 7]);
+          const rows = [[0, "\\Box"], [1, a * b], [2, a * b * b], [3, a * b * b * b]];
+          return makeQuestion("medium", "missing-table-backward", "promptMissingTable", tableLatex(rows), String(a), [
+            { line: `b=\\frac{${a * b * b}}{${a * b}}=${b}`, note: tr().notes.ratio },
+            { line: `y(0)=\\frac{${a * b}}{${b}}=${a}`, note: tr().notes.table }
+          ], [String(a * b), String(b), String(a + b), String(a * b * b)]);
+        },
+        () => {
+          const a = choose([80, 120, 160, 200]), d = choose([2, 4, 5]);
+          const rows = [[0, a], [1, a / d], [2, "\\Box"], [3, a / (d * d * d)]];
+          const missing = a / (d * d);
+          return makeQuestion("medium", "missing-table-decay", "promptMissingTable", tableLatex(rows), String(missing), [
+            { line: `b=\\frac{1}{${d}}`, note: tr().notes.ratio },
+            { line: `${a / d}\\cdot \\frac{1}{${d}}=${missing}`, note: tr().notes.table }
+          ], [String(a / d), String(a / (d * d * d)), String(a - 2 * d), String(d * d)]);
+        },
+        // 5. Compare values.
+        () => {
+          const fA = randInt(2, 5), fB = choose([2, 3]);
+          const gA = randInt(2, 5), gB = choose([2, 3, 4]);
+          const x = randInt(2, 4);
+          const fv = fA * powInt(fB, x), gv = gA * powInt(gB, x);
+          if (fv === gv) return BUILDERS.medium[0]();
+          const rel = fv > gv ? ">" : "<";
+          return makeQuestion("medium", "compare-at-x", "promptCompare", `f(x)=${modelLatex(fA, fB)},\\quad g(x)=${modelLatex(gA, gB)},\\quad x=${x}`, comparisonLatex(`f(${x})`, rel, `g(${x})`), [
+            { line: `f(${x})=${fv}`, note: tr().notes.compare },
+            { line: `g(${x})=${gv}`, note: tr().notes.compare },
+            { line: comparisonLatex(`f(${x})`, rel, `g(${x})`), note: tr().notes.compare }
+          ], [comparisonLatex(`f(${x})`, rel === ">" ? "<" : ">", `g(${x})`), `f(${x})=g(${x})`, comparisonLatex(`f(${x + 1})`, rel, `g(${x + 1})`), comparisonLatex(`f(0)`, rel, `g(0)`)]);
+        },
+        () => {
+          const a = choose([10, 20, 50]), b1 = choose([2, 3]), b2 = b1 + choose([1, 2]);
+          const x = randInt(3, 5);
+          return makeQuestion("medium", "compare-same-initial", "promptCompare", `f(x)=${modelLatex(a, b1)},\\quad g(x)=${modelLatex(a, b2)},\\quad x=${x}`, `g(${x})>f(${x})`, [
+            { line: `${b2}>${b1}`, note: tr().notes.compare },
+            { line: `g(${x})>${`f(${x})`}`, note: tr().notes.compare }
+          ], [`f(${x})>g(${x})`, `f(${x})=g(${x})`, `g(0)>f(0)`, `f(1)=g(1)`]);
+        }
+      ],
+      hard: [
+        // 1. Transformations.
+        () => {
+          const b = choose([2, 3, 4]), h = randInt(2, 6), k = randInt(2, 8);
+          return makeQuestion("hard", "transform-right-up", "promptTransform", `y=${expTerm(b, `x-${h}`)}+${k}`, textLatex(`${rightText(h)}, ${upText(k)}`), [
+            { line: `x-${h}`, note: tr().notes.shift },
+            { line: `+${k}`, note: tr().notes.shift },
+            { line: textLatex(`${rightText(h)}, ${upText(k)}`), note: tr().notes.shift }
+          ], [textLatex(`${leftText(h)}, ${upText(k)}`), textLatex(`${rightText(h)}, ${downText(-k)}`), `y=${k}`, `x=${h}`]);
+        },
+        () => {
+          const b = choose([2, 3, 5]), h = randInt(2, 6), k = -randInt(2, 8);
+          return makeQuestion("hard", "transform-left-down", "promptTransform", `y=${expTerm(b, `x+${h}`)}${k}`, textLatex(`${leftText(h)}, ${downText(k)}`), [
+            { line: `x+${h}`, note: tr().notes.shift },
+            { line: `${k}`, note: tr().notes.shift },
+            { line: textLatex(`${leftText(h)}, ${downText(k)}`), note: tr().notes.shift }
+          ], [textLatex(`${rightText(h)}, ${downText(k)}`), textLatex(`${leftText(h)}, ${upText(Math.abs(k))}`), `y=${k}`, `x=-${h}`]);
+        },
+        () => {
+          const b = choose([2, 3, 4]), k = randInt(-8, 8);
+          return makeQuestion("hard", "transform-asymptote", "promptTransform", `y=${expTerm(b)}${signedOutside(k)}`, `y=${k}`, [
+            { line: `y=${expTerm(b)}`, note: tr().notes.asymptote },
+            { line: `y=${k}`, note: tr().notes.asymptote }
+          ], [`x=${k}`, `y=0`, `y=${b}`, `x=0`]);
+        },
+        () => {
+          const a = -choose([1, 2, 3]), b = choose([2, 3]), k = randInt(-5, 5);
+          return makeQuestion("hard", "reflection-feature", "promptTransform", `y=${coefficient(a)}${expTerm(b)}${signedOutside(k)}`, textLatex(lang === "zh" ? "关于 x 轴反射" : "reflection across the x-axis"), [
+            { line: `${a}<0`, note: tr().notes.shift },
+            { line: textLatex(lang === "zh" ? "负号在函数外面" : "the negative sign is outside the exponential part"), note: tr().notes.shift }
+          ], [textLatex(lang === "zh" ? "关于 y 轴反射" : "reflection across the y-axis"), `y=${k}`, textLatex(`${upText(k)}`), textLatex(growthText())]);
+        },
+        // 2. Same-base exponential equations.
+        () => {
+          const a = choose([2, 3, 5]), m = randInt(2, 5), n = randInt(-5, 5), x = randInt(-2, 6);
+          const k = m * x + n;
+          return makeQuestion("hard", "same-base-linear", "promptSolveEquation", `${a}^{${m}x${signedInt(n)}}=${a}^{${k}}`, `x=${x}`, [
+            { line: `${m}x${signedInt(n)}=${k}`, note: tr().notes.exponentsEqual },
+            { line: `${m}x=${k - n}`, note: tr().notes.exponentsEqual },
+            { line: `x=${x}`, note: tr().notes.exponentsEqual }
+          ], [`x=${k}`, `x=${k - n}`, `x=${-x}`, `x=${x + 1}`]);
+        },
+        () => {
+          const a = choose([2, 3, 5]), m = randInt(2, 5), p = randInt(1, m - 1), x = randInt(-2, 6), q = randInt(-4, 4), n = p * x + q - m * x;
+          return makeQuestion("hard", "same-base-two-linear", "promptSolveEquation", `${a}^{${m}x${signedInt(n)}}=${a}^{${p}x${signedInt(q)}}`, `x=${x}`, [
+            { line: `${m}x${signedInt(n)}=${p}x${signedInt(q)}`, note: tr().notes.exponentsEqual },
+            { line: `${m - p}x=${q - n}`, note: tr().notes.exponentsEqual },
+            { line: `x=${x}`, note: tr().notes.exponentsEqual }
+          ], [`x=${q - n}`, `x=${m - p}`, `x=${-x}`, `x=${x + 2}`]);
+        },
+        () => {
+          const a = choose([2, 3, 5]), m = randInt(2, 4), n = randInt(-4, 4), r = randInt(1, 4), s = randInt(1, 4);
+          const xNum = r + s - n;
+          const x = simplifyFrac(xNum, m);
+          return makeQuestion("hard", "same-base-product", "promptSolveEquation", `${a}^{${m}x${signedInt(n)}}=${a}^{${r}}\\cdot ${a}^{${s}}`, `x=${fracLatex(x)}`, [
+            { line: `${a}^{${r}}\\cdot ${a}^{${s}}=${a}^{${r + s}}`, note: tr().notes.sameBase },
+            { line: `${m}x${signedInt(n)}=${r + s}`, note: tr().notes.exponentsEqual },
+            { line: `x=${fracLatex(x)}`, note: tr().notes.exponentsEqual }
+          ], [`x=${r + s}`, `x=${fracLatex(simplifyFrac(r + s + n, m))}`, `x=${fracLatex(simplifyFrac(x.n + 1, x.d))}`, `x=${n}`]);
+        },
+        () => {
+          const a = choose([2, 3, 5]), m = randInt(2, 5), n = randInt(-3, 4), r = randInt(1, 5), s = randInt(2, 8);
+          const x = simplifyFrac(s + r - n, m);
+          return makeQuestion("hard", "same-base-quotient", "promptSolveEquation", `\\frac{${a}^{${m}x${signedInt(n)}}}{${a}^{${r}}}=${a}^{${s}}`, `x=${fracLatex(x)}`, [
+            { line: `${m}x${signedInt(n)}-${r}=${s}`, note: tr().notes.sameBase },
+            { line: `${m}x=${s + r - n}`, note: tr().notes.exponentsEqual },
+            { line: `x=${fracLatex(x)}`, note: tr().notes.exponentsEqual }
+          ], [`x=${s}`, `x=${fracLatex(simplifyFrac(s - r - n, m))}`, `x=${fracLatex(simplifyFrac(x.n + 1, x.d))}`, `x=${r + s}`]);
+        },
+        // 3. Two-point model.
+        () => {
+          const a = randInt(2, 10), b = choose([2, 3, 4, 5]);
+          return makeQuestion("hard", "two-points-0-1", "promptTwoPoints", `(0,${a}),\\ (1,${a * b})`, `y=${modelLatex(a, b)}`, [
+            { line: `a=${a}`, note: tr().notes.twoPoints },
+            { line: `b=\\frac{${a * b}}{${a}}=${b}`, note: tr().notes.twoPoints },
+            { line: `y=${modelLatex(a, b)}`, note: tr().notes.model }
+          ], [`y=${modelLatex(b, a)}`, `y=${a}+${b}x`, `y=${modelLatex(a * b, b)}`, `y=${a}x^${b}`]);
+        },
+        () => {
+          const a = choose([2, 3, 4, 5, 6]), b = choose([2, 3, 4]);
+          return makeQuestion("hard", "two-points-1-2", "promptTwoPoints", `(1,${a * b}),\\ (2,${a * b * b})`, `y=${modelLatex(a, b)}`, [
+            { line: `b=\\frac{${a * b * b}}{${a * b}}=${b}`, note: tr().notes.twoPoints },
+            { line: `a=\\frac{${a * b}}{${b}}=${a}`, note: tr().notes.twoPoints },
+            { line: `y=${modelLatex(a, b)}`, note: tr().notes.model }
+          ], [`y=${modelLatex(a * b, b)}`, `y=${modelLatex(a, b + 1)}`, `y=${a}+${b}x`, `y=${modelLatex(b, a)}`]);
+        },
+        () => {
+          const a = choose([80, 120, 180, 240]), d = choose([2, 3, 4]);
+          return makeQuestion("hard", "two-points-decay", "promptTwoPoints", `(0,${a}),\\ (1,${a / d})`, `y=${a}${fracBaseLatex(1, d)}^x`, [
+            { line: `b=\\frac{${a / d}}{${a}}=\\frac{1}{${d}}`, note: tr().notes.twoPoints },
+            { line: `y=${a}\\left(\\frac{1}{${d}}\\right)^x`, note: tr().notes.model }
+          ], [`y=${a}(${d})^x`, `y=${a / d}${fracBaseLatex(1, d)}^x`, `y=${a}-${d}x`, `y=${d}${fracBaseLatex(1, a)}^x`]);
+        },
+        () => {
+          const a = choose([3, 4, 5, 6]), b = choose([2, 3]), k = randInt(1, 5);
+          return makeQuestion("hard", "two-points-shifted-x", "promptTwoPoints", `(${k},${a}),\\ (${k + 1},${a * b})`, `y=${a}\\cdot ${b}^{x-${k}}`, [
+            { line: `x=${k}\\Rightarrow y=${a}`, note: tr().notes.twoPoints },
+            { line: `b=\\frac{${a * b}}{${a}}=${b}`, note: tr().notes.twoPoints },
+            { line: `y=${a}\\cdot ${b}^{x-${k}}`, note: tr().notes.model }
+          ], [`y=${modelLatex(a, b)}`, `y=${a}\\cdot ${b}^{x+${k}}`, `y=${a * b}\\cdot ${b}^{x-${k}}`, `y=${a}+${b}(x-${k})`]);
+        },
+        // 4. Percent model.
+        () => {
+          const a = choose([200, 400, 800, 1000]), r = choose([8, 12, 15, 20]), t = choose([2, 3, 4]);
+          const b = 1 - r / 100;
+          const value = trimNumber(a * Math.pow(b, t), 2);
+          return makeQuestion("hard", "percent-decay-compute", "promptPercentModel", textLatex(lang === "zh" ? `${a} 开始，每期减少 ${r}%，${t} 期后是多少？` : `Starts at ${a}, decreases by ${r}% each period. Find the amount after ${t} periods.`), value, [
+            { line: `y=${a}(${trimNumber(b)})^t`, note: tr().notes.percentDecay },
+            { line: `y=${a}(${trimNumber(b)})^{${t}}`, note: tr().notes.substitute },
+            { line: `y=${value}`, note: tr().notes.model }
+          ], [String(a - a * r / 100 * t), String(a * (r / 100) * t), String(a * (1 + r / 100) ** t), String(a)]);
+        },
+        () => {
+          const a = choose([100, 250, 500]), r = choose([6, 9, 12, 18]), t = choose([3, 4, 5]);
+          const b = 1 + r / 100;
+          const value = trimNumber(a * Math.pow(b, t), 2);
+          return makeQuestion("hard", "percent-growth-compute", "promptPercentModel", textLatex(lang === "zh" ? `${a} 开始，每期增长 ${r}%，${t} 期后是多少？` : `Starts at ${a}, grows by ${r}% each period. Find the amount after ${t} periods.`), value, [
+            { line: `y=${a}(${trimNumber(b)})^t`, note: tr().notes.percentGrowth },
+            { line: `y=${a}(${trimNumber(b)})^{${t}}`, note: tr().notes.substitute },
+            { line: `y=${value}`, note: tr().notes.model }
+          ], [String(a + a * r / 100 * t), String(a * (r / 100) * t), String(a * (1 - r / 100) ** t), String(a)]);
+        },
+        () => {
+          const r = choose([5, 10, 15, 20, 25]), a = choose([100, 300, 500]);
+          const b = percentBase(r, true);
+          return makeQuestion("hard", "percent-find-rate-growth", "promptPercentModel", `y=${a}(${b})^t`, textLatex(lang === "zh" ? `每期增长 ${r}%` : `grows by ${r}% per period`), [
+            { line: `${b}=1+${trimNumber(r / 100)}`, note: tr().notes.percentGrowth },
+            { line: textLatex(lang === "zh" ? `增长率是 ${r}%` : `growth rate is ${r}%`), note: tr().notes.percentGrowth }
+          ], [textLatex(lang === "zh" ? `每期减少 ${r}%` : `decreases by ${r}% per period`), textLatex(lang === "zh" ? `每期增长 ${trimNumber(r / 100)}%` : `grows by ${trimNumber(r / 100)}% per period`), textLatex(lang === "zh" ? `每期增长 ${b}%` : `grows by ${b}% per period`), String(b)]);
+        },
+        () => {
+          const r = choose([5, 10, 15, 20, 30]), a = choose([100, 300, 500]);
+          const b = percentBase(r, false);
+          return makeQuestion("hard", "percent-find-rate-decay", "promptPercentModel", `y=${a}(${b})^t`, textLatex(lang === "zh" ? `每期减少 ${r}%` : `decreases by ${r}% per period`), [
+            { line: `${b}=1-${trimNumber(r / 100)}`, note: tr().notes.percentDecay },
+            { line: textLatex(lang === "zh" ? `衰减率是 ${r}%` : `decay rate is ${r}%`), note: tr().notes.percentDecay }
+          ], [textLatex(lang === "zh" ? `每期增长 ${r}%` : `grows by ${r}% per period`), textLatex(lang === "zh" ? `每期减少 ${trimNumber(r / 100)}%` : `decreases by ${trimNumber(r / 100)}% per period`), textLatex(lang === "zh" ? `每期减少 ${b}%` : `decreases by ${b}% per period`), String(b)]);
+        },
+        // 5. Features.
+        () => {
+          const b = choose([2, 3, 4]), k = randInt(-8, 8);
+          return makeQuestion("hard", "feature-asymptote", "promptFeature", `y=${randInt(2, 5)}\\cdot ${expTerm(b)}${signedOutside(k)}`, `y=${k}`, [
+            { line: `y=${k}`, note: tr().notes.asymptote }
+          ], [`x=${k}`, `y=0`, `x=0`, `y=${b}`]);
+        },
+        () => {
+          const b = choose([2, 3, 5]), k = randInt(-6, 6);
+          return makeQuestion("hard", "feature-domain", "promptFeature", `y=${expTerm(b)}${signedOutside(k)}`, textLatex(allRealText()), [
+            { line: `x\\in\\mathbb{R}`, note: tr().notes.asymptote },
+            { line: textLatex(allRealText()), note: tr().notes.asymptote }
+          ], [`x>${k}`, `x<${k}`, `x>0`, `y>${k}`]);
+        },
+        () => {
+          const a = choose([1, 2, 3, 4]), b = choose([2, 3]), k = randInt(-5, 5);
+          return makeQuestion("hard", "feature-range-positive", "promptFeature", `y=${coefficient(a)}${expTerm(b)}${signedOutside(k)}`, `y>${k}`, [
+            { line: `${coefficient(a)}${b}^x>0`, note: tr().notes.asymptote },
+            { line: `y>${k}`, note: tr().notes.asymptote }
+          ], [`y<${k}`, `x>${k}`, `y\\ge ${k}`, textLatex(allRealText())]);
+        },
+        () => {
+          const a = -choose([1, 2, 3, 4]), b = choose([2, 3]), k = randInt(-5, 5);
+          return makeQuestion("hard", "feature-range-negative", "promptFeature", `y=${coefficient(a)}${expTerm(b)}${signedOutside(k)}`, `y<${k}`, [
+            { line: `${coefficient(a)}${b}^x<0`, note: tr().notes.asymptote },
+            { line: `y<${k}`, note: tr().notes.asymptote }
+          ], [`y>${k}`, `x<${k}`, `y\\le ${k}`, textLatex(allRealText())]);
+        }
+      ],
+      expert: [
+        // 1. Complex same-base equations.
+        () => {
+          const a = choose([2, 3, 5, 7]), m = randInt(2, 5), n = randInt(-6, 6), x = randInt(-2, 6);
+          const k = m * x + n;
+          return makeQuestion("expert", "expert-eq-power-number", "promptSolveEquation", `${a}^{${m}x${signedInt(n)}}=${a}^{${k}}`, `x=${x}`, [
+            { line: `${m}x${signedInt(n)}=${k}`, note: tr().notes.exponentsEqual },
+            { line: `x=${x}`, note: tr().notes.exponentsEqual }
+          ], [`x=${k}`, `x=${k - n}`, `x=${-x}`, `x=${x + 1}`]);
+        },
+        () => {
+          const a = choose([2, 3, 5]), m = randInt(3, 6), p = randInt(1, 4), x = randInt(-3, 6), q = randInt(-5, 5), n = p * x + q - m * x;
+          return makeQuestion("expert", "expert-eq-linear-linear", "promptSolveEquation", `${a}^{${m}x${signedInt(n)}}=${a}^{${p}x${signedInt(q)}}`, `x=${x}`, [
+            { line: `${m}x${signedInt(n)}=${p}x${signedInt(q)}`, note: tr().notes.exponentsEqual },
+            { line: `${m - p}x=${q - n}`, note: tr().notes.exponentsEqual },
+            { line: `x=${x}`, note: tr().notes.exponentsEqual }
+          ], [`x=${q - n}`, `x=${m - p}`, `x=${-x}`, `x=${x + 2}`]);
+        },
+        () => {
+          const a = choose([2, 3, 5]), m = randInt(2, 5), n = randInt(-4, 4), r = randInt(2, 5), s = randInt(1, 4);
+          const x = simplifyFrac(r + s - n, m);
+          return makeQuestion("expert", "expert-eq-product", "promptSolveEquation", `${a}^{${m}x${signedInt(n)}}=${a}^{${r}}\\cdot ${a}^{${s}}`, `x=${fracLatex(x)}`, [
+            { line: `${a}^{${r}}\\cdot ${a}^{${s}}=${a}^{${r + s}}`, note: tr().notes.sameBase },
+            { line: `${m}x${signedInt(n)}=${r + s}`, note: tr().notes.exponentsEqual },
+            { line: `x=${fracLatex(x)}`, note: tr().notes.exponentsEqual }
+          ], [`x=${r + s}`, `x=${fracLatex(simplifyFrac(r + s + n, m))}`, `x=${fracLatex(simplifyFrac(x.n + 1, x.d))}`, `x=${n}`]);
+        },
+        () => {
+          const a = choose([2, 3, 5]), m = randInt(2, 5), n = randInt(-3, 4), r = randInt(1, 5), s = randInt(2, 8);
+          const x = simplifyFrac(s + r - n, m);
+          return makeQuestion("expert", "expert-eq-quotient", "promptSolveEquation", `\\frac{${a}^{${m}x${signedInt(n)}}}{${a}^{${r}}}=${a}^{${s}}`, `x=${fracLatex(x)}`, [
+            { line: `${m}x${signedInt(n)}-${r}=${s}`, note: tr().notes.sameBase },
+            { line: `${m}x=${s + r - n}`, note: tr().notes.exponentsEqual },
+            { line: `x=${fracLatex(x)}`, note: tr().notes.exponentsEqual }
+          ], [`x=${s}`, `x=${fracLatex(simplifyFrac(s - r - n, m))}`, `x=${fracLatex(simplifyFrac(x.n + 1, x.d))}`, `x=${r + s}`]);
+        },
+        () => {
+          const a = choose([2, 3, 5]), r = choose([2, 3]), m = randInt(1, 4), n = randInt(-3, 4), x = randInt(-2, 5);
+          const k = r * (m * x + n);
+          return makeQuestion("expert", "expert-eq-power-of-power", "promptSolveEquation", `(${a}^{${r}})^{${m}x${signedInt(n)}}=${a}^{${k}}`, `x=${x}`, [
+            { line: `(${a}^{${r}})^{${m}x${signedInt(n)}}=${a}^{${r}(${m}x${signedInt(n)})}`, note: tr().notes.sameBase },
+            { line: `${r}(${m}x${signedInt(n)})=${k}`, note: tr().notes.exponentsEqual },
+            { line: `x=${x}`, note: tr().notes.exponentsEqual }
+          ], [`x=${k}`, `x=${fracLatex(simplifyFrac(k, r))}`, `x=${-x}`, `x=${x + 1}`]);
+        },
+        () => {
+          const a = choose([2, 3, 5, 7]), m = randInt(2, 6), x = randInt(-2, 5), n = -m * x;
+          return makeQuestion("expert", "expert-eq-equals-one", "promptSolveEquation", `${a}^{${m}x${signedInt(n)}}=1`, `x=${x}`, [
+            { line: `1=${a}^{0}`, note: tr().notes.sameBase },
+            { line: `${m}x${signedInt(n)}=0`, note: tr().notes.exponentsEqual },
+            { line: `x=${x}`, note: tr().notes.exponentsEqual }
+          ], [`x=0`, `x=${n}`, `x=${-x}`, `x=${x + 1}`]);
+        },
+        // 2. Half-life and doubling.
+        () => {
+          const a = choose([400, 800, 1200, 1600]), h = choose([2, 4, 6, 8]), cycles = randInt(2, 4), t = h * cycles;
+          const value = a / powInt(2, cycles);
+          return makeQuestion("expert", "half-life-exact", "promptHalfLife", textLatex(lang === "zh" ? `初始 ${a}，半衰期 ${h} 小时，${t} 小时后剩多少？` : `Initial amount ${a}, half-life ${h} hours. How much remains after ${t} hours?`), String(value), [
+            { line: `\\text{cycles}=\\frac{${t}}{${h}}=${cycles}`, note: tr().notes.halfLife },
+            { line: `y=${a}\\left(\\frac12\\right)^{${cycles}}`, note: tr().notes.halfLife },
+            { line: `y=${value}`, note: tr().notes.model }
+          ], [String(a / 2), String(a - h * cycles), String(a * powInt(2, cycles)), String(value * 2)]);
+        },
+        () => {
+          const a = choose([5, 10, 20, 50]), d = choose([3, 4, 6]), cycles = randInt(2, 5), t = d * cycles;
+          const value = a * powInt(2, cycles);
+          return makeQuestion("expert", "doubling-time-exact", "promptHalfLife", textLatex(lang === "zh" ? `初始 ${a}，每 ${d} 小时翻倍，${t} 小时后是多少？` : `Initial amount ${a}, doubles every ${d} hours. How much after ${t} hours?`), String(value), [
+            { line: `\\text{cycles}=\\frac{${t}}{${d}}=${cycles}`, note: tr().notes.doubling },
+            { line: `y=${a}\\cdot 2^{${cycles}}`, note: tr().notes.doubling },
+            { line: `y=${value}`, note: tr().notes.model }
+          ], [String(a * 2), String(a + 2 * cycles), String(a / powInt(2, cycles)), String(value / 2)]);
+        },
+        () => {
+          const a = choose([600, 900, 1500]), h = choose([5, 10, 12]), t = h * choose([2, 3]);
+          return makeQuestion("expert", "half-life-equation", "promptHalfLife", textLatex(lang === "zh" ? `初始 ${a}，半衰期 ${h}，选择模型。` : `Initial amount ${a}, half-life ${h}. Choose the model.`), `y=${a}\\left(\\frac12\\right)^{t/${h}}`, [
+            { line: `\\frac{t}{${h}}`, note: tr().notes.halfLife },
+            { line: `y=${a}\\left(\\frac12\\right)^{t/${h}}`, note: tr().notes.model }
+          ], [`y=${a}\\left(2\\right)^{t/${h}}`, `y=${a}\\left(\\frac12\\right)^{${h}t}`, `y=${a}-${h}t`, `y=${h}\\left(\\frac12\\right)^{t/${a}}`]);
+        },
+        () => {
+          const a = choose([20, 40, 60]), d = choose([3, 5, 8]);
+          return makeQuestion("expert", "doubling-equation", "promptHalfLife", textLatex(lang === "zh" ? `初始 ${a}，倍增时间 ${d}，选择模型。` : `Initial amount ${a}, doubling time ${d}. Choose the model.`), `y=${a}\\cdot 2^{t/${d}}`, [
+            { line: `\\frac{t}{${d}}`, note: tr().notes.doubling },
+            { line: `y=${a}\\cdot 2^{t/${d}}`, note: tr().notes.model }
+          ], [`y=${a}\\left(\\frac12\\right)^{t/${d}}`, `y=${a}\\cdot 2^{${d}t}`, `y=${a}+2t`, `y=${d}\\cdot 2^{t/${a}}`]);
+        },
+        // 3. Nonconsecutive points.
+        () => {
+          const a = choose([2, 3, 4, 5]), b = choose([2, 3, 4]);
+          const y2 = a * b * b;
+          return makeQuestion("expert", "nonconsecutive-points-0-2", "promptTwoPoints", `(0,${a}),\\ (2,${y2})`, `y=${modelLatex(a, b)}`, [
+            { line: `a=${a}`, note: tr().notes.twoPoints },
+            { line: `${a}b^2=${y2}`, note: tr().notes.twoPoints },
+            { line: `b^2=${b * b},\\ b=${b}`, note: tr().notes.twoPoints },
+            { line: `y=${modelLatex(a, b)}`, note: tr().notes.model }
+          ], [`y=${modelLatex(a, b * b)}`, `y=${modelLatex(y2, b)}`, `y=${a}+${b}x`, `y=${modelLatex(b, a)}`]);
+        },
+        () => {
+          const a = choose([2, 3, 5]), b = choose([2, 3]), y1 = a * b, y3 = a * powInt(b, 3);
+          return makeQuestion("expert", "nonconsecutive-points-1-3", "promptTwoPoints", `(1,${y1}),\\ (3,${y3})`, `y=${modelLatex(a, b)}`, [
+            { line: `\\frac{${y3}}{${y1}}=b^2=${b * b}`, note: tr().notes.twoPoints },
+            { line: `b=${b}`, note: tr().notes.twoPoints },
+            { line: `a=\\frac{${y1}}{${b}}=${a}`, note: tr().notes.twoPoints },
+            { line: `y=${modelLatex(a, b)}`, note: tr().notes.model }
+          ], [`y=${modelLatex(y1, b)}`, `y=${modelLatex(a, b * b)}`, `y=${a}+${b}x`, `y=${modelLatex(b, a)}`]);
+        },
+        () => {
+          const a = choose([144, 216, 288]), b = choose([2, 3, 4]);
+          const y2 = a / (b * b);
+          return makeQuestion("expert", "nonconsecutive-decay-0-2", "promptTwoPoints", `(0,${a}),\\ (2,${y2})`, `y=${a}${fracBaseLatex(1, b)}^x`, [
+            { line: `a=${a}`, note: tr().notes.twoPoints },
+            { line: `b^2=\\frac{${y2}}{${a}}=\\frac{1}{${b * b}}`, note: tr().notes.twoPoints },
+            { line: `b=\\frac{1}{${b}}`, note: tr().notes.twoPoints },
+            { line: `y=${a}\\left(\\frac1${b}\\right)^x`, note: tr().notes.model }
+          ], [`y=${a}(${b})^x`, `y=${y2}${fracBaseLatex(1, b)}^x`, `y=${a}-${b}x`, `y=${b}${fracBaseLatex(1, a)}^x`]);
+        },
+        () => {
+          const a = choose([3, 4, 5]), b = choose([2, 3]), h = choose([2, 3, 4]);
+          return makeQuestion("expert", "nonconsecutive-shifted", "promptTwoPoints", `(${h},${a}),\\ (${h + 2},${a * b * b})`, `y=${a}\\cdot ${b}^{x-${h}}`, [
+            { line: `b^2=\\frac{${a * b * b}}{${a}}=${b * b}`, note: tr().notes.twoPoints },
+            { line: `b=${b}`, note: tr().notes.twoPoints },
+            { line: `y=${a}\\cdot ${b}^{x-${h}}`, note: tr().notes.model }
+          ], [`y=${modelLatex(a, b)}`, `y=${a}\\cdot ${b * b}^{x-${h}}`, `y=${a}\\cdot ${b}^{x+${h}}`, `y=${a}+${b}(x-${h})`]);
+        },
+        // 4. Long-run comparison.
+        () => {
+          const b1 = choose([2, 3, 4]), b2 = b1 + choose([1, 2]);
+          const a1 = choose([50, 100, 200]), a2 = choose([1, 2, 5]);
+          return makeQuestion("expert", "long-run-larger-base", "promptLongRun", `f(x)=${modelLatex(a1, b1)},\\quad g(x)=${modelLatex(a2, b2)}`, `g(x)`, [
+            { line: `${b2}>${b1}`, note: tr().notes.longRun },
+            { line: `g(x)`, note: tr().notes.longRun }
+          ], [`f(x)`, textLatex(lang === "zh" ? "两者一样快" : "same long-run growth"), textLatex(lang === "zh" ? "无法判断" : "cannot determine"), `${a1}`]);
+        },
+        () => {
+          const b1 = choose([2, 3]), b2 = b1 + 1;
+          return makeQuestion("expert", "long-run-shift-does-not-win", "promptLongRun", `f(x)=1000\\cdot ${b1}^{x},\\quad g(x)=${b2}^{x}`, `g(x)`, [
+            { line: `${b2}>${b1}`, note: tr().notes.longRun },
+            { line: textLatex(lang === "zh" ? "长期看底数更重要" : "the base matters most in the long run"), note: tr().notes.longRun },
+            { line: `g(x)`, note: tr().notes.longRun }
+          ], [`f(x)`, textLatex(lang === "zh" ? "两者一样快" : "same long-run growth"), `1000`, `${b1}`]);
+        },
+        () => {
+          const b1 = choose([2, 3, 4]), b2 = b1 + choose([1, 2]);
+          return makeQuestion("expert", "long-run-with-vertical-shift", "promptLongRun", `f(x)=${b1}^{x}+10000,\\quad g(x)=${b2}^{x}`, `g(x)`, [
+            { line: `${b2}>${b1}`, note: tr().notes.longRun },
+            { line: textLatex(lang === "zh" ? "常数平移不会改变长期增长速度" : "a constant shift does not change long-run exponential growth"), note: tr().notes.longRun },
+            { line: `g(x)`, note: tr().notes.longRun }
+          ], [`f(x)`, textLatex(lang === "zh" ? "两者一样快" : "same long-run growth"), `10000`, `${b1}^{x}`]);
+        },
+        () => {
+          const d1 = choose([2, 3]), d2 = d1 + 2;
+          return makeQuestion("expert", "long-run-decay-slower", "promptStatement", `f(x)=100${fracBaseLatex(1, d1)}^x,\\quad g(x)=100${fracBaseLatex(1, d2)}^x`, `f(x)>g(x)\\text{ for large }x`, [
+            { line: `\\frac{1}{${d1}}>\\frac{1}{${d2}}`, note: tr().notes.longRun },
+            { line: `f(x)\\text{ decays more slowly}`, note: tr().notes.longRun }
+          ], [`g(x)>f(x)\\text{ for large }x`, `f(x)=g(x)\\text{ for all }x`, textLatex(lang === "zh" ? "无法判断" : "cannot determine"), `g(x)\\text{ decays more slowly}`]);
+        },
+        // 5. Combined statements.
+        () => {
+          const a = choose([2, 3, 4]), b = choose([2, 3, 5]), h = randInt(2, 5), k = randInt(-5, 5);
+          return makeQuestion("expert", "combined-growth-transform", "promptStatement", `y=${a}\\cdot ${b}^{x-${h}}${signedOutside(k)}`, textLatex(lang === "zh" ? `水平渐近线是 y=${k}` : `the horizontal asymptote is y=${k}`), [
+            { line: `+${k}`, note: tr().notes.asymptote },
+            { line: `y=${k}`, note: tr().notes.asymptote }
+          ], [textLatex(lang === "zh" ? `水平渐近线是 x=${h}` : `the horizontal asymptote is x=${h}`), textLatex(lang === "zh" ? `函数向左 ${h}` : `the graph shifts left ${h}`), textLatex(lang === "zh" ? "这是衰减函数" : "this is decay"), `y>${h}`]);
+        },
+        () => {
+          const a = choose([2, 3, 5]), b = choose([2, 3]), h = randInt(2, 5), k = randInt(-5, 5);
+          return makeQuestion("expert", "combined-shift-direction", "promptStatement", `y=${a}\\cdot ${b}^{x+${h}}${signedOutside(k)}`, textLatex(lang === "zh" ? `图像向左 ${h}` : `the graph shifts left ${h}`), [
+            { line: `x+${h}=x-(-${h})`, note: tr().notes.shift },
+            { line: textLatex(lang === "zh" ? `向左 ${h}` : `left ${h}`), note: tr().notes.shift }
+          ], [textLatex(lang === "zh" ? `图像向右 ${h}` : `the graph shifts right ${h}`), textLatex(lang === "zh" ? `水平渐近线是 y=${h}` : `the horizontal asymptote is y=${h}`), textLatex(lang === "zh" ? "这是衰减函数" : "this is decay"), `y<${k}`]);
+        },
+        () => {
+          const a = -choose([1, 2, 3]), b = choose([2, 3, 4]), k = randInt(-4, 6);
+          return makeQuestion("expert", "combined-negative-range", "promptStatement", `y=${coefficient(a)}${expTerm(b)}${signedOutside(k)}`, `y<${k}`, [
+            { line: `${coefficient(a)}${b}^x<0`, note: tr().notes.combined },
+            { line: `y<${k}`, note: tr().notes.combined }
+          ], [`y>${k}`, `y=${k}`, textLatex(lang === "zh" ? "定义域是 x>0" : "domain is x>0"), textLatex(lang === "zh" ? "这是衰减函数" : "this is decay")]);
+        },
+        () => {
+          const a = choose([3, 4, 5]), d = choose([2, 3, 4]), k = randInt(-3, 5);
+          return makeQuestion("expert", "combined-decay-statement", "promptStatement", `y=${a}${fracBaseLatex(1, d)}^x${signedOutside(k)}`, textLatex(lang === "zh" ? "这是衰减函数" : "this is decay"), [
+            { line: `0<\\frac{1}{${d}}<1`, note: tr().notes.decay },
+            { line: textLatex(lang === "zh" ? "这是衰减函数" : "this is decay"), note: tr().notes.decay }
+          ], [textLatex(lang === "zh" ? "这是增长函数" : "this is growth"), `y=${d}`, `x=${k}`, textLatex(lang === "zh" ? "初始值是 1/d" : "initial value is 1/d")]);
+        }
+      ]
+    };
+
+    function generateQuestion(difficulty, forcedType = null) {
+      const builders = BUILDERS[difficulty] || BUILDERS.medium;
+      for (let i = 0; i < 200; i++) {
+        const q = choose(builders)();
+        if (forcedType && q.type !== forcedType) continue;
+        q.options = generateOptions(q, Number(optionCountEl.value || 4));
+        return q;
+      }
+      // If the requested wrong-answer type is not available in this difficulty,
+      // fall back to a normal question instead of silently mixing all types.
+      const q = choose(builders)();
+      q.options = generateOptions(q, Number(optionCountEl.value || 4));
+      return q;
+    }
+
+    function buildDifficultyPlan(count, difficulty) {
+      if (difficulty !== "mixed") return Array(count).fill(difficulty);
+      const plan = [];
+      while (plan.length < count) plan.push(...shuffle(REAL_DIFFICULTIES));
+      return plan.slice(0, count);
+    }
+    function pickDifficultyForSample(difficulty) { return difficulty === "mixed" ? choose(REAL_DIFFICULTIES) : difficulty; }
+    function clearTimer() { if (timerId !== null) { clearInterval(timerId); timerId = null; } }
+    function updateTimerControls() { timerLevelEl.disabled = !timedModeEl.checked; }
+    function updateTimerDisplay() {
+      if (!timedModeEl.checked || quizCard.classList.contains("hidden")) { timerDisplay.classList.add("hidden"); return; }
+      timerDisplay.classList.remove("hidden");
+      timerDisplay.textContent = tr().timerDisplay(timeLeft);
+      timerDisplay.classList.toggle("timer-danger", timeLeft <= 10);
+    }
+    function startTimerForQuestion() {
+      clearTimer();
+      if (!timedModeEl.checked) { timerDisplay.classList.add("hidden"); return; }
+      timeLeft = TIMER_DURATIONS[timerLevelEl.value] || 60;
+      updateTimerDisplay();
+      timerId = setInterval(() => {
+        timeLeft -= 1;
+        updateTimerDisplay();
+        if (timeLeft <= 0) handleTimeUp();
+      }, 1000);
+    }
+
+    function applyLanguage() {
+      lang = readGlobalLanguage();
+      const t = tr();
+      document.documentElement.lang = t.htmlLang;
+      document.title = t.title;
+      document.querySelectorAll("[data-i18n]").forEach(el => {
+        const key = el.getAttribute("data-i18n");
+        if (t[key]) el.textContent = t[key];
+      });
+      document.getElementById("toolBadge").textContent = t.toolBadge;
+      document.getElementById("pageTitle").textContent = t.title;
+      document.getElementById("pageSubtitle").textContent = t.subtitle;
+      document.getElementById("setupTitle").textContent = t.setupTitle;
+      document.getElementById("difficultyLabel").textContent = t.difficultyLabel;
+      document.getElementById("questionCountLabel").textContent = t.questionCountLabel;
+      document.getElementById("optionCountLabel").textContent = t.optionCountLabel;
+      document.getElementById("timedModeText").textContent = t.timedModeText;
+      document.getElementById("timedModeHint").textContent = t.timedModeHint;
+      document.getElementById("timerLevelLabel").textContent = t.timerLevelLabel;
+      startBtn.textContent = t.startBtn;
+      sampleBtn.textContent = t.sampleBtn;
+      document.getElementById("noteBox").textContent = t.note;
+      qTitle.textContent = t.questionTitle;
+      quitBtn.textContent = t.quitBtn;
+      document.getElementById("resultTitle").textContent = t.resultTitle;
+      document.getElementById("scoreLabel").textContent = t.scoreLabel;
+      document.getElementById("accuracyLabel").textContent = t.accuracyLabel;
+      document.getElementById("wrongLabel").textContent = t.wrongLabel;
+      document.getElementById("wrongReviewTitle").textContent = t.wrongReviewTitle;
+      restartBtn.textContent = t.restartBtn;
+      reviewWrongBtn.textContent = t.reviewWrongBtn;
+      rebuildDifficultyOptions();
+      rebuildOptionCountOptions();
+      rebuildTimerLevelOptions();
+      updateTimerControls();
+      if (quiz.length && !quizCard.classList.contains("hidden")) renderQuestion(false);
+      if (!resultCard.classList.contains("hidden")) renderResultBody();
+      updateTimerDisplay();
+    }
+
+    function rebuildDifficultyOptions() {
+      const current = difficultyEl.value || "medium";
+      difficultyEl.innerHTML = "";
+      ["easy", "medium", "hard", "expert", "mixed"].forEach(value => {
+        const option = document.createElement("option");
+        option.value = value;
+        option.textContent = tr().difficultyOptions[value];
+        difficultyEl.appendChild(option);
+      });
+      difficultyEl.value = tr().difficultyOptions[current] ? current : "medium";
+    }
+    function rebuildOptionCountOptions() {
+      const current = optionCountEl.value || "4";
+      optionCountEl.innerHTML = "";
+      [4, 5, 6].forEach(value => {
+        const option = document.createElement("option");
+        option.value = String(value);
+        option.textContent = tr().optionCount(value);
+        optionCountEl.appendChild(option);
+      });
+      optionCountEl.value = current;
+    }
+    function rebuildTimerLevelOptions() {
+      const current = timerLevelEl.value || "timer_medium";
+      timerLevelEl.innerHTML = "";
+      ["timer_easy", "timer_medium", "timer_hard", "timer_expert"].forEach(value => {
+        const option = document.createElement("option");
+        option.value = value;
+        option.textContent = tr().timerOptions[value];
+        timerLevelEl.appendChild(option);
+      });
+      timerLevelEl.value = TIMER_DURATIONS[current] ? current : "timer_medium";
+    }
+
+    function buildQuiz() {
+      const difficulty = difficultyEl.value;
+      const count = clamp(Number(questionCountEl.value || 10), 1, 100);
+      lastDifficulty = difficulty;
+      quiz = buildDifficultyPlan(count, difficulty).map(level => generateQuestion(level));
+      currentIndex = 0;
+      correctCount = 0;
+      wrongAnswers = [];
+      answered = false;
+      showQuiz();
+      renderQuestion(true);
+    }
+    function buildWrongTypeQuiz() {
+      if (!wrongAnswers.length) { alert(tr().noWrongAlert); return; }
+      const count = Math.max(wrongAnswers.length * 2, 5);
+      quiz = [];
+      for (let i = 0; i < count; i++) {
+        const source = choose(wrongAnswers);
+        const difficulty = lastDifficulty === "mixed" ? source.difficulty : lastDifficulty;
+        quiz.push(generateQuestion(difficulty, source.type));
+      }
+      currentIndex = 0;
+      correctCount = 0;
+      wrongAnswers = [];
+      answered = false;
+      showQuiz();
+      renderQuestion(true);
+    }
+    function showQuiz() {
+      setupCard.classList.add("hidden");
+      resultCard.classList.add("hidden");
+      quizCard.classList.remove("hidden");
+    }
+    function renderQuestion(resetOptions) {
+      const q = quiz[currentIndex];
+      if (!q) return;
+      if (resetOptions) {
+        answered = false;
+        feedbackEl.textContent = "";
+        feedbackEl.className = "feedback";
+        solutionBox.classList.add("hidden");
+        solutionBox.innerHTML = "";
+        nextBtn.disabled = true;
+      }
+      progressText.textContent = tr().progress(currentIndex + 1, quiz.length);
+      difficultyText.textContent = lastDifficulty === "mixed" ? `${tr().difficulties.mixed} · ${tr().difficulties[q.difficulty]}` : tr().difficulties[q.difficulty];
+      progressBar.style.width = `${(currentIndex / quiz.length) * 100}%`;
+      qExtra.textContent = tr()[q.promptKey];
+      renderLatex(qMain, q.main, true);
+      if (resetOptions) {
+        optionsEl.innerHTML = "";
+        q.options.forEach(option => {
+          const btn = document.createElement("button");
+          btn.className = "option";
+          btn.dataset.answerKey = answerKey(option);
+          btn.setAttribute("aria-label", answerToString(option));
+          renderLatex(btn, answerToString(option));
+          btn.addEventListener("click", () => chooseOption(btn, option));
+          optionsEl.appendChild(btn);
+        });
+      }
+      nextBtn.textContent = currentIndex === quiz.length - 1 ? tr().resultBtn : tr().nextBtn;
+      if (resetOptions) startTimerForQuestion();
+      else updateTimerDisplay();
+    }
+    function renderFeedback(correct, answer, timeUp = false) {
+      feedbackEl.className = "feedback";
+      if (correct) {
+        feedbackEl.textContent = tr().correctFeedback;
+        feedbackEl.classList.add("good");
+      } else {
+        feedbackEl.innerHTML = `${timeUp ? tr().timeUpPrefix : tr().incorrectPrefix} ${mathSpan(answer, "feedback-math")}.`;
+        renderTaggedMath(feedbackEl);
+        feedbackEl.classList.add("bad");
+      }
+    }
+    function renderSolutionBox() {
+      const q = quiz[currentIndex];
+      if (!q || !answered) {
+        solutionBox.classList.add("hidden");
+        solutionBox.innerHTML = "";
+        return;
+      }
+      const correct = answerToString(q.answer);
+      solutionBox.classList.remove("hidden");
+      solutionBox.innerHTML = `<h4>${tr().solutionTitle}</h4><div class="solution-chain">${q.lines.map(step => `<div class="chain-line">${mathSpan(step.line, "chain-math")}<span class="chain-note">${escapeHtml(step.note || "")}</span></div>`).join("")}</div><div class="solution-answer">${tr().solutionFinal} ${mathSpan(correct, "answer-math")}</div>`;
+      renderTaggedMath(solutionBox);
+    }
+    function chooseOption(button, selected) {
+      if (answered) return;
+      answered = true;
+      clearTimer();
+      const q = quiz[currentIndex];
+      const correct = q.answer;
+      const correctDisplay = answerToString(correct);
+      const isCorrect = isSameAnswer(selected, correct);
+      [...optionsEl.querySelectorAll(".option")].forEach(btn => {
+        btn.disabled = true;
+        if (btn.dataset.answerKey === answerKey(correct)) btn.classList.add("correct");
+      });
+      if (isCorrect) {
+        correctCount += 1;
+        renderFeedback(true, correctDisplay, false);
+      } else {
+        button.classList.add("wrong");
+        renderFeedback(false, correctDisplay, false);
+        wrongAnswers.push({ main: q.plain, answer: correctDisplay, selected: answerToString(selected), type: q.type, difficulty: q.difficulty });
+      }
+      void window.MCLProgress?.recordGameAttempt?.({
+        question: q,
+        course: "algebra-2",
+        topic: q.type,
+        correctAnswer: correctDisplay,
+        selectedAnswer: answerToString(selected),
+        isCorrect
+      });
+      renderSolutionBox();
+      nextBtn.disabled = false;
+      progressBar.style.width = `${((currentIndex + 1) / quiz.length) * 100}%`;
+    }
+    function handleTimeUp() {
+      if (answered) return;
+      clearTimer();
+      answered = true;
+      const q = quiz[currentIndex];
+      const correct = q.answer;
+      const correctDisplay = answerToString(correct);
+      [...optionsEl.querySelectorAll(".option")].forEach(btn => {
+        btn.disabled = true;
+        if (btn.dataset.answerKey === answerKey(correct)) btn.classList.add("correct");
+      });
+      renderFeedback(false, correctDisplay, true);
+      wrongAnswers.push({ main: q.plain, answer: correctDisplay, selected: null, timeUp: true, type: q.type, difficulty: q.difficulty });
+      void window.MCLProgress?.recordGameAttempt?.({
+        question: q,
+        course: "algebra-2",
+        topic: q.type,
+        correctAnswer: correctDisplay,
+        selectedAnswer: "",
+        isCorrect: false,
+        timeUp: true
+      });
+      renderSolutionBox();
+      nextBtn.disabled = false;
+      progressBar.style.width = `${((currentIndex + 1) / quiz.length) * 100}%`;
+    }
+    function nextQuestion() {
+      if (!answered) return;
+      if (currentIndex < quiz.length - 1) {
+        currentIndex += 1;
+        renderQuestion(true);
+      } else {
+        showResult();
+      }
+    }
+    function showResult() {
+      clearTimer();
+      quizCard.classList.add("hidden");
+      resultCard.classList.remove("hidden");
+      renderResultBody();
+    }
+    function renderResultBody() {
+      const total = quiz.length;
+      const accuracy = total ? Math.round((correctCount / total) * 100) : 0;
+      scoreNum.textContent = `${correctCount}/${total}`;
+      accuracyNum.textContent = `${accuracy}%`;
+      wrongNum.textContent = `${wrongAnswers.length}`;
+      wrongList.innerHTML = "";
+      if (!wrongAnswers.length) {
+        const item = document.createElement("div");
+        item.className = "wrong-item";
+        item.innerHTML = `<div class="expr">${tr().noWrong}</div><p class="tag-good">${tr().noWrongTip}</p>`;
+        wrongList.appendChild(item);
+        return;
+      }
+      wrongAnswers.forEach((wrong, index) => {
+        const item = document.createElement("div");
+        item.className = "wrong-item";
+        item.innerHTML = `<div class="expr">${index + 1}. ${mathSpan(wrong.main, "wrong-math")}</div><p>${tr().yourAnswer}: <span class="tag-bad">${escapeHtml(wrong.timeUp ? tr().timeUpAnswer : wrong.selected)}</span></p><p>${tr().correctAnswer}: ${mathSpan(wrong.answer, "wrong-math")}</p><p>${tr().suggestion}</p>`;
+        wrongList.appendChild(item);
+        renderTaggedMath(item);
+      });
+    }
+    function resetToSetup() {
+      clearTimer();
+      setupCard.classList.remove("hidden");
+      quizCard.classList.add("hidden");
+      resultCard.classList.add("hidden");
+      progressBar.style.width = "0%";
+      sampleBox.classList.add("hidden");
+      sampleBox.innerHTML = "";
+      solutionBox.classList.add("hidden");
+      solutionBox.innerHTML = "";
+    }
+    function quitQuiz() { if (answered || currentIndex > 0) showResult(); else resetToSetup(); }
+    function showSample() {
+      const q = generateQuestion(pickDifficultyForSample(difficultyEl.value));
+      const correct = answerToString(q.answer);
+      sampleBox.classList.remove("hidden");
+      sampleBox.innerHTML = `<strong>${tr().sampleTitle}:</strong><br>${tr().sampleQuestion}: ${mathSpan(q.plain, "sample-math")}<br>${tr()[q.promptKey]}<br>${tr().sampleAnswer}: ${mathSpan(correct, "sample-math")}<br>${tr().sampleOptions}: ${q.options.map(item => mathSpan(answerToString(item), "sample-math")).join(" ")}`;
+      renderTaggedMath(sampleBox);
+    }
+
+    timedModeEl.addEventListener("change", updateTimerControls);
+    startBtn.addEventListener("click", buildQuiz);
+    sampleBtn.addEventListener("click", showSample);
+    nextBtn.addEventListener("click", nextQuestion);
+    quitBtn.addEventListener("click", quitQuiz);
+    restartBtn.addEventListener("click", resetToSetup);
+    reviewWrongBtn.addEventListener("click", buildWrongTypeQuiz);
+    window.addEventListener("storage", event => { if (event.key === "mathcomplete_lang") applyLanguage(); });
+    applyLanguage();
+  </script>
+  <script src="../assets/js/home-link.js"></script>
+</body>
+</html>

@@ -1,0 +1,2225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Linear Equation Solver Practice</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../assets/js/supabase-client.js"></script>
+  <script src="../assets/js/auth.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <style>
+
+    :root {
+      --bg: #f7f7fb;
+      --card: #ffffff;
+      --text: #0f172a;
+      --muted: #64748b;
+      --border: #e5e7eb;
+      --accent: #2563eb;
+      --accent-dark: #1d4ed8;
+      --violet: #7c3aed;
+      --good: #16a34a;
+      --bad: #dc2626;
+      --warning: #f59e0b;
+      --shadow: 0 18px 42px rgba(15, 23, 42, 0.10);
+      --radius: 22px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", Arial, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(96, 165, 250, 0.35), transparent 34%),
+        radial-gradient(circle at top right, rgba(167, 139, 250, 0.28), transparent 32%),
+        linear-gradient(180deg, #f8fbff 0%, var(--bg) 52%, #ffffff 100%);
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.42;
+      background-image:
+        linear-gradient(rgba(15, 23, 42, 0.045) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(15, 23, 42, 0.045) 1px, transparent 1px);
+      background-size: 42px 42px;
+      mask-image: linear-gradient(180deg, black, transparent 72%);
+    }
+
+    .mc-site-shell {
+      width: min(1180px, calc(100% - 32px));
+      margin: 18px auto 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 12px 14px;
+      border: 1px solid rgba(255, 255, 255, 0.74);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.84);
+      backdrop-filter: blur(18px);
+      box-shadow: 0 16px 36px rgba(15, 23, 42, 0.10);
+      position: sticky;
+      top: 12px;
+      z-index: 20;
+    }
+
+    .mc-brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: #0f172a;
+      font-weight: 950;
+      text-decoration: none;
+      letter-spacing: -0.035em;
+      white-space: nowrap;
+    }
+
+    .mc-brand-mark {
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      border-radius: 12px;
+      color: white;
+      background: linear-gradient(135deg, #2563eb, #7c3aed);
+      box-shadow: 0 12px 24px rgba(37, 99, 235, 0.28);
+    }
+
+    .mc-links {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .mc-link {
+      color: #475569;
+      text-decoration: none;
+      font-weight: 850;
+      padding: 8px 11px;
+      border-radius: 999px;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .mc-link:hover {
+      color: #1d4ed8;
+      background: #eff6ff;
+    }
+
+    .mc-link.primary {
+      color: white;
+      background: #0f172a;
+    }
+
+    .mc-link.primary:hover {
+      color: white;
+      background: #1e293b;
+    }
+
+    .container {
+      width: min(1040px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 42px 0 72px;
+      position: relative;
+    }
+
+    header {
+      margin-bottom: 26px;
+      overflow: visible;
+    }
+
+    .header-main {
+      min-width: 0;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      color: #1d4ed8;
+      background: rgba(239, 246, 255, 0.86);
+      border: 1px solid rgba(191, 219, 254, 0.8);
+      font-weight: 950;
+      margin-bottom: 14px;
+    }
+
+    .eyebrow-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: #10b981;
+      box-shadow: 0 0 0 6px rgba(16, 185, 129, 0.12);
+    }
+
+    h1,
+    #pageTitle {
+      display: block;
+      margin: 0;
+      max-width: 980px;
+      font-size: clamp(34px, 5.2vw, 58px);
+      line-height: 1.18;
+      letter-spacing: -0.055em;
+      background: linear-gradient(135deg, #0f172a 0%, #1d4ed8 48%, #7c3aed 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      padding-bottom: 0.18em;
+      overflow: visible;
+      text-wrap: balance;
+    }
+
+    h2 {
+      margin: 0 0 12px;
+      font-size: clamp(24px, 4vw, 34px);
+      letter-spacing: -0.045em;
+      line-height: 1.12;
+    }
+
+    h3 {
+      margin: 0 0 8px;
+      letter-spacing: -0.025em;
+      line-height: 1.2;
+    }
+
+    .subtitle {
+      margin: 14px 0 0;
+      color: var(--muted);
+      line-height: 1.75;
+      max-width: 780px;
+      font-size: 17px;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.90);
+      border: 1px solid rgba(255, 255, 255, 0.76);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 24px;
+      backdrop-filter: blur(16px);
+    }
+
+    .setup-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+      margin: 22px 0;
+    }
+
+    label {
+      display: block;
+      font-weight: 900;
+      margin-bottom: 8px;
+    }
+
+    select,
+    input {
+      width: 100%;
+      min-height: 46px;
+      padding: 12px 14px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      font-size: 16px;
+      background: white;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    select:focus,
+    input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+    }
+
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 46px;
+      padding: 12px 14px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: white;
+      cursor: pointer;
+      margin-bottom: 6px;
+    }
+
+    .checkbox-label input {
+      width: auto;
+      min-height: 0;
+      transform: scale(1.15);
+      accent-color: var(--accent);
+    }
+
+    .mini-hint {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    button {
+      appearance: none;
+      border: none;
+      background: linear-gradient(135deg, var(--accent), var(--violet));
+      color: white;
+      font-weight: 950;
+      padding: 12px 18px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: transform 0.14s, filter 0.2s, box-shadow 0.2s;
+      box-shadow: 0 12px 24px rgba(37, 99, 235, 0.24);
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+      filter: brightness(0.98);
+    }
+
+    button.secondary {
+      background: #111827;
+      box-shadow: 0 8px 18px rgba(17, 24, 39, 0.16);
+    }
+
+    button.ghost {
+      background: white;
+      color: var(--text);
+      border: 1px solid var(--border);
+      box-shadow: none;
+    }
+
+    button:disabled {
+      cursor: not-allowed;
+      opacity: 0.55;
+      transform: none;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .explain-box {
+      margin-top: 18px;
+      padding: 16px;
+      background: #f8fafc;
+      border: 1px dashed #cbd5e1;
+      border-radius: 18px;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    code {
+      background: #eef2ff;
+      padding: 2px 6px;
+      border-radius: 8px;
+      color: #3730a3;
+      font-weight: 900;
+    }
+
+    .topbar {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: white;
+      color: var(--muted);
+      font-weight: 850;
+      font-size: 14px;
+      margin-right: 6px;
+      margin-bottom: 6px;
+    }
+
+    .timer-pill {
+      color: #1d4ed8;
+      background: #eff6ff;
+      border-color: #bfdbfe;
+    }
+
+    .timer-danger {
+      color: #991b1b;
+      background: #fef2f2;
+      border-color: #fecaca;
+    }
+
+    .progress-wrap {
+      width: 100%;
+      height: 10px;
+      background: #e5e7eb;
+      border-radius: 999px;
+      overflow: hidden;
+      margin: 10px 0 22px;
+    }
+
+    .progress {
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(90deg, #2563eb, #7c3aed);
+      transition: width 0.25s ease;
+    }
+
+    .question-title {
+      color: var(--muted);
+      font-weight: 950;
+      margin-bottom: 8px;
+    }
+
+    .question-main,
+    .expression,
+    .equation {
+      font-size: clamp(28px, 5vw, 50px);
+      line-height: 1.22;
+      font-weight: 950;
+      letter-spacing: -0.045em;
+      margin: 10px 0 20px;
+      overflow-wrap: anywhere;
+    }
+
+    .question-extra {
+      color: var(--muted);
+      font-weight: 850;
+      margin: -8px 0 18px;
+      line-height: 1.6;
+    }
+
+    .values {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 22px;
+    }
+
+    .value-chip {
+      background: #eef2ff;
+      color: #3730a3;
+      border: 1px solid #c7d2fe;
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-weight: 900;
+    }
+
+    .options {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .option {
+      border: 2px solid var(--border);
+      background: white;
+      color: var(--text);
+      box-shadow: none;
+      border-radius: 18px;
+      min-height: 64px;
+      font-size: 20px;
+      text-align: center;
+      padding: 12px;
+    }
+
+    .option:hover {
+      border-color: var(--accent);
+      background: #f8fbff;
+    }
+
+    .option.correct {
+      border-color: rgba(22, 163, 74, 0.5);
+      background: #ecfdf5;
+      color: #065f46;
+    }
+
+    .option.wrong {
+      border-color: rgba(220, 38, 38, 0.5);
+      background: #fef2f2;
+      color: #991b1b;
+    }
+
+    .feedback {
+      min-height: 30px;
+      font-weight: 950;
+      margin: 8px 0 16px;
+    }
+
+    .feedback.good {
+      color: var(--good);
+    }
+
+    .feedback.bad {
+      color: var(--bad);
+    }
+
+    .solution-box {
+      margin: 14px 0 18px;
+      padding: 18px;
+      border-radius: 20px;
+      border: 1px solid #dbeafe;
+      background: linear-gradient(180deg, #f8fbff, #ffffff);
+      color: #1f2937;
+      line-height: 1.7;
+    }
+
+    .solution-box h4 {
+      margin: 0 0 12px;
+      font-size: 18px;
+    }
+
+    .solution-given {
+      margin-bottom: 12px;
+      color: #4b5563;
+      font-weight: 850;
+    }
+
+    .solution-chain {
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
+      border-radius: 16px;
+      padding: 14px 16px;
+      overflow-x: auto;
+    }
+
+    .chain-line {
+      display: grid;
+      grid-template-columns: minmax(250px, 1fr) minmax(170px, 0.65fr);
+      align-items: baseline;
+      gap: 18px;
+      margin: 8px 0;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size: 17px;
+      font-weight: 850;
+      white-space: nowrap;
+    }
+
+    .chain-line.first {
+      grid-template-columns: minmax(0, 1fr);
+      padding-left: 0;
+    }
+
+    .chain-eq {
+      color: #2563eb;
+      font-weight: 950;
+      text-align: right;
+    }
+
+    .chain-note {
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", Arial, sans-serif;
+      color: #64748b;
+      font-size: 13px;
+      font-weight: 850;
+      white-space: normal;
+    }
+
+    .solution-answer {
+      margin-top: 12px;
+      font-weight: 950;
+      color: #111827;
+    }
+
+
+
+    .result-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin: 18px 0 24px;
+    }
+
+    .stat {
+      background: #f9fafb;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 18px;
+    }
+
+    .stat .num {
+      font-size: 34px;
+      font-weight: 950;
+      letter-spacing: -0.05em;
+    }
+
+    .stat .label {
+      color: var(--muted);
+      margin-top: 4px;
+      font-weight: 850;
+    }
+
+    .wrong-list {
+      display: grid;
+      gap: 14px;
+    }
+
+    .wrong-item {
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      background: #fff;
+      padding: 16px;
+    }
+
+    .wrong-item .expr {
+      font-size: 22px;
+      font-weight: 950;
+      margin-bottom: 8px;
+      overflow-wrap: anywhere;
+    }
+
+    .wrong-item p {
+      margin: 6px 0;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .tag-good {
+      color: var(--good);
+      font-weight: 950;
+    }
+
+    .tag-bad {
+      color: var(--bad);
+      font-weight: 950;
+    }
+
+
+    .chain-math,
+    .answer-math,
+    .feedback-math,
+    .sample-math,
+    .wrong-math {
+      display: inline-block;
+    }
+
+    .question-main.math-render,
+    .expression.math-render,
+    .equation.math-render,
+    .question-extra.math-render {
+      display: block;
+      width: 100%;
+    }
+
+    .question-extra.math-render {
+      margin-top: -6px;
+      margin-bottom: 18px;
+    }
+
+    .question-main .katex,
+    .expression .katex,
+    .equation .katex {
+      font-size: 1.14em;
+      line-height: 1.2;
+    }
+
+    .question-extra .katex {
+      font-size: 1.05em;
+      line-height: 1.25;
+    }
+
+    .option .katex {
+      font-size: 1.14em;
+      line-height: 1.25;
+    }
+
+    .chain-line {
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", Arial, sans-serif;
+    }
+
+    .chain-math .katex {
+      font-size: 1.08em;
+      line-height: 1.35;
+    }
+
+    .feedback-math .katex,
+    .answer-math .katex,
+    .sample-math .katex,
+    .wrong-math .katex {
+      font-size: 1.08em;
+      line-height: 1.25;
+    }
+
+    .math-render .katex {
+      color: #0f172a;
+    }
+
+    .option.correct .katex {
+      color: #065f46;
+    }
+
+    .option.wrong .katex {
+      color: #991b1b;
+    }
+
+    .feedback.bad .katex {
+      color: #dc2626;
+    }
+
+    .solution-answer > .answer-math {
+      display: inline-block;
+      background: #ecfdf5;
+      color: #065f46;
+      border: 1px solid #bbf7d0;
+      border-radius: 999px;
+      padding: 3px 10px;
+      margin-left: 4px;
+      vertical-align: middle;
+    }
+
+    @media (max-width: 760px) {
+      .mc-site-shell {
+        border-radius: 22px;
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .mc-links {
+        justify-content: flex-start;
+      }
+
+      .setup-grid,
+      .options,
+      .result-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .card {
+        padding: 18px;
+      }
+
+      .container {
+        width: min(100% - 22px, 1040px);
+        padding-top: 28px;
+      }
+
+      h1,
+      #pageTitle {
+        font-size: clamp(33px, 11vw, 48px);
+        line-height: 1.18;
+        letter-spacing: -0.05em;
+      }
+
+      .question-main,
+      .expression,
+      .equation {
+        font-size: clamp(27px, 9vw, 42px);
+      }
+
+      .chain-line {
+        grid-template-columns: 1fr;
+        gap: 2px;
+        white-space: normal;
+      }
+
+      .chain-note {
+        padding-left: 12px;
+      }
+    }
+
+  
+
+  /* MathComplete Lab shared tool question layout override */
+  .question-main,
+  .expression,
+  .equation {
+    max-width: 100%;
+    font-size: clamp(28px, 5.4vw, 54px) !important;
+    line-height: 1.2 !important;
+    font-weight: 500 !important;
+    letter-spacing: -0.045em !important;
+    margin: 10px 0 24px !important;
+    text-align: left !important;
+    overflow-wrap: anywhere !important;
+    word-break: normal !important;
+    text-wrap: pretty;
+    white-space: normal;
+    justify-content: flex-start !important;
+    align-items: flex-start !important;
+  }
+
+  .question-main.math-render,
+  .expression.math-render,
+  .equation.math-render {
+    display: block !important;
+    width: 100% !important;
+    text-align: left !important;
+  }
+
+  .question-main .katex,
+  .expression .katex,
+  .equation .katex {
+    white-space: normal !important;
+    text-align: left !important;
+    font-weight: 400 !important;
+  }
+
+  .question-main .katex *,
+  .expression .katex *,
+  .equation .katex * {
+    font-weight: 400 !important;
+  }
+
+  .question-line,
+  .question-text {
+    max-width: 100%;
+    text-align: left !important;
+    overflow-wrap: anywhere;
+    word-break: normal;
+    text-wrap: pretty;
+  }
+</style>
+</head>
+<body>
+  <nav class="mc-site-shell">
+    <a class="mc-brand" href="../index.html">
+      <span class="mc-brand-mark">∑</span>
+      <span>MathComplete Lab</span>
+    </a>
+    <div class="mc-links">
+      <a class="mc-link" href="../practice.html" data-i18n="navPractice">Practice Library</a>
+      <a class="mc-link primary" href="../index.html" data-i18n="navHome">Home</a>
+    </div>
+  </nav>
+
+  <main class="container">
+    <header>
+      <div>
+        <div class="eyebrow"><span class="eyebrow-dot"></span><span id="toolBadge"></span></div>
+        <h1 id="pageTitle"></h1>
+        <p id="pageSubtitle" class="subtitle"></p>
+      </div>
+    </header>
+
+    <section id="setupCard" class="card">
+      <h2 id="setupTitle"></h2>
+      <div class="setup-grid">
+        <div>
+          <label id="difficultyLabel" for="difficulty"></label>
+          <select id="difficulty"></select>
+        </div>
+        <div>
+          <label id="questionCountLabel" for="questionCount"></label>
+          <input id="questionCount" type="number" min="1" max="100" value="10" />
+        </div>
+        <div>
+          <label id="optionCountLabel" for="optionCount"></label>
+          <select id="optionCount"></select>
+        </div>
+        <div>
+          <label class="checkbox-label" for="timedMode">
+            <input id="timedMode" type="checkbox" />
+            <span id="timedModeText"></span>
+          </label>
+          <p id="timedModeHint" class="mini-hint"></p>
+        </div>
+        <div>
+          <label id="timerLevelLabel" for="timerLevel"></label>
+          <select id="timerLevel"></select>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button id="startBtn"></button>
+        <button id="sampleBtn" class="ghost"></button>
+      </div>
+
+      <div id="sampleBox" class="explain-box hidden"></div>
+      <div id="noteBox" class="explain-box"></div>
+    </section>
+
+    <section id="quizCard" class="card hidden">
+      <div class="topbar">
+        <div>
+          <span class="pill" id="progressText"></span>
+          <span class="pill" id="difficultyText"></span>
+          <span class="pill timer-pill hidden" id="timerDisplay"></span>
+        </div>
+        <button id="quitBtn" class="ghost"></button>
+      </div>
+
+      <div class="progress-wrap">
+        <div id="progressBar" class="progress"></div>
+      </div>
+
+      <div id="questionTitle" class="question-title"></div>
+      <div id="equation" class="equation"></div>
+
+      <div id="options" class="options"></div>
+      <div id="feedback" class="feedback"></div>
+      <div id="solutionBox" class="solution-box hidden"></div>
+
+      <div class="actions">
+        <button id="nextBtn" disabled></button>
+      </div>
+    </section>
+
+    <section id="resultCard" class="card hidden">
+      <h2 id="resultTitle"></h2>
+      <div class="result-grid">
+        <div class="stat">
+          <div id="scoreNum" class="num">0/0</div>
+          <div id="scoreLabel" class="label"></div>
+        </div>
+        <div class="stat">
+          <div id="accuracyNum" class="num">0%</div>
+          <div id="accuracyLabel" class="label"></div>
+        </div>
+        <div class="stat">
+          <div id="wrongNum" class="num">0</div>
+          <div id="wrongLabel" class="label"></div>
+        </div>
+      </div>
+
+      <h3 id="wrongReviewTitle"></h3>
+      <div id="wrongList" class="wrong-list"></div>
+
+      <div class="actions" style="margin-top: 22px;">
+        <button id="restartBtn"></button>
+        <button id="reviewWrongBtn" class="secondary"></button>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const T = {
+      en: {
+        htmlLang: "en",
+        navPractice: "Practice Library",
+        navHome: "Home",
+        toolBadge: "Equation solving practice",
+        title: "Linear Equation Solver",
+        subtitle: "Solve randomized one-variable linear equations. Practice moving terms, distributing, handling negatives, and recognizing special cases.",
+        authorRole: "Math practice tool",
+        setupTitle: "Start Practice",
+        difficultyLabel: "Difficulty",
+        questionCountLabel: "Number of Questions",
+        optionCountLabel: "Number of Choices",
+        timedModeText: "Enable Timed Mode",
+        timedModeHint: "Off means no countdown. On means each question has its own timer.",
+        timerLevelLabel: "Timer Level",
+        startBtn: "Start",
+        sampleBtn: "Generate Sample Question",
+        note: "Special cases appear only in Expert and Hell: no solution or infinitely many solutions.",
+        questionTitle: "Solve for x.",
+        quitBtn: "End This Round",
+        nextBtn: "Next Question",
+        resultBtn: "See Results",
+        correctFeedback: "Correct!",
+        wrongFeedback: answer => `Incorrect. The correct answer is ${answer}.`,
+        timeUpFeedback: answer => `Time is up. The correct answer is ${answer}.`,
+        solutionTitle: "Correct Solution",
+        solutionFinal: "Answer:",
+        resultTitle: "Practice Results",
+        scoreLabel: "Correct Answers",
+        accuracyLabel: "Accuracy",
+        wrongLabel: "Wrong Answers",
+        wrongReviewTitle: "Wrong Answer Review",
+        restartBtn: "Practice Again",
+        reviewWrongBtn: "Practice Similar Wrong Types",
+        noWrong: "No wrong answers this round.",
+        noWrongTip: "Great job. Try a harder level next.",
+        wrongEquation: "Equation",
+        yourAnswer: "Your answer",
+        correctAnswer: "Correct answer",
+        timeUpAnswer: "No answer: time is up",
+        suggestion: "Suggestion: check distribution, signs, moving x terms, and dividing by the coefficient.",
+        sampleTitle: "Sample Question",
+        sampleEquation: "Equation",
+        sampleAnswer: "Correct answer",
+        sampleOptions: "Sample choices",
+        progress: (a, b) => `Question ${a} / ${b}`,
+        optionCount: n => `${n} choices`,
+        timerDisplay: seconds => `Time left: ${formatTime(seconds)}`,
+        difficulties: {
+          easy: "Easy",
+          medium: "Medium",
+          hard: "Hard",
+          expert: "Expert",
+          hell: "Hell"
+        },
+        difficultyOptions: {
+          easy: "Easy: one-step and two-step equations",
+          medium: "Medium: parentheses and combining like terms",
+          hard: "Hard: variables on both sides",
+          expert: "Expert: negatives, nested structure, special cases",
+          hell: "Hell: fast, tricky, special-case heavy"
+        },
+        timerOptions: {
+          timer_easy: "Easy: 2 minutes per question",
+          timer_medium: "Medium: 1 minute per question",
+          timer_hard: "Hard: 30 seconds per question",
+          timer_expert: "Expert: 15 seconds per question",
+          timer_hell: "Hell: 10 seconds per question"
+        },
+        notes: {
+          original: "",
+          distribute: "distribute / simplify",
+          moveX: "move x terms to one side",
+          moveConst: "move constants to the other side",
+          divide: "divide by the coefficient of x",
+          contradiction: "false statement",
+          identity: "always true"
+        },
+        noSolution: "No solution",
+        infiniteSolutions: "Infinitely many solutions",
+        falseStatement: "This is false, so there is no solution.",
+        trueStatement: "This is always true, so there are infinitely many solutions.",
+        noWrongAlert: "There are no wrong answers from this round, so similar wrong-type practice cannot be generated."
+      },
+      zh: {
+        htmlLang: "zh-CN",
+        navPractice: "练习库",
+        navHome: "主页",
+        toolBadge: "解方程练习",
+        title: "一元一次方程练习",
+        subtitle: "随机生成一元一次方程，练习移项、分配律、负号处理，以及特殊解情况。",
+        authorRole: "数学练习工具",
+        setupTitle: "开始练习",
+        difficultyLabel: "难度",
+        questionCountLabel: "题目数量",
+        optionCountLabel: "选项数量",
+        timedModeText: "开启计时模式",
+        timedModeHint: "关闭后不会倒计时；开启后每题单独计时。",
+        timerLevelLabel: "计时难度",
+        startBtn: "开始",
+        sampleBtn: "生成一道样题",
+        note: "特殊解只会出现在专家和地狱难度：无解或无穷多个解。",
+        questionTitle: "解出 x：",
+        quitBtn: "结束本轮",
+        nextBtn: "下一题",
+        resultBtn: "查看结果",
+        correctFeedback: "正确！",
+        wrongFeedback: answer => `错误。正确答案是 ${answer}。`,
+        timeUpFeedback: answer => `时间到。正确答案是 ${answer}。`,
+        solutionTitle: "正确解法",
+        solutionFinal: "答案：",
+        resultTitle: "练习结果",
+        scoreLabel: "正确题数",
+        accuracyLabel: "正确率",
+        wrongLabel: "错题数量",
+        wrongReviewTitle: "错题整理",
+        restartBtn: "再练一轮",
+        reviewWrongBtn: "只练错题同类型",
+        noWrong: "本轮没有错题。",
+        noWrongTip: "非常好，可以尝试更高难度。",
+        wrongEquation: "方程",
+        yourAnswer: "你的答案",
+        correctAnswer: "正确答案",
+        timeUpAnswer: "未作答（时间到）",
+        suggestion: "建议检查：分配律、正负号、移项、以及最后是否除以 x 的系数。",
+        sampleTitle: "样题",
+        sampleEquation: "方程",
+        sampleAnswer: "正确答案",
+        sampleOptions: "选项示例",
+        progress: (a, b) => `第 ${a} / ${b} 题`,
+        optionCount: n => `${n} 个选项`,
+        timerDisplay: seconds => `剩余时间：${formatTime(seconds)}`,
+        difficulties: {
+          easy: "简单",
+          medium: "中等",
+          hard: "困难",
+          expert: "专家",
+          hell: "地狱"
+        },
+        difficultyOptions: {
+          easy: "简单：一步和两步方程",
+          medium: "中等：括号和合并同类项",
+          hard: "困难：两边都有变量",
+          expert: "专家：负号、复杂结构、特殊解",
+          hell: "地狱：快速、易错、特殊解比例更高"
+        },
+        timerOptions: {
+          timer_easy: "简单：每题 2 分钟",
+          timer_medium: "中等：每题 1 分钟",
+          timer_hard: "困难：每题 30 秒",
+          timer_expert: "专家：每题 15 秒",
+          timer_hell: "地狱：每题 10 秒"
+        },
+        notes: {
+          original: "",
+          distribute: "分配 / 化简",
+          moveX: "把 x 项移到一边",
+          moveConst: "把常数移到另一边",
+          divide: "两边除以 x 的系数",
+          contradiction: "矛盾",
+          identity: "恒等式"
+        },
+        noSolution: "无解",
+        infiniteSolutions: "无穷多个解",
+        falseStatement: "这是矛盾，所以无解。",
+        trueStatement: "这是恒等式，所以有无穷多个解。",
+        noWrongAlert: "本轮没有错题，不能生成错题同类型练习。"
+      }
+    };
+
+    function readGlobalLanguage() {
+      return localStorage.getItem("mathcomplete_lang") === "zh" ? "zh" : "en";
+    }
+
+    let lang = readGlobalLanguage();
+
+    const setupCard = document.getElementById("setupCard");
+    const quizCard = document.getElementById("quizCard");
+    const resultCard = document.getElementById("resultCard");
+
+    const difficultyEl = document.getElementById("difficulty");
+    const questionCountEl = document.getElementById("questionCount");
+    const optionCountEl = document.getElementById("optionCount");
+    const timedModeEl = document.getElementById("timedMode");
+    const timerLevelEl = document.getElementById("timerLevel");
+
+    const startBtn = document.getElementById("startBtn");
+    const sampleBtn = document.getElementById("sampleBtn");
+    const sampleBox = document.getElementById("sampleBox");
+
+    const progressText = document.getElementById("progressText");
+    const difficultyText = document.getElementById("difficultyText");
+    const timerDisplay = document.getElementById("timerDisplay");
+    const progressBar = document.getElementById("progressBar");
+    const equationEl = document.getElementById("equation");
+    const optionsEl = document.getElementById("options");
+    const feedbackEl = document.getElementById("feedback");
+    const solutionBox = document.getElementById("solutionBox");
+    const nextBtn = document.getElementById("nextBtn");
+    const quitBtn = document.getElementById("quitBtn");
+
+    const scoreNum = document.getElementById("scoreNum");
+    const accuracyNum = document.getElementById("accuracyNum");
+    const wrongNum = document.getElementById("wrongNum");
+    const wrongList = document.getElementById("wrongList");
+    const restartBtn = document.getElementById("restartBtn");
+    const reviewWrongBtn = document.getElementById("reviewWrongBtn");
+
+    let quiz = [];
+    let currentIndex = 0;
+    let correctCount = 0;
+    let wrongAnswers = [];
+    let answered = false;
+    let lastDifficulty = "medium";
+    let lastFeedback = null;
+    let timerId = null;
+    let timeLeft = 0;
+
+    const TIMER_DURATIONS = {
+      timer_easy: 120,
+      timer_medium: 60,
+      timer_hard: 30,
+      timer_expert: 15,
+      timer_hell: 10
+    };
+
+    function tr() {
+      return T[lang];
+    }
+
+    function applyLanguage() {
+      lang = readGlobalLanguage();
+      const t = tr();
+
+      document.documentElement.lang = t.htmlLang;
+      document.title = t.title;
+
+      document.querySelectorAll("[data-i18n]").forEach(el => {
+        const key = el.getAttribute("data-i18n");
+        if (t[key]) el.textContent = t[key];
+      });
+
+      document.getElementById("toolBadge").textContent = t.toolBadge;
+      document.getElementById("pageTitle").textContent = t.title;
+      document.getElementById("pageSubtitle").textContent = t.subtitle;
+      document.getElementById("setupTitle").textContent = t.setupTitle;
+      document.getElementById("difficultyLabel").textContent = t.difficultyLabel;
+      document.getElementById("questionCountLabel").textContent = t.questionCountLabel;
+      document.getElementById("optionCountLabel").textContent = t.optionCountLabel;
+      document.getElementById("timedModeText").textContent = t.timedModeText;
+      document.getElementById("timedModeHint").textContent = t.timedModeHint;
+      document.getElementById("timerLevelLabel").textContent = t.timerLevelLabel;
+      startBtn.textContent = t.startBtn;
+      sampleBtn.textContent = t.sampleBtn;
+      document.getElementById("noteBox").textContent = t.note;
+      document.getElementById("questionTitle").textContent = t.questionTitle;
+      quitBtn.textContent = t.quitBtn;
+      document.getElementById("resultTitle").textContent = t.resultTitle;
+      document.getElementById("scoreLabel").textContent = t.scoreLabel;
+      document.getElementById("accuracyLabel").textContent = t.accuracyLabel;
+      document.getElementById("wrongLabel").textContent = t.wrongLabel;
+      document.getElementById("wrongReviewTitle").textContent = t.wrongReviewTitle;
+      restartBtn.textContent = t.restartBtn;
+      reviewWrongBtn.textContent = t.reviewWrongBtn;
+
+      rebuildDifficultyOptions();
+      rebuildOptionCountOptions();
+      rebuildTimerLevelOptions();
+      updateTimerControls();
+
+      if (quiz.length > 0 && !quizCard.classList.contains("hidden")) {
+        renderQuestion(false);
+      }
+
+      if (!resultCard.classList.contains("hidden")) {
+        renderResultBody();
+      }
+
+      if (lastFeedback) {
+        renderFeedback(lastFeedback.correct, lastFeedback.answer, lastFeedback.timeUp);
+        renderSolutionBox();
+      }
+
+      updateTimerDisplay();
+    }
+
+    function rebuildDifficultyOptions() {
+      const current = difficultyEl.value || "medium";
+      difficultyEl.innerHTML = "";
+      ["easy", "medium", "hard", "expert", "hell"].forEach(value => {
+        const option = document.createElement("option");
+        option.value = value;
+        option.textContent = tr().difficultyOptions[value];
+        difficultyEl.appendChild(option);
+      });
+      difficultyEl.value = tr().difficultyOptions[current] ? current : "medium";
+    }
+
+    function rebuildOptionCountOptions() {
+      const current = optionCountEl.value || "4";
+      optionCountEl.innerHTML = "";
+      [4, 5, 6].forEach(value => {
+        const option = document.createElement("option");
+        option.value = String(value);
+        option.textContent = tr().optionCount(value);
+        optionCountEl.appendChild(option);
+      });
+      optionCountEl.value = current;
+    }
+
+    function rebuildTimerLevelOptions() {
+      const current = timerLevelEl.value || "timer_medium";
+      timerLevelEl.innerHTML = "";
+      ["timer_easy", "timer_medium", "timer_hard", "timer_expert", "timer_hell"].forEach(value => {
+        const option = document.createElement("option");
+        option.value = value;
+        option.textContent = tr().timerOptions[value];
+        timerLevelEl.appendChild(option);
+      });
+      timerLevelEl.value = TIMER_DURATIONS[current] ? current : "timer_medium";
+    }
+
+    function updateTimerControls() {
+      timerLevelEl.disabled = !timedModeEl.checked;
+    }
+
+    function formatTime(totalSeconds) {
+      const safeSeconds = Math.max(0, totalSeconds);
+      const minutes = Math.floor(safeSeconds / 60);
+      const seconds = safeSeconds % 60;
+      return `${minutes}:${String(seconds).padStart(2, "0")}`;
+    }
+
+    function clearTimer() {
+      if (timerId !== null) {
+        clearInterval(timerId);
+        timerId = null;
+      }
+    }
+
+    function updateTimerDisplay() {
+      if (!timedModeEl.checked || quizCard.classList.contains("hidden")) {
+        timerDisplay.classList.add("hidden");
+        return;
+      }
+      timerDisplay.classList.remove("hidden");
+      timerDisplay.textContent = tr().timerDisplay(timeLeft);
+      timerDisplay.classList.toggle("timer-danger", timeLeft <= 10);
+    }
+
+    function startTimerForQuestion() {
+      clearTimer();
+
+      if (!timedModeEl.checked) {
+        timerDisplay.classList.add("hidden");
+        return;
+      }
+
+      timeLeft = TIMER_DURATIONS[timerLevelEl.value] || 60;
+      updateTimerDisplay();
+
+      timerId = setInterval(() => {
+        timeLeft -= 1;
+        updateTimerDisplay();
+        if (timeLeft <= 0) handleTimeUp();
+      }, 1000);
+    }
+
+    function randInt(min, max) {
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    function choose(arr) {
+      return arr[randInt(0, arr.length - 1)];
+    }
+
+    function shuffle(arr) {
+      const copy = [...arr];
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = randInt(0, i);
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    function nonZeroRand(min, max) {
+      let n = 0;
+      while (n === 0) n = randInt(min, max);
+      return n;
+    }
+
+    function chooseCoeff(minAbs = 1, maxAbs = 9) {
+      const n = randInt(minAbs, maxAbs);
+      return Math.random() < 0.35 ? -n : n;
+    }
+
+    function clamp(n, min, max) {
+      return Math.max(min, Math.min(max, n));
+    }
+
+    function gcd(a, b) {
+      a = Math.abs(a);
+      b = Math.abs(b);
+      while (b) {
+        [a, b] = [b, a % b];
+      }
+      return a || 1;
+    }
+
+    function formatSignedNumber(n) {
+      if (n === 0) return "";
+      return n > 0 ? ` + ${n}` : ` - ${Math.abs(n)}`;
+    }
+
+    function formatXTerm(a) {
+      if (a === 0) return "";
+      if (a === 1) return "x";
+      if (a === -1) return "-x";
+      return `${a}x`;
+    }
+
+    function formatLinear(a, b) {
+      if (a === 0) return String(b);
+      const xPart = formatXTerm(a);
+      if (b === 0) return xPart;
+      return `${xPart}${formatSignedNumber(b)}`;
+    }
+
+    function formatBinomial(a, b) {
+      if (a === 1) return `x${formatSignedNumber(b)}`;
+      if (a === -1) return `-x${formatSignedNumber(b)}`;
+      return `${a}x${formatSignedNumber(b)}`;
+    }
+
+    function formatConstFirst(constant, xCoeff) {
+      if (xCoeff === 0) return String(constant);
+      const xTerm = formatXTerm(Math.abs(xCoeff));
+      if (constant === 0) return formatXTerm(xCoeff);
+      return xCoeff > 0 ? `${constant} + ${xTerm}` : `${constant} - ${xTerm}`;
+    }
+
+    function formatFactor(k, inside) {
+      if (k === 1) return `(${inside})`;
+      if (k === -1) return `-(${inside})`;
+      return `${k}(${inside})`;
+    }
+
+    function makeEq(leftText, rightText, leftA, leftB, rightA, rightB, type, expandedLeft = null, expandedRight = null) {
+      return {
+        leftText,
+        rightText,
+        equationText: `${leftText} = ${rightText}`,
+        leftA,
+        leftB,
+        rightA,
+        rightB,
+        type,
+        expandedText: expandedLeft || expandedRight ? `${expandedLeft || formatLinear(leftA, leftB)} = ${expandedRight || formatLinear(rightA, rightB)}` : null
+      };
+    }
+
+    function classifyEquation(eq) {
+      const coef = eq.leftA - eq.rightA;
+      const constant = eq.rightB - eq.leftB;
+
+      if (coef === 0 && constant === 0) {
+        eq.answerType = "infinite";
+        eq.answerValue = null;
+        return eq;
+      }
+
+      if (coef === 0 && constant !== 0) {
+        eq.answerType = "none";
+        eq.answerValue = null;
+        return eq;
+      }
+
+      if (constant % coef !== 0) {
+        eq.answerType = "fraction";
+        eq.answerValue = constant / coef;
+        return eq;
+      }
+
+      eq.answerType = "one";
+      eq.answerValue = constant / coef;
+      return eq;
+    }
+
+    function pickX(difficulty) {
+      const ranges = {
+        easy: [-9, 10],
+        medium: [-10, 12],
+        hard: [-12, 14],
+        expert: [-14, 16],
+        hell: [-15, 18]
+      };
+      const [min, max] = ranges[difficulty] || ranges.medium;
+      return randInt(min, max);
+    }
+
+    function fromTarget(leftA, leftB, rightA, x, type, leftText, rightShape = "linear", expandedLeft = null) {
+      const rightB = (leftA - rightA) * x + leftB;
+      let rightText = formatLinear(rightA, rightB);
+      let expandedRight = null;
+
+      if (rightShape === "constFirst") {
+        rightText = formatConstFirst(rightB, rightA);
+      }
+
+      return makeEq(leftText, rightText, leftA, leftB, rightA, rightB, type, expandedLeft, expandedRight);
+    }
+
+    function buildLinearOnly(type, difficulty, leftA, leftB, rightA = 0, leftText = null, rightShape = "linear", expandedLeft = null) {
+      const x = pickX(difficulty);
+      return fromTarget(leftA, leftB, rightA, x, type, leftText || formatLinear(leftA, leftB), rightShape, expandedLeft);
+    }
+
+    function buildTwoSide(type, difficulty, leftA, leftB, rightA, rightB, leftText = null, rightText = null, expandedLeft = null, expandedRight = null) {
+      return makeEq(
+        leftText || formatLinear(leftA, leftB),
+        rightText || formatLinear(rightA, rightB),
+        leftA,
+        leftB,
+        rightA,
+        rightB,
+        type,
+        expandedLeft,
+        expandedRight
+      );
+    }
+
+    function generateSpecial(type, variant) {
+      const a = chooseCoeff(2, 8);
+      const b = randInt(-12, 12);
+      const offset = nonZeroRand(-9, 9);
+
+      if (variant === "none-linear") {
+        return buildTwoSide(type, "expert", a, b, a, b + offset);
+      }
+
+      if (variant === "infinite-linear") {
+        return buildTwoSide(type, "expert", a, b, a, b);
+      }
+
+      const k = chooseCoeff(2, 6);
+      const m = randInt(-6, 6);
+      const leftText = formatFactor(k, `x${formatSignedNumber(m)}`);
+      const leftA = k;
+      const leftB = k * m;
+      const expanded = formatLinear(leftA, leftB);
+
+      if (variant === "none-factor") {
+        return buildTwoSide(type, "expert", leftA, leftB, leftA, leftB + offset, leftText, formatLinear(leftA, leftB + offset), expanded, null);
+      }
+
+      if (variant === "infinite-factor") {
+        return buildTwoSide(type, "expert", leftA, leftB, leftA, leftB, leftText, formatLinear(leftA, leftB), expanded, null);
+      }
+
+      const k2 = chooseCoeff(2, 6);
+      const m2 = randInt(-5, 5);
+      const leftText2 = formatFactor(k2, `x${formatSignedNumber(m2)}`) + formatSignedNumber(randInt(-8, 8));
+      const leftA2 = k2;
+      const leftB2 = k2 * m2 + Number(leftText2.match(/([+-]\s*\d+)$/)?.[0]?.replace(/\s/g, "") || 0);
+      const rightB2 = variant === "none-mixed" ? leftB2 + offset : leftB2;
+      return buildTwoSide(type, "expert", leftA2, leftB2, leftA2, rightB2, leftText2, formatLinear(leftA2, rightB2), formatLinear(leftA2, leftB2), null);
+    }
+
+    const easyTemplates = [
+      { id: "easy-x-plus", build: d => buildLinearOnly("easy-x-plus", d, 1, randInt(1, 12)) },
+      { id: "easy-x-minus", build: d => buildLinearOnly("easy-x-minus", d, 1, -randInt(1, 12)) },
+      { id: "easy-a-plus-x", build: d => { const b = randInt(1, 12); return buildLinearOnly("easy-a-plus-x", d, 1, b, 0, `${b} + x`); } },
+      { id: "easy-a-minus-x", build: d => { const b = randInt(1, 15); return buildLinearOnly("easy-a-minus-x", d, -1, b, 0, `${b} - x`); } },
+      { id: "easy-ax", build: d => buildLinearOnly("easy-ax", d, nonZeroRand(2, 9), 0) },
+      { id: "easy-neg-ax", build: d => buildLinearOnly("easy-neg-ax", d, -nonZeroRand(2, 8), 0) },
+      { id: "easy-ax-plus", build: d => buildLinearOnly("easy-ax-plus", d, nonZeroRand(2, 9), randInt(1, 15)) },
+      { id: "easy-ax-minus", build: d => buildLinearOnly("easy-ax-minus", d, nonZeroRand(2, 9), -randInt(1, 15)) },
+      { id: "easy-b-plus-ax", build: d => { const a = nonZeroRand(2, 8), b = randInt(1, 12); return buildLinearOnly("easy-b-plus-ax", d, a, b, 0, `${b} + ${formatXTerm(a)}`); } },
+      { id: "easy-b-minus-ax", build: d => { const a = nonZeroRand(2, 8), b = randInt(5, 25); return buildLinearOnly("easy-b-minus-ax", d, -a, b, 0, `${b} - ${formatXTerm(a)}`); } },
+      { id: "easy-x-plus-negative", build: d => buildLinearOnly("easy-x-plus-negative", d, 1, -randInt(1, 10)) },
+      { id: "easy-neg-x-plus", build: d => buildLinearOnly("easy-neg-x-plus", d, -1, randInt(1, 12)) },
+      { id: "easy-neg-x-minus", build: d => buildLinearOnly("easy-neg-x-minus", d, -1, -randInt(1, 12)) },
+      { id: "easy-ax-equals-cx-plus", build: d => buildLinearOnly("easy-ax-equals-cx-plus", d, nonZeroRand(3, 9), 0, nonZeroRand(1, 2)) },
+      { id: "easy-small-two-side", build: d => buildLinearOnly("easy-small-two-side", d, nonZeroRand(2, 7), randInt(1, 10), nonZeroRand(1, 2)) },
+      { id: "easy-constant-right", build: d => buildLinearOnly("easy-constant-right", d, nonZeroRand(2, 7), randInt(-8, 8), 0) },
+      { id: "easy-x-over", build: d => { const a = nonZeroRand(2, 9), x = pickX(d); return makeEq(`x/${a}`, String(x), 1, 0, 0, a * x, "easy-x-over"); } },
+      { id: "easy-x-over-plus", build: d => { const a = nonZeroRand(2, 8), b = randInt(1, 10), x = pickX(d); return makeEq(`x/${a} + ${b}`, String(x + b), 1, a*b, 0, a*(x + b), "easy-x-over-plus"); } },
+      { id: "easy-sign-flip", build: d => buildLinearOnly("easy-sign-flip", d, -nonZeroRand(2, 6), randInt(-8, 8)) },
+      { id: "easy-near-zero", build: d => buildLinearOnly("easy-near-zero", d, nonZeroRand(2, 6), randInt(-5, 5)) }
+    ];
+
+    const mediumTemplates = [
+      { id: "med-factor-plus", build: d => { const k = nonZeroRand(2, 7), b = randInt(1, 8); return buildLinearOnly("med-factor-plus", d, k, k*b, 0, formatFactor(k, `x + ${b}`), "linear", formatLinear(k, k*b)); } },
+      { id: "med-factor-minus", build: d => { const k = nonZeroRand(2, 7), b = randInt(1, 8); return buildLinearOnly("med-factor-minus", d, k, -k*b, 0, formatFactor(k, `x - ${b}`), "linear", formatLinear(k, -k*b)); } },
+      { id: "med-factor-plus-const", build: d => { const k = nonZeroRand(2, 6), b = randInt(1, 7), c = randInt(1, 10); return buildLinearOnly("med-factor-plus-const", d, k, k*b + c, 0, `${formatFactor(k, `x + ${b}`)} + ${c}`, "linear", formatLinear(k, k*b + c)); } },
+      { id: "med-factor-minus-const", build: d => { const k = nonZeroRand(2, 6), b = randInt(1, 7), c = randInt(1, 10); return buildLinearOnly("med-factor-minus-const", d, k, -k*b - c, 0, `${formatFactor(k, `x - ${b}`)} - ${c}`, "linear", formatLinear(k, -k*b - c)); } },
+      { id: "med-neg-factor", build: d => { const k = -nonZeroRand(2, 5), b = randInt(1, 6); return buildLinearOnly("med-neg-factor", d, k, k*b, 0, formatFactor(k, `x + ${b}`), "linear", formatLinear(k, k*b)); } },
+      { id: "med-neg-factor-minus", build: d => { const k = -nonZeroRand(2, 5), b = randInt(1, 6); return buildLinearOnly("med-neg-factor-minus", d, k, -k*b, 0, formatFactor(k, `x - ${b}`), "linear", formatLinear(k, -k*b)); } },
+      { id: "med-combine-add", build: d => { const a = nonZeroRand(2, 6), c = nonZeroRand(1, 5), b = randInt(-8, 8); return buildLinearOnly("med-combine-add", d, a+c, b, 0, `${formatXTerm(a)} + ${formatXTerm(c)}${formatSignedNumber(b)}`, "linear", formatLinear(a+c,b)); } },
+      { id: "med-combine-sub", build: d => { const a = nonZeroRand(4, 9), c = nonZeroRand(1, 3), b = randInt(-8, 8); return buildLinearOnly("med-combine-sub", d, a-c, b, 0, `${formatXTerm(a)} - ${formatXTerm(c)}${formatSignedNumber(b)}`, "linear", formatLinear(a-c,b)); } },
+      { id: "med-const-first-factor", build: d => { const k = nonZeroRand(2, 6), b = randInt(1, 6), c = randInt(1, 10); return buildLinearOnly("med-const-first-factor", d, k, k*b + c, 0, `${c} + ${formatFactor(k, `x + ${b}`)}`, "linear", formatLinear(k,k*b+c)); } },
+      { id: "med-factor-equals-x", build: d => { const k = nonZeroRand(2, 7), b = randInt(1, 7); return buildLinearOnly("med-factor-equals-x", d, k, k*b, nonZeroRand(1, 2), formatFactor(k, `x + ${b}`), "linear", formatLinear(k,k*b)); } },
+      { id: "med-factor-minus-equals-x", build: d => { const k = nonZeroRand(2, 7), b = randInt(1, 7); return buildLinearOnly("med-factor-minus-equals-x", d, k, -k*b, nonZeroRand(1, 2), formatFactor(k, `x - ${b}`), "linear", formatLinear(k,-k*b)); } },
+      { id: "med-double-left", build: d => { const a = nonZeroRand(2, 5), b = randInt(1, 6), c = nonZeroRand(2, 5); return buildLinearOnly("med-double-left", d, a+c, a*b, 0, `${formatFactor(a, `x + ${b}`)} + ${formatXTerm(c)}`, "linear", formatLinear(a+c,a*b)); } },
+      { id: "med-double-left-sub", build: d => { const a = nonZeroRand(2, 5), b = randInt(1, 6), c = nonZeroRand(1, 4); return buildLinearOnly("med-double-left-sub", d, a-c, a*b, 0, `${formatFactor(a, `x + ${b}`)} - ${formatXTerm(c)}`, "linear", formatLinear(a-c,a*b)); } },
+      { id: "med-x-minus-factor", build: d => { const a = nonZeroRand(2, 5), b = randInt(1, 6); return buildLinearOnly("med-x-minus-factor", d, 1-a, -a*b, 0, `x - ${formatFactor(a, `x + ${b}`)}`, "linear", formatLinear(1-a,-a*b)); } },
+      { id: "med-factor-plus-negative", build: d => { const k = nonZeroRand(2, 6), b = -randInt(1, 6); return buildLinearOnly("med-factor-plus-negative", d, k, k*b, 0, formatFactor(k, `x - ${Math.abs(b)}`), "linear", formatLinear(k,k*b)); } },
+      { id: "med-two-constants", build: d => { const a = nonZeroRand(2, 7), b = randInt(1, 9), c = randInt(1, 9); return buildLinearOnly("med-two-constants", d, a, b-c, 0, `${formatXTerm(a)} + ${b} - ${c}`, "linear", formatLinear(a,b-c)); } },
+      { id: "med-parentheses-constant-right", build: d => { const a = nonZeroRand(2, 6), b = randInt(1, 6), c = randInt(1, 8); return buildLinearOnly("med-parentheses-constant-right", d, a, -a*b + c, 0, `${formatFactor(a, `x - ${b}`)} + ${c}`, "linear", formatLinear(a,-a*b+c)); } },
+      { id: "med-negative-plus-group", build: d => { const b = randInt(1, 7), c = randInt(1, 9); return buildLinearOnly("med-negative-plus-group", d, -1, -b + c, 0, `-(x + ${b}) + ${c}`, "linear", formatLinear(-1,-b+c)); } },
+      { id: "med-negative-minus-group", build: d => { const b = randInt(1, 7), c = randInt(1, 9); return buildLinearOnly("med-negative-minus-group", d, -1, b - c, 0, `-(x - ${b}) - ${c}`, "linear", formatLinear(-1,b-c)); } },
+      { id: "med-three-term-left", build: d => { const a = nonZeroRand(2, 5), b = nonZeroRand(2, 5), c = randInt(-10,10); return buildLinearOnly("med-three-term-left", d, a+b+1, c, 0, `${formatXTerm(a)} + ${formatXTerm(b)} + x${formatSignedNumber(c)}`, "linear", formatLinear(a+b+1,c)); } },
+      { id: "med-factor-equals-factor-lite", build: d => { const a = nonZeroRand(2,5), b = randInt(1,6), c = nonZeroRand(1,3); return buildLinearOnly("med-factor-equals-factor-lite", d, a, a*b, c, formatFactor(a, `x + ${b}`), "linear", formatLinear(a,a*b)); } },
+      { id: "med-coef-right-shift", build: d => { const a = nonZeroRand(3,8), b = randInt(-8,8), c = nonZeroRand(1,2); return buildLinearOnly("med-coef-right-shift", d, a, b, c); } },
+      { id: "med-small-negative-right", build: d => { const a = -nonZeroRand(2,6), b = randInt(-8,8), c = nonZeroRand(1,2); return buildLinearOnly("med-small-negative-right", d, a, b, c); } },
+      { id: "med-mixed-constant-first", build: d => { const a = nonZeroRand(2,6), b = randInt(-8,8); return buildLinearOnly("med-mixed-constant-first", d, a, b, 0, formatConstFirst(b,a)); } }
+    ];
+
+    const hardTemplates = [
+      { id: "hard-ax-b-cx-d", build: d => { const a = nonZeroRand(3,9), c = nonZeroRand(1,5), b = randInt(-10,10), x = pickX(d), rightB=(a-c)*x+b; return buildTwoSide("hard-ax-b-cx-d", d, a,b,c,rightB); } },
+      { id: "hard-ax-minus-cx-plus", build: d => { const a = nonZeroRand(3,9), c = nonZeroRand(1,5), b = -randInt(1,10), x = pickX(d), rightB=(a-c)*x+b; return buildTwoSide("hard-ax-minus-cx-plus", d, a,b,c,rightB); } },
+      { id: "hard-const-minus-x", build: d => { const b = randInt(5,25), a=-nonZeroRand(2,7), c=nonZeroRand(1,5), x=pickX(d), rightB=(a-c)*x+b; return buildTwoSide("hard-const-minus-x", d, a,b,c,rightB, formatConstFirst(b,a)); } },
+      { id: "hard-x-both-neg", build: d => { const a=-nonZeroRand(2,8), c=nonZeroRand(1,5), b=randInt(-10,10), x=pickX(d), rightB=(a-c)*x+b; return buildTwoSide("hard-x-both-neg", d,a,b,c,rightB); } },
+      { id: "hard-factor-left", build: d => { const k=nonZeroRand(2,6), m=randInt(1,7), c=nonZeroRand(1,5), x=pickX(d), A=k,B=k*m,D=(A-c)*x+B; return buildTwoSide("hard-factor-left",d,A,B,c,D,formatFactor(k,`x + ${m}`),null,formatLinear(A,B)); } },
+      { id: "hard-factor-left-minus", build: d => { const k=nonZeroRand(2,6), m=randInt(1,7), c=nonZeroRand(1,5), x=pickX(d), A=k,B=-k*m,D=(A-c)*x+B; return buildTwoSide("hard-factor-left-minus",d,A,B,c,D,formatFactor(k,`x - ${m}`),null,formatLinear(A,B)); } },
+      { id: "hard-right-factor", build: d => { const a=nonZeroRand(3,8), b=randInt(-10,10), k=nonZeroRand(1,5), m=randInt(1,7), x=pickX(d), C=k,D=k*m, B=(C-a)*x+D; return buildTwoSide("hard-right-factor",d,a,B,C,D,null,formatFactor(k,`x + ${m}`),null,formatLinear(C,D)); } },
+      { id: "hard-right-factor-minus", build: d => { const a=nonZeroRand(3,8), k=nonZeroRand(1,5), m=randInt(1,7), x=pickX(d), C=k,D=-k*m, B=(C-a)*x+D; return buildTwoSide("hard-right-factor-minus",d,a,B,C,D,null,formatFactor(k,`x - ${m}`),null,formatLinear(C,D)); } },
+      { id: "hard-two-factors", build: d => { const k=nonZeroRand(2,6),m=randInt(1,6),r=nonZeroRand(1,5),n=randInt(1,6); return buildTwoSide("hard-two-factors",d,k,k*m,r,r*n,formatFactor(k,`x + ${m}`),formatFactor(r,`x + ${n}`),formatLinear(k,k*m),formatLinear(r,r*n)); } },
+      { id: "hard-two-factors-minus", build: d => { const k=nonZeroRand(2,6),m=randInt(1,6),r=nonZeroRand(1,5),n=randInt(1,6); return buildTwoSide("hard-two-factors-minus",d,k,-k*m,r,-r*n,formatFactor(k,`x - ${m}`),formatFactor(r,`x - ${n}`),formatLinear(k,-k*m),formatLinear(r,-r*n)); } },
+      { id: "hard-factor-plus-const", build: d => { const k=nonZeroRand(2,6),m=randInt(1,6),p=randInt(-8,8),c=nonZeroRand(1,5),x=pickX(d),A=k,B=k*m+p,D=(A-c)*x+B; return buildTwoSide("hard-factor-plus-const",d,A,B,c,D,`${formatFactor(k,`x + ${m}`)}${formatSignedNumber(p)}`,null,formatLinear(A,B)); } },
+      { id: "hard-factor-minus-const", build: d => { const k=nonZeroRand(2,6),m=randInt(1,6),p=randInt(1,8),c=nonZeroRand(1,5),x=pickX(d),A=k,B=-k*m-p,D=(A-c)*x+B; return buildTwoSide("hard-factor-minus-const",d,A,B,c,D,`${formatFactor(k,`x - ${m}`)} - ${p}`,null,formatLinear(A,B)); } },
+      { id: "hard-combine-left-both", build: d => { const a=nonZeroRand(2,6), c=nonZeroRand(2,6), b=randInt(-8,8), r=nonZeroRand(1,5), x=pickX(d), A=a+c, D=(A-r)*x+b; return buildTwoSide("hard-combine-left-both",d,A,b,r,D,`${formatXTerm(a)} + ${formatXTerm(c)}${formatSignedNumber(b)}`,null,formatLinear(A,b)); } },
+      { id: "hard-combine-left-minus", build: d => { const a=nonZeroRand(5,9), c=nonZeroRand(1,4), b=randInt(-8,8), r=nonZeroRand(1,5), x=pickX(d), A=a-c, D=(A-r)*x+b; return buildTwoSide("hard-combine-left-minus",d,A,b,r,D,`${formatXTerm(a)} - ${formatXTerm(c)}${formatSignedNumber(b)}`,null,formatLinear(A,b)); } },
+      { id: "hard-combine-right", build: d => { const a=nonZeroRand(2,8), b=randInt(-8,8), r=nonZeroRand(2,6), s=nonZeroRand(1,4), x=pickX(d), C=r+s,D=(a-C)*x+b; return buildTwoSide("hard-combine-right",d,a,b,C,D,null,`${formatXTerm(r)} + ${formatXTerm(s)}${formatSignedNumber(D)}`,null,formatLinear(C,D)); } },
+      { id: "hard-constant-first-right", build: d => { const a=nonZeroRand(3,8), b=randInt(-8,8), c=-nonZeroRand(1,6), x=pickX(d), D=(a-c)*x+b; return buildTwoSide("hard-constant-first-right",d,a,b,c,D,null,formatConstFirst(D,c)); } },
+      { id: "hard-neg-factor-left", build: d => { const k=-nonZeroRand(2,6),m=randInt(1,6),c=nonZeroRand(1,5),x=pickX(d),A=k,B=k*m,D=(A-c)*x+B; return buildTwoSide("hard-neg-factor-left",d,A,B,c,D,formatFactor(k,`x + ${m}`),null,formatLinear(A,B)); } },
+      { id: "hard-neg-factor-right", build: d => { const a=nonZeroRand(2,8),b=randInt(-8,8),k=-nonZeroRand(2,5),m=randInt(1,6),C=k,D=k*m,x=pickX(d),B=(C-a)*x+D; return buildTwoSide("hard-neg-factor-right",d,a,B,C,D,null,formatFactor(k,`x + ${m}`),null,formatLinear(C,D)); } },
+      { id: "hard-x-minus-factor", build: d => { const k=nonZeroRand(2,6),m=randInt(1,6),c=nonZeroRand(1,5),x=pickX(d),A=1-k,B=-k*m,D=(A-c)*x+B; return buildTwoSide("hard-x-minus-factor",d,A,B,c,D,`x - ${formatFactor(k,`x + ${m}`)}`,null,formatLinear(A,B)); } },
+      { id: "hard-factor-minus-x", build: d => { const k=nonZeroRand(2,6),m=randInt(1,6),c=nonZeroRand(1,5),x=pickX(d),A=k-1,B=k*m,D=(A-c)*x+B; return buildTwoSide("hard-factor-minus-x",d,A,B,c,D,`${formatFactor(k,`x + ${m}`)} - x`,null,formatLinear(A,B)); } },
+      { id: "hard-right-factor-plus-const", build: d => { const a=nonZeroRand(3,8),k=nonZeroRand(1,5),m=randInt(1,6),p=randInt(-8,8),C=k,D=k*m+p,x=pickX(d),B=(C-a)*x+D; return buildTwoSide("hard-right-factor-plus-const",d,a,B,C,D,null,`${formatFactor(k,`x + ${m}`)}${formatSignedNumber(p)}`,null,formatLinear(C,D)); } },
+      { id: "hard-both-with-const", build: d => { const a=nonZeroRand(2,7),b=randInt(-8,8),c=nonZeroRand(1,6),x=pickX(d),D=(a-c)*x+b; return buildTwoSide("hard-both-with-const",d,a,b,c,D); } },
+      { id: "hard-swap-sides", build: d => { const a=nonZeroRand(1,5),b=randInt(-8,8),c=nonZeroRand(3,9),x=pickX(d),D=(a-c)*x+b; return buildTwoSide("hard-swap-sides",d,a,b,c,D,formatConstFirst(b,a),formatLinear(c,D)); } },
+      { id: "hard-small-answer", build: d => { const a=nonZeroRand(2,8),c=nonZeroRand(1,6),x=randInt(-3,3),b=randInt(-12,12),D=(a-c)*x+b; return buildTwoSide("hard-small-answer",d,a,b,c,D); } },
+      { id: "hard-large-constant", build: d => { const a=nonZeroRand(2,9),c=nonZeroRand(1,6),x=pickX(d),b=randInt(10,35),D=(a-c)*x+b; return buildTwoSide("hard-large-constant",d,a,b,c,D); } },
+      { id: "hard-neg-constants", build: d => { const a=nonZeroRand(2,9),c=nonZeroRand(1,6),x=pickX(d),b=-randInt(10,25),D=(a-c)*x+b; return buildTwoSide("hard-neg-constants",d,a,b,c,D); } }
+    ];
+
+    const expertTemplates = [
+      ...hardTemplates.map(t => ({ id: "expert-" + t.id, build: t.build })),
+      { id: "expert-neg-left-paren", build: d => { const m=randInt(1,7),c=nonZeroRand(1,5),x=pickX(d),A=-1,B=-m,D=(A-c)*x+B; return buildTwoSide("expert-neg-left-paren",d,A,B,c,D,`-(x + ${m})`,null,formatLinear(A,B)); } },
+      { id: "expert-neg-left-minus", build: d => { const m=randInt(1,7),c=nonZeroRand(1,5),x=pickX(d),A=-1,B=m,D=(A-c)*x+B; return buildTwoSide("expert-neg-left-minus",d,A,B,c,D,`-(x - ${m})`,null,formatLinear(A,B)); } },
+      { id: "expert-const-minus-paren", build: d => { const p=randInt(1,10),m=randInt(1,7),c=nonZeroRand(1,5),x=pickX(d),A=-1,B=p-m,D=(A-c)*x+B; return buildTwoSide("expert-const-minus-paren",d,A,B,c,D,`${p} - (x + ${m})`,null,formatLinear(A,B)); } },
+      { id: "expert-factor-minus-factor", build: d => { const a=nonZeroRand(2,6),m=randInt(1,6),b=nonZeroRand(1,5),n=randInt(1,6),c=nonZeroRand(1,5),x=pickX(d),A=a-b,B=a*m-b*n,D=(A-c)*x+B; return buildTwoSide("expert-factor-minus-factor",d,A,B,c,D,`${formatFactor(a,`x + ${m}`)} - ${formatFactor(b,`x + ${n}`)}`,null,formatLinear(A,B)); } },
+      { id: "expert-none-linear", build: () => generateSpecial("expert-none-linear", "none-linear") },
+      { id: "expert-infinite-linear", build: () => generateSpecial("expert-infinite-linear", "infinite-linear") },
+      { id: "expert-none-factor", build: () => generateSpecial("expert-none-factor", "none-factor") },
+      { id: "expert-infinite-factor", build: () => generateSpecial("expert-infinite-factor", "infinite-factor") }
+    ];
+
+    const hellTemplates = [
+      ...expertTemplates.map(t => ({ id: "hell-" + t.id, build: t.build })),
+      { id: "hell-none-mixed", build: () => generateSpecial("hell-none-mixed", "none-mixed") },
+      { id: "hell-infinite-mixed", build: () => generateSpecial("hell-infinite-mixed", "infinite-mixed") },
+      { id: "hell-negative-special-none", build: () => { const a=-nonZeroRand(2,7),b=randInt(-12,12),off=nonZeroRand(-8,8); return buildTwoSide("hell-negative-special-none","hell",a,b,a,b+off,formatLinear(a,b),formatLinear(a,b+off)); } },
+      { id: "hell-negative-special-infinite", build: () => { const a=-nonZeroRand(2,7),b=randInt(-12,12); return buildTwoSide("hell-negative-special-infinite","hell",a,b,a,b); } }
+    ];
+
+    function getTemplates(difficulty) {
+      if (difficulty === "easy") return easyTemplates;
+      if (difficulty === "medium") return mediumTemplates;
+      if (difficulty === "hard") return hardTemplates;
+      if (difficulty === "expert") return expertTemplates;
+      return hellTemplates;
+    }
+
+    function generateQuestion(difficulty, forcedType = null) {
+      for (let attempt = 0; attempt < 300; attempt++) {
+        let templates = getTemplates(difficulty);
+        if (forcedType) {
+          const matched = templates.filter(t => t.id === forcedType || t.id.endsWith(forcedType));
+          if (matched.length > 0) templates = matched;
+        }
+
+        const template = choose(templates);
+        const raw = template.build(difficulty);
+        const q = classifyEquation(raw);
+
+        if (q.answerType === "fraction") continue;
+
+        if (["easy", "medium", "hard"].includes(difficulty) && q.answerType !== "one") continue;
+
+        if (q.answerType === "one") {
+          if (!Number.isInteger(q.answerValue)) continue;
+          if (Math.abs(q.answerValue) > 40) continue;
+          if (q.leftA === q.rightA) continue;
+        }
+
+        q.difficulty = difficulty;
+        q.templateId = template.id;
+        q.options = generateOptions(q, Number(optionCountEl.value || 4));
+        return q;
+      }
+
+      const fallback = classifyEquation(makeEq("2x + 3", "11", 2, 3, 0, 11, "fallback"));
+      fallback.difficulty = difficulty;
+      fallback.templateId = "fallback";
+      fallback.options = generateOptions(fallback, Number(optionCountEl.value || 4));
+      return fallback;
+    }
+
+    function answerKey(answer) {
+      return `${answer.type}:${answer.value ?? ""}`;
+    }
+
+    function makeAnswer(type, value = null) {
+      return { type, value };
+    }
+
+    function correctAnswerObject(q) {
+      if (q.answerType === "one") return makeAnswer("value", q.answerValue);
+      if (q.answerType === "none") return makeAnswer("none");
+      return makeAnswer("infinite");
+    }
+
+    function answerToString(answer) {
+      if (answer.type === "value") return `x = ${answer.value}`;
+      if (answer.type === "none") return tr().noSolution;
+      return tr().infiniteSolutions;
+    }
+
+    function generateOptions(q, count) {
+      const correct = correctAnswerObject(q);
+      const options = new Map();
+      options.set(answerKey(correct), correct);
+
+      if (q.answerType === "one") {
+        const a = q.answerValue;
+        const distractors = [
+          a + 1, a - 1, a + 2, a - 2, -a, a + 5, a - 5,
+          q.rightB - q.leftB,
+          q.leftA - q.rightA,
+          q.leftB - q.rightB
+        ].filter(n => Number.isInteger(n) && Math.abs(n) <= 60 && n !== a);
+
+        shuffle(distractors).forEach(n => {
+          if (options.size < count) options.set(answerKey(makeAnswer("value", n)), makeAnswer("value", n));
+        });
+
+        if (["expert", "hell"].includes(q.difficulty) && options.size < count) {
+          options.set("none:", makeAnswer("none"));
+        }
+
+        if (["expert", "hell"].includes(q.difficulty) && options.size < count) {
+          options.set("infinite:", makeAnswer("infinite"));
+        }
+      } else {
+        const specials = [makeAnswer("none"), makeAnswer("infinite")];
+        specials.forEach(item => {
+          if (options.size < count) options.set(answerKey(item), item);
+        });
+
+        const fakeValues = shuffle([0, 1, -1, 2, -2, q.rightB - q.leftB, q.leftB - q.rightB, q.leftA, q.rightA])
+          .filter(n => Number.isInteger(n) && Math.abs(n) <= 60);
+
+        fakeValues.forEach(n => {
+          if (options.size < count) options.set(answerKey(makeAnswer("value", n)), makeAnswer("value", n));
+        });
+      }
+
+      while (options.size < count) {
+        const n = randInt(-15, 15);
+        options.set(answerKey(makeAnswer("value", n)), makeAnswer("value", n));
+      }
+
+      return shuffle([...options.values()]);
+    }
+
+    function buildSolutionSteps(q) {
+      const steps = [];
+      steps.push({ line: q.equationText, note: tr().notes.original });
+
+      if (q.expandedText && q.expandedText !== q.equationText) {
+        steps.push({ line: q.expandedText, note: tr().notes.distribute });
+      }
+
+      const A = q.leftA;
+      const B = q.leftB;
+      const C = q.rightA;
+      const D = q.rightB;
+      const coef = A - C;
+      const constant = D - B;
+
+      if (A !== C) {
+        const movedX = `${formatLinear(coef, B)} = ${D}`;
+        if (movedX !== (q.expandedText || q.equationText)) {
+          steps.push({ line: movedX, note: C !== 0 ? tr().notes.moveX : "" });
+        }
+
+        const movedConst = `${formatXTerm(coef)} = ${constant}`;
+        if (B !== 0) {
+          steps.push({ line: movedConst, note: tr().notes.moveConst });
+        }
+
+        const answer = q.answerValue;
+        if (coef !== 1) {
+          steps.push({ line: `x = ${answer}`, note: tr().notes.divide });
+        } else if (steps[steps.length - 1].line !== `x = ${answer}`) {
+          steps.push({ line: `x = ${answer}`, note: "" });
+        }
+
+        return steps;
+      }
+
+      const reduced = `${B} = ${D}`;
+      steps.push({
+        line: reduced,
+        note: B === D ? tr().notes.identity : tr().notes.contradiction
+      });
+
+      steps.push({
+        line: B === D ? tr().trueStatement : tr().falseStatement,
+        note: ""
+      });
+
+      return steps;
+    }
+
+    function renderSolutionBox() {
+      const q = quiz[currentIndex];
+      if (!q || !answered) {
+        solutionBox.classList.add("hidden");
+        solutionBox.innerHTML = "";
+        return;
+      }
+
+      const steps = buildSolutionSteps(q);
+      const correct = answerToString(correctAnswerObject(q));
+
+      solutionBox.classList.remove("hidden");
+      solutionBox.innerHTML = `
+        <h4>${tr().solutionTitle}</h4>
+        <div class="solution-chain">
+          ${steps.map(step => `
+            <div class="chain-line">
+              ${mathSpan(step.line, "chain-math")}
+              <span class="chain-note">${escapeHtml(step.note || "")}</span>
+            </div>
+          `).join("")}
+        </div>
+        <div class="solution-answer">${tr().solutionFinal} ${mathSpan(correct, "answer-math")}</div>
+      `;
+      renderTaggedMath(solutionBox);
+    }
+
+    function escapeHtml(text) {
+      return String(text)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function splitTopLevel(input, delimiter){
+      const parts = [];
+      let depth = 0;
+      let start = 0;
+      for(let i = 0; i < input.length; i++){
+        const ch = input[i];
+        if(ch === "(") depth++;
+        else if(ch === ")") depth = Math.max(0, depth - 1);
+        else if(ch === delimiter && depth === 0){
+          parts.push(input.slice(start, i).trim());
+          start = i + 1;
+        }
+      }
+      parts.push(input.slice(start).trim());
+      return parts.filter(Boolean);
+    }
+
+    function findTopLevel(input, target){
+      let depth = 0;
+      for(let i = 0; i < input.length; i++){
+        const ch = input[i];
+        if(ch === "(") depth++;
+        else if(ch === ")") depth = Math.max(0, depth - 1);
+        else if(ch === target && depth === 0) return i;
+      }
+      return -1;
+    }
+
+    function stripOuterParens(input){
+      const s = String(input).trim();
+      if(!s.startsWith("(") || !s.endsWith(")")) return s;
+      let depth = 0;
+      for(let i = 0; i < s.length; i++){
+        if(s[i] === "(") depth++;
+        if(s[i] === ")") depth--;
+        if(depth === 0 && i < s.length - 1) return s;
+      }
+      return s.slice(1, -1).trim();
+    }
+
+    function escapeLatexText(text){
+      return String(text)
+        .replace(/\\/g, "\\textbackslash{}")
+        .replace(/([#$%&_{}])/g, "\\$1");
+    }
+
+    function mathToLatex(expr){
+      let s = String(expr ?? "").trim();
+      if(!s) return "";
+
+      s = s
+        .replace(/−/g, "-")
+        .replace(/×/g, "\\times ")
+        .replace(/·/g, "\\cdot ")
+        .replace(/\u00a0/g, " ");
+
+      const pureText = {
+        "No solution": "\\text{No solution}",
+        "Infinitely many solutions": "\\text{Infinitely many solutions}",
+        "No answer: time is up": "\\text{No answer: time is up}",
+        "无解": "\\text{无解}",
+        "无穷多个解": "\\text{无穷多个解}",
+        "未作答（时间到）": "\\text{未作答（时间到）}"
+      };
+      if(pureText[s]) return pureText[s];
+
+      const colonMatch = s.match(/^([A-Za-z\u4e00-\u9fff ]+):\s*(.+)$/);
+      if(colonMatch){
+        return `\\text{${escapeLatexText(colonMatch[1] + ": ")}}${mathToLatex(colonMatch[2])}`;
+      }
+
+      const commaParts = splitTopLevel(s, ",");
+      if(commaParts.length > 1){
+        return commaParts.map(part => mathToLatex(part)).join(",\\quad ");
+      }
+
+      const equalParts = splitTopLevel(s, "=");
+      if(equalParts.length > 1){
+        return equalParts.map(part => mathToLatex(part)).join(" = ");
+      }
+
+      const slashIndex = findTopLevel(s, "/");
+      if(slashIndex > -1){
+        const numerator = stripOuterParens(s.slice(0, slashIndex));
+        const denominator = stripOuterParens(s.slice(slashIndex + 1));
+        return `\\frac{${mathToLatex(numerator)}}{${mathToLatex(denominator)}}`;
+      }
+
+      s = s.replace(/\*/g, "\\cdot ");
+      s = s.replace(/\bof\b/g, "\\text{ of }");
+      s = s.replace(/%/g, "\\%");
+      s = s.replace(/π/g, "\\text{π}");
+      s = s.replace(/\?/g, "?");
+
+      s = s.replace(/sqrt\(([^()]*)\)/g, (_, inner) => `\\sqrt{${mathToLatex(inner)}}`);
+      s = s.replace(/sec\^2\(([^()]*)\)/g, (_, inner) => `\\sec^{2}\\left(${mathToLatex(inner)}\\right)`);
+      s = s.replace(/(sin|cos|tan|sec|ln)\(([^()]*)\)/g, (_, fn, inner) => `\\${fn}\\left(${mathToLatex(inner)}\\right)`);
+      s = s.replace(/f\(g\(([^()]*)\)\)/g, (_, inner) => `f\\left(g\\left(${mathToLatex(inner)}\\right)\\right)`);
+      s = s.replace(/g\(f\(([^()]*)\)\)/g, (_, inner) => `g\\left(f\\left(${mathToLatex(inner)}\\right)\\right)`);
+      s = s.replace(/f\(([^()]*)\)/g, (_, inner) => `f\\left(${mathToLatex(inner)}\\right)`);
+      s = s.replace(/g\(([^()]*)\)/g, (_, inner) => `g\\left(${mathToLatex(inner)}\\right)`);
+      s = s.replace(/e\^\(([^()]*)\)/g, (_, inner) => `e^{${mathToLatex(inner)}}`);
+      s = s.replace(/e\^x/g, "e^{x}");
+
+      s = s.replace(/\^\(([^)]+)\)/g, (_, exponent) => `^{${mathToLatex(exponent)}}`);
+      s = s.replace(/\^(-?\d+)/g, "^{$1}");
+      s = s.replace(/\^([a-zA-Z]+)/g, "^{$1}");
+      s = s.replace(/([a-zA-Z])²/g, "$1^{2}");
+      s = s.replace(/([a-zA-Z])³/g, "$1^{3}");
+
+      s = s.replace(/x\^\{1\}/g, "x");
+      s = s.replace(/x\^\{0\}/g, "1");
+      s = s.replace(/\bln\b/g, "\\ln");
+      s = s.replace(/(^|[^A-Za-z])pi(?![A-Za-z])/g, "$1\\text{π}");
+
+      return s;
+    }
+
+    function shouldRenderMath(expr){
+      const s = String(expr ?? "").trim();
+      if(!s) return false;
+      if(["No solution","Infinitely many solutions","无解","无穷多个解"].includes(s)) return true;
+      if(/[=^/*+\-()π%²³]/.test(s)) return true;
+      if(/^\s*-?\d+(\.\d+)?\s*$/.test(s)) return true;
+      if(/^[A-Za-z]\s*\(/.test(s)) return true;
+      return false;
+    }
+
+    function renderLatex(el, latex, displayMode=false){
+      el.classList.add("math-render");
+      const boldLatex = `\\boldsymbol{${latex}}`;
+      if(window.katex){
+        katex.render(boldLatex, el, {
+          throwOnError: false,
+          displayMode
+        });
+      } else {
+        el.textContent = latex;
+      }
+    }
+
+    function renderMath(el, expr, displayMode=false){
+      renderLatex(el, mathToLatex(expr), displayMode);
+    }
+
+    function renderMaybeMath(el, expr, displayMode=false){
+      const raw = String(expr ?? "");
+      if(shouldRenderMath(raw)){
+        renderMath(el, raw, displayMode);
+      } else {
+        el.classList.remove("math-render");
+        el.textContent = raw;
+      }
+    }
+
+    function mathSpan(expr, className=""){
+      const cls = className ? ` class="${className}"` : "";
+      return `<span${cls} data-math="${escapeHtml(expr)}"></span>`;
+    }
+
+    function renderTaggedMath(root){
+      root.querySelectorAll("[data-math]").forEach(el => {
+        renderMaybeMath(el, el.getAttribute("data-math") || "");
+      });
+    }
+
+
+
+    function buildQuiz() {
+      const difficulty = difficultyEl.value;
+      const count = clamp(Number(questionCountEl.value || 10), 1, 100);
+      lastDifficulty = difficulty;
+      quiz = [];
+
+      for (let i = 0; i < count; i++) {
+        quiz.push(generateQuestion(difficulty));
+      }
+
+      currentIndex = 0;
+      correctCount = 0;
+      wrongAnswers = [];
+      answered = false;
+      lastFeedback = null;
+      showQuiz();
+      renderQuestion(true);
+    }
+
+    function buildWrongTypeQuiz() {
+      if (wrongAnswers.length === 0) {
+        alert(tr().noWrongAlert);
+        return;
+      }
+
+      const wrongTypePool = wrongAnswers.map(w => w.templateId);
+      const count = Math.max(wrongAnswers.length * 2, 5);
+      quiz = [];
+
+      for (let i = 0; i < count; i++) {
+        quiz.push(generateQuestion(lastDifficulty, choose(wrongTypePool)));
+      }
+
+      currentIndex = 0;
+      correctCount = 0;
+      wrongAnswers = [];
+      answered = false;
+      lastFeedback = null;
+      showQuiz();
+      renderQuestion(true);
+    }
+
+    function showQuiz() {
+      setupCard.classList.add("hidden");
+      resultCard.classList.add("hidden");
+      quizCard.classList.remove("hidden");
+    }
+
+    function renderQuestion(resetOptions) {
+      const q = quiz[currentIndex];
+      if (!q) return;
+
+      if (resetOptions) {
+        answered = false;
+        lastFeedback = null;
+        feedbackEl.textContent = "";
+        feedbackEl.className = "feedback";
+        solutionBox.classList.add("hidden");
+        solutionBox.innerHTML = "";
+        nextBtn.disabled = true;
+      }
+
+      progressText.textContent = tr().progress(currentIndex + 1, quiz.length);
+      difficultyText.textContent = tr().difficulties[q.difficulty];
+      progressBar.style.width = `${(currentIndex / quiz.length) * 100}%`;
+      renderMaybeMath(equationEl, q.equationText, true);
+
+      if (resetOptions) {
+        optionsEl.innerHTML = "";
+        q.options.forEach(option => {
+          const btn = document.createElement("button");
+          btn.className = "option";
+          btn.dataset.answerKey = answerKey(option);
+          btn.setAttribute("aria-label", answerToString(option));
+          renderMaybeMath(btn, answerToString(option));
+          btn.addEventListener("click", () => chooseOption(btn, option));
+          optionsEl.appendChild(btn);
+        });
+      }
+
+      nextBtn.textContent = currentIndex === quiz.length - 1 ? tr().resultBtn : tr().nextBtn;
+
+      if (resetOptions) startTimerForQuestion();
+      else updateTimerDisplay();
+    }
+
+    function renderFeedback(correct, answer, timeUp = false) {
+      feedbackEl.className = "feedback";
+      if (correct) {
+        feedbackEl.textContent = tr().correctFeedback;
+        feedbackEl.classList.add("good");
+      } else {
+        const prefix = timeUp
+          ? (lang === "zh" ? "时间到。正确答案是" : "Time is up. The correct answer is")
+          : (lang === "zh" ? "错误。正确答案是" : "Incorrect. The correct answer is");
+        feedbackEl.innerHTML = `${prefix} ${mathSpan(answer, "feedback-math")}.`;
+        renderTaggedMath(feedbackEl);
+        feedbackEl.classList.add("bad");
+      }
+    }
+
+    function isSameAnswer(a, b) {
+      return answerKey(a) === answerKey(b);
+    }
+
+    function chooseOption(button, selected) {
+      if (answered) return;
+      answered = true;
+      clearTimer();
+
+      const q = quiz[currentIndex];
+      const correct = correctAnswerObject(q);
+      const correctDisplay = answerToString(correct);
+      const buttons = [...optionsEl.querySelectorAll(".option")];
+
+      buttons.forEach(btn => {
+        btn.disabled = true;
+        if (btn.dataset.answerKey === answerKey(correct)) btn.classList.add("correct");
+      });
+
+      if (isSameAnswer(selected, correct)) {
+        correctCount++;
+        lastFeedback = { correct: true, answer: correctDisplay, timeUp: false };
+        renderFeedback(true, correctDisplay, false);
+      } else {
+        button.classList.add("wrong");
+        lastFeedback = { correct: false, answer: correctDisplay, timeUp: false };
+        renderFeedback(false, correctDisplay, false);
+
+        wrongAnswers.push({
+          equation: q.equationText,
+          answer: correctDisplay,
+          selected: answerToString(selected),
+          templateId: q.templateId,
+          difficulty: q.difficulty
+        });
+      }
+
+      void window.MCLProgress?.recordGameAttempt?.({
+        question: q,
+        correctAnswer: correctDisplay,
+        selectedAnswer: answerToString(selected),
+        isCorrect: isSameAnswer(selected, correct)
+      });
+
+      renderSolutionBox();
+      nextBtn.disabled = false;
+      progressBar.style.width = `${((currentIndex + 1) / quiz.length) * 100}%`;
+    }
+
+    function handleTimeUp() {
+      if (answered) return;
+      clearTimer();
+      answered = true;
+
+      const q = quiz[currentIndex];
+      const correct = correctAnswerObject(q);
+      const correctDisplay = answerToString(correct);
+      const buttons = [...optionsEl.querySelectorAll(".option")];
+
+      buttons.forEach(btn => {
+        btn.disabled = true;
+        if (btn.dataset.answerKey === answerKey(correct)) btn.classList.add("correct");
+      });
+
+      lastFeedback = { correct: false, answer: correctDisplay, timeUp: true };
+      renderFeedback(false, correctDisplay, true);
+
+      wrongAnswers.push({
+        equation: q.equationText,
+        answer: correctDisplay,
+        selected: null,
+        timeUp: true,
+        templateId: q.templateId,
+        difficulty: q.difficulty
+      });
+
+      void window.MCLProgress?.recordGameAttempt?.({
+        question: q,
+        correctAnswer: correctDisplay,
+        selectedAnswer: "",
+        isCorrect: false,
+        timeUp: true
+      });
+
+      renderSolutionBox();
+      nextBtn.disabled = false;
+      progressBar.style.width = `${((currentIndex + 1) / quiz.length) * 100}%`;
+    }
+
+    function nextQuestion() {
+      if (!answered) return;
+      if (currentIndex < quiz.length - 1) {
+        currentIndex++;
+        renderQuestion(true);
+      } else {
+        showResult();
+      }
+    }
+
+    function showResult() {
+      clearTimer();
+      quizCard.classList.add("hidden");
+      resultCard.classList.remove("hidden");
+      renderResultBody();
+    }
+
+    function renderResultBody() {
+      const total = quiz.length;
+      const accuracy = total === 0 ? 0 : Math.round((correctCount / total) * 100);
+
+      scoreNum.textContent = `${correctCount}/${total}`;
+      accuracyNum.textContent = `${accuracy}%`;
+      wrongNum.textContent = `${wrongAnswers.length}`;
+
+      wrongList.innerHTML = "";
+
+      if (wrongAnswers.length === 0) {
+        const item = document.createElement("div");
+        item.className = "wrong-item";
+        item.innerHTML = `<div class="expr">${tr().noWrong}</div><p class="tag-good">${tr().noWrongTip}</p>`;
+        wrongList.appendChild(item);
+      } else {
+        wrongAnswers.forEach((w, index) => {
+          const item = document.createElement("div");
+          item.className = "wrong-item";
+          item.innerHTML = `
+            <div class="expr">${index + 1}. ${escapeHtml(w.equation)}</div>
+            <p>${tr().yourAnswer}: <span class="tag-bad">${escapeHtml(w.timeUp ? tr().timeUpAnswer : w.selected)}</span></p>
+            <p>${tr().correctAnswer}: <span class="tag-good">${escapeHtml(w.answer)}</span></p>
+            <p>${tr().suggestion}</p>
+          `;
+          wrongList.appendChild(item);
+        });
+      }
+    }
+
+    function resetToSetup() {
+      clearTimer();
+      setupCard.classList.remove("hidden");
+      quizCard.classList.add("hidden");
+      resultCard.classList.add("hidden");
+      progressBar.style.width = "0%";
+      sampleBox.classList.add("hidden");
+      sampleBox.innerHTML = "";
+      solutionBox.classList.add("hidden");
+      solutionBox.innerHTML = "";
+      lastFeedback = null;
+    }
+
+    function quitQuiz() {
+      if (answered || currentIndex > 0) showResult();
+      else resetToSetup();
+    }
+
+    function showSample() {
+      const q = generateQuestion(difficultyEl.value);
+      const correct = answerToString(correctAnswerObject(q));
+      sampleBox.classList.remove("hidden");
+      sampleBox.innerHTML = `
+        <strong>${tr().sampleTitle}:</strong><br>
+        ${tr().sampleEquation}: ${mathSpan(q.equationText, "sample-math")}<br>
+        ${tr().sampleAnswer}: ${mathSpan(correct, "sample-math")}<br>
+        ${tr().sampleOptions}: ${q.options.map(x => mathSpan(answerToString(x), "sample-math")).join(" ")}
+      `;
+      renderTaggedMath(sampleBox);
+    }
+
+    timedModeEl.addEventListener("change", updateTimerControls);
+    startBtn.addEventListener("click", buildQuiz);
+    sampleBtn.addEventListener("click", showSample);
+    nextBtn.addEventListener("click", nextQuestion);
+    quitBtn.addEventListener("click", quitQuiz);
+    restartBtn.addEventListener("click", resetToSetup);
+    reviewWrongBtn.addEventListener("click", buildWrongTypeQuiz);
+
+    applyLanguage();
+  </script>
+  <script src="../assets/js/home-link.js"></script>
+</body>
+</html>

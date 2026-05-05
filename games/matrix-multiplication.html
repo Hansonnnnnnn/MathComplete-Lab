@@ -1,0 +1,1117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Matrix Multiplication Practice</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../assets/js/supabase-client.js"></script>
+  <script src="../assets/js/auth.js"></script>
+  <script src="../assets/js/auth-ui.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <style>
+
+    :root {
+      --bg: #f7f7fb;
+      --text: #0f172a;
+      --muted: #64748b;
+      --border: #e5e7eb;
+      --accent: #2563eb;
+      --violet: #7c3aed;
+      --good: #16a34a;
+      --bad: #dc2626;
+      --shadow: 0 18px 42px rgba(15, 23, 42, 0.10);
+      --radius: 22px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", Arial, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(96, 165, 250, 0.35), transparent 34%),
+        radial-gradient(circle at top right, rgba(167, 139, 250, 0.28), transparent 32%),
+        linear-gradient(180deg, #f8fbff 0%, var(--bg) 52%, #ffffff 100%);
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.42;
+      background-image:
+        linear-gradient(rgba(15, 23, 42, 0.045) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(15, 23, 42, 0.045) 1px, transparent 1px);
+      background-size: 42px 42px;
+      mask-image: linear-gradient(180deg, black, transparent 72%);
+    }
+
+    .mc-site-shell {
+      width: min(1180px, calc(100% - 32px));
+      margin: 18px auto 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 12px 14px;
+      border: 1px solid rgba(255, 255, 255, 0.74);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.84);
+      backdrop-filter: blur(18px);
+      box-shadow: 0 16px 36px rgba(15, 23, 42, 0.10);
+      position: sticky;
+      top: 12px;
+      z-index: 20;
+    }
+
+    .mc-brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: #0f172a;
+      font-weight: 950;
+      text-decoration: none;
+      letter-spacing: -0.035em;
+      white-space: nowrap;
+    }
+
+    .mc-brand-mark {
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      border-radius: 12px;
+      color: white;
+      background: linear-gradient(135deg, #2563eb, #7c3aed);
+      box-shadow: 0 12px 24px rgba(37, 99, 235, 0.28);
+    }
+
+    .mc-links {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .mc-link {
+      color: #475569;
+      text-decoration: none;
+      font-weight: 850;
+      padding: 8px 11px;
+      border-radius: 999px;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .mc-link:hover { color: #1d4ed8; background: #eff6ff; }
+    .mc-link.primary { color: white; background: #0f172a; }
+    .mc-link.primary:hover { color: white; background: #1e293b; }
+
+    .container {
+      width: min(1040px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 38px 0 68px;
+      position: relative;
+    }
+
+    header { margin-bottom: 24px; overflow: visible; }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      color: #1d4ed8;
+      background: rgba(239, 246, 255, 0.86);
+      border: 1px solid rgba(191, 219, 254, 0.8);
+      font-weight: 950;
+      margin-bottom: 14px;
+    }
+
+    .eyebrow-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: #10b981;
+      box-shadow: 0 0 0 6px rgba(16, 185, 129, 0.12);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(34px, 5.2vw, 56px);
+      line-height: 1.16;
+      letter-spacing: -0.055em;
+      background: linear-gradient(135deg, #0f172a 0%, #1d4ed8 48%, #7c3aed 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      padding-bottom: 0.18em;
+      overflow: visible;
+    }
+
+    h2 { margin: 0 0 12px; font-size: clamp(24px, 4vw, 34px); letter-spacing: -0.045em; }
+    h3 { margin: 0 0 8px; letter-spacing: -0.025em; }
+
+    .subtitle {
+      margin: 14px 0 0;
+      color: var(--muted);
+      line-height: 1.75;
+      max-width: 780px;
+      font-size: 17px;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.90);
+      border: 1px solid rgba(255, 255, 255, 0.76);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 24px;
+      backdrop-filter: blur(16px);
+    }
+
+    .setup-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+      margin: 22px 0;
+    }
+
+    label { display: block; font-weight: 900; margin-bottom: 8px; }
+
+    select,
+    input {
+      width: 100%;
+      min-height: 46px;
+      padding: 12px 14px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      font-size: 16px;
+      background: white;
+      outline: none;
+    }
+
+    select:focus,
+    input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+    }
+
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 46px;
+      padding: 12px 14px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: white;
+      cursor: pointer;
+      margin-bottom: 6px;
+    }
+
+    .checkbox-label input {
+      width: auto;
+      min-height: 0;
+      transform: scale(1.15);
+      accent-color: var(--accent);
+    }
+
+    .mini-hint { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.45; }
+
+    button {
+      appearance: none;
+      border: none;
+      background: linear-gradient(135deg, var(--accent), var(--violet));
+      color: white;
+      font-weight: 950;
+      padding: 12px 18px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: transform 0.14s, filter 0.2s, box-shadow 0.2s;
+      box-shadow: 0 12px 24px rgba(37, 99, 235, 0.24);
+    }
+
+    button:hover { transform: translateY(-1px); filter: brightness(0.98); }
+    button.secondary { background: #111827; box-shadow: 0 8px 18px rgba(17, 24, 39, 0.16); }
+    button.ghost { background: white; color: var(--text); border: 1px solid var(--border); box-shadow: none; }
+    button:disabled { cursor: not-allowed; opacity: 0.55; transform: none; }
+
+    .hidden { display: none !important; }
+    .actions { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+
+    .explain-box {
+      margin-top: 18px;
+      padding: 16px;
+      background: #f8fafc;
+      border: 1px dashed #cbd5e1;
+      border-radius: 18px;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .topbar {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: white;
+      color: var(--muted);
+      font-weight: 850;
+      font-size: 14px;
+      margin-right: 6px;
+      margin-bottom: 6px;
+    }
+
+    .timer-pill { color: #1d4ed8; background: #eff6ff; border-color: #bfdbfe; }
+    .timer-danger { color: #991b1b; background: #fef2f2; border-color: #fecaca; }
+
+    .progress-wrap {
+      width: 100%;
+      height: 10px;
+      background: #e5e7eb;
+      border-radius: 999px;
+      overflow: hidden;
+      margin: 10px 0 22px;
+    }
+
+    .progress {
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(90deg, #2563eb, #7c3aed);
+      transition: width 0.25s ease;
+    }
+
+    .question-title { color: var(--muted); font-weight: 950; margin-bottom: 8px; }
+    .question-extra { color: var(--muted); font-weight: 900; margin: -4px 0 14px; line-height: 1.6; }
+
+    .question-main {
+      font-size: clamp(20px, 2.7vw, 32px);
+      line-height: 1.45;
+      font-weight: 850;
+      letter-spacing: normal;
+      margin: 12px 0 24px;
+      overflow-wrap: anywhere;
+      text-align: left;
+    }
+
+    .math-render { display: inline-block; }
+    .question-main.math-render { display: block; width: 100%; overflow-x: auto; padding: 4px 0; }
+    .question-main .katex { font-size: 1em; line-height: 1.35; }
+    .option .katex { font-size: 1.1em; line-height: 1.25; }
+    .chain-math .katex, .answer-math .katex, .feedback-math .katex, .sample-math .katex, .wrong-math .katex { font-size: 1.06em; line-height: 1.25; }
+    .math-render .katex { color: #0f172a; }
+
+    .options {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .option {
+      border: 2px solid var(--border);
+      background: white;
+      color: var(--text);
+      box-shadow: none;
+      border-radius: 18px;
+      min-height: 64px;
+      font-size: 20px;
+      text-align: center;
+      padding: 12px;
+      overflow-wrap: anywhere;
+    }
+
+    .option:hover { border-color: var(--accent); background: #f8fbff; }
+    .option.correct { border-color: rgba(22, 163, 74, 0.5); background: #ecfdf5; color: #065f46; }
+    .option.wrong { border-color: rgba(220, 38, 38, 0.5); background: #fef2f2; color: #991b1b; }
+    .option.correct .katex { color: #065f46; }
+    .option.wrong .katex { color: #991b1b; }
+
+    .feedback { min-height: 30px; font-weight: 950; margin: 8px 0 16px; }
+    .feedback.good { color: var(--good); }
+    .feedback.bad { color: var(--bad); }
+    .feedback.bad .katex { color: #dc2626; }
+
+    .solution-box {
+      margin: 14px 0 18px;
+      padding: 18px;
+      border-radius: 20px;
+      border: 1px solid #dbeafe;
+      background: linear-gradient(180deg, #f8fbff, #fff);
+      color: #1f2937;
+      line-height: 1.7;
+    }
+
+    .solution-box h4 { margin: 0 0 12px; font-size: 18px; }
+    .solution-chain { background: white; border: 1px solid #e5e7eb; border-radius: 16px; padding: 14px 16px; overflow-x: auto; }
+
+    .chain-line {
+      display: grid;
+      grid-template-columns: minmax(250px, 1fr) minmax(170px, 0.65fr);
+      align-items: baseline;
+      gap: 18px;
+      margin: 8px 0;
+      font-size: 17px;
+      font-weight: 850;
+      white-space: nowrap;
+    }
+
+    .chain-note { color: #64748b; font-size: 13px; font-weight: 850; white-space: normal; }
+    .solution-answer { margin-top: 12px; font-weight: 950; color: #111827; }
+    .solution-answer > .answer-math { display: inline-block; background: #ecfdf5; color: #065f46; border: 1px solid #bbf7d0; border-radius: 999px; padding: 3px 10px; margin-left: 4px; vertical-align: middle; }
+
+    .result-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin: 18px 0 24px; }
+    .stat { background: #f9fafb; border: 1px solid var(--border); border-radius: 18px; padding: 18px; }
+    .stat .num { font-size: 34px; font-weight: 950; letter-spacing: -0.05em; }
+    .stat .label { color: var(--muted); margin-top: 4px; font-weight: 850; }
+    .wrong-list { display: grid; gap: 14px; }
+    .wrong-item { border: 1px solid var(--border); border-radius: 18px; background: white; padding: 16px; }
+    .wrong-item .expr { font-size: 22px; font-weight: 950; margin-bottom: 8px; overflow-wrap: anywhere; }
+    .wrong-item p { margin: 6px 0; color: var(--muted); line-height: 1.6; }
+    .tag-good { color: var(--good); font-weight: 950; }
+    .tag-bad { color: var(--bad); font-weight: 950; }
+
+    @media (max-width: 760px) {
+      .mc-site-shell { border-radius: 22px; align-items: flex-start; flex-direction: column; }
+      .mc-links { justify-content: flex-start; }
+      .setup-grid, .options, .result-grid { grid-template-columns: 1fr; }
+      .card { padding: 18px; }
+      .container { width: min(100% - 22px, 1040px); padding-top: 26px; }
+      .chain-line { grid-template-columns: 1fr; gap: 2px; white-space: normal; }
+      .chain-note { padding-left: 12px; }
+    }
+  
+    .operator-note {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: #475569;
+      font-weight: 900;
+      margin-top: -8px;
+      margin-bottom: 14px;
+    }
+    .small-code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-weight: 950;
+      color: #1d4ed8;
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      border-radius: 999px;
+      padding: 2px 8px;
+    }
+
+  
+
+  /* MathComplete Lab shared tool question layout override */
+  .question-main,
+  .expression,
+  .equation {
+    max-width: 100%;
+    font-size: clamp(28px, 5.4vw, 54px) !important;
+    line-height: 1.2 !important;
+    font-weight: 500 !important;
+    letter-spacing: -0.045em !important;
+    margin: 10px 0 24px !important;
+    text-align: left !important;
+    overflow-wrap: anywhere !important;
+    word-break: normal !important;
+    text-wrap: pretty;
+    white-space: normal;
+    justify-content: flex-start !important;
+    align-items: flex-start !important;
+  }
+
+  .question-main.math-render,
+  .expression.math-render,
+  .equation.math-render {
+    display: block !important;
+    width: 100% !important;
+    text-align: left !important;
+  }
+
+  .question-main .katex,
+  .expression .katex,
+  .equation .katex {
+    white-space: normal !important;
+    text-align: left !important;
+    font-weight: 400 !important;
+  }
+
+  .question-main .katex *,
+  .expression .katex *,
+  .equation .katex * {
+    font-weight: 400 !important;
+  }
+
+  .question-line,
+  .question-text {
+    max-width: 100%;
+    text-align: left !important;
+    overflow-wrap: anywhere;
+    word-break: normal;
+    text-wrap: pretty;
+  }
+</style>
+</head>
+<body>
+  <nav class="mc-site-shell">
+    <a class="mc-brand" href="../index.html"><span class="mc-brand-mark">∑</span><span>MathComplete Lab</span></a>
+    <div class="mc-links">
+      <a class="mc-link" href="../practice.html" data-i18n="navPractice">Practice Library</a>
+      <a class="mc-link primary" href="../index.html" data-i18n="navHome">Home</a>
+    </div>
+  </nav>
+
+  <main class="container">
+    <header>
+      <div class="eyebrow"><span class="eyebrow-dot"></span><span id="toolBadge"></span></div>
+      <h1 id="pageTitle"></h1>
+      <p id="pageSubtitle" class="subtitle"></p>
+    </header>
+
+    <section id="setupCard" class="card">
+      <h2 id="setupTitle"></h2>
+      <div class="setup-grid">
+        <div><label id="difficultyLabel" for="difficulty"></label><select id="difficulty"></select></div>
+        <div><label id="questionCountLabel" for="questionCount"></label><input id="questionCount" type="number" min="1" max="100" value="10" /></div>
+        <div><label id="optionCountLabel" for="optionCount"></label><select id="optionCount"></select></div>
+        <div><label class="checkbox-label" for="timedMode"><input id="timedMode" type="checkbox" /><span id="timedModeText"></span></label><p id="timedModeHint" class="mini-hint"></p></div>
+        <div><label id="timerLevelLabel" for="timerLevel"></label><select id="timerLevel"></select></div>
+      </div>
+      <div class="actions"><button id="startBtn"></button><button id="sampleBtn" class="ghost"></button></div>
+      <div id="sampleBox" class="explain-box hidden"></div>
+      <div id="noteBox" class="explain-box"></div>
+    </section>
+
+    <section id="quizCard" class="card hidden">
+      <div class="topbar">
+        <div><span class="pill" id="progressText"></span><span class="pill" id="difficultyText"></span><span class="pill timer-pill hidden" id="timerDisplay"></span></div>
+        <button id="quitBtn" class="ghost"></button>
+      </div>
+      <div class="progress-wrap"><div id="progressBar" class="progress"></div></div>
+      <div id="questionTitle" class="question-title"></div>
+      <div id="questionExtra" class="question-extra"></div>
+      <div id="questionMain" class="question-main"></div>
+      <div id="options" class="options"></div>
+      <div id="feedback" class="feedback"></div>
+      <div id="solutionBox" class="solution-box hidden"></div>
+      <div class="actions"><button id="nextBtn" disabled></button></div>
+    </section>
+
+    <section id="resultCard" class="card hidden">
+      <h2 id="resultTitle"></h2>
+      <div class="result-grid">
+        <div class="stat"><div id="scoreNum" class="num">0/0</div><div id="scoreLabel" class="label"></div></div>
+        <div class="stat"><div id="accuracyNum" class="num">0%</div><div id="accuracyLabel" class="label"></div></div>
+        <div class="stat"><div id="wrongNum" class="num">0</div><div id="wrongLabel" class="label"></div></div>
+      </div>
+      <h3 id="wrongReviewTitle"></h3>
+      <div id="wrongList" class="wrong-list"></div>
+      <div class="actions" style="margin-top:22px;"><button id="restartBtn"></button><button id="reviewWrongBtn" class="secondary"></button></div>
+    </section>
+  </main>
+
+
+  <script>
+    const TOOL_CONFIG = {
+      gameId: "matrix-multiplication",
+      course: "linear-algebra",
+      title: { en: "Matrix Multiplication Practice", zh: "矩阵乘法专项练习" },
+      subtitle: {
+        en: "Practice matrix dimensions, row-by-column multiplication, matrix-vector products, and matrix multiplication properties.",
+        zh: "练习矩阵尺寸、行乘列计算、矩阵乘向量和矩阵乘法性质。"
+      }
+    };
+
+    const T = {
+      en: {
+        htmlLang: "en",
+        navPractice: "Practice Library",
+        navHome: "Home",
+        toolBadge: "Linear Algebra",
+        title: TOOL_CONFIG.title.en,
+        subtitle: TOOL_CONFIG.subtitle.en,
+        note: "This tool focuses on matrix multiplication fundamentals: dimension matching, row-by-column computation, and basic multiplication properties.",
+        setupTitle: "Start Practice",
+        difficultyLabel: "Difficulty",
+        questionCountLabel: "Number of Questions",
+        optionCountLabel: "Number of Choices",
+        timedModeText: "Enable Timed Mode",
+        timedModeHint: "Off means no countdown. On means each question has its own timer.",
+        timerLevelLabel: "Timer Level",
+        startBtn: "Start",
+        sampleBtn: "Generate Sample Question",
+        quitBtn: "End This Round",
+        nextBtn: "Next Question",
+        resultBtn: "See Results",
+        questionTitle: "Choose the correct answer.",
+        promptDefined: "Decide whether the matrix product is defined.",
+        promptDimension: "Choose the size of the product.",
+        promptScalar: "Choose the scalar value produced by the multiplication.",
+        promptEntry: "Compute the requested entry.",
+        promptMatrix: "Choose the matrix that results from the multiplication.",
+        promptVector: "Choose the vector that results from the multiplication.",
+        promptStatement: "Choose the correct statement.",
+        promptProperty: "Choose the statement that is NOT always true.",
+        promptVariable: "Solve for the unknown value.",
+        promptError: "Identify the mistake.",
+        mainErrorStep: "A student multiplied corresponding entries. What is the mistake?",
+        correctFeedback: "Correct!",
+        solutionTitle: "Correct Solution",
+        solutionFinal: "Answer:",
+        resultTitle: "Practice Results",
+        scoreLabel: "Correct Answers",
+        accuracyLabel: "Accuracy",
+        wrongLabel: "Wrong Answers",
+        wrongReviewTitle: "Wrong Answer Review",
+        restartBtn: "Practice Again",
+        reviewWrongBtn: "Practice Similar Wrong Types",
+        noWrong: "No wrong answers this round.",
+        noWrongTip: "Great job. Try a harder level next.",
+        yourAnswer: "Your answer",
+        correctAnswer: "Correct answer",
+        timeUpAnswer: "No answer: time is up",
+        sampleTitle: "Sample Question",
+        sampleQuestion: "Question",
+        sampleAnswer: "Correct answer",
+        sampleOptions: "Sample choices",
+        incorrectPrefix: "Incorrect. The correct answer is",
+        timeUpPrefix: "Time is up. The correct answer is",
+        progress: (a, b) => `Question ${a} / ${b}`,
+        optionCount: n => `${n} choices`,
+        timerDisplay: s => `Time left: ${formatTime(s)}`,
+        difficulties: { easy: "Easy", medium: "Medium", hard: "Hard", expert: "Expert", mixed: "Mixed" },
+        difficultyOptions: {
+          easy: "Easy: dimensions, product size, row-column scalar, and single entries",
+          medium: "Medium: 2×2 multiplication, matrix-vector products, identity matrices, and common mistakes",
+          hard: "Hard: rectangular products, variables, vector equations, and properties",
+          expert: "Expert: matrix chains, non-commutativity, composite transformations, and unknown entries",
+          mixed: "Mixed: balanced practice from all difficulty levels"
+        },
+        timerOptions: {
+          timer_easy: "Easy: 2 minutes per question",
+          timer_medium: "Medium: 1 minute per question",
+          timer_hard: "Hard: 30 seconds per question",
+          timer_expert: "Expert: 15 seconds per question"
+        },
+        notes: {
+          inner: "check inner dimensions",
+          outer: "outer dimensions give result size",
+          rowColumn: "row × column",
+          entry: "entry c_ij uses row i of A and column j of B",
+          matrix: "compute each entry by row × column",
+          vector: "matrix-vector product uses each row against the vector",
+          identity: "identity matrix keeps the matrix unchanged when dimensions match",
+          mistake: "matrix multiplication is not entrywise multiplication",
+          variable: "use the requested entry equation",
+          equation: "write the matrix equation as a system",
+          property: "matrix multiplication is usually not commutative",
+          chain: "multiply in a valid order",
+          final: "final result"
+        },
+        textOptions: {
+          definedInner: "Defined: inner dimensions match",
+          undefinedInner: "Undefined: inner dimensions do not match",
+          definedSameSize: "Defined: matrices have the same size",
+          undefinedSameSize: "Undefined: matrices must have the same size",
+          undefinedOuter: "Undefined: outer dimensions are different",
+          bothDefinedDifferent: "Both AB and BA are defined, but their sizes are different",
+          onlyABDefined: "Only AB is defined",
+          onlyBADefined: "Only BA is defined",
+          bothUndefined: "Both products are undefined",
+          rowColumnMistake: "The student should use row × column, not corresponding entries",
+          sizeMistake: "The result size was chosen incorrectly",
+          signMistake: "The mistake is only a sign error",
+          noMistake: "There is no mistake",
+          notAlwaysABBA: "AB = BA",
+          associative: "A(BC)=(AB)C, when the products are defined",
+          distributive: "A(B+C)=AB+AC, when the products are defined",
+          identityProp: "AI=A when I has the correct size",
+          abNotEqualBA: "AB ≠ BA",
+          abEqualsBA: "AB = BA",
+          abUndefined: "AB is undefined",
+          baUndefined: "BA is undefined",
+          noSolution: "no solution"
+        }
+      },
+      zh: {
+        htmlLang: "zh-CN",
+        navPractice: "练习库",
+        navHome: "主页",
+        toolBadge: "线性代数",
+        title: TOOL_CONFIG.title.zh,
+        subtitle: TOOL_CONFIG.subtitle.zh,
+        note: "这个工具专注训练矩阵乘法基础：维度匹配、行乘列计算和基本乘法性质。",
+        setupTitle: "开始练习",
+        difficultyLabel: "难度",
+        questionCountLabel: "题目数量",
+        optionCountLabel: "选项数量",
+        timedModeText: "开启计时模式",
+        timedModeHint: "关闭则不倒计时。开启后每题都有单独倒计时。",
+        timerLevelLabel: "计时等级",
+        startBtn: "开始",
+        sampleBtn: "生成示例题",
+        quitBtn: "结束本轮",
+        nextBtn: "下一题",
+        resultBtn: "查看结果",
+        questionTitle: "请阅读题干，并选择正确答案。",
+        promptDefined: "判断这个乘积是否有定义。",
+        promptDimension: "选择乘积的尺寸。",
+        promptScalar: "\u8bf7\u9009\u62e9\u77e9\u9635\u4e58\u6cd5\u5f97\u5230\u7684\u6807\u91cf\u503c\u3002",
+        promptEntry: "计算指定位置的 entry。",
+        promptMatrix: "\u8bf7\u9009\u62e9\u77e9\u9635\u4e58\u6cd5\u5f97\u5230\u7684\u7ed3\u679c\u77e9\u9635\u3002",
+        promptVector: "\u8bf7\u9009\u62e9\u77e9\u9635\u4e58\u6cd5\u5f97\u5230\u7684\u7ed3\u679c\u5411\u91cf\u3002",
+        promptStatement: "选择正确说法。",
+        promptProperty: "选择不一定恒成立的说法。",
+        promptVariable: "求未知数的值。",
+        promptError: "判断错误在哪里。",
+        mainErrorStep: "某学生把对应位置直接相乘。这个解法错在哪里？",
+        correctFeedback: "正确！",
+        solutionTitle: "正确解法",
+        solutionFinal: "答案：",
+        resultTitle: "练习结果",
+        scoreLabel: "正确题数",
+        accuracyLabel: "正确率",
+        wrongLabel: "错题数",
+        wrongReviewTitle: "错题回顾",
+        restartBtn: "再练一轮",
+        reviewWrongBtn: "练习相似错题",
+        noWrong: "本轮没有错题。",
+        noWrongTip: "非常好，可以尝试更高难度。",
+        yourAnswer: "你的答案",
+        correctAnswer: "正确答案",
+        timeUpAnswer: "未作答：时间到",
+        sampleTitle: "示例题",
+        sampleQuestion: "题目",
+        sampleAnswer: "正确答案",
+        sampleOptions: "示例选项",
+        incorrectPrefix: "不正确。正确答案是",
+        timeUpPrefix: "时间到。正确答案是",
+        progress: (a, b) => `第 ${a} / ${b} 题`,
+        optionCount: n => `${n} 个选项`,
+        timerDisplay: s => `剩余时间：${formatTime(s)}`,
+        difficulties: { easy: "简单", medium: "中等", hard: "困难", expert: "专家", mixed: "混合" },
+        difficultyOptions: {
+          easy: "简单：判断维度、结果尺寸、行列乘成 scalar 和单个 entry",
+          medium: "中等：2×2 矩阵乘法、矩阵乘向量、单位矩阵和常见错误",
+          hard: "困难：长方形矩阵、变量、矩阵方程和性质判断",
+          expert: "专家：矩阵连乘、非交换性、复合变换和未知 entry",
+          mixed: "混合：从所有难度均衡出题"
+        },
+        timerOptions: {
+          timer_easy: "简单：每题 2 分钟",
+          timer_medium: "中等：每题 1 分钟",
+          timer_hard: "困难：每题 30 秒",
+          timer_expert: "专家：每题 15 秒"
+        },
+        notes: {
+          inner: "检查内维度是否相同",
+          outer: "外维度给出结果尺寸",
+          rowColumn: "行乘列",
+          entry: "entry c_ij 用 A 的第 i 行乘 B 的第 j 列",
+          matrix: "每个 entry 都按行乘列计算",
+          vector: "矩阵乘向量是每一行分别乘这个向量",
+          identity: "维度匹配时，单位矩阵不会改变矩阵",
+          mistake: "矩阵乘法不是对应位置相乘",
+          variable: "用指定 entry 建方程",
+          equation: "把矩阵方程写成方程组",
+          property: "矩阵乘法通常不满足交换律",
+          chain: "选择一个有定义的顺序连乘",
+          final: "最终结果"
+        },
+        textOptions: {
+          definedInner: "有定义：内维度相同",
+          undefinedInner: "无定义：内维度不相同",
+          definedSameSize: "有定义：两个矩阵尺寸相同",
+          undefinedSameSize: "无定义：矩阵必须同尺寸",
+          undefinedOuter: "无定义：外维度不同",
+          bothDefinedDifferent: "AB 和 BA 都有定义，但尺寸不同",
+          onlyABDefined: "只有 AB 有定义",
+          onlyBADefined: "只有 BA 有定义",
+          bothUndefined: "两个乘积都无定义",
+          rowColumnMistake: "应该用行乘列，而不是对应位置相乘",
+          sizeMistake: "结果尺寸选错了",
+          signMistake: "只是符号错误",
+          noMistake: "没有错误",
+          notAlwaysABBA: "AB = BA",
+          associative: "A(BC)=(AB)C，在乘积有定义时成立",
+          distributive: "A(B+C)=AB+AC，在乘积有定义时成立",
+          identityProp: "I 尺寸正确时，AI=A",
+          abNotEqualBA: "AB ≠ BA",
+          abEqualsBA: "AB = BA",
+          abUndefined: "AB 无定义",
+          baUndefined: "BA 无定义",
+          noSolution: "无解"
+        }
+      }
+    };
+
+    const setupCard = document.getElementById("setupCard");
+    const quizCard = document.getElementById("quizCard");
+    const resultCard = document.getElementById("resultCard");
+    const difficultyEl = document.getElementById("difficulty");
+    const questionCountEl = document.getElementById("questionCount");
+    const optionCountEl = document.getElementById("optionCount");
+    const timedModeEl = document.getElementById("timedMode");
+    const timerLevelEl = document.getElementById("timerLevel");
+    const startBtn = document.getElementById("startBtn");
+    const sampleBtn = document.getElementById("sampleBtn");
+    const sampleBox = document.getElementById("sampleBox");
+    const noteBox = document.getElementById("noteBox");
+    const quitBtn = document.getElementById("quitBtn");
+    const nextBtn = document.getElementById("nextBtn");
+    const qTitle = document.getElementById("questionTitle");
+    const qExtra = document.getElementById("questionExtra");
+    const qMain = document.getElementById("questionMain");
+    const optionsEl = document.getElementById("options");
+    const feedbackEl = document.getElementById("feedback");
+    const solutionBox = document.getElementById("solutionBox");
+    const progressText = document.getElementById("progressText");
+    const difficultyText = document.getElementById("difficultyText");
+    const timerDisplay = document.getElementById("timerDisplay");
+    const progressBar = document.getElementById("progressBar");
+    const scoreNum = document.getElementById("scoreNum");
+    const accuracyNum = document.getElementById("accuracyNum");
+    const wrongNum = document.getElementById("wrongNum");
+    const wrongList = document.getElementById("wrongList");
+    const restartBtn = document.getElementById("restartBtn");
+    const reviewWrongBtn = document.getElementById("reviewWrongBtn");
+
+    let lang = readGlobalLanguage();
+    let quiz = [];
+    let currentIndex = 0;
+    let correctCount = 0;
+    let wrongAnswers = [];
+    let answered = false;
+    let timerId = null;
+    let timeLeft = 0;
+
+    const REAL_DIFFICULTIES = ["easy", "medium", "hard", "expert"];
+    const TIMER_DURATIONS = { timer_easy: 120, timer_medium: 60, timer_hard: 30, timer_expert: 15 };
+
+    function readGlobalLanguage() { return localStorage.getItem("mathcomplete_lang") === "zh" ? "zh" : "en"; }
+    function tr() { return T[lang]; }
+    function randInt(a, b) { return Math.floor(Math.random() * (b - a + 1)) + a; }
+    function randNonzero(a, b) { let n = 0; while (n === 0) n = randInt(a, b); return n; }
+    function choose(arr) { return arr[randInt(0, arr.length - 1)]; }
+    function shuffle(arr) { const copy = [...arr]; for (let i = copy.length - 1; i > 0; i--) { const j = randInt(0, i); [copy[i], copy[j]] = [copy[j], copy[i]]; } return copy; }
+    function formatTime(s) { s = Math.max(0, s); return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`; }
+    function escapeHtml(text) { return String(text).replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#039;"); }
+    function renderLatex(el, latex, displayMode = false) { el.classList.add("math-render"); if (window.katex) katex.render(latex, el, { throwOnError: false, displayMode }); else el.textContent = latex; }
+    function mathSpan(latex, cls = "") { return `<span${cls ? ` class="${cls}"` : ""} data-latex="${escapeHtml(latex)}"></span>`; }
+    function renderTaggedMath(root) { root.querySelectorAll("[data-latex]").forEach(el => renderLatex(el, el.getAttribute("data-latex") || "")); }
+
+    function makeOpt(kind, key, latex = null, code = null, text = null) { return { kind, answerKind: kind, key, latex, code, text }; }
+    function mathOption(answerKind, key, latex) { return makeOpt(answerKind, key, latex); }
+    function textOption(answerKind, code) { return makeOpt(answerKind, `${answerKind}:${code}`, null, code); }
+    function plainOption(answerKind, key, en, zh) { return makeOpt(answerKind, `${answerKind}:${key}`, null, null, { en, zh }); }
+    function scalarOption(n) { return mathOption("scalar", `scalar:${n}`, String(n)); }
+    function dimensionOption(r, c) { return mathOption("dimension", `dim:${r}x${c}`, `${r}\\times ${c}`); }
+    function noSolutionOption() { return textOption("scalar", "noSolution"); }
+    function optKey(option) { return option.key; }
+    function optionText(option) { if (option.text) return option.text[lang]; if (option.code) return tr().textOptions[option.code] || option.code; return option.latex; }
+    function optionToHtml(option, cls = "answer-math") { if (option.code || option.text) return `<span class="${cls}">${escapeHtml(optionText(option))}</span>`; return mathSpan(option.latex, cls); }
+    function renderOptionElement(el, option) { el.innerHTML = ""; if (option.code || option.text) el.textContent = optionText(option); else renderLatex(el, option.latex, false); }
+    function isSameAnswer(a, b) { return optKey(a) === optKey(b); }
+
+    function mat(rows, cols, min = -5, max = 5) { return Array.from({ length: rows }, () => Array.from({ length: cols }, () => randInt(min, max))); }
+    function matNonzero(rows, cols, min = -5, max = 5) { return Array.from({ length: rows }, () => Array.from({ length: cols }, () => randNonzero(min, max))); }
+    function sameMat(A, B) { return A.length === B.length && A[0].length === B[0].length && A.every((r, i) => r.every((x, j) => x === B[i][j])); }
+    function matrixKey(M) { return M.map(row => row.join(",")).join(";"); }
+    function formatNum(n) { return String(n); }
+    function matrixLatex(M) { return `\\begin{bmatrix}${M.map(row => row.map(formatNum).join("&")).join("\\\\")}\\end{bmatrix}`; }
+    function matrixOption(M) { return mathOption(`matrix${M.length}x${M[0].length}`, `matrix:${M.length}x${M[0].length}:${matrixKey(M)}`, matrixLatex(M)); }
+    function matMul(A, B) { const r = A.length, n = A[0].length, c = B[0].length; const out = Array.from({ length: r }, () => Array(c).fill(0)); for (let i = 0; i < r; i++) for (let j = 0; j < c; j++) for (let k = 0; k < n; k++) out[i][j] += A[i][k] * B[k][j]; return out; }
+    function matAdd(A, B) { return A.map((row, i) => row.map((x, j) => x + B[i][j])); }
+    function scalarMat(k, A) { return A.map(row => row.map(x => k * x)); }
+    function transpose(A) { return Array.from({ length: A[0].length }, (_, j) => A.map(row => row[j])); }
+    function identity(n) { return Array.from({ length: n }, (_, i) => Array.from({ length: n }, (_, j) => i === j ? 1 : 0)); }
+    function matDims(M) { return `${M.length}\\times ${M[0].length}`; }
+    function matrixDistractors(correct, extras = []) {
+      const out = [];
+      function add(M) { if (!M || M.length !== correct.length || M[0].length !== correct[0].length || sameMat(M, correct)) return; if (!out.some(x => sameMat(x, M))) out.push(M); }
+      extras.forEach(add);
+      const r = correct.length, c = correct[0].length;
+      add(correct.map((row, i) => row.map((x, j) => i === 0 && j === 0 ? x + 1 : x)));
+      add(correct.map(row => row.map(x => -x)));
+      add(correct.map(row => [...row].reverse()));
+      if (r === c) add(transpose(correct));
+      while (out.length < 5) add(correct.map(row => row.map(x => x + randNonzero(-3, 3))));
+      return out.map(matrixOption);
+    }
+    function scalarDistractors(n, extras = []) { const vals = []; function add(x) { if (x === n || vals.includes(x) || !Number.isFinite(x)) return; vals.push(x); } extras.forEach(add); [n + 1, n - 1, -n, n + 2, n - 2, 0].forEach(add); while (vals.length < 5) add(n + randNonzero(-6, 6)); return vals.map(scalarOption); }
+    function line(latex, noteKey) { return { line: latex, noteKey }; }
+    function makeQuestion(q) { q.distractors = q.distractors || []; q.lines = q.lines || []; q.plain = q.main || q.mainTextKey || ""; return q; }
+
+    function fallbackOptions(answerKind, q) {
+      if (answerKind === "defined") return [textOption("defined", "definedInner"), textOption("defined", "undefinedInner"), textOption("defined", "definedSameSize"), textOption("defined", "undefinedSameSize"), textOption("defined", "undefinedOuter")];
+      if (answerKind === "dimension") return [dimensionOption(2,2), dimensionOption(2,3), dimensionOption(3,2), dimensionOption(3,3), dimensionOption(1,1), dimensionOption(3,4), dimensionOption(4,2)];
+      if (answerKind === "scalar") return scalarDistractors(q.answerValue ?? 0);
+      if (answerKind.startsWith("matrix") && q.answerMatrix) return matrixDistractors(q.answerMatrix);
+      if (answerKind === "statement") return [textOption("statement", "bothDefinedDifferent"), textOption("statement", "onlyABDefined"), textOption("statement", "onlyBADefined"), textOption("statement", "bothUndefined")];
+      if (answerKind === "property") return [textOption("property", "notAlwaysABBA"), textOption("property", "associative"), textOption("property", "distributive"), textOption("property", "identityProp")];
+      if (answerKind === "error") return [textOption("error", "rowColumnMistake"), textOption("error", "sizeMistake"), textOption("error", "signMistake"), textOption("error", "noMistake")];
+      return [];
+    }
+    function generateOptions(q, count) {
+      const wrongs = [];
+      function add(opt) { if (!opt || opt.answerKind !== q.answerKind || isSameAnswer(opt, q.answer)) return; if (!wrongs.some(x => optKey(x) === optKey(opt))) wrongs.push(opt); }
+      (q.distractors || []).forEach(add);
+      fallbackOptions(q.answerKind, q).forEach(add);
+      const options = [q.answer, ...shuffle(wrongs).slice(0, count - 1)];
+      return shuffle(options);
+    }
+
+    function qDefinedAB() {
+      const defined = Math.random() < 0.55;
+      const m = randInt(2, 4), n = randInt(2, 4), p = randInt(2, 4);
+      const r = defined ? n : choose([1,2,3,4].filter(x => x !== n));
+      const answer = defined ? textOption("defined", "definedInner") : textOption("defined", "undefinedInner");
+      return makeQuestion({ difficulty: "easy", type: "defined-product", promptKey: "promptDefined", answerKind: "defined", answer, main: `A:${m}\\times ${n},\\quad B:${r}\\times ${p},\\quad AB`, lines: [line(`(${m}\\times ${n})(${r}\\times ${p})`, "inner"), line(defined ? `${n}=${r}\\Rightarrow AB\\text{ is defined.}` : `${n}\\ne ${r}\\Rightarrow AB\\text{ is undefined.}`, "inner")], distractors: fallbackOptions("defined", {}) });
+    }
+    function qResultDimension() {
+      const m = randInt(2, 4), n = randInt(2, 4), p = randInt(2, 5);
+      const ans = dimensionOption(m, p);
+      return makeQuestion({ difficulty: "easy", type: "result-dimension", promptKey: "promptDimension", answerKind: "dimension", answer: ans, main: `A:${m}\\times ${n},\\quad B:${n}\\times ${p},\\quad AB`, lines: [line(`(${m}\\times ${n})({${n}\\times ${p}})\\Rightarrow ${m}\\times ${p}`, "outer")], distractors: [dimensionOption(n,p), dimensionOption(m,n), dimensionOption(n,m), dimensionOption(p,m)] });
+    }
+    function qRowColumnScalar() {
+      const a = matNonzero(1,2,-5,5), b = matNonzero(2,1,-5,5), ansVal = matMul(a,b)[0][0];
+      return makeQuestion({ difficulty: "easy", type: "row-column-scalar", promptKey: "promptScalar", answerKind: "scalar", answerValue: ansVal, answer: scalarOption(ansVal), main: `${matrixLatex(a)}${matrixLatex(b)}=?`, lines: [line(`${a[0][0]}\\cdot ${b[0][0]}+${a[0][1]}\\cdot ${b[1][0]}=${ansVal}`, "rowColumn")], distractors: scalarDistractors(ansVal, [a[0][0]*b[0][0], a[0][1]*b[1][0], a[0][0]+b[0][0]+a[0][1]+b[1][0]]) });
+    }
+    function qSingleEntry() {
+      const A = mat(2,2,-4,5), B = mat(2,2,-4,5), C = matMul(A,B), i = randInt(0,1), j = randInt(0,1), ansVal = C[i][j];
+      const row = A[i], col = [B[0][j], B[1][j]];
+      return makeQuestion({ difficulty: "easy", type: "single-entry", promptKey: "promptEntry", answerKind: "scalar", answerValue: ansVal, answer: scalarOption(ansVal), main: `A=${matrixLatex(A)},\\quad B=${matrixLatex(B)},\\quad C=AB,\\quad c_{${i+1}${j+1}}=?`, lines: [line(`c_{${i+1}${j+1}}=${row[0]}\\cdot ${col[0]}+${row[1]}\\cdot ${col[1]}=${ansVal}`, "entry")], distractors: scalarDistractors(ansVal, [A[i][j]*B[i][j], row[0]+col[0]+row[1]+col[1]]) });
+    }
+
+    function qMultiply2x2() {
+      const A = mat(2,2,-4,5), B = mat(2,2,-4,5), C = matMul(A,B);
+      return makeQuestion({ difficulty: "medium", type: "multiply-2x2", promptKey: "promptMatrix", answerKind: "matrix2x2", answerMatrix: C, answer: matrixOption(C), main: `A=${matrixLatex(A)},\\quad B=${matrixLatex(B)},\\quad AB=?`, lines: [line(`c_{11}=${A[0][0]}\\cdot ${B[0][0]}+${A[0][1]}\\cdot ${B[1][0]}=${C[0][0]}`, "rowColumn"), line(`c_{12}=${A[0][0]}\\cdot ${B[0][1]}+${A[0][1]}\\cdot ${B[1][1]}=${C[0][1]}`, "rowColumn"), line(`c_{21}=${A[1][0]}\\cdot ${B[0][0]}+${A[1][1]}\\cdot ${B[1][0]}=${C[1][0]}`, "rowColumn"), line(`c_{22}=${A[1][0]}\\cdot ${B[0][1]}+${A[1][1]}\\cdot ${B[1][1]}=${C[1][1]}`, "rowColumn"), line(`AB=${matrixLatex(C)}`, "final")], distractors: matrixDistractors(C, [matMul(B,A), [[A[0][0]*B[0][0], A[0][1]*B[0][1]],[A[1][0]*B[1][0], A[1][1]*B[1][1]]], matAdd(A,B)]) });
+    }
+    function qMatrixVector2() {
+      const A = mat(2,2,-5,5), v = mat(2,1,-5,5), ans = matMul(A,v);
+      return makeQuestion({ difficulty: "medium", type: "matrix-vector-2", promptKey: "promptVector", answerKind: "matrix2x1", answerMatrix: ans, answer: matrixOption(ans), main: `${matrixLatex(A)}${matrixLatex(v)}=?`, lines: [line(`${A[0][0]}\\cdot ${v[0][0]}+${A[0][1]}\\cdot ${v[1][0]}=${ans[0][0]}`, "vector"), line(`${A[1][0]}\\cdot ${v[0][0]}+${A[1][1]}\\cdot ${v[1][0]}=${ans[1][0]}`, "vector"), line(`${matrixLatex(ans)}`, "final")], distractors: matrixDistractors(ans, [[[A[0][0]*v[0][0]],[A[1][1]*v[1][0]]], [[ans[1][0]],[ans[0][0]]]]) });
+    }
+    function qABBAExist() {
+      const m = randInt(2,4), n = choose([2,3,4].filter(x => x !== m));
+      const correct = textOption("statement", "bothDefinedDifferent");
+      return makeQuestion({ difficulty: "medium", type: "abba-exist", promptKey: "promptStatement", answerKind: "statement", answer: correct, main: `A:${m}\\times ${n},\\quad B:${n}\\times ${m}`, lines: [line(`AB:(${m}\\times ${n})(${n}\\times ${m})=${m}\\times ${m}`, "outer"), line(`BA:(${n}\\times ${m})(${m}\\times ${n})=${n}\\times ${n}`, "outer")], distractors: [textOption("statement", "onlyABDefined"), textOption("statement", "onlyBADefined"), textOption("statement", "bothUndefined")] });
+    }
+    function qIdentityMatrix() {
+      const A = mat(2,3,-4,5), ans = matMul(identity(2), A);
+      return makeQuestion({ difficulty: "medium", type: "identity-left", promptKey: "promptMatrix", answerKind: "matrix2x3", answerMatrix: ans, answer: matrixOption(ans), main: `A=${matrixLatex(A)},\\quad I_2A=?`, lines: [line(`I_2A=A`, "identity"), line(`${matrixLatex(ans)}`, "final")], distractors: matrixDistractors(ans, [scalarMat(2,A), A.map(row => [...row].reverse())]) });
+    }
+    function qErrorStep() {
+      const correct = textOption("error", "rowColumnMistake");
+      return makeQuestion({ difficulty: "medium", type: "entrywise-mistake", promptKey: "promptError", answerKind: "error", answer: correct, mainTextKey: "mainErrorStep", lines: [line(`AB\\ne [a_{ij}b_{ij}]`, "mistake"), line(`(AB)_{ij}=\\text{row }i\\text{ of }A\\cdot\\text{ column }j\\text{ of }B`, "rowColumn")], distractors: [textOption("error", "sizeMistake"), textOption("error", "signMistake"), textOption("error", "noMistake")] });
+    }
+
+    function qRect2x3Times3x2() {
+      const A = mat(2,3,-4,4), B = mat(3,2,-4,4), C = matMul(A,B);
+      return makeQuestion({ difficulty: "hard", type: "rect-2x3-3x2", promptKey: "promptMatrix", answerKind: "matrix2x2", answerMatrix: C, answer: matrixOption(C), main: `A=${matrixLatex(A)},\\quad B=${matrixLatex(B)},\\quad AB=?`, lines: [line(`(2\\times 3)(3\\times 2)\\Rightarrow 2\\times 2`, "outer"), line(`AB=${matrixLatex(C)}`, "matrix")], distractors: matrixDistractors(C, [matMul(B,A).slice(0,2).map(r => r.slice(0,2))]) });
+    }
+    function qRect3x2Times2x3() {
+      const A = mat(3,2,-3,4), B = mat(2,3,-3,4), C = matMul(A,B);
+      return makeQuestion({ difficulty: "hard", type: "rect-3x2-2x3", promptKey: "promptMatrix", answerKind: "matrix3x3", answerMatrix: C, answer: matrixOption(C), main: `A=${matrixLatex(A)},\\quad B=${matrixLatex(B)},\\quad AB=?`, lines: [line(`(3\\times 2)(2\\times 3)\\Rightarrow 3\\times 3`, "outer"), line(`AB=${matrixLatex(C)}`, "matrix")], distractors: matrixDistractors(C) });
+    }
+    function qVariableEntry() {
+      const x = randNonzero(-5,5), a = randInt(-4,4), b = randInt(-4,4), c = randInt(-4,4), v1 = randNonzero(1,5), v2 = randNonzero(-5,5);
+      const result1 = x*v1 + a*v2;
+      const A = `\\begin{bmatrix}x&${a}\\\\${b}&${c}\\end{bmatrix}`;
+      const V = matrixLatex([[v1],[v2]]);
+      return makeQuestion({ difficulty: "hard", type: "variable-entry", promptKey: "promptVariable", answerKind: "scalar", answerValue: x, answer: scalarOption(x), main: `${A}${V}=\\begin{bmatrix}${result1}\\\\${b*v1+c*v2}\\end{bmatrix},\\quad x=?`, lines: [line(`${v1}x+${a}\\cdot ${v2}=${result1}`, "variable"), line(`x=${x}`, "final")], distractors: scalarDistractors(x, [-x, x+1, result1]) });
+    }
+    function qMatrixEquationVector() {
+      const x = mat(2,1,-4,4), A = [[1, randInt(-3,3)], [randInt(-3,3), 1]]; if (A[0][1] === 0) A[0][1] = 2; if (A[1][0] === 0) A[1][0] = -1;
+      const b = matMul(A,x);
+      return makeQuestion({ difficulty: "hard", type: "matrix-equation-vector", promptKey: "promptVector", answerKind: "matrix2x1", answerMatrix: x, answer: matrixOption(x), main: `${matrixLatex(A)}\\mathbf{x}=${matrixLatex(b)},\\quad \\mathbf{x}=?`, lines: [line(`\\mathbf{x}=\\begin{bmatrix}x\\\\y\\end{bmatrix}`, "equation"), line(`${A[0][0]}x+${A[0][1]}y=${b[0][0]},\\quad ${A[1][0]}x+${A[1][1]}y=${b[1][0]}`, "equation"), line(`\\mathbf{x}=${matrixLatex(x)}`, "final")], distractors: matrixDistractors(x, [b, scalarMat(-1,x), [[x[1][0]],[x[0][0]]]]) });
+    }
+    function qPropertyFalse() {
+      const correct = textOption("property", "notAlwaysABBA");
+      return makeQuestion({ difficulty: "hard", type: "property-false", promptKey: "promptProperty", answerKind: "property", answer: correct, main: `\\text{Which statement is NOT always true for matrices?}`, lines: [line(`AB=BA\\text{ is not generally true.}`, "property")], distractors: [textOption("property", "associative"), textOption("property", "distributive"), textOption("property", "identityProp")] });
+    }
+
+    function qChainDimension() {
+      const a = randInt(2,4), b = randInt(2,4), c = randInt(2,4), d = randInt(2,4);
+      const ans = dimensionOption(a,d);
+      return makeQuestion({ difficulty: "expert", type: "chain-dimension", promptKey: "promptDimension", answerKind: "dimension", answer: ans, main: `A:${a}\\times ${b},\\quad B:${b}\\times ${c},\\quad C:${c}\\times ${d},\\quad ABC`, lines: [line(`AB:${a}\\times ${c}`, "chain"), line(`(AB)C:(${a}\\times ${c})(${c}\\times ${d})=${a}\\times ${d}`, "outer")], distractors: [dimensionOption(a,c), dimensionOption(b,d), dimensionOption(c,d), dimensionOption(d,a)] });
+    }
+    function qChainCompute() {
+      const A = mat(2,2,-3,4), B = mat(2,2,-3,4), v = mat(2,1,-3,4), Bv = matMul(B,v), ans = matMul(A,Bv);
+      return makeQuestion({ difficulty: "expert", type: "chain-compute", promptKey: "promptVector", answerKind: "matrix2x1", answerMatrix: ans, answer: matrixOption(ans), main: `A=${matrixLatex(A)},\\quad B=${matrixLatex(B)},\\quad \\mathbf{v}=${matrixLatex(v)},\\quad A(B\\mathbf{v})=?`, lines: [line(`B\\mathbf{v}=${matrixLatex(Bv)}`, "chain"), line(`A(B\\mathbf{v})=${matrixLatex(ans)}`, "final")], distractors: matrixDistractors(ans, [matMul(B, matMul(A,v)), Bv]) });
+    }
+    function qNonCommutativity() {
+      let A, B, AB, BA; do { A = mat(2,2,-3,4); B = mat(2,2,-3,4); AB = matMul(A,B); BA = matMul(B,A); } while (sameMat(AB,BA));
+      const correct = textOption("statement", "abNotEqualBA");
+      return makeQuestion({ difficulty: "expert", type: "noncommutativity", promptKey: "promptStatement", answerKind: "statement", answer: correct, main: `A=${matrixLatex(A)},\\quad B=${matrixLatex(B)}`, lines: [line(`AB=${matrixLatex(AB)}`, "matrix"), line(`BA=${matrixLatex(BA)}`, "matrix"), line(`AB\\ne BA`, "property")], distractors: [textOption("statement", "abEqualsBA"), textOption("statement", "abUndefined"), textOption("statement", "baUndefined")] });
+    }
+    function qCompositeTransform() {
+      const A = [[randNonzero(1,4),0],[0,randNonzero(1,4)]], B = [[1, randInt(-3,3)], [0, 1]], v = mat(2,1,-4,4);
+      const Bv = matMul(B,v), ans = matMul(A,Bv);
+      return makeQuestion({ difficulty: "expert", type: "composite-transform", promptKey: "promptVector", answerKind: "matrix2x1", answerMatrix: ans, answer: matrixOption(ans), main: `A=${matrixLatex(A)},\\quad B=${matrixLatex(B)},\\quad \\mathbf{v}=${matrixLatex(v)},\\quad A(B\\mathbf{v})=?`, lines: [line(`\\text{First compute }B\\mathbf{v}=${matrixLatex(Bv)}`, "chain"), line(`\\text{Then compute }A(B\\mathbf{v})=${matrixLatex(ans)}`, "final")], distractors: matrixDistractors(ans, [matMul(B,matMul(A,v)), Bv, matMul(A,v)]) });
+    }
+    function qUnknownEntryFromProduct() {
+      const x = randNonzero(-4,4), a = randInt(-3,3), b = randInt(-3,3), c = randNonzero(1,5), d = randNonzero(-5,5);
+      const A = `\\begin{bmatrix}${a}&x\\\\${b}&${c}\\end{bmatrix}`;
+      const B = [[randInt(-3,3), d], [randInt(-3,3), randNonzero(1,5)]];
+      const target = a*B[0][1] + x*B[1][1];
+      return makeQuestion({ difficulty: "expert", type: "unknown-entry-product", promptKey: "promptVariable", answerKind: "scalar", answerValue: x, answer: scalarOption(x), main: `A=${A},\\quad B=${matrixLatex(B)},\\quad (AB)_{12}=${target},\\quad x=?`, lines: [line(`(AB)_{12}=\\text{row 1 of }A\\cdot\\text{ column 2 of }B`, "entry"), line(`${a}\\cdot ${B[0][1]}+x\\cdot ${B[1][1]}=${target}`, "variable"), line(`x=${x}`, "final")], distractors: scalarDistractors(x, [-x, x+1, target]) });
+    }
+
+    const BUILDERS = {
+      easy: [qDefinedAB, qResultDimension, qRowColumnScalar, qSingleEntry],
+      medium: [qMultiply2x2, qMatrixVector2, qABBAExist, qIdentityMatrix, qErrorStep],
+      hard: [qRect2x3Times3x2, qRect3x2Times2x3, qVariableEntry, qMatrixEquationVector, qPropertyFalse],
+      expert: [qChainDimension, qChainCompute, qNonCommutativity, qCompositeTransform, qUnknownEntryFromProduct]
+    };
+
+    function buildQuestion(difficulty, forcedType = null) {
+      let builders = BUILDERS[difficulty] || BUILDERS.medium;
+      if (forcedType) builders = builders.filter(fn => fn().type === forcedType);
+      if (!builders.length) builders = BUILDERS[difficulty] || BUILDERS.medium;
+      for (let i = 0; i < 50; i++) {
+        const q = choose(builders)();
+        if (forcedType && q.type !== forcedType) continue;
+        q.options = generateOptions(q, Number(optionCountEl.value || 4));
+        return q;
+      }
+      return BUILDERS.easy[0]();
+    }
+    function buildDifficultyPlan(count, difficulty) { if (difficulty !== "mixed") return Array(count).fill(difficulty); const plan = []; while (plan.length < count) plan.push(...shuffle(REAL_DIFFICULTIES)); return plan.slice(0, count); }
+    function pickDifficultyForSample(difficulty) { return difficulty === "mixed" ? choose(REAL_DIFFICULTIES) : difficulty; }
+    function clearTimer() { if (timerId !== null) { clearInterval(timerId); timerId = null; } }
+    function updateTimerControls() { timerLevelEl.disabled = !timedModeEl.checked; }
+    function updateTimerDisplay() { if (!timedModeEl.checked || quizCard.classList.contains("hidden")) { timerDisplay.classList.add("hidden"); return; } timerDisplay.classList.remove("hidden"); timerDisplay.textContent = tr().timerDisplay(timeLeft); timerDisplay.classList.toggle("timer-danger", timeLeft <= 10); }
+    function startTimerForQuestion() { clearTimer(); if (!timedModeEl.checked) { timerDisplay.classList.add("hidden"); return; } timeLeft = TIMER_DURATIONS[timerLevelEl.value] || 60; updateTimerDisplay(); timerId = setInterval(() => { timeLeft -= 1; updateTimerDisplay(); if (timeLeft <= 0) handleTimeUp(); }, 1000); }
+    function applyLanguage() {
+      lang = readGlobalLanguage();
+      const t = tr();
+      document.documentElement.lang = t.htmlLang;
+      document.title = t.title;
+      document.querySelectorAll("[data-i18n]").forEach(el => { const key = el.getAttribute("data-i18n"); if (t[key]) el.textContent = t[key]; });
+      document.getElementById("toolBadge").textContent = t.toolBadge;
+      document.getElementById("pageTitle").textContent = t.title;
+      document.getElementById("pageSubtitle").textContent = t.subtitle;
+      document.getElementById("setupTitle").textContent = t.setupTitle;
+      document.getElementById("difficultyLabel").textContent = t.difficultyLabel;
+      document.getElementById("questionCountLabel").textContent = t.questionCountLabel;
+      document.getElementById("optionCountLabel").textContent = t.optionCountLabel;
+      document.getElementById("timedModeText").textContent = t.timedModeText;
+      document.getElementById("timedModeHint").textContent = t.timedModeHint;
+      document.getElementById("timerLevelLabel").textContent = t.timerLevelLabel;
+      startBtn.textContent = t.startBtn; sampleBtn.textContent = t.sampleBtn; quitBtn.textContent = t.quitBtn;
+      nextBtn.textContent = answered && currentIndex === quiz.length - 1 ? t.resultBtn : t.nextBtn;
+      document.getElementById("resultTitle").textContent = t.resultTitle;
+      document.getElementById("scoreLabel").textContent = t.scoreLabel;
+      document.getElementById("accuracyLabel").textContent = t.accuracyLabel;
+      document.getElementById("wrongLabel").textContent = t.wrongLabel;
+      document.getElementById("wrongReviewTitle").textContent = t.wrongReviewTitle;
+      restartBtn.textContent = t.restartBtn; reviewWrongBtn.textContent = t.reviewWrongBtn; noteBox.textContent = t.note;
+      const selectedDifficulty = difficultyEl.value || "medium";
+      difficultyEl.innerHTML = ["easy", "medium", "hard", "expert", "mixed"].map(key => `<option value="${key}">${t.difficultyOptions[key]}</option>`).join("");
+      difficultyEl.value = selectedDifficulty;
+      const selectedOptionCount = optionCountEl.value || "4";
+      optionCountEl.innerHTML = [4,5,6].map(n => `<option value="${n}">${t.optionCount(n)}</option>`).join("");
+      optionCountEl.value = selectedOptionCount;
+      const selectedTimer = timerLevelEl.value || "timer_medium";
+      timerLevelEl.innerHTML = ["timer_easy", "timer_medium", "timer_hard", "timer_expert"].map(key => `<option value="${key}">${t.timerOptions[key]}</option>`).join("");
+      timerLevelEl.value = selectedTimer;
+      updateTimerControls();
+      if (!quizCard.classList.contains("hidden") && quiz.length) renderQuestion(false);
+      if (!resultCard.classList.contains("hidden")) renderResultBody();
+    }
+    function renderQuestion(resetTimer = true) {
+      const q = quiz[currentIndex]; answered = false;
+      qTitle.textContent = tr().questionTitle;
+      qExtra.textContent = tr()[q.promptKey] || tr().promptMatrix;
+      qMain.innerHTML = ""; qMain.classList.remove("math-render");
+      if (q.mainTextKey) qMain.textContent = tr()[q.mainTextKey] || q.mainTextKey; else renderLatex(qMain, q.main, false);
+      optionsEl.innerHTML = ""; feedbackEl.textContent = ""; feedbackEl.className = "feedback"; solutionBox.classList.add("hidden"); solutionBox.innerHTML = "";
+      q.options.forEach(option => { const btn = document.createElement("button"); btn.type = "button"; btn.className = "option"; btn.dataset.answerKey = optKey(option); renderOptionElement(btn, option); btn.addEventListener("click", () => chooseOption(btn, option)); optionsEl.appendChild(btn); });
+      progressText.textContent = tr().progress(currentIndex + 1, quiz.length);
+      difficultyText.textContent = tr().difficulties[q.difficulty];
+      progressBar.style.width = `${(currentIndex / quiz.length) * 100}%`;
+      nextBtn.textContent = currentIndex === quiz.length - 1 ? tr().resultBtn : tr().nextBtn;
+      nextBtn.disabled = true;
+      if (resetTimer) startTimerForQuestion(); else updateTimerDisplay();
+    }
+    function renderFeedback(isCorrect, correctOption, timeUp) { feedbackEl.className = `feedback ${isCorrect ? "good" : "bad"}`; if (isCorrect) feedbackEl.textContent = tr().correctFeedback; else { feedbackEl.innerHTML = `${timeUp ? tr().timeUpPrefix : tr().incorrectPrefix} ${optionToHtml(correctOption, "feedback-math")}`; renderTaggedMath(feedbackEl); } }
+    function renderSolutionBox() {
+      const q = quiz[currentIndex]; if (!q) { solutionBox.classList.add("hidden"); solutionBox.innerHTML = ""; return; }
+      solutionBox.classList.remove("hidden");
+      solutionBox.innerHTML = `<h4>${tr().solutionTitle}</h4><div class="solution-chain">${q.lines.map(step => `<div class="chain-line">${mathSpan(step.line, "chain-math")}<span class="chain-note">${escapeHtml(tr().notes[step.noteKey] || step.noteKey || "")}</span></div>`).join("")}</div><div class="solution-answer">${tr().solutionFinal} ${optionToHtml(q.answer, "answer-math")}</div>`;
+      renderTaggedMath(solutionBox);
+    }
+    function recordAttempt(q, correctDisplay, selectedDisplay, isCorrect, timeUp = false) { void window.MCLProgress?.recordGameAttempt?.({ gameId: TOOL_CONFIG.gameId, question: { plain: q.plain, type: q.type, difficulty: q.difficulty }, course: TOOL_CONFIG.course, topic: q.type, correctAnswer: correctDisplay, selectedAnswer: selectedDisplay, isCorrect, timeUp }); }
+    function chooseOption(button, selected) {
+      if (answered) return; answered = true; clearTimer();
+      const q = quiz[currentIndex]; const isCorrect = isSameAnswer(selected, q.answer);
+      [...optionsEl.querySelectorAll(".option")].forEach(btn => { btn.disabled = true; if (btn.dataset.answerKey === optKey(q.answer)) btn.classList.add("correct"); });
+      if (isCorrect) { correctCount += 1; renderFeedback(true, q.answer, false); } else { button.classList.add("wrong"); renderFeedback(false, q.answer, false); wrongAnswers.push({ main: q.plain, answer: optionText(q.answer), selected: optionText(selected), type: q.type, difficulty: q.difficulty }); }
+      recordAttempt(q, optionText(q.answer), optionText(selected), isCorrect, false);
+      renderSolutionBox(); nextBtn.disabled = false; progressBar.style.width = `${((currentIndex + 1) / quiz.length) * 100}%`;
+    }
+    function handleTimeUp() {
+      if (answered) return; clearTimer(); answered = true;
+      const q = quiz[currentIndex]; [...optionsEl.querySelectorAll(".option")].forEach(btn => { btn.disabled = true; if (btn.dataset.answerKey === optKey(q.answer)) btn.classList.add("correct"); });
+      renderFeedback(false, q.answer, true); wrongAnswers.push({ main: q.plain, answer: optionText(q.answer), selected: null, timeUp: true, type: q.type, difficulty: q.difficulty });
+      recordAttempt(q, optionText(q.answer), "", false, true); renderSolutionBox(); nextBtn.disabled = false; progressBar.style.width = `${((currentIndex + 1) / quiz.length) * 100}%`;
+    }
+    function nextQuestion() { if (!answered) return; if (currentIndex < quiz.length - 1) { currentIndex += 1; renderQuestion(true); } else showResult(); }
+    function showResult() { clearTimer(); quizCard.classList.add("hidden"); resultCard.classList.remove("hidden"); renderResultBody(); }
+    function renderResultBody() {
+      const total = quiz.length; const accuracy = total ? Math.round((correctCount / total) * 100) : 0;
+      scoreNum.textContent = `${correctCount}/${total}`; accuracyNum.textContent = `${accuracy}%`; wrongNum.textContent = String(wrongAnswers.length);
+      if (!wrongAnswers.length) { wrongList.innerHTML = `<div class="wrong-item"><div class="expr">${escapeHtml(tr().noWrong)}</div><p>${escapeHtml(tr().noWrongTip)}</p></div>`; reviewWrongBtn.disabled = true; return; }
+      reviewWrongBtn.disabled = false;
+      wrongList.innerHTML = wrongAnswers.map(item => `<div class="wrong-item"><div class="expr">${mathSpan(item.main, "wrong-math")}</div><p><span class="tag-bad">${escapeHtml(tr().yourAnswer)}:</span> ${escapeHtml(item.timeUp ? tr().timeUpAnswer : item.selected)}</p><p><span class="tag-good">${escapeHtml(tr().correctAnswer)}:</span> ${escapeHtml(item.answer)}</p></div>`).join("");
+      renderTaggedMath(wrongList);
+    }
+    function startRound(forcedTypes = null) {
+      clearTimer(); const difficulty = difficultyEl.value || "medium"; const count = Math.max(1, Math.min(100, Number(questionCountEl.value || 10))); questionCountEl.value = String(count);
+      const plan = buildDifficultyPlan(count, difficulty); quiz = plan.map((diff, i) => buildQuestion(diff, forcedTypes ? forcedTypes[i % forcedTypes.length] : null));
+      currentIndex = 0; correctCount = 0; wrongAnswers = [];
+      setupCard.classList.add("hidden"); resultCard.classList.add("hidden"); quizCard.classList.remove("hidden"); renderQuestion(true);
+    }
+    function showSample() {
+      const diff = pickDifficultyForSample(difficultyEl.value || "medium"); const q = buildQuestion(diff);
+      sampleBox.classList.remove("hidden");
+      const mainHtml = q.mainTextKey ? escapeHtml(tr()[q.mainTextKey] || q.mainTextKey) : mathSpan(q.main, "sample-math");
+      sampleBox.innerHTML = `<strong>${tr().sampleTitle}</strong><br>${escapeHtml(tr().sampleQuestion)}: ${mainHtml}<br>${escapeHtml(tr().sampleAnswer)}: ${optionToHtml(q.answer, "sample-math")}<br>${escapeHtml(tr().sampleOptions)}: ${q.options.map(opt => (opt.code || opt.text) ? escapeHtml(optionText(opt)) : mathSpan(opt.latex, "sample-math")).join(" &nbsp; ")}`;
+      renderTaggedMath(sampleBox);
+    }
+    function reviewWrongTypes() { if (!wrongAnswers.length) return; const types = [...new Set(wrongAnswers.map(x => x.type))]; startRound(types); }
+    function resetToSetup() { clearTimer(); quizCard.classList.add("hidden"); resultCard.classList.add("hidden"); setupCard.classList.remove("hidden"); progressBar.style.width = "0%"; }
+
+    startBtn.addEventListener("click", () => startRound());
+    sampleBtn.addEventListener("click", showSample);
+    nextBtn.addEventListener("click", nextQuestion);
+    quitBtn.addEventListener("click", showResult);
+    restartBtn.addEventListener("click", resetToSetup);
+    reviewWrongBtn.addEventListener("click", reviewWrongTypes);
+    timedModeEl.addEventListener("change", updateTimerControls);
+    window.addEventListener("storage", event => { if (event.key === "mathcomplete_lang") applyLanguage(); });
+    applyLanguage();
+  </script>
+  <script src="../assets/js/home-link.js"></script>
+</body>
+</html>

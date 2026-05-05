@@ -1,0 +1,1577 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Practice Library | MathComplete Lab</title>
+  <link rel="stylesheet" href="assets/css/auth.css" />
+  <style>
+    :root {
+      --ink: #0f172a;
+      --muted: #64748b;
+      --line: rgba(148, 163, 184, 0.24);
+      --glass: rgba(255, 255, 255, 0.76);
+      --glass-strong: rgba(255, 255, 255, 0.94);
+      --blue: #2563eb;
+      --blue-dark: #1d4ed8;
+      --violet: #7c3aed;
+      --green: #10b981;
+      --shadow: 0 24px 60px rgba(15, 23, 42, 0.14);
+      --radius: 28px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", Arial, sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 12% 4%, rgba(96, 165, 250, 0.34), transparent 30%),
+        radial-gradient(circle at 88% 0%, rgba(167, 139, 250, 0.28), transparent 32%),
+        linear-gradient(180deg, #f8fbff 0%, #f7f7fb 42%, #ffffff 100%);
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.42;
+      background-image:
+        linear-gradient(rgba(15, 23, 42, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(15, 23, 42, 0.05) 1px, transparent 1px);
+      background-size: 42px 42px;
+      mask-image: linear-gradient(180deg, black, transparent 70%);
+    }
+
+    .nav {
+      width: min(1180px, calc(100% - 32px));
+      margin: 18px auto 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 12px 14px;
+      border: 1px solid rgba(255, 255, 255, 0.72);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.78);
+      backdrop-filter: blur(18px);
+      box-shadow: 0 18px 44px rgba(15, 23, 42, 0.10);
+      position: sticky;
+      top: 12px;
+      z-index: 10;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--ink);
+      text-decoration: none;
+      font-weight: 950;
+      letter-spacing: -0.04em;
+      font-size: 18px;
+      white-space: nowrap;
+    }
+
+    .brand-mark {
+      width: 36px;
+      height: 36px;
+      display: grid;
+      place-items: center;
+      border-radius: 13px;
+      color: white;
+      background: linear-gradient(135deg, var(--blue), var(--violet));
+      box-shadow: 0 12px 24px rgba(37, 99, 235, 0.28);
+      font-weight: 950;
+    }
+
+    .links {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 7px;
+      flex-wrap: wrap;
+    }
+
+    .links a, .links button, .lang-button {
+      color: #475569;
+      text-decoration: none;
+      font-weight: 850;
+      padding: 8px 11px;
+      border-radius: 999px;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      font: inherit;
+      transition: color 0.2s, background 0.2s, transform 0.2s;
+    }
+
+    .links a:hover, .links button:hover, .lang-button:hover {
+      color: var(--blue-dark);
+      background: #eff6ff;
+      transform: translateY(-1px);
+    }
+
+    .links a.cta {
+      color: white;
+      background: var(--ink);
+    }
+
+    .links a.cta:hover {
+      color: white;
+      background: #1e293b;
+    }
+
+    .lang-button.active {
+      color: white;
+      background: linear-gradient(135deg, var(--blue), var(--violet));
+      box-shadow: 0 10px 20px rgba(37, 99, 235, 0.2);
+    }
+
+    .container {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 62px 0 78px;
+      position: relative;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.08fr) minmax(340px, 0.92fr);
+      gap: 34px;
+      align-items: center;
+      min-height: calc(100vh - 160px);
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      color: #1d4ed8;
+      background: rgba(239, 246, 255, 0.86);
+      border: 1px solid rgba(191, 219, 254, 0.8);
+      font-weight: 950;
+      margin-bottom: 16px;
+    }
+
+    .eyebrow .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: var(--green);
+      box-shadow: 0 0 0 6px rgba(16, 185, 129, 0.12);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(48px, 8vw, 92px);
+      line-height: 0.9;
+      letter-spacing: -0.08em;
+    }
+
+    .gradient-text {
+      background: linear-gradient(135deg, #0f172a 0%, #1d4ed8 48%, #7c3aed 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    h2 {
+      margin: 0 0 12px;
+      font-size: clamp(28px, 4.5vw, 44px);
+      letter-spacing: -0.06em;
+      line-height: 1.03;
+    }
+
+    h3 {
+      margin: 0 0 8px;
+      font-size: 23px;
+      letter-spacing: -0.035em;
+    }
+
+    p {
+      color: var(--muted);
+      line-height: 1.75;
+      margin: 0;
+    }
+
+    .lead {
+      max-width: 710px;
+      margin-top: 20px;
+      font-size: 19px;
+    }
+
+    .hero-actions {
+      margin-top: 28px;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      min-height: 48px;
+      padding: 12px 18px;
+      border-radius: 999px;
+      text-decoration: none;
+      font-weight: 950;
+      border: 1px solid transparent;
+      transition: transform 0.18s, box-shadow 0.18s, background 0.18s;
+    }
+
+    .button:hover { transform: translateY(-2px); }
+
+    .button.primary {
+      color: white;
+      background: linear-gradient(135deg, var(--blue), var(--violet));
+      box-shadow: 0 18px 36px rgba(37, 99, 235, 0.27);
+    }
+
+    .button.secondary {
+      color: var(--ink);
+      background: rgba(255, 255, 255, 0.84);
+      border-color: rgba(148, 163, 184, 0.32);
+      box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+    }
+
+    .card {
+      position: relative;
+      background: var(--glass);
+      border: 1px solid rgba(255, 255, 255, 0.72);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+      overflow: hidden;
+    }
+
+    .card-pad { padding: 26px; }
+
+    .showcase {
+      min-height: 520px;
+      padding: 18px;
+      background:
+        linear-gradient(145deg, rgba(15, 23, 42, 0.92), rgba(30, 41, 59, 0.88)),
+        radial-gradient(circle at top right, rgba(124, 58, 237, 0.65), transparent 36%);
+      color: white;
+    }
+
+    .showcase-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .window-dots { display: flex; gap: 7px; }
+    .window-dots span {
+      width: 11px;
+      height: 11px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.35);
+    }
+
+    .small-pill {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 6px 10px;
+      color: #bfdbfe;
+      background: rgba(37, 99, 235, 0.22);
+      border: 1px solid rgba(147, 197, 253, 0.28);
+      font-weight: 900;
+      font-size: 12px;
+    }
+
+    .mock-question {
+      margin-top: 24px;
+      padding: 24px;
+      border-radius: 24px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .mock-question .expr {
+      font-size: clamp(34px, 5vw, 56px);
+      font-weight: 950;
+      letter-spacing: -0.05em;
+      margin: 10px 0;
+    }
+
+    .mock-values {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .mock-values span {
+      padding: 7px 10px;
+      border-radius: 999px;
+      color: #c7d2fe;
+      background: rgba(99, 102, 241, 0.18);
+      border: 1px solid rgba(199, 210, 254, 0.18);
+      font-weight: 900;
+    }
+
+    .mock-options {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .mock-options div {
+      min-height: 54px;
+      display: grid;
+      place-items: center;
+      border-radius: 16px;
+      font-weight: 950;
+      background: rgba(255, 255, 255, 0.10);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .mock-options .correct {
+      background: rgba(16, 185, 129, 0.20);
+      border-color: rgba(110, 231, 183, 0.35);
+      color: #bbf7d0;
+    }
+
+    .mock-solution {
+      margin-top: 18px;
+      padding: 16px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.92);
+      color: var(--ink);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-weight: 850;
+      line-height: 1.75;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-top: 22px;
+    }
+
+    .stat {
+      padding: 18px;
+      border-radius: 22px;
+      background: rgba(255, 255, 255, 0.72);
+      border: 1px solid rgba(148, 163, 184, 0.22);
+    }
+
+    .stat .num {
+      font-size: 36px;
+      font-weight: 950;
+      letter-spacing: -0.06em;
+      color: #1d4ed8;
+      margin-bottom: 3px;
+    }
+
+    .section { margin-top: 62px; }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 18px;
+      margin-bottom: 22px;
+    }
+
+    .section-head p { max-width: 640px; }
+
+    .tools-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .tool-card {
+      min-height: 310px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      isolation: isolate;
+      position: relative;
+    }
+
+    .tool-card::before {
+      content: "";
+      position: absolute;
+      width: 210px;
+      height: 210px;
+      top: -92px;
+      right: -82px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, rgba(96, 165, 250, 0.38), rgba(167, 139, 250, 0.26));
+      z-index: -1;
+    }
+
+    .tag-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      padding: 6px 9px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 950;
+      background: rgba(241, 245, 249, 0.9);
+      color: #475569;
+      border: 1px solid rgba(148, 163, 184, 0.24);
+    }
+
+    .tag.live {
+      background: rgba(236, 253, 245, 0.9);
+      color: #047857;
+      border-color: rgba(167, 243, 208, 0.7);
+    }
+
+    .tag.soon {
+      background: rgba(239, 246, 255, 0.94);
+      color: #1d4ed8;
+      border-color: rgba(191, 219, 254, 0.9);
+    }
+
+    .course-tag {
+      background: rgba(248, 250, 252, 0.95);
+      color: #475569;
+      border-color: rgba(226, 232, 240, 0.95);
+    }
+
+    .filter-panel {
+      margin: 30px 0 18px;
+      padding: 18px;
+      border-radius: 24px;
+      background: rgba(255, 255, 255, 0.82);
+      border: 1px solid rgba(255, 255, 255, 0.76);
+      box-shadow: 0 14px 34px rgba(15, 23, 42, 0.08);
+      backdrop-filter: blur(16px);
+    }
+
+    .filter-label {
+      margin: 0 0 12px;
+      color: var(--muted);
+      font-weight: 900;
+    }
+
+    .search-control {
+      display: grid;
+      gap: 9px;
+      margin-bottom: 18px;
+    }
+
+    .search-control label {
+      color: var(--muted);
+      font-weight: 900;
+    }
+
+    .search-input {
+      width: 100%;
+      min-height: 48px;
+      padding: 12px 15px;
+      border-radius: 16px;
+      border: 1px solid rgba(148, 163, 184, 0.34);
+      background: rgba(255, 255, 255, 0.94);
+      color: var(--ink);
+      font: inherit;
+      font-weight: 800;
+      outline: none;
+    }
+
+    .search-input:focus {
+      border-color: #93c5fd;
+      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+    }
+
+    .filter-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .filter-chip {
+      border: 1px solid rgba(226, 232, 240, 0.95);
+      background: #ffffff;
+      color: #475569;
+      box-shadow: none;
+      padding: 9px 13px;
+      border-radius: 999px;
+      font-weight: 900;
+      cursor: pointer;
+      font: inherit;
+      transition: color 0.2s, background 0.2s, border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+    }
+
+    .filter-chip:hover {
+      color: var(--blue-dark);
+      background: #eff6ff;
+      border-color: #bfdbfe;
+      transform: translateY(-1px);
+    }
+
+    .filter-chip.active {
+      color: #ffffff;
+      background: linear-gradient(135deg, var(--blue), var(--violet));
+      border-color: transparent;
+      box-shadow: 0 10px 22px rgba(37, 99, 235, 0.20);
+    }
+
+    .tool-card.hidden-by-filter {
+      display: none;
+    }
+
+    .favorite-button {
+      position: absolute;
+      right: 18px;
+      bottom: 18px;
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.34);
+      background: rgba(255, 255, 255, 0.92);
+      color: #94a3b8;
+      box-shadow: 0 10px 22px rgba(15, 23, 42, 0.10);
+      font-size: 24px;
+      line-height: 1;
+      cursor: pointer;
+      transition: transform 0.18s, color 0.18s, background 0.18s, border-color 0.18s;
+      z-index: 2;
+    }
+
+    .favorite-button:hover {
+      transform: translateY(-1px);
+      color: #f59e0b;
+      border-color: rgba(245, 158, 11, 0.45);
+    }
+
+    .favorite-button.active {
+      color: #f59e0b;
+      background: #fffbeb;
+      border-color: rgba(245, 158, 11, 0.55);
+    }
+
+    .favorite-button[disabled] {
+      cursor: wait;
+      opacity: 0.72;
+      transform: none;
+    }
+
+    .favorites-panel {
+      margin: 18px 0 24px;
+      padding: 20px;
+      border-radius: 24px;
+      background: rgba(255, 255, 255, 0.84);
+      border: 1px solid rgba(255, 255, 255, 0.76);
+      box-shadow: 0 14px 34px rgba(15, 23, 42, 0.08);
+      backdrop-filter: blur(16px);
+    }
+
+    .favorites-panel h2 {
+      margin: 0 0 12px;
+      font-size: 24px;
+      letter-spacing: -0.04em;
+    }
+
+    .favorite-list {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .favorite-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 14px 15px;
+      border-radius: 16px;
+      background: rgba(248, 250, 252, 0.9);
+      border: 1px solid rgba(226, 232, 240, 0.9);
+      color: var(--ink);
+      text-decoration: none;
+      font-weight: 950;
+    }
+
+    .favorite-item span:last-child {
+      color: #f59e0b;
+      font-size: 18px;
+    }
+
+    .favorite-empty {
+      margin: 0;
+      color: var(--muted);
+      font-weight: 850;
+      line-height: 1.6;
+    }
+
+    .library-empty {
+      display: none;
+      margin: 22px 0 0;
+      padding: 18px;
+      border-radius: 18px;
+      background: rgba(248, 250, 252, 0.92);
+      border: 1px dashed rgba(148, 163, 184, 0.5);
+      color: var(--muted);
+      font-weight: 900;
+      line-height: 1.6;
+    }
+
+    .library-empty.visible {
+      display: block;
+    }
+
+    .tool-card p {
+      flex: 1;
+      margin-top: 8px;
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+
+    .feature {
+      padding: 22px;
+      min-height: 210px;
+    }
+
+    .icon {
+      width: 44px;
+      height: 44px;
+      display: grid;
+      place-items: center;
+      border-radius: 16px;
+      color: white;
+      background: linear-gradient(135deg, var(--blue), var(--violet));
+      font-weight: 950;
+      margin-bottom: 14px;
+      box-shadow: 0 14px 28px rgba(37, 99, 235, 0.22);
+    }
+
+    .footer {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 32px 0 42px;
+      border-top: 1px solid rgba(148, 163, 184, 0.28);
+      color: var(--muted);
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      font-weight: 800;
+      position: relative;
+    }
+
+    @media (max-width: 980px) {
+      .hero { grid-template-columns: 1fr; }
+      .tools-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .feature-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .favorite-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 650px) {
+      .nav {
+        border-radius: 24px;
+        align-items: flex-start;
+        flex-direction: column;
+      }
+      .links { justify-content: flex-start; }
+      .container { padding-top: 38px; }
+      .tools-grid, .feature-grid, .stats, .favorite-list { grid-template-columns: 1fr; }
+      .showcase { min-height: auto; }
+      .mock-options { grid-template-columns: 1fr; }
+      .section-head {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <a class="brand" href="index.html">
+      <span class="brand-mark">∑</span>
+      <span>MathComplete Lab</span>
+    </a>
+    <div class="links">
+      <a href="practice.html" data-i18n="navPractice">Practice Library</a>
+      <a href="login.html" data-auth-show="logged-out" data-i18n="navLogin">Login</a>
+      <a href="dashboard.html" data-auth-show="logged-in" data-i18n="navDashboard">Dashboard</a>
+      <a href="dashboard.html#mistakes" data-auth-show="logged-in" data-i18n="navMistakes">Mistake Book</a>
+      <span class="auth-chip" data-auth-show="logged-in">
+        <span data-auth-greeting></span>
+      </span>
+      <button class="auth-logout-button" type="button" data-auth-logout data-auth-show="logged-in" data-i18n="navLogout">Log out</button>
+      <button class="lang-button" id="langEn" type="button">EN</button>
+      <button class="lang-button" id="langZh" type="button">&#20013;&#25991;</button>
+      <a class="cta" href="games/algebra-expression.html" data-i18n="navStart">Start</a>
+    </div>
+  </nav>
+
+  <main class="container">
+    <section>
+      <div class="eyebrow"><span class="dot"></span><span data-i18n="libraryBadge">Practice Library</span></div>
+      <h1><span class="gradient-text" data-i18n="libraryTitle">Choose a practice tool.</span></h1>
+      <p class="lead" data-i18n="libraryLead">
+        Open a practice game, choose your settings, and start solving. More tools will be added over time.
+      </p>
+    </section>
+
+    <section class="filter-panel" aria-label="Course filter">
+      <div class="search-control">
+        <label for="librarySearch" data-i18n="searchLabel">Search library</label>
+        <input
+          class="search-input"
+          id="librarySearch"
+          type="search"
+          autocomplete="off"
+          data-i18n-placeholder="searchPlaceholder"
+          placeholder="Search tools, topics, or courses..."
+        />
+      </div>
+      <p class="filter-label" data-i18n="filterByCourse">Filter by course</p>
+      <div class="filter-buttons" id="courseFilter">
+        <button class="filter-chip active" type="button" data-course-filter="all" data-i18n="courseAll">All</button>
+        <button class="filter-chip" type="button" data-course-filter="pre-algebra" data-i18n="coursePreAlgebra">Pre-Algebra</button>
+        <button class="filter-chip" type="button" data-course-filter="algebra-1" data-i18n="courseAlgebra1">Algebra I</button>
+        <button class="filter-chip" type="button" data-course-filter="algebra-2" data-i18n="courseAlgebra2">Algebra II</button>
+        <button class="filter-chip" type="button" data-course-filter="geometry-1" data-i18n="courseGeometry1">Geometry I</button>
+        <button class="filter-chip" type="button" data-course-filter="single-variable-calculus" data-i18n="courseSingleVariableCalculus">Single Variable Calculus</button>
+        <button class="filter-chip" type="button" data-course-filter="linear-algebra" data-i18n="courseLinearAlgebra">Linear Algebra</button>
+      </div>
+    </section>
+
+        <section class="favorites-panel mcl-hidden" id="favoritesPanel" data-auth-show="logged-in">
+      <h2 data-i18n="favoritesTitle">Favorite Practice</h2>
+      <div class="favorite-list" id="favoriteList"></div>
+      <p class="favorite-empty mcl-hidden" id="favoriteEmpty" data-i18n="favoritesEmpty">No favorite practice tools yet.</p>
+    </section>
+    <section class="section tools-grid" id="toolsGrid">
+
+      <article class="card tool-card" data-game-id="arithmetic-within-10" data-courses="pre-algebra" data-search-keys="arithmetic within 10 addition subtraction multiplication division facts pre algebra arithmetic-within-10 10以内 四则运算 加法 减法 乘法 除法 预备代数 计算 熟练度">
+        <button class="favorite-button mcl-hidden" type="button" data-auth-show="logged-in" data-favorite-button data-game-id="arithmetic-within-10" aria-label="Favorite Arithmetic Within 10" title="Favorite">&#9734;</button>
+        <div class="tag-row">
+          <span class="tag live" data-i18n="live">Live</span>
+          <span class="tag course-tag" data-course-label="pre-algebra">Pre-Algebra</span>
+        </div>
+        <h3 data-i18n="arithmetic10Title">Arithmetic Within 10</h3>
+        <p data-i18n="arithmetic10Desc">
+          Practice addition, subtraction, multiplication, and division with input numbers within 10.
+        </p>
+        <div class="hero-actions">
+          <a class="button primary" href="games/arithmetic-within-10.html" data-i18n="openTool">Open Tool →</a>
+        </div>
+      </article>
+
+      <article class="card tool-card" data-game-id="arithmetic-within-100" data-courses="pre-algebra" data-search-keys="arithmetic within 100 addition subtraction multiplication division pre algebra arithmetic-within-100 100以内 四则运算 加法 减法 乘法 除法 预备代数 计算 熟练度">
+        <button class="favorite-button mcl-hidden" type="button" data-auth-show="logged-in" data-favorite-button data-game-id="arithmetic-within-100" aria-label="Favorite Arithmetic Within 100" title="Favorite">&#9734;</button>
+        <div class="tag-row">
+          <span class="tag live" data-i18n="live">Live</span>
+          <span class="tag course-tag" data-course-label="pre-algebra">Pre-Algebra</span>
+        </div>
+        <h3 data-i18n="arithmetic100Title">Arithmetic Within 100</h3>
+        <p data-i18n="arithmetic100Desc">
+          Build fluency with addition, subtraction, multiplication, and division with input numbers within 100.
+        </p>
+        <div class="hero-actions">
+          <a class="button primary" href="games/arithmetic-within-100.html" data-i18n="openTool">Open Tool →</a>
+        </div>
+      </article>
+
+      <article class="card tool-card" data-game-id="arithmetic-within-1000" data-courses="pre-algebra" data-search-keys="arithmetic within 1000 addition subtraction multiplication division order of operations pre algebra arithmetic-within-1000 1000以内 四则运算 加法 减法 乘法 除法 运算顺序 预备代数 计算 熟练度">
+        <button class="favorite-button mcl-hidden" type="button" data-auth-show="logged-in" data-favorite-button data-game-id="arithmetic-within-1000" aria-label="Favorite Arithmetic Within 1000" title="Favorite">&#9734;</button>
+        <div class="tag-row">
+          <span class="tag live" data-i18n="live">Live</span>
+          <span class="tag course-tag" data-course-label="pre-algebra">Pre-Algebra</span>
+        </div>
+        <h3 data-i18n="arithmetic1000Title">Arithmetic Within 1000</h3>
+        <p data-i18n="arithmetic1000Desc">
+          Challenge arithmetic fluency with input numbers within 1000, including signs, division, and two-step expressions.
+        </p>
+        <div class="hero-actions">
+          <a class="button primary" href="games/arithmetic-within-1000.html" data-i18n="openTool">Open Tool →</a>
+        </div>
+      </article>
+
+
+
+
+      <article class="card tool-card" data-game-id="set-theory-basics" data-courses="pre-algebra" data-search-keys="set theory basics practice sets elements membership subset union intersection difference complement cardinality interval notation pre algebra set-theory-basics 集合 集合基础 元素 属于 子集 并集 交集 差集 补集 集合大小 区间 预备代数">
+        <button class="favorite-button mcl-hidden" type="button" data-auth-show="logged-in" data-favorite-button data-game-id="set-theory-basics" aria-label="Favorite Set Theory Basics Practice" title="Favorite">&#9734;</button>
+        <div class="tag-row">
+          <span class="tag live" data-i18n="live">Live</span>
+          <span class="tag course-tag" data-course-label="pre-algebra">Pre-Algebra</span>
+        </div>
+        <h3 data-i18n="setTheoryTitle">Set Theory Basics Practice</h3>
+        <p data-i18n="setTheoryDesc">
+          Practice elements, subsets, union, intersection, difference, complement, and basic set notation.
+        </p>
+        <div class="hero-actions">
+          <a class="button primary" href="games/set-theory-basics.html" data-i18n="openTool">Open Tool →</a>
+        </div>
+      </article>
+
+      <article class="card tool-card" data-game-id="exponential-functions" data-courses="algebra-2" data-search-keys="exponential function practice exponential growth decay table equation transformation asymptote half life doubling time algebra ii exponential-functions 指数函数 指数增长 指数衰减 表格 方程 函数变换 渐近线 半衰期 倍增时间 代数二">
+        <button class="favorite-button mcl-hidden" type="button" data-auth-show="logged-in" data-favorite-button data-game-id="exponential-functions" aria-label="Favorite Exponential Function Practice" title="Favorite">&#9734;</button>
+        <div class="tag-row">
+          <span class="tag live" data-i18n="live">Live</span>
+          <span class="tag course-tag" data-course-label="algebra-2">Algebra II</span>
+        </div>
+        <h3 data-i18n="exponentialTitle">Exponential Function Practice</h3>
+        <p data-i18n="exponentialDesc">
+          Practice exponential growth, decay, tables, equations, transformations, half-life, and doubling-time models.
+        </p>
+        <div class="hero-actions">
+          <a class="button primary" href="games/exponential-functions.html" data-i18n="openTool">Open Tool →</a>
+        </div>
+      </article>
+
+
+
+      <article class="card tool-card" data-game-id="logarithmic-functions" data-courses="algebra-2" data-search-keys="logarithmic function practice logarithm log properties expand condense equations graph transformation inverse change of base algebra ii logarithmic-functions 对数函数 对数 性质 展开 合并 方程 图像 变换 反函数 换底公式 代数二">
+        <button class="favorite-button mcl-hidden" type="button" data-auth-show="logged-in" data-favorite-button data-game-id="logarithmic-functions" aria-label="Favorite Logarithmic Function Practice" title="Favorite">&#9734;</button>
+        <div class="tag-row">
+          <span class="tag live" data-i18n="live">Live</span>
+          <span class="tag course-tag" data-course-label="algebra-2">Algebra II</span>
+        </div>
+        <h3 data-i18n="logarithmicTitle">Logarithmic Function Practice</h3>
+        <p data-i18n="logarithmicDesc">
+          Practice logarithmic form, log properties, equations, graph transformations, inverse functions, and change of base.
+        </p>
+        <div class="hero-actions">
+          <a class="button primary" href="games/logarithmic-functions.html" data-i18n="openTool">Open Tool →</a>
+        </div>
+      </article>
+
+
+
+      <article class="card tool-card" data-game-id="vector-operations" data-courses="linear-algebra" data-search-keys="vector operations practice vector addition subtraction scalar multiplication linear combination 2d 3d linear algebra vector-operations 向量 运算 向量加法 向量减法 标量乘法 线性组合 二维 三维 线性代数">
+        <button class="favorite-button mcl-hidden" type="button" data-auth-show="logged-in" data-favorite-button data-game-id="vector-operations" aria-label="Favorite Vector Operations Practice" title="Favorite">&#9734;</button>
+        <div class="tag-row">
+          <span class="tag live" data-i18n="live">Live</span>
+          <span class="tag course-tag" data-course-label="linear-algebra">Linear Algebra</span>
+        </div>
+        <h3 data-i18n="vectorOperationsTitle">Vector Operations Practice</h3>
+        <p data-i18n="vectorOperationsDesc">
+          Practice vector addition, subtraction, scalar multiplication, and linear combinations in 2D and 3D.
+        </p>
+        <div class="hero-actions">
+          <a class="button primary" href="games/vector-operations.html" data-i18n="openTool">Open Tool →</a>
+        </div>
+      </article>
+
+
+
+      <article class="card tool-card" data-game-id="matrix-multiplication" data-courses="linear-algebra" data-search-keys="matrix multiplication practice matrix product dimensions row column matrix vector identity non commutative linear algebra matrix-multiplication 矩阵 乘法 矩阵乘法 矩阵乘向量 维度 行乘列 单位矩阵 非交换 线性代数">
+        <button class="favorite-button mcl-hidden" type="button" data-auth-show="logged-in" data-favorite-button data-game-id="matrix-multiplication" aria-label="Favorite Matrix Multiplication Practice" title="Favorite">&#9734;</button>
+        <div class="tag-row">
+          <span class="tag live" data-i18n="live">Live</span>
+          <span class="tag course-tag" data-course-label="linear-algebra">Linear Algebra</span>
+        </div>
+        <h3 data-i18n="matrixMultiplicationTitle">Matrix Multiplication Practice</h3>
+        <p data-i18n="matrixMultiplicationDesc">
+          Practice matrix dimensions, row-by-column multiplication, matrix-vector products, and basic matrix multiplication properties.
+        </p>
+        <div class="hero-actions">
+          <a class="button primary" href="games/matrix-multiplication.html" data-i18n="openTool">Open Tool →</a>
+        </div>
+      </article>
+
+      <article class="card tool-card" data-game-id="determinant-practice" data-courses="linear-algebra" data-search-keys="determinant practice 2x2 3x3 matrix determinant invertible triangular determinant properties linear algebra determinant-practice 行列式 二阶 三阶 矩阵 行列式计算 可逆 三角矩阵 性质 线性代数">
+        <button class="favorite-button mcl-hidden" type="button" data-auth-show="logged-in" data-favorite-button data-game-id="determinant-practice" aria-label="Favorite Determinant Practice" title="Favorite">&#9734;</button>
+        <div class="tag-row">
+          <span class="tag live" data-i18n="live">Live</span>
+          <span class="tag course-tag" data-course-label="linear-algebra">Linear Algebra</span>
+        </div>
+        <h3 data-i18n="determinantTitle">Determinant Practice</h3>
+        <p data-i18n="determinantDesc">
+          Practice 2×2 and 3×3 determinants, triangular matrices, invertibility, and basic determinant properties.
+        </p>
+        <div class="hero-actions">
+          <a class="button primary" href="games/determinant-practice.html" data-i18n="openTool">Open Tool →</a>
+        </div>
+      </article>
+
+
+      <article class="card tool-card" data-game-id="completing-the-square" data-courses="algebra-1 algebra-2" data-search-keys="completing the square complete square quadratic vertex form parabola solve quadratic algebra i algebra ii completing-the-square 配方法 二次函数 顶点式 平方完成 完全平方 解二次方程 抛物线 代数">
+        <button class="favorite-button mcl-hidden" type="button" data-auth-show="logged-in" data-favorite-button data-game-id="completing-the-square" aria-label="Favorite Completing the Square Practice" title="Favorite">&#9734;</button>
+        <div class="tag-row">
+          <span class="tag live" data-i18n="live">Live</span>
+          <span class="tag course-tag" data-course-label="algebra-1">Algebra I</span>
+          <span class="tag course-tag" data-course-label="algebra-2">Algebra II</span>
+        </div>
+        <h3 data-i18n="completingSquareTitle">Completing the Square</h3>
+        <p data-i18n="completingSquareDesc">
+          Practice rewriting quadratics in vertex form and solving equations by completing the square.
+        </p>
+        <div class="hero-actions">
+          <a class="button primary" href="games/completing-the-square.html" data-i18n="openTool">Open Tool -></a>
+        </div>
+      </article>
+
+      <article class="card tool-card" data-game-id="algebra-expression" data-courses="pre-algebra algebra-1" data-search-keys="algebra expression evaluator algebra expressions variable substitution multiple choice timer wrong answer review pre algebra algebra i algebra-expression 代数表达式求值 表达式 变量代入 选择题 计时 错题 预备代数 代数">
+        <button class="favorite-button mcl-hidden" type="button" data-auth-show="logged-in" data-favorite-button data-game-id="algebra-expression" aria-label="Favorite Algebra Expression Evaluator" title="Favorite">&#9734;</button>
+        <div class="tag-row">
+          <span class="tag live" data-i18n="live">Live</span>
+          <span class="tag course-tag" data-course-label="pre-algebra">Pre-Algebra</span>
+          <span class="tag course-tag" data-course-label="algebra-1">Algebra I</span>
+        </div>
+        <h3 data-i18n="algebraTitle">Algebra Expression Evaluator</h3>
+        <p data-i18n="algebraDesc">
+          Evaluate randomized algebra expressions with variable substitution, multiple-choice answers,
+          timer modes, adaptive solutions, and wrong-answer review.
+        </p>
+        <div class="hero-actions">
+          <a class="button primary" href="games/algebra-expression.html" data-i18n="openTool">Open Tool →</a>
+        </div>
+      </article>
+
+      <article class="card tool-card" data-game-id="algebra-simplification" data-courses="algebra-1 algebra-2" data-search-keys="algebra simplification simplify expressions like terms distributing signs algebra i algebra ii algebra-simplification 代数化简 合并同类项 分配律 正负号 表达式 化简 代数">
+        <button class="favorite-button mcl-hidden" type="button" data-auth-show="logged-in" data-favorite-button data-game-id="algebra-simplification" aria-label="Favorite Algebra Simplification" title="Favorite">&#9734;</button>
+        <div class="tag-row">
+          <span class="tag live" data-i18n="live">Live</span>
+          <span class="tag course-tag" data-course-label="algebra-1">Algebra I</span>
+          <span class="tag course-tag" data-course-label="algebra-2">Algebra II</span>
+        </div>
+        <h3 data-i18n="simplificationTitle">Algebra Simplification</h3>
+        <p data-i18n="simplificationDesc">
+          Simplify algebraic expressions by combining like terms, distributing, and handling signs.
+        </p>
+        <div class="hero-actions">
+          <a class="button primary" href="games/algebra-simplification.html" data-i18n="openTool">Open Tool →</a>
+        </div>
+      </article>
+
+      <article class="card tool-card" data-game-id="linear-equation" data-courses="algebra-1" data-search-keys="linear equation solver equation one step multi step parentheses negative coefficients algebra i linear-equation 一元一次方程 方程 解方程 多步方程 括号 负系数 代数">
+        <button class="favorite-button mcl-hidden" type="button" data-auth-show="logged-in" data-favorite-button data-game-id="linear-equation" aria-label="Favorite Linear Equation Solver" title="Favorite">&#9734;</button>
+        <div class="tag-row">
+          <span class="tag live" data-i18n="live">Live</span>
+          <span class="tag course-tag" data-course-label="algebra-1">Algebra I</span>
+        </div>
+        <h3 data-i18n="linearTitle">Linear Equation Solver</h3>
+        <p data-i18n="linearDesc">
+          Practice one-step and multi-step equations, including parentheses, negative coefficients,
+          and common mistake-based distractors.
+        </p>
+        <div class="hero-actions">
+          <a class="button primary" href="games/linear-equation.html" data-i18n="openTool">Open Tool →</a>
+        </div>
+      </article>
+
+      <article class="card tool-card" data-game-id="slope-from-two-points" data-courses="algebra-1 geometry-1" data-search-keys="slope from two points slope coordinate pairs algebra i geometry i slope-from-two-points 斜率 两点斜率 坐标点 坐标 几何 代数">
+        <button class="favorite-button mcl-hidden" type="button" data-auth-show="logged-in" data-favorite-button data-game-id="slope-from-two-points" aria-label="Favorite Slope from Two Points" title="Favorite">&#9734;</button>
+        <div class="tag-row">
+          <span class="tag live" data-i18n="live">Live</span>
+          <span class="tag course-tag" data-course-label="algebra-1">Algebra I</span>
+          <span class="tag course-tag" data-course-label="geometry-1">Geometry I</span>
+        </div>
+        <h3 data-i18n="slopeTitle">Slope from Two Points</h3>
+        <p data-i18n="slopeDesc">
+          Practice slope using randomly generated coordinate pairs, with clear step-by-step explanations.
+        </p>
+        <div class="hero-actions">
+          <a class="button primary" href="games/slope-from-two-points.html" data-i18n="openTool">Open Tool →</a>
+        </div>
+      </article>
+
+      <article class="card tool-card" data-game-id="function-evaluation" data-courses="algebra-1 algebra-2" data-search-keys="function evaluation function substitution f(x) simplify algebra i algebra ii function-evaluation 函数代入 函数 求值 代入 化简 代数">
+        <button class="favorite-button mcl-hidden" type="button" data-auth-show="logged-in" data-favorite-button data-game-id="function-evaluation" aria-label="Favorite Function Evaluation" title="Favorite">&#9734;</button>
+        <div class="tag-row">
+          <span class="tag live" data-i18n="live">Live</span>
+          <span class="tag course-tag" data-course-label="algebra-1">Algebra I</span>
+          <span class="tag course-tag" data-course-label="algebra-2">Algebra II</span>
+        </div>
+        <h3 data-i18n="functionTitle">Function Evaluation</h3>
+        <p data-i18n="functionDesc">
+          Practice f(x), f(-a), and simple function substitution with automatic step-by-step simplification.
+        </p>
+        <div class="hero-actions">
+          <a class="button primary" href="games/function-evaluation.html" data-i18n="openTool">Open Tool →</a>
+        </div>
+      </article>
+
+      <article class="card tool-card" data-game-id="factoring-practice" data-courses="algebra-1 algebra-2" data-search-keys="factoring practice factor gcf trinomials ac method special products grouping algebra i algebra ii factoring-practice 因式分解 提公因式 二次三项式 ac方法 特殊公式 分组分解 代数">
+        <button class="favorite-button mcl-hidden" type="button" data-auth-show="logged-in" data-favorite-button data-game-id="factoring-practice" aria-label="Favorite Factoring Practice" title="Favorite">&#9734;</button>
+        <div class="tag-row">
+          <span class="tag live" data-i18n="live">Live</span>
+          <span class="tag course-tag" data-course-label="algebra-1">Algebra I</span>
+          <span class="tag course-tag" data-course-label="algebra-2">Algebra II</span>
+        </div>
+        <h3 data-i18n="factoringTitle">Factoring Practice</h3>
+        <p data-i18n="factoringDesc">
+          Practice factoring with GCF, trinomials, AC method, special products, and grouping.
+        </p>
+        <div class="hero-actions">
+          <a class="button primary" href="games/factoring-practice.html" data-i18n="openTool">Open Tool →</a>
+        </div>
+      </article>
+
+      <article class="card tool-card" data-game-id="fraction-percent" data-courses="pre-algebra algebra-1" data-search-keys="fraction percent lab fractions decimals percentages conversion fluency pre algebra algebra i fraction-percent 分数 百分数 百分比 小数 分数百分数 互化 转换 熟练度 预备代数 代数">
+        <button class="favorite-button mcl-hidden" type="button" data-auth-show="logged-in" data-favorite-button data-game-id="fraction-percent" aria-label="Favorite Fraction & Percent Lab" title="Favorite">&#9734;</button>
+        <div class="tag-row">
+          <span class="tag live" data-i18n="live">Live</span>
+          <span class="tag course-tag" data-course-label="pre-algebra">Pre-Algebra</span>
+          <span class="tag course-tag" data-course-label="algebra-1">Algebra I</span>
+        </div>
+        <h3 data-i18n="fractionTitle">Fraction & Percent Lab</h3>
+        <p data-i18n="fractionDesc">
+          Convert between fractions, decimals, and percentages with quick fluency drills.
+        </p>
+        <div class="hero-actions">
+          <a class="button primary" href="games/fraction-percent.html" data-i18n="openTool">Open Tool →</a>
+        </div>
+      </article>
+
+      <article class="card tool-card" data-game-id="geometry-formula" data-courses="geometry-1" data-search-keys="geometry formula arena area perimeter circumference volume formulas geometry i geometry-formula 几何 公式 面积 周长 圆周长 体积 几何公式">
+        <button class="favorite-button mcl-hidden" type="button" data-auth-show="logged-in" data-favorite-button data-game-id="geometry-formula" aria-label="Favorite Geometry Formula Arena" title="Favorite">&#9734;</button>
+        <div class="tag-row">
+          <span class="tag live" data-i18n="live">Live</span>
+          <span class="tag course-tag" data-course-label="geometry-1">Geometry I</span>
+        </div>
+        <h3 data-i18n="geometryTitle">Geometry Formula Arena</h3>
+        <p data-i18n="geometryDesc">
+          Practice area, perimeter, circumference, and volume formulas through randomized mini challenges.
+        </p>
+        <div class="hero-actions">
+          <a class="button primary" href="games/geometry-formula.html" data-i18n="openTool">Open Tool →</a>
+        </div>
+      </article>
+
+      <article class="card tool-card" data-game-id="derivative-practice" data-courses="single-variable-calculus" data-search-keys="derivative practice derivatives power rule trig exponential logarithmic product quotient chain rule calculus single variable calculus derivative-practice 导数 求导 幂法则 三角函数 指数函数 对数函数 乘积法则 商法则 链式法则 微积分 一元微积分">
+        <button class="favorite-button mcl-hidden" type="button" data-auth-show="logged-in" data-favorite-button data-game-id="derivative-practice" aria-label="Favorite Derivative Practice" title="Favorite">&#9734;</button>
+        <div class="tag-row">
+          <span class="tag live" data-i18n="live">Live</span>
+          <span class="tag course-tag" data-course-label="single-variable-calculus">Single Variable Calculus</span>
+        </div>
+        <h3 data-i18n="derivativeTitle">Derivative Practice</h3>
+        <p data-i18n="derivativeDesc">
+          Practice derivatives with power rule, trig, exponential, logarithmic, product, quotient, and chain rule.
+        </p>
+        <div class="hero-actions">
+          <a class="button primary" href="games/derivative-practice.html" data-i18n="openTool">Open Tool →</a>
+        </div>
+      </article>
+
+      <article class="card tool-card" data-game-id="special-products" data-courses="algebra-1" data-search-keys="special products practice difference of squares perfect square identities expansion factoring algebra i special-products 特殊乘法公式 平方差 完全平方 展开 因式分解 代数">
+        <button class="favorite-button mcl-hidden" type="button" data-auth-show="logged-in" data-favorite-button data-game-id="special-products" aria-label="Favorite Special Products Practice" title="Favorite">&#9734;</button>
+        <div class="tag-row">
+         <span class="tag live" data-i18n="live">Live</span>
+          <span class="tag course-tag" data-course-label="algebra-1">Algebra I</span>
+        </div>
+        <h3 data-i18n="specialProductsTitle">Special Products Practice</h3>
+        <p data-i18n="specialProductsDesc">
+          Practice difference of squares and perfect square identities through expansion and factoring.
+        </p>
+        <div class="hero-actions">
+          <a class="button primary" href="games/special-products.html" data-i18n="openTool">Open Tool →</a>
+        </div>
+      </article>
+    </section>
+    <p class="library-empty" id="libraryEmpty" data-i18n="noSearchResults">No tools match your search.</p>
+  </main>
+
+  <footer class="footer">
+    <span data-i18n="footerLeft">© 2026 MathComplete Lab</span>
+    <span data-i18n="footerRight">Randomized practice tools for tutors and students</span>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="assets/js/supabase-client.js"></script>
+  <script src="assets/js/auth.js"></script>
+  <script src="assets/js/auth-ui.js"></script>
+  <script src="assets/js/favorites.js"></script>
+  <script src="assets/js/home-link.js"></script>
+
+<script>
+    const COPY = {
+      en: {
+        navPractice: "Practice Library",
+        navLogin: "Login",
+        navDashboard: "Dashboard",
+        navMistakes: "Mistake Book",
+        navLogout: "Log out",
+        navStart: "Start",
+        footerLeft: "© 2026 MathComplete Lab",
+        footerRight: "Randomized practice tools for tutors and students",
+
+        heroBadge: "Built for tutors and students",
+        heroTitle: "Randomized math practice that feels like a game.",
+        heroLead: "MathComplete Lab collects clean, replayable math practice tools for tutors and students. Start with algebra expression evaluation, timed modes, instant feedback, and step-by-step solutions.",
+        heroPrimary: "Launch Algebra Tool →",
+        heroSecondary: "Explore Practice Library",
+        statTemplates: "random templates",
+        statTimers: "timer levels",
+        statLanguages: "global languages",
+        previewBadge: "Live tool preview",
+        previewPrompt: "Evaluate the expression",
+
+        flowBadge: "Built for class flow",
+        flowTitle: "Fast enough for tutoring. Clean enough for students.",
+        flowLead: "Start a drill in seconds, project it during class, or let a student practice independently. Each question ends with a clear solution chain instead of just a right-or-wrong label.",
+        featureRandomTitle: "Randomized",
+        featureRandomText: "Templates generate fresh values and expressions, so students cannot memorize answer keys.",
+        featureTimerTitle: "Timed modes",
+        featureTimerText: "Use easy timing for practice or hell mode for quick fluency challenges.",
+        featureFeedbackTitle: "Immediate feedback",
+        featureFeedbackText: "Students see right or wrong instantly, then review the correct method.",
+        featureWrongTitle: "Wrong-type practice",
+        featureWrongText: "Missed question types can become a targeted follow-up round.",
+
+        libraryBadge: "Practice Library",
+        libraryTitle: "Choose a practice tool.",
+        libraryLead: "Open a practice game, choose your settings, and start solving. More tools will be added over time.",
+        searchLabel: "Search library",
+        searchPlaceholder: "Search tools, topics, or courses...",
+        noSearchResults: "No tools match your search.",
+        favoritesTitle: "Favorite Practice",
+        favoritesEmpty: "No favorite practice tools yet.",
+        favoriteSaveFailed: "Could not save favorite. Run the Supabase schema setup if this is your first time.",
+        filterByCourse: "Filter by course",
+        courseAll: "All",
+        coursePreAlgebra: "Pre-Algebra",
+        courseAlgebra1: "Algebra I",
+        courseAlgebra2: "Algebra II",
+        courseGeometry1: "Geometry I",
+        courseSingleVariableCalculus: "Single Variable Calculus",
+        courseLinearAlgebra: "Linear Algebra",
+        openTool: "Open Tool →",
+        previewTool: "Preview",
+        live: "Live",
+        globalLanguage: "Global language",
+        comingSoon: "Coming soon",
+        arithmetic10Title: "Arithmetic Within 10",
+        arithmetic10Desc: "Practice addition, subtraction, multiplication, and division with input numbers within 10.",
+        arithmetic100Title: "Arithmetic Within 100",
+        arithmetic100Desc: "Build fluency with addition, subtraction, multiplication, and division with input numbers within 100.",
+        arithmetic1000Title: "Arithmetic Within 1000",
+        arithmetic1000Desc: "Challenge arithmetic fluency with input numbers within 1000, including signs, division, and two-step expressions.",
+        setTheoryTitle: "Set Theory Basics Practice",
+        setTheoryDesc: "Practice elements, subsets, union, intersection, difference, complement, and basic set notation.",
+        algebraTitle: "Algebra Expression Evaluator",
+        algebraDesc: "Evaluate randomized algebra expressions with variable substitution, multiple-choice answers, timer modes, adaptive solutions, and wrong-answer review.",
+        simplificationTitle: "Algebra Simplification",
+        simplificationDesc: "Simplify algebraic expressions by combining like terms, distributing, and handling signs.",
+        linearTitle: "Linear Equation Solver",
+        linearDesc: "Practice one-step and multi-step equations, including parentheses, negative coefficients, and common mistake-based distractors.",
+        slopeTitle: "Slope from Two Points",
+        slopeDesc: "Practice slope using randomly generated coordinate pairs, with clear step-by-step explanations.",
+        functionTitle: "Function Evaluation",
+        functionDesc: "Practice f(x), f(-a), and simple function substitution with automatic step-by-step simplification.",
+        factoringTitle: "Factoring Practice",
+        factoringDesc: "Practice factoring with GCF, trinomials, AC method, special products, and grouping.",
+        completingSquareTitle: "Completing the Square",
+        completingSquareDesc: "Practice rewriting quadratics in vertex form and solving equations by completing the square.",
+        exponentialTitle: "Exponential Function Practice",
+        exponentialDesc: "Practice exponential growth, decay, tables, equations, transformations, half-life, and doubling-time models.",
+        logarithmicTitle: "Logarithmic Function Practice",
+        logarithmicDesc: "Practice logarithmic form, log properties, equations, graph transformations, inverse functions, and change of base.",
+        vectorOperationsTitle: "Vector Operations Practice",
+        vectorOperationsDesc: "Practice vector addition, subtraction, scalar multiplication, and linear combinations in 2D and 3D.",
+        matrixMultiplicationTitle: "Matrix Multiplication Practice",
+        matrixMultiplicationDesc: "Practice matrix dimensions, row-by-column multiplication, matrix-vector products, and basic matrix multiplication properties.",
+        determinantTitle: "Determinant Practice",
+        determinantDesc: "Practice 2×2 and 3×3 determinants, triangular matrices, invertibility, and basic determinant properties.",
+        derivativeTitle: "Derivative Practice",
+        derivativeDesc: "Practice derivatives with power rule, trig, exponential, logarithmic, product, quotient, and chain rule.",
+        fractionTitle: "Fraction & Percent Lab",
+        fractionDesc: "Convert between fractions, decimals, and percentages with quick fluency drills.",
+        geometryTitle: "Geometry Formula Arena",
+        geometryDesc: "Practice area, perimeter, circumference, and volume formulas through randomized mini challenges.",
+        specialProductsTitle: "Special Products Practice",
+        specialProductsDesc: "Practice difference of squares and perfect square identities through expansion and factoring.",
+      },
+      zh: {
+        navPractice: "\u7ec3\u4e60\u5e93",
+        navLogin: "\u767b\u5f55",
+        navDashboard: "\u5b66\u4e60\u8bb0\u5f55",
+        navMistakes: "\u9519\u9898\u5e93",
+        navLogout: "\u9000\u51fa\u767b\u5f55",
+        navStart: "\u5f00\u59cb",
+        footerLeft: "\u00a9 2026 MathComplete Lab",
+        footerRight: "\u7ed9 tutor \u548c\u5b66\u751f\u4f7f\u7528\u7684\u968f\u673a\u6570\u5b66\u7ec3\u4e60\u5de5\u5177",
+        heroBadge: "\u4e3a\u8001\u5e08\u548c\u5b66\u751f\u8bbe\u8ba1",
+        heroTitle: "\u6570\u5b66\u7ec3\u4e60\uff0c\n\u5bd3\u6559\u4e8e\u4e50\u3002",
+        heroLead: "MathComplete Lab \u6c47\u96c6\u5e72\u51c0\u3001\u53ef\u91cd\u590d\u7ec3\u4e60\u7684\u6570\u5b66\u968f\u673a\u9898\u5de5\u5177\uff0c\u9762\u5411\u8001\u5e08\u548c\u5b66\u751f\u3002\u73b0\u5728\u53ef\u4ee5\u4ece\u4ee3\u6570\u8868\u8fbe\u5f0f\u6c42\u503c\u5f00\u59cb\uff0c\u4f53\u9a8c\u8ba1\u65f6\u6a21\u5f0f\u3001\u5373\u65f6\u53cd\u9988\u548c\u9010\u6b65\u89e3\u6cd5\u3002",
+        heroPrimary: "\u6253\u5f00\u4ee3\u6570\u7ec3\u4e60 \u2192",
+        heroSecondary: "\u6d4f\u89c8\u7ec3\u4e60\u5e93",
+        statTemplates: "\u968f\u673a\u6a21\u677f",
+        statTimers: "\u8ba1\u65f6\u7b49\u7ea7",
+        statLanguages: "\u5168\u7ad9\u8bed\u8a00",
+        previewBadge: "\u5de5\u5177\u9884\u89c8",
+        previewPrompt: "\u8ba1\u7b97\u8868\u8fbe\u5f0f\u7684\u503c",
+        flowBadge: "\u9002\u5408\u8bfe\u5802\u8282\u594f",
+        flowTitle: "\u8001\u5e08\u4e0a\u8bfe\u591f\u5feb\uff0c\u5b66\u751f\u4f7f\u7528\u591f\u6e05\u695a\u3002",
+        flowLead: "\u51e0\u79d2\u949f\u5f00\u59cb\u7ec3\u4e60\uff0c\u53ef\u4ee5\u8bfe\u5802\u6295\u5c4f\uff0c\u4e5f\u53ef\u4ee5\u8ba9\u5b66\u751f\u72ec\u7acb\u7ec3\u4e60\u3002\u6bcf\u9898\u7ed3\u675f\u540e\u4e0d\u4ec5\u663e\u793a\u5bf9\u9519\uff0c\u8fd8\u4f1a\u663e\u793a\u6e05\u695a\u7684\u89e3\u6cd5\u94fe\u3002",
+        featureRandomTitle: "\u968f\u673a\u751f\u6210",
+        featureRandomText: "\u6a21\u677f\u4f1a\u968f\u673a\u751f\u6210\u65b0\u6570\u503c\u548c\u8868\u8fbe\u5f0f\uff0c\u5b66\u751f\u4e0d\u80fd\u9760\u80cc\u7b54\u6848\u5b8c\u6210\u7ec3\u4e60\u3002",
+        featureTimerTitle: "\u8ba1\u65f6\u6a21\u5f0f",
+        featureTimerText: "\u53ef\u4ee5\u7528\u5bbd\u677e\u8ba1\u65f6\u8bad\u7ec3\uff0c\u4e5f\u53ef\u4ee5\u7528\u5730\u72f1\u6a21\u5f0f\u6311\u6218\u719f\u7ec3\u5ea6\u3002",
+        featureFeedbackTitle: "\u5373\u65f6\u53cd\u9988",
+        featureFeedbackText: "\u5b66\u751f\u7b54\u9898\u540e\u9a6c\u4e0a\u77e5\u9053\u5bf9\u9519\uff0c\u5e76\u770b\u5230\u6b63\u786e\u89e3\u6cd5\u3002",
+        featureWrongTitle: "\u9519\u9898\u540c\u7c7b\u7ec3\u4e60",
+        featureWrongText: "\u9519\u8fc7\u7684\u9898\u578b\u53ef\u4ee5\u751f\u6210\u540c\u7c7b\u578b\u65b0\u9898\uff0c\u9002\u5408\u9488\u5bf9\u6027\u8865\u5f31\u3002",
+        libraryBadge: "\u7ec3\u4e60\u5e93",
+        libraryTitle: "\u9009\u62e9\u4e00\u4e2a\u7ec3\u4e60\u5de5\u5177\u3002",
+        libraryLead: "\u6253\u5f00\u4e00\u4e2a\u7ec3\u4e60\u6e38\u620f\uff0c\u9009\u62e9\u8bbe\u7f6e\uff0c\u7136\u540e\u5f00\u59cb\u505a\u9898\u3002\u4e4b\u540e\u53ef\u4ee5\u7ee7\u7eed\u52a0\u5165\u66f4\u591a\u5de5\u5177\u3002",
+        searchLabel: "\u641c\u7d22\u7ec3\u4e60\u5e93",
+        searchPlaceholder: "\u641c\u7d22\u5de5\u5177\u3001\u77e5\u8bc6\u70b9\u6216\u8bfe\u7a0b...",
+        noSearchResults: "\u6ca1\u6709\u627e\u5230\u5339\u914d\u7684\u7ec3\u4e60\u5de5\u5177\u3002",
+        favoritesTitle: "\u6536\u85cf\u7ec3\u4e60",
+        favoritesEmpty: "\u8fd8\u6ca1\u6709\u6536\u85cf\u7ec3\u4e60\u3002",
+        favoriteSaveFailed: "\u6536\u85cf\u4fdd\u5b58\u5931\u8d25\u3002\u5982\u679c\u8fd9\u662f\u7b2c\u4e00\u6b21\u4f7f\u7528\uff0c\u8bf7\u5148\u8fd0\u884c Supabase schema\u3002",
+        filterByCourse: "\u6309\u8bfe\u7a0b\u7b5b\u9009",
+        courseAll: "\u5168\u90e8",
+        coursePreAlgebra: "\u9884\u5907\u4ee3\u6570",
+        courseAlgebra1: "\u4ee3\u6570 I",
+        courseAlgebra2: "\u4ee3\u6570 II",
+        courseGeometry1: "\u51e0\u4f55 I",
+        courseSingleVariableCalculus: "\u4e00\u5143\u5fae\u79ef\u5206",
+        courseLinearAlgebra: "线性代数",
+        openTool: "\u6253\u5f00\u5de5\u5177 \u2192",
+        previewTool: "\u9884\u89c8",
+        live: "\u5df2\u4e0a\u7ebf",
+        globalLanguage: "\u5168\u7ad9\u8bed\u8a00",
+        comingSoon: "\u5373\u5c06\u63a8\u51fa",
+        arithmetic10Title: "10\u4ee5\u5185\u56db\u5219\u8fd0\u7b97",
+        arithmetic10Desc: "\u7ec3\u4e60\u53c2\u4e0e\u8fd0\u7b97\u6570\u5b57\u5728 10 \u4ee5\u5185\u7684\u52a0\u3001\u51cf\u3001\u4e58\u3001\u9664\u3002",
+        arithmetic100Title: "100\u4ee5\u5185\u56db\u5219\u8fd0\u7b97",
+        arithmetic100Desc: "\u7ec3\u4e60\u53c2\u4e0e\u8fd0\u7b97\u6570\u5b57\u5728 100 \u4ee5\u5185\u7684\u52a0\u3001\u51cf\u3001\u4e58\u3001\u9664\uff0c\u63d0\u9ad8\u8ba1\u7b97\u719f\u7ec3\u5ea6\u3002",
+        arithmetic1000Title: "1000\u4ee5\u5185\u56db\u5219\u8fd0\u7b97",
+        arithmetic1000Desc: "\u6311\u6218\u53c2\u4e0e\u8fd0\u7b97\u6570\u5b57\u5728 1000 \u4ee5\u5185\u7684\u56db\u5219\u8fd0\u7b97\uff0c\u5305\u542b\u6b63\u8d1f\u53f7\u3001\u9664\u6cd5\u548c\u4e24\u6b65\u8868\u8fbe\u5f0f\u3002",
+        setTheoryTitle: "集合基础专项练习",
+        setTheoryDesc: "练习元素、子集、并集、交集、差集、补集和基础集合符号。",
+        algebraTitle: "\u4ee3\u6570\u8868\u8fbe\u5f0f\u6c42\u503c",
+        algebraDesc: "\u968f\u673a\u751f\u6210\u4ee3\u6570\u8868\u8fbe\u5f0f\uff0c\u7ed9\u5b9a\u53d8\u91cf\u503c\uff0c\u9009\u62e9\u7b54\u6848\uff1b\u652f\u6301\u8ba1\u65f6\u6a21\u5f0f\u3001\u81ea\u9002\u5e94\u89e3\u6cd5\u548c\u9519\u9898\u6574\u7406\u3002",
+        simplificationTitle: "\u4ee3\u6570\u5316\u7b80",
+        simplificationDesc: "\u901a\u8fc7\u5408\u5e76\u540c\u7c7b\u9879\u3001\u5206\u914d\u5f8b\u548c\u6b63\u8d1f\u53f7\u5904\u7406\u6765\u7ec3\u4e60\u4ee3\u6570\u5316\u7b80\u3002",
+        linearTitle: "\u4e00\u5143\u4e00\u6b21\u65b9\u7a0b\u7ec3\u4e60",
+        linearDesc: "\u7ec3\u4e60\u4e00\u6b65\u548c\u591a\u6b65\u65b9\u7a0b\uff0c\u5305\u62ec\u62ec\u53f7\u3001\u8d1f\u7cfb\u6570\uff0c\u4ee5\u53ca\u57fa\u4e8e\u5e38\u89c1\u9519\u8bef\u7684\u8bef\u5bfc\u9009\u9879\u3002",
+        slopeTitle: "\u4e24\u70b9\u659c\u7387\u7ec3\u4e60",
+        slopeDesc: "\u968f\u673a\u751f\u6210\u5750\u6807\u70b9\uff0c\u7ec3\u4e60\u659c\u7387\u8ba1\u7b97\uff0c\u5e76\u63d0\u4f9b\u6e05\u6670\u7684\u9010\u6b65\u89e3\u91ca\u3002",
+        functionTitle: "\u51fd\u6570\u4ee3\u5165\u7ec3\u4e60",
+        functionDesc: "\u7ec3\u4e60 f(x)\u3001f(-a) \u548c\u7b80\u5355\u51fd\u6570\u4ee3\u5165\uff0c\u5e76\u81ea\u52a8\u5c55\u793a\u9010\u6b65\u5316\u7b80\u3002",
+        factoringTitle: "\u56e0\u5f0f\u5206\u89e3",
+        factoringDesc: "\u7ec3\u4e60\u63d0\u516c\u56e0\u5f0f\u3001\u4e8c\u6b21\u4e09\u9879\u5f0f\u3001AC \u65b9\u6cd5\u3001\u7279\u6b8a\u516c\u5f0f\u548c\u5206\u7ec4\u56e0\u5f0f\u5206\u89e3\u3002",
+        completingSquareTitle: "\u914d\u65b9\u6cd5\u7ec3\u4e60",
+        completingSquareDesc: "\u7ec3\u4e60\u628a\u4e8c\u6b21\u5f0f\u6539\u5199\u6210\u9876\u70b9\u5f0f\uff0c\u5e76\u7528\u914d\u65b9\u6cd5\u89e3\u4e8c\u6b21\u65b9\u7a0b\u3002",
+        exponentialTitle: "指数函数专项练习",
+        exponentialDesc: "练习指数增长、指数衰减、表格、方程、函数变换、半衰期和倍增时间模型。",
+        logarithmicTitle: "对数函数专项练习",
+        logarithmicDesc: "练习对数形式、对数性质、方程、图像变换、反函数和换底公式。",
+        vectorOperationsTitle: "向量运算专项练习",
+        vectorOperationsDesc: "练习二维和三维向量的加法、减法、标量乘法与线性组合。",
+        matrixMultiplicationTitle: "矩阵乘法专项练习",
+        matrixMultiplicationDesc: "练习矩阵尺寸、行乘列计算、矩阵乘向量和基本矩阵乘法性质。",
+        determinantTitle: "行列式专项练习",
+        determinantDesc: "练习 2×2 和 3×3 矩阵的行列式、三角矩阵、可逆性判断和基础性质。",
+        derivativeTitle: "\u4e00\u5143\u51fd\u6570\u6c42\u5bfc\u7ec3\u4e60",
+        derivativeDesc: "\u7ec3\u4e60\u5e42\u6cd5\u5219\u3001\u4e09\u89d2\u51fd\u6570\u3001\u6307\u6570\u51fd\u6570\u3001\u5bf9\u6570\u51fd\u6570\u3001\u4e58\u79ef\u6cd5\u5219\u3001\u5546\u6cd5\u5219\u548c\u94fe\u5f0f\u6cd5\u5219\u3002",
+        fractionTitle: "\u5206\u6570\u4e0e\u767e\u5206\u6570\u5b9e\u9a8c\u5ba4",
+        fractionDesc: "\u7ec3\u4e60\u5206\u6570\u3001\u5c0f\u6570\u3001\u767e\u5206\u6570\u4e92\u5316\uff0c\u9002\u5408\u5feb\u901f\u719f\u7ec3\u5ea6\u8bad\u7ec3\u3002",
+        geometryTitle: "\u51e0\u4f55\u516c\u5f0f\u6311\u6218",
+        geometryDesc: "\u901a\u8fc7\u968f\u673a\u5c0f\u6311\u6218\u7ec3\u4e60\u9762\u79ef\u3001\u5468\u957f\u3001\u5706\u5468\u957f\u548c\u4f53\u79ef\u516c\u5f0f\u3002",
+        specialProductsTitle: "\u7279\u6b8a\u4e58\u6cd5\u516c\u5f0f\u7ec3\u4e60",
+        specialProductsDesc: "\u4e13\u9879\u7ec3\u4e60\u5e73\u65b9\u5dee\u516c\u5f0f\u548c\u5b8c\u5168\u5e73\u65b9\u516c\u5f0f\uff0c\u5305\u542b\u5c55\u5f00\u3001\u56e0\u5f0f\u5206\u89e3\u548c\u7b26\u53f7\u9677\u9631\u3002",
+      }
+    };
+
+    const COURSE_LABELS = {
+      en: {
+        "pre-algebra": "Pre-Algebra",
+        "algebra-1": "Algebra I",
+        "algebra-2": "Algebra II",
+        "geometry-1": "Geometry I",
+        "single-variable-calculus": "Single Variable Calculus",
+        "linear-algebra": "Linear Algebra"
+      },
+      zh: {
+        "pre-algebra": "预备代数",
+        "algebra-1": "代数 I",
+        "algebra-2": "代数 II",
+        "geometry-1": "几何 I",
+        "single-variable-calculus": "一元微积分",
+        "linear-algebra": "线性代数"
+      }
+    };
+
+    let activeCourseFilter = "all";
+    let activeSearchQuery = "";
+    let favoriteGameIds = new Set();
+    let favoriteLocalVersion = 0;
+
+    function applyCourseLabels() {
+      const lang = getLang();
+      document.querySelectorAll("[data-course-label]").forEach(el => {
+        const key = el.getAttribute("data-course-label");
+        el.textContent = COURSE_LABELS[lang]?.[key] || key;
+      });
+    }
+
+    function updateCourseFilterCounts() {
+      const lang = getLang();
+      const cards = Array.from(document.querySelectorAll(".tool-card"));
+      const counts = { all: cards.length };
+
+      cards.forEach(card => {
+        const courses = (card.dataset.courses || "").split(/\s+/).filter(Boolean);
+        courses.forEach(course => {
+          counts[course] = (counts[course] || 0) + 1;
+        });
+      });
+
+      document.querySelectorAll("[data-course-filter]").forEach(btn => {
+        const key = btn.getAttribute("data-course-filter");
+        const label = key === "all"
+          ? COPY[lang]?.courseAll || "All"
+          : COURSE_LABELS[lang]?.[key] || key;
+        const count = counts[key] || 0;
+        btn.textContent = lang === "zh" ? `${label}(${count})` : `${label} (${count})`;
+      });
+    }
+
+    function applyLibraryFilters() {
+      let visibleCount = 0;
+      const query = activeSearchQuery.trim().toLocaleLowerCase();
+
+      document.querySelectorAll(".tool-card").forEach(card => {
+        const courses = (card.dataset.courses || "").split(/\s+/).filter(Boolean);
+        const courseText = courses.map(course => `${course} ${COURSE_LABELS.en[course] || ""} ${COURSE_LABELS.zh[course] || ""}`).join(" ");
+        const searchText = `${card.dataset.searchKeys || ""} ${courseText}`.toLocaleLowerCase();
+        const matchesCourse = activeCourseFilter === "all" || courses.includes(activeCourseFilter);
+        const matchesSearch = !query || searchText.includes(query);
+        const shouldShow = matchesCourse && matchesSearch;
+        card.classList.toggle("hidden-by-filter", !shouldShow);
+        if (shouldShow) visibleCount++;
+      });
+
+      document.getElementById("libraryEmpty")?.classList.toggle("visible", visibleCount === 0);
+    }
+
+    function cardForGame(gameId) {
+      return document.querySelector(`.tool-card[data-game-id="${gameId}"]`);
+    }
+
+    function toolInfoFromCard(card) {
+      const link = card?.querySelector(".button.primary");
+      return {
+        title: card?.querySelector("h3")?.textContent?.trim() || "",
+        href: link?.getAttribute("href") || "#"
+      };
+    }
+
+    function renderFavoriteButtons() {
+      document.querySelectorAll("[data-favorite-button]").forEach(btn => {
+        const isFavorite = favoriteGameIds.has(btn.dataset.gameId);
+        btn.classList.toggle("active", isFavorite);
+        btn.setAttribute("aria-pressed", String(isFavorite));
+        btn.innerHTML = isFavorite ? "&#9733;" : "&#9734;";
+      });
+    }
+
+    function renderFavoriteList() {
+      const list = document.getElementById("favoriteList");
+      const empty = document.getElementById("favoriteEmpty");
+      if (!list || !empty) return;
+
+      list.innerHTML = "";
+
+      const cards = [...favoriteGameIds]
+        .map(gameId => cardForGame(gameId))
+        .filter(Boolean);
+
+      empty.classList.toggle("mcl-hidden", cards.length > 0);
+
+      cards.forEach(card => {
+        const info = toolInfoFromCard(card);
+        const item = document.createElement("a");
+        item.className = "favorite-item";
+        item.href = info.href;
+
+        const title = document.createElement("span");
+        title.textContent = info.title;
+
+        const star = document.createElement("span");
+        star.innerHTML = "&#9733;";
+
+        item.append(title, star);
+        list.appendChild(item);
+      });
+    }
+
+    function favoriteErrorMessage(err) {
+      return err?.message || t("favoriteSaveFailed");
+    }
+
+    async function refreshFavorites() {
+      const refreshVersion = favoriteLocalVersion;
+
+      if (!window.MCLFavorites || !window.MCLAuth?.isConfigured?.()) {
+        favoriteGameIds = new Set();
+        renderFavoriteButtons();
+        renderFavoriteList();
+        return;
+      }
+
+      const cachedSession = window.MCLAuth.getCachedSession?.();
+      if (cachedSession?.user && typeof window.MCLFavorites.getCachedFavorites === "function") {
+        favoriteGameIds = new Set(window.MCLFavorites.getCachedFavorites().map(item => item.game_id));
+        renderFavoriteButtons();
+        renderFavoriteList();
+      }
+
+      const { session } = await window.MCLAuth.getSession();
+      if (!session?.user) {
+        if (refreshVersion !== favoriteLocalVersion) return;
+        favoriteGameIds = new Set();
+        renderFavoriteButtons();
+        renderFavoriteList();
+        return;
+      }
+
+      try {
+        const favorites = await window.MCLFavorites.getFavorites();
+        if (refreshVersion !== favoriteLocalVersion) return;
+        favoriteGameIds = new Set(favorites.map(item => item.game_id));
+      } catch (err) {
+        console.warn("[MathComplete Lab] Could not load favorites.", err);
+      }
+
+      renderFavoriteButtons();
+      renderFavoriteList();
+    }
+
+    function setupCourseFilter() {
+      const filter = document.getElementById("courseFilter");
+      if (!filter) return;
+
+      filter.addEventListener("click", event => {
+        const btn = event.target.closest("[data-course-filter]");
+        if (!btn) return;
+
+        activeCourseFilter = btn.getAttribute("data-course-filter");
+
+        filter.querySelectorAll(".filter-chip").forEach(chip => {
+          chip.classList.toggle("active", chip === btn);
+        });
+
+        applyLibraryFilters();
+      });
+    }
+
+    function setupSearchFilter() {
+      const input = document.getElementById("librarySearch");
+      if (!input) return;
+
+      activeSearchQuery = input.value;
+      input.addEventListener("input", () => {
+        activeSearchQuery = input.value;
+        applyLibraryFilters();
+      });
+    }
+
+    function setupFavoriteButtons() {
+      document.addEventListener("click", event => {
+        const btn = event.target.closest("[data-favorite-button]");
+        if (!btn) return;
+
+        event.preventDefault();
+        const gameId = btn.dataset.gameId;
+        const shouldFavorite = !favoriteGameIds.has(gameId);
+        const previousFavorites = new Set(favoriteGameIds);
+        favoriteLocalVersion += 1;
+
+        if (shouldFavorite) {
+          favoriteGameIds.add(gameId);
+        } else {
+          favoriteGameIds.delete(gameId);
+        }
+
+        const cachedFavorites = window.MCLFavorites?.setCachedFavorite?.(gameId, shouldFavorite);
+        if (cachedFavorites) {
+          favoriteGameIds = new Set(cachedFavorites.map(item => item.game_id));
+        }
+
+        renderFavoriteButtons();
+        renderFavoriteList();
+
+        window.MCLFavorites.toggleFavorite(gameId, shouldFavorite).catch(err => {
+          console.warn("[MathComplete Lab] Could not update favorite.", err);
+          favoriteGameIds = previousFavorites;
+          renderFavoriteButtons();
+          renderFavoriteList();
+          if (err?.message !== "You must be signed in.") {
+            alert(favoriteErrorMessage(err));
+          }
+        });
+      });
+    }
+
+    function getLang() {
+      return localStorage.getItem("mathcomplete_lang") === "zh" ? "zh" : "en";
+    }
+
+    function setLang(lang) {
+      localStorage.setItem("mathcomplete_lang", lang === "zh" ? "zh" : "en");
+      applyLang();
+      window.MCLAuthUI?.refresh?.();
+    }
+
+    function applyLang() {
+      const lang = getLang();
+      document.documentElement.lang = lang === "zh" ? "zh-CN" : "en";
+      document.querySelectorAll("[data-i18n]").forEach(el => {
+        const key = el.getAttribute("data-i18n");
+        if (COPY[lang][key]) el.textContent = COPY[lang][key];
+      });
+      document.querySelectorAll("[data-i18n-placeholder]").forEach(el => {
+        const key = el.getAttribute("data-i18n-placeholder");
+        if (COPY[lang][key]) el.setAttribute("placeholder", COPY[lang][key]);
+      });
+      const en = document.getElementById("langEn");
+      const zh = document.getElementById("langZh");
+      if (en && zh) {
+        en.classList.toggle("active", lang === "en");
+        zh.classList.toggle("active", lang === "zh");
+      }
+
+      applyCourseLabels();
+      updateCourseFilterCounts();
+      applyLibraryFilters();
+      renderFavoriteList();
+    }
+
+    document.getElementById("langEn")?.addEventListener("click", () => setLang("en"));
+    document.getElementById("langZh")?.addEventListener("click", () => setLang("zh"));
+    applyLang();
+    setupCourseFilter();
+    setupSearchFilter();
+    setupFavoriteButtons();
+    applyLibraryFilters();
+    refreshFavorites();
+    window.MCLAuth?.onAuthStateChange?.(() => refreshFavorites());
+  </script>
+
+</body>
+</html>

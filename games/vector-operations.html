@@ -1,0 +1,1293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vector Operations Practice</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../assets/js/supabase-client.js"></script>
+  <script src="../assets/js/auth.js"></script>
+  <script src="../assets/js/auth-ui.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <style>
+
+    :root {
+      --bg: #f7f7fb;
+      --text: #0f172a;
+      --muted: #64748b;
+      --border: #e5e7eb;
+      --accent: #2563eb;
+      --violet: #7c3aed;
+      --good: #16a34a;
+      --bad: #dc2626;
+      --shadow: 0 18px 42px rgba(15, 23, 42, 0.10);
+      --radius: 22px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", Arial, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(96, 165, 250, 0.35), transparent 34%),
+        radial-gradient(circle at top right, rgba(167, 139, 250, 0.28), transparent 32%),
+        linear-gradient(180deg, #f8fbff 0%, var(--bg) 52%, #ffffff 100%);
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.42;
+      background-image:
+        linear-gradient(rgba(15, 23, 42, 0.045) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(15, 23, 42, 0.045) 1px, transparent 1px);
+      background-size: 42px 42px;
+      mask-image: linear-gradient(180deg, black, transparent 72%);
+    }
+
+    .mc-site-shell {
+      width: min(1180px, calc(100% - 32px));
+      margin: 18px auto 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 12px 14px;
+      border: 1px solid rgba(255, 255, 255, 0.74);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.84);
+      backdrop-filter: blur(18px);
+      box-shadow: 0 16px 36px rgba(15, 23, 42, 0.10);
+      position: sticky;
+      top: 12px;
+      z-index: 20;
+    }
+
+    .mc-brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: #0f172a;
+      font-weight: 950;
+      text-decoration: none;
+      letter-spacing: -0.035em;
+      white-space: nowrap;
+    }
+
+    .mc-brand-mark {
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      border-radius: 12px;
+      color: white;
+      background: linear-gradient(135deg, #2563eb, #7c3aed);
+      box-shadow: 0 12px 24px rgba(37, 99, 235, 0.28);
+    }
+
+    .mc-links {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .mc-link {
+      color: #475569;
+      text-decoration: none;
+      font-weight: 850;
+      padding: 8px 11px;
+      border-radius: 999px;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .mc-link:hover { color: #1d4ed8; background: #eff6ff; }
+    .mc-link.primary { color: white; background: #0f172a; }
+    .mc-link.primary:hover { color: white; background: #1e293b; }
+
+    .container {
+      width: min(1040px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 38px 0 68px;
+      position: relative;
+    }
+
+    header { margin-bottom: 24px; overflow: visible; }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      color: #1d4ed8;
+      background: rgba(239, 246, 255, 0.86);
+      border: 1px solid rgba(191, 219, 254, 0.8);
+      font-weight: 950;
+      margin-bottom: 14px;
+    }
+
+    .eyebrow-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: #10b981;
+      box-shadow: 0 0 0 6px rgba(16, 185, 129, 0.12);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(34px, 5.2vw, 56px);
+      line-height: 1.16;
+      letter-spacing: -0.055em;
+      background: linear-gradient(135deg, #0f172a 0%, #1d4ed8 48%, #7c3aed 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      padding-bottom: 0.18em;
+      overflow: visible;
+    }
+
+    h2 { margin: 0 0 12px; font-size: clamp(24px, 4vw, 34px); letter-spacing: -0.045em; }
+    h3 { margin: 0 0 8px; letter-spacing: -0.025em; }
+
+    .subtitle {
+      margin: 14px 0 0;
+      color: var(--muted);
+      line-height: 1.75;
+      max-width: 780px;
+      font-size: 17px;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.90);
+      border: 1px solid rgba(255, 255, 255, 0.76);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 24px;
+      backdrop-filter: blur(16px);
+    }
+
+    .setup-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+      margin: 22px 0;
+    }
+
+    label { display: block; font-weight: 900; margin-bottom: 8px; }
+
+    select,
+    input {
+      width: 100%;
+      min-height: 46px;
+      padding: 12px 14px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      font-size: 16px;
+      background: white;
+      outline: none;
+    }
+
+    select:focus,
+    input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+    }
+
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 46px;
+      padding: 12px 14px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: white;
+      cursor: pointer;
+      margin-bottom: 6px;
+    }
+
+    .checkbox-label input {
+      width: auto;
+      min-height: 0;
+      transform: scale(1.15);
+      accent-color: var(--accent);
+    }
+
+    .mini-hint { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.45; }
+
+    button {
+      appearance: none;
+      border: none;
+      background: linear-gradient(135deg, var(--accent), var(--violet));
+      color: white;
+      font-weight: 950;
+      padding: 12px 18px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: transform 0.14s, filter 0.2s, box-shadow 0.2s;
+      box-shadow: 0 12px 24px rgba(37, 99, 235, 0.24);
+    }
+
+    button:hover { transform: translateY(-1px); filter: brightness(0.98); }
+    button.secondary { background: #111827; box-shadow: 0 8px 18px rgba(17, 24, 39, 0.16); }
+    button.ghost { background: white; color: var(--text); border: 1px solid var(--border); box-shadow: none; }
+    button:disabled { cursor: not-allowed; opacity: 0.55; transform: none; }
+
+    .hidden { display: none !important; }
+    .actions { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+
+    .explain-box {
+      margin-top: 18px;
+      padding: 16px;
+      background: #f8fafc;
+      border: 1px dashed #cbd5e1;
+      border-radius: 18px;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .topbar {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: white;
+      color: var(--muted);
+      font-weight: 850;
+      font-size: 14px;
+      margin-right: 6px;
+      margin-bottom: 6px;
+    }
+
+    .timer-pill { color: #1d4ed8; background: #eff6ff; border-color: #bfdbfe; }
+    .timer-danger { color: #991b1b; background: #fef2f2; border-color: #fecaca; }
+
+    .progress-wrap {
+      width: 100%;
+      height: 10px;
+      background: #e5e7eb;
+      border-radius: 999px;
+      overflow: hidden;
+      margin: 10px 0 22px;
+    }
+
+    .progress {
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(90deg, #2563eb, #7c3aed);
+      transition: width 0.25s ease;
+    }
+
+    .question-title { color: var(--muted); font-weight: 950; margin-bottom: 8px; }
+    .question-extra { color: var(--muted); font-weight: 900; margin: -4px 0 14px; line-height: 1.6; }
+
+    .question-main {
+      font-size: clamp(20px, 2.7vw, 32px);
+      line-height: 1.45;
+      font-weight: 850;
+      letter-spacing: normal;
+      margin: 12px 0 24px;
+      overflow-wrap: anywhere;
+      text-align: left;
+    }
+
+    .math-render { display: inline-block; }
+    .question-main.math-render { display: block; width: 100%; overflow-x: auto; padding: 4px 0; }
+    .question-main .katex { font-size: 1em; line-height: 1.35; }
+    .option .katex { font-size: 1.1em; line-height: 1.25; }
+    .chain-math .katex, .answer-math .katex, .feedback-math .katex, .sample-math .katex, .wrong-math .katex { font-size: 1.06em; line-height: 1.25; }
+    .math-render .katex { color: #0f172a; }
+
+    .options {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .option {
+      border: 2px solid var(--border);
+      background: white;
+      color: var(--text);
+      box-shadow: none;
+      border-radius: 18px;
+      min-height: 64px;
+      font-size: 20px;
+      text-align: center;
+      padding: 12px;
+      overflow-wrap: anywhere;
+    }
+
+    .option:hover { border-color: var(--accent); background: #f8fbff; }
+    .option.correct { border-color: rgba(22, 163, 74, 0.5); background: #ecfdf5; color: #065f46; }
+    .option.wrong { border-color: rgba(220, 38, 38, 0.5); background: #fef2f2; color: #991b1b; }
+    .option.correct .katex { color: #065f46; }
+    .option.wrong .katex { color: #991b1b; }
+
+    .feedback { min-height: 30px; font-weight: 950; margin: 8px 0 16px; }
+    .feedback.good { color: var(--good); }
+    .feedback.bad { color: var(--bad); }
+    .feedback.bad .katex { color: #dc2626; }
+
+    .solution-box {
+      margin: 14px 0 18px;
+      padding: 18px;
+      border-radius: 20px;
+      border: 1px solid #dbeafe;
+      background: linear-gradient(180deg, #f8fbff, #fff);
+      color: #1f2937;
+      line-height: 1.7;
+    }
+
+    .solution-box h4 { margin: 0 0 12px; font-size: 18px; }
+    .solution-chain { background: white; border: 1px solid #e5e7eb; border-radius: 16px; padding: 14px 16px; overflow-x: auto; }
+
+    .chain-line {
+      display: grid;
+      grid-template-columns: minmax(250px, 1fr) minmax(170px, 0.65fr);
+      align-items: baseline;
+      gap: 18px;
+      margin: 8px 0;
+      font-size: 17px;
+      font-weight: 850;
+      white-space: nowrap;
+    }
+
+    .chain-note { color: #64748b; font-size: 13px; font-weight: 850; white-space: normal; }
+    .solution-answer { margin-top: 12px; font-weight: 950; color: #111827; }
+    .solution-answer > .answer-math { display: inline-block; background: #ecfdf5; color: #065f46; border: 1px solid #bbf7d0; border-radius: 999px; padding: 3px 10px; margin-left: 4px; vertical-align: middle; }
+
+    .result-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin: 18px 0 24px; }
+    .stat { background: #f9fafb; border: 1px solid var(--border); border-radius: 18px; padding: 18px; }
+    .stat .num { font-size: 34px; font-weight: 950; letter-spacing: -0.05em; }
+    .stat .label { color: var(--muted); margin-top: 4px; font-weight: 850; }
+    .wrong-list { display: grid; gap: 14px; }
+    .wrong-item { border: 1px solid var(--border); border-radius: 18px; background: white; padding: 16px; }
+    .wrong-item .expr { font-size: 22px; font-weight: 950; margin-bottom: 8px; overflow-wrap: anywhere; }
+    .wrong-item p { margin: 6px 0; color: var(--muted); line-height: 1.6; }
+    .tag-good { color: var(--good); font-weight: 950; }
+    .tag-bad { color: var(--bad); font-weight: 950; }
+
+    @media (max-width: 760px) {
+      .mc-site-shell { border-radius: 22px; align-items: flex-start; flex-direction: column; }
+      .mc-links { justify-content: flex-start; }
+      .setup-grid, .options, .result-grid { grid-template-columns: 1fr; }
+      .card { padding: 18px; }
+      .container { width: min(100% - 22px, 1040px); padding-top: 26px; }
+      .chain-line { grid-template-columns: 1fr; gap: 2px; white-space: normal; }
+      .chain-note { padding-left: 12px; }
+    }
+  
+    .operator-note {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: #475569;
+      font-weight: 900;
+      margin-top: -8px;
+      margin-bottom: 14px;
+    }
+    .small-code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-weight: 950;
+      color: #1d4ed8;
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      border-radius: 999px;
+      padding: 2px 8px;
+    }
+
+  
+
+  /* MathComplete Lab shared tool question layout override */
+  .question-main,
+  .expression,
+  .equation {
+    max-width: 100%;
+    font-size: clamp(28px, 5.4vw, 54px) !important;
+    line-height: 1.2 !important;
+    font-weight: 500 !important;
+    letter-spacing: -0.045em !important;
+    margin: 10px 0 24px !important;
+    text-align: left !important;
+    overflow-wrap: anywhere !important;
+    word-break: normal !important;
+    text-wrap: pretty;
+    white-space: normal;
+    justify-content: flex-start !important;
+    align-items: flex-start !important;
+  }
+
+  .question-main.math-render,
+  .expression.math-render,
+  .equation.math-render {
+    display: block !important;
+    width: 100% !important;
+    text-align: left !important;
+  }
+
+  .question-main .katex,
+  .expression .katex,
+  .equation .katex {
+    white-space: normal !important;
+    text-align: left !important;
+    font-weight: 400 !important;
+  }
+
+  .question-main .katex *,
+  .expression .katex *,
+  .equation .katex * {
+    font-weight: 400 !important;
+  }
+
+  .question-line,
+  .question-text {
+    max-width: 100%;
+    text-align: left !important;
+    overflow-wrap: anywhere;
+    word-break: normal;
+    text-wrap: pretty;
+  }
+</style>
+</head>
+<body>
+  <nav class="mc-site-shell">
+    <a class="mc-brand" href="../index.html"><span class="mc-brand-mark">∑</span><span>MathComplete Lab</span></a>
+    <div class="mc-links">
+      <a class="mc-link" href="../practice.html" data-i18n="navPractice">Practice Library</a>
+      <a class="mc-link primary" href="../index.html" data-i18n="navHome">Home</a>
+    </div>
+  </nav>
+
+  <main class="container">
+    <header>
+      <div class="eyebrow"><span class="eyebrow-dot"></span><span id="toolBadge"></span></div>
+      <h1 id="pageTitle"></h1>
+      <p id="pageSubtitle" class="subtitle"></p>
+    </header>
+
+    <section id="setupCard" class="card">
+      <h2 id="setupTitle"></h2>
+      <div class="setup-grid">
+        <div><label id="difficultyLabel" for="difficulty"></label><select id="difficulty"></select></div>
+        <div><label id="questionCountLabel" for="questionCount"></label><input id="questionCount" type="number" min="1" max="100" value="10" /></div>
+        <div><label id="optionCountLabel" for="optionCount"></label><select id="optionCount"></select></div>
+        <div><label class="checkbox-label" for="timedMode"><input id="timedMode" type="checkbox" /><span id="timedModeText"></span></label><p id="timedModeHint" class="mini-hint"></p></div>
+        <div><label id="timerLevelLabel" for="timerLevel"></label><select id="timerLevel"></select></div>
+      </div>
+      <div class="actions"><button id="startBtn"></button><button id="sampleBtn" class="ghost"></button></div>
+      <div id="sampleBox" class="explain-box hidden"></div>
+      <div id="noteBox" class="explain-box"></div>
+    </section>
+
+    <section id="quizCard" class="card hidden">
+      <div class="topbar">
+        <div><span class="pill" id="progressText"></span><span class="pill" id="difficultyText"></span><span class="pill timer-pill hidden" id="timerDisplay"></span></div>
+        <button id="quitBtn" class="ghost"></button>
+      </div>
+      <div class="progress-wrap"><div id="progressBar" class="progress"></div></div>
+      <div id="questionTitle" class="question-title"></div>
+      <div id="questionExtra" class="question-extra"></div>
+      <div id="questionMain" class="question-main"></div>
+      <div id="options" class="options"></div>
+      <div id="feedback" class="feedback"></div>
+      <div id="solutionBox" class="solution-box hidden"></div>
+      <div class="actions"><button id="nextBtn" disabled></button></div>
+    </section>
+
+    <section id="resultCard" class="card hidden">
+      <h2 id="resultTitle"></h2>
+      <div class="result-grid">
+        <div class="stat"><div id="scoreNum" class="num">0/0</div><div id="scoreLabel" class="label"></div></div>
+        <div class="stat"><div id="accuracyNum" class="num">0%</div><div id="accuracyLabel" class="label"></div></div>
+        <div class="stat"><div id="wrongNum" class="num">0</div><div id="wrongLabel" class="label"></div></div>
+      </div>
+      <h3 id="wrongReviewTitle"></h3>
+      <div id="wrongList" class="wrong-list"></div>
+      <div class="actions" style="margin-top:22px;"><button id="restartBtn"></button><button id="reviewWrongBtn" class="secondary"></button></div>
+    </section>
+  </main>
+
+
+  <script>
+    const TOOL_CONFIG = {
+      gameId: "vector-operations",
+      course: "linear-algebra",
+      title: { en: "Vector Operations Practice", zh: "向量运算专项练习" },
+      subtitle: {
+        en: "Practice vector addition, subtraction, scalar multiplication, and linear combinations in 2D and 3D.",
+        zh: "练习二维和三维向量的加法、减法、标量乘法与线性组合。"
+      }
+    };
+
+    const T = {
+      en: {
+        htmlLang: "en",
+        navPractice: "Practice Library",
+        navHome: "Home",
+        toolBadge: "Linear Algebra",
+        title: TOOL_CONFIG.title.en,
+        subtitle: TOOL_CONFIG.subtitle.en,
+        note: "This tool focuses on component-wise vector operations. Dot products, cross products, projections, and span are intentionally left for later tools.",
+        setupTitle: "Start Practice",
+        difficultyLabel: "Difficulty",
+        questionCountLabel: "Number of Questions",
+        optionCountLabel: "Number of Choices",
+        timedModeText: "Enable Timed Mode",
+        timedModeHint: "Off means no countdown. On means each question has its own timer.",
+        timerLevelLabel: "Timer Level",
+        startBtn: "Start",
+        sampleBtn: "Generate Sample Question",
+        quitBtn: "End This Round",
+        nextBtn: "Next Question",
+        resultBtn: "See Results",
+        questionTitle: "Choose the correct answer.",
+        promptVector: "Choose the vector that results from the operation.",
+        promptScalar: "Choose the scalar value that satisfies the statement.",
+        promptStatement: "Choose the correct statement.",
+        promptDefined: "Decide whether the operation is defined.",
+        promptIdentity: "Choose the identity that is always true.",
+        mainChooseIdentity: "Choose the vector identity that is always true.",
+        mainChooseIdentityForVectors: "Choose the identity that is always true for vectors u and v.",
+        promptMissing: "Find the missing vector.",
+        promptPoint: "Use the two points to build the vector, then choose the resulting vector.",
+        correctFeedback: "Correct!",
+        solutionTitle: "Correct Solution",
+        solutionFinal: "Answer:",
+        resultTitle: "Practice Results",
+        scoreLabel: "Correct Answers",
+        accuracyLabel: "Accuracy",
+        wrongLabel: "Wrong Answers",
+        wrongReviewTitle: "Wrong Answer Review",
+        restartBtn: "Practice Again",
+        reviewWrongBtn: "Practice Similar Wrong Types",
+        noWrong: "No wrong answers this round.",
+        noWrongTip: "Great job. Try a harder level next.",
+        yourAnswer: "Your answer",
+        correctAnswer: "Correct answer",
+        timeUpAnswer: "No answer: time is up",
+        sampleTitle: "Sample Question",
+        sampleQuestion: "Question",
+        sampleAnswer: "Correct answer",
+        sampleOptions: "Sample choices",
+        incorrectPrefix: "Incorrect. The correct answer is",
+        timeUpPrefix: "Time is up. The correct answer is",
+        progress: (a, b) => `Question ${a} / ${b}`,
+        optionCount: n => `${n} choices`,
+        timerDisplay: s => `Time left: ${formatTime(s)}`,
+        difficulties: { easy: "Easy", medium: "Medium", hard: "Hard", expert: "Expert", mixed: "Mixed" },
+        difficultyOptions: {
+          easy: "Easy: 2D addition, subtraction, and scalar multiplication",
+          medium: "Medium: 3D vectors, simple combinations, and missing vectors",
+          hard: "Hard: negative scalars, vector equations, dimensions, and point-built vectors",
+          expert: "Expert: complex linear combinations, parameters, identities, and point-vector problems",
+          mixed: "Mixed: balanced practice from all difficulty levels"
+        },
+        timerOptions: {
+          timer_easy: "Easy: 2 minutes per question",
+          timer_medium: "Medium: 1 minute per question",
+          timer_hard: "Hard: 30 seconds per question",
+          timer_expert: "Expert: 15 seconds per question"
+        },
+        notes: {
+          componentAdd: "add corresponding components",
+          componentSub: "subtract corresponding components",
+          scalarMul: "multiply every component by the scalar",
+          combine: "combine like vector components",
+          missing: "isolate the missing vector",
+          equation: "solve the vector equation component-wise",
+          point: "terminal point minus initial point",
+          defined: "vectors must have the same dimension",
+          identity: "use vector operation properties",
+          parameter: "the same scalar must work for every component",
+          final: "final result"
+        },
+        textOptions: {
+          vector: "vector",
+          scalar: "scalar",
+          matrix: "matrix",
+          undefined: "undefined",
+          definedSameDim: "Defined: the dimensions match",
+          undefinedDim: "Undefined: dimensions do not match",
+          undefinedScalar: "Undefined: a scalar is missing",
+          definedScalar: "Defined: the result is a scalar",
+          noSolution: "no solution",
+          cannotDetermine: "cannot be determined",
+          true: "True",
+          false: "False"
+        }
+      },
+      zh: {
+        htmlLang: "zh-CN",
+        navPractice: "练习库",
+        navHome: "主页",
+        toolBadge: "线性代数",
+        title: TOOL_CONFIG.title.zh,
+        subtitle: TOOL_CONFIG.subtitle.zh,
+        note: "这个工具专注训练按分量进行的向量运算。点积、叉积、投影和 span 会留给后续更高阶工具。",
+        setupTitle: "开始练习",
+        difficultyLabel: "难度",
+        questionCountLabel: "题目数量",
+        optionCountLabel: "选项数量",
+        timedModeText: "开启计时模式",
+        timedModeHint: "关闭则不倒计时。开启后每题都有单独倒计时。",
+        timerLevelLabel: "计时等级",
+        startBtn: "开始",
+        sampleBtn: "生成示例题",
+        quitBtn: "结束本轮",
+        nextBtn: "下一题",
+        resultBtn: "查看结果",
+        questionTitle: "请阅读题干，并选择正确答案。",
+        promptVector: "\u8bf7\u9009\u62e9\u8fd0\u7b97\u540e\u7684\u7ed3\u679c\u5411\u91cf\u3002",
+        promptScalar: "\u8bf7\u9009\u62e9\u6ee1\u8db3\u6761\u4ef6\u7684\u6807\u91cf\u503c\u3002",
+        promptStatement: "选择正确说法。",
+        promptDefined: "判断这个运算是否有定义。",
+        promptIdentity: "选择恒成立的向量恒等式。",
+        mainChooseIdentity: "选择一个恒成立的向量恒等式。",
+        mainChooseIdentityForVectors: "选择一个对向量 u 和 v 恒成立的恒等式。",
+        promptMissing: "求缺失的向量。",
+        promptPoint: "请先用两个点构造向量，然后选择计算后的结果。",
+        correctFeedback: "正确！",
+        solutionTitle: "正确解法",
+        solutionFinal: "答案：",
+        resultTitle: "练习结果",
+        scoreLabel: "正确题数",
+        accuracyLabel: "正确率",
+        wrongLabel: "错题数",
+        wrongReviewTitle: "错题回顾",
+        restartBtn: "再练一轮",
+        reviewWrongBtn: "练习相似错题",
+        noWrong: "本轮没有错题。",
+        noWrongTip: "非常好，可以尝试更高难度。",
+        yourAnswer: "你的答案",
+        correctAnswer: "正确答案",
+        timeUpAnswer: "未作答：时间到",
+        sampleTitle: "示例题",
+        sampleQuestion: "题目",
+        sampleAnswer: "正确答案",
+        sampleOptions: "示例选项",
+        incorrectPrefix: "不正确。正确答案是",
+        timeUpPrefix: "时间到。正确答案是",
+        progress: (a, b) => `第 ${a} / ${b} 题`,
+        optionCount: n => `${n} 个选项`,
+        timerDisplay: s => `剩余时间：${formatTime(s)}`,
+        difficulties: { easy: "简单", medium: "中等", hard: "困难", expert: "专家", mixed: "混合" },
+        difficultyOptions: {
+          easy: "简单：二维向量加减和标量乘法",
+          medium: "中等：三维向量、简单线性组合和缺失向量",
+          hard: "困难：负标量、向量方程、维度判断和点构造向量",
+          expert: "专家：复杂线性组合、参数、恒等式和点向量综合",
+          mixed: "混合：从所有难度均衡出题"
+        },
+        timerOptions: {
+          timer_easy: "简单：每题 2 分钟",
+          timer_medium: "中等：每题 1 分钟",
+          timer_hard: "困难：每题 30 秒",
+          timer_expert: "专家：每题 15 秒"
+        },
+        notes: {
+          componentAdd: "对应分量相加",
+          componentSub: "对应分量相减",
+          scalarMul: "标量要乘到每一个分量",
+          combine: "按分量合并",
+          missing: "先隔离缺失向量",
+          equation: "按分量解向量方程",
+          point: "终点坐标减起点坐标",
+          defined: "向量维度必须一致",
+          identity: "使用向量运算性质",
+          parameter: "同一个 scalar 必须同时满足每个分量",
+          final: "最终结果"
+        },
+        textOptions: {
+          vector: "向量",
+          scalar: "scalar",
+          matrix: "矩阵",
+          undefined: "无定义",
+          definedSameDim: "有定义：维度一致",
+          undefinedDim: "无定义：维度不一致",
+          undefinedScalar: "无定义：缺少 scalar",
+          definedScalar: "有定义：结果是 scalar",
+          noSolution: "无解",
+          cannotDetermine: "无法判断",
+          true: "正确",
+          false: "错误"
+        }
+      }
+    };
+
+    const difficultyEl = document.getElementById("difficulty");
+    const questionCountEl = document.getElementById("questionCount");
+    const optionCountEl = document.getElementById("optionCount");
+    const timedModeEl = document.getElementById("timedMode");
+    const timerLevelEl = document.getElementById("timerLevel");
+    const startBtn = document.getElementById("startBtn");
+    const sampleBtn = document.getElementById("sampleBtn");
+    const setupCard = document.getElementById("setupCard");
+    const quizCard = document.getElementById("quizCard");
+    const resultCard = document.getElementById("resultCard");
+    const sampleBox = document.getElementById("sampleBox");
+    const noteBox = document.getElementById("noteBox");
+    const progressText = document.getElementById("progressText");
+    const difficultyText = document.getElementById("difficultyText");
+    const timerDisplay = document.getElementById("timerDisplay");
+    const progressBar = document.getElementById("progressBar");
+    const qTitle = document.getElementById("questionTitle");
+    const qMain = document.getElementById("questionMain");
+    const qExtra = document.getElementById("questionExtra");
+    const optionsEl = document.getElementById("options");
+    const feedbackEl = document.getElementById("feedback");
+    const solutionBox = document.getElementById("solutionBox");
+    const nextBtn = document.getElementById("nextBtn");
+    const quitBtn = document.getElementById("quitBtn");
+    const scoreNum = document.getElementById("scoreNum");
+    const accuracyNum = document.getElementById("accuracyNum");
+    const wrongNum = document.getElementById("wrongNum");
+    const wrongList = document.getElementById("wrongList");
+    const restartBtn = document.getElementById("restartBtn");
+    const reviewWrongBtn = document.getElementById("reviewWrongBtn");
+
+    let lang = readGlobalLanguage();
+    let quiz = [];
+    let currentIndex = 0;
+    let correctCount = 0;
+    let wrongAnswers = [];
+    let answered = false;
+    let lastDifficulty = "medium";
+    let timerId = null;
+    let timeLeft = 0;
+
+    const REAL_DIFFICULTIES = ["easy", "medium", "hard", "expert"];
+    const TIMER_DURATIONS = { timer_easy: 120, timer_medium: 60, timer_hard: 30, timer_expert: 15 };
+
+    function readGlobalLanguage() { return localStorage.getItem("mathcomplete_lang") === "zh" ? "zh" : "en"; }
+    function tr() { return T[lang]; }
+    function randInt(a, b) { return Math.floor(Math.random() * (b - a + 1)) + a; }
+    function choose(arr) { return arr[randInt(0, arr.length - 1)]; }
+    function shuffle(arr) {
+      const copy = [...arr];
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = randInt(0, i);
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+    function formatTime(s) { s = Math.max(0, s); return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`; }
+    function escapeHtml(text) { return String(text).replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#039;"); }
+    function renderLatex(el, latex, displayMode = false) {
+      el.classList.add("math-render");
+      if (window.katex) katex.render(latex, el, { throwOnError: false, displayMode });
+      else el.textContent = latex;
+    }
+    function mathSpan(latex, cls = "") { return `<span${cls ? ` class="${cls}"` : ""} data-latex="${escapeHtml(latex)}"></span>`; }
+    function renderTaggedMath(root) { root.querySelectorAll("[data-latex]").forEach(el => renderLatex(el, el.getAttribute("data-latex") || "")); }
+    function textOption(code) { return { kind: "text", key: `text:${code}`, code }; }
+    function mathOption(key, latex) { return { kind: "math", key, latex }; }
+    function scalarOption(n) { return mathOption(`scalar:${n}`, String(n)); }
+    function noSolutionOption() { return textOption("noSolution"); }
+    function optKey(option) { return option.key; }
+    function optionText(option) {
+      if (option.kind === "text") return tr().textOptions[option.code] || option.code;
+      return option.latex;
+    }
+    function optionToHtml(option, cls = "answer-math") {
+      if (option.kind === "text") return `<span class="${cls}">${escapeHtml(optionText(option))}</span>`;
+      return mathSpan(option.latex, cls);
+    }
+    function renderOptionElement(el, option) {
+      el.innerHTML = "";
+      if (option.kind === "text") el.textContent = optionText(option);
+      else renderLatex(el, option.latex, false);
+    }
+    function isSameAnswer(a, b) { return optKey(a) === optKey(b); }
+    function vecKey(v) { return v.join(","); }
+    function vecLatex(v) { return `\\langle ${v.join(",")} \\rangle`; }
+    function vecOption(v) { return mathOption(`vec${v.length}:${vecKey(v)}`, vecLatex(v)); }
+    function addVec(a, b) { return a.map((x, i) => x + b[i]); }
+    function subVec(a, b) { return a.map((x, i) => x - b[i]); }
+    function mulVec(k, v) { return v.map(x => k * x); }
+    function addMany(vecs) { return vecs.reduce((acc, v) => addVec(acc, v), Array(vecs[0].length).fill(0)); }
+    function negVec(v) { return v.map(x => -x); }
+    function randNonzero(a, b) { let n = 0; while (n === 0) n = randInt(a, b); return n; }
+    function randVec(dim, min = -6, max = 6, nonzero = false) {
+      let v = Array.from({ length: dim }, () => randInt(min, max));
+      if (nonzero) while (v.every(x => x === 0)) v = Array.from({ length: dim }, () => randInt(min, max));
+      return v;
+    }
+    function pointLatex(p) { return `(${p.join(",")})`; }
+    function vectorFromPoints(A, B) { return B.map((x, i) => x - A[i]); }
+    function signedCoeff(k, variable, first = false) {
+      const abs = Math.abs(k);
+      const body = abs === 1 ? variable : `${abs}${variable}`;
+      if (first) return k < 0 ? `-${body}` : body;
+      return k < 0 ? `-${body}` : `+${body}`;
+    }
+    function coeffExpr(terms) {
+      return terms.map((t, i) => signedCoeff(t.k, t.name, i === 0)).join(" ").replace(/\+\-/g, "-");
+    }
+    function linearCombo(terms) {
+      const dim = terms[0].v.length;
+      let out = Array(dim).fill(0);
+      terms.forEach(t => { out = addVec(out, mulVec(t.k, t.v)); });
+      return out;
+    }
+
+    function vectorDistractors(correct, extras = []) {
+      const dim = correct.length;
+      const items = [];
+      const add = v => {
+        if (!Array.isArray(v) || v.length !== dim) return;
+        const option = vecOption(v);
+        if (option.key !== vecOption(correct).key && !items.some(x => x.key === option.key)) items.push(option);
+      };
+      extras.forEach(add);
+      add(correct.map((x, i) => i === 0 ? -x : x));
+      add(correct.map((x, i) => i === dim - 1 ? -x : x));
+      add(correct.map(x => x + 1));
+      add(correct.map(x => x - 1));
+      if (dim === 2) add([correct[1], correct[0]]);
+      if (dim === 3) add([correct[1], correct[0], correct[2]]);
+      while (items.length < 8) add(correct.map(x => x + randNonzero(-3, 3)));
+      return items;
+    }
+    function scalarDistractors(correct, extras = []) {
+      const items = [];
+      const add = n => {
+        const option = Number.isFinite(n) ? scalarOption(n) : noSolutionOption();
+        if (option.key !== scalarOption(correct).key && !items.some(x => x.key === option.key)) items.push(option);
+      };
+      extras.forEach(add);
+      [correct + 1, correct - 1, -correct, correct + 2, correct - 2, 0, 1, -1].forEach(add);
+      while (items.length < 8) add(correct + randNonzero(-5, 5));
+      return items;
+    }
+    function textDistractors(correct, pool) {
+      const used = new Set([correct.key]);
+      return pool.filter(x => {
+        if (used.has(x.key)) return false;
+        used.add(x.key);
+        return true;
+      });
+    }
+    function generateOptions(q, count) {
+      const map = new Map();
+      const add = opt => { if (opt && opt.key !== q.answer.key && !map.has(opt.key)) map.set(opt.key, opt); };
+      (q.distractors || []).forEach(add);
+      const fallbacks = fallbackOptions(q);
+      fallbacks.forEach(add);
+      return shuffle([q.answer, ...shuffle([...map.values()]).slice(0, count - 1)]);
+    }
+    function fallbackOptions(q) {
+      if (q.answerKind === "vector2" || q.answerKind === "vector3") return vectorDistractors(q.answerVector || [0, 0]);
+      if (q.answerKind === "scalar") return scalarDistractors(q.answerScalar || 0).concat([noSolutionOption()]);
+      if (q.answerKind === "defined") return [textOption("definedSameDim"), textOption("undefinedDim"), textOption("undefinedScalar"), textOption("definedScalar")];
+      if (q.answerKind === "type") return [textOption("vector"), textOption("scalar"), textOption("matrix"), textOption("undefined")];
+      if (q.answerKind === "statement" || q.answerKind === "identity") return q.statementPool || [];
+      return [];
+    }
+
+    function makeQuestion(config) {
+      const q = {
+        difficulty: config.difficulty,
+        type: config.type,
+        promptKey: config.promptKey,
+        main: config.main,
+        plain: config.main,
+        answer: config.answer,
+        answerKind: config.answerKind,
+        answerVector: config.answerVector,
+        answerScalar: config.answerScalar,
+        lines: config.lines || [],
+        distractors: config.distractors || [],
+        statementPool: config.statementPool || []
+      };
+      q.options = generateOptions(q, Number(optionCountEl.value || 4));
+      return q;
+    }
+    function line(latex, noteKey) { return { line: latex, note: tr().notes[noteKey] || noteKey || "" }; }
+
+    function qAdd2() {
+      const u = randVec(2), v = randVec(2), ans = addVec(u, v);
+      return makeQuestion({
+        difficulty: "easy", type: "vector-add-2d", promptKey: "promptVector", answerKind: "vector2", answerVector: ans, answer: vecOption(ans),
+        main: `\\mathbf{u}=${vecLatex(u)},\\quad \\mathbf{v}=${vecLatex(v)},\\quad \\mathbf{u}+\\mathbf{v}=?`,
+        lines: [line(`\\mathbf{u}+\\mathbf{v}=${vecLatex(u)}+${vecLatex(v)}`, "componentAdd"), line(`=${vecLatex(ans)}`, "final")],
+        distractors: vectorDistractors(ans, [subVec(u, v), addVec(v, u).map((x, i) => i === 0 ? x : u[i] - v[i]), [u[0] + v[0], u[1]]])
+      });
+    }
+    function qSub2() {
+      const u = randVec(2), v = randVec(2), ans = subVec(u, v);
+      return makeQuestion({
+        difficulty: "easy", type: "vector-sub-2d", promptKey: "promptVector", answerKind: "vector2", answerVector: ans, answer: vecOption(ans),
+        main: `\\mathbf{u}=${vecLatex(u)},\\quad \\mathbf{v}=${vecLatex(v)},\\quad \\mathbf{u}-\\mathbf{v}=?`,
+        lines: [line(`\\mathbf{u}-\\mathbf{v}=${vecLatex(u)}-${vecLatex(v)}`, "componentSub"), line(`=${vecLatex(ans)}`, "final")],
+        distractors: vectorDistractors(ans, [subVec(v, u), addVec(u, v), [u[0] - v[0], u[1] + v[1]]])
+      });
+    }
+    function qScalar2() {
+      const k = randNonzero(-5, 5), u = randVec(2), ans = mulVec(k, u);
+      return makeQuestion({
+        difficulty: "easy", type: "scalar-mul-2d", promptKey: "promptVector", answerKind: "vector2", answerVector: ans, answer: vecOption(ans),
+        main: `${k}${vecLatex(u)}=?`,
+        lines: [line(`${k}${vecLatex(u)}=${vecLatex(ans)}`, "scalarMul")],
+        distractors: vectorDistractors(ans, [[k * u[0], u[1]], [u[0], k * u[1]], [u[0] + k, u[1] + k], mulVec(-k, u)])
+      });
+    }
+    function qResultType() {
+      const u = randVec(2), v = randVec(2), k = randNonzero(2, 5);
+      const correct = textOption("vector");
+      const pool = [textOption("scalar"), textOption("matrix"), textOption("undefined")];
+      return makeQuestion({
+        difficulty: "easy", type: "result-type", promptKey: "promptStatement", answerKind: "type", answer: correct,
+        main: `\\mathbf{u}=${vecLatex(u)},\\quad \\mathbf{v}=${vecLatex(v)},\\quad ${k}\\mathbf{u}+\\mathbf{v}=?`,
+        lines: [line(`${k}\\mathbf{u}+\\mathbf{v}\\text{ is still a vector.}`, "combine")],
+        distractors: pool
+      });
+    }
+
+    function qAdd3() {
+      const u = randVec(3), v = randVec(3), ans = addVec(u, v);
+      return makeQuestion({ difficulty: "medium", type: "vector-add-3d", promptKey: "promptVector", answerKind: "vector3", answerVector: ans, answer: vecOption(ans), main: `\\mathbf{u}=${vecLatex(u)},\\quad \\mathbf{v}=${vecLatex(v)},\\quad \\mathbf{u}+\\mathbf{v}=?`, lines: [line(`${vecLatex(u)}+${vecLatex(v)}=${vecLatex(ans)}`, "componentAdd")], distractors: vectorDistractors(ans, [subVec(u, v), [u[0]+v[0], u[1], u[2]+v[2]], addVec(u, negVec(v))]) });
+    }
+    function qSub3() {
+      const u = randVec(3), v = randVec(3), ans = subVec(u, v);
+      return makeQuestion({ difficulty: "medium", type: "vector-sub-3d", promptKey: "promptVector", answerKind: "vector3", answerVector: ans, answer: vecOption(ans), main: `\\mathbf{u}=${vecLatex(u)},\\quad \\mathbf{v}=${vecLatex(v)},\\quad \\mathbf{u}-\\mathbf{v}=?`, lines: [line(`${vecLatex(u)}-${vecLatex(v)}=${vecLatex(ans)}`, "componentSub")], distractors: vectorDistractors(ans, [subVec(v, u), addVec(u, v), [u[0]-v[0], u[1]+v[1], u[2]-v[2]]]) });
+    }
+    function qSimpleCombo2() {
+      const u = randVec(2), v = randVec(2), a = randNonzero(2, 4), b = randNonzero(2, 4), ans = addVec(mulVec(a, u), mulVec(b, v));
+      return makeQuestion({ difficulty: "medium", type: "linear-combo-2d", promptKey: "promptVector", answerKind: "vector2", answerVector: ans, answer: vecOption(ans), main: `\\mathbf{u}=${vecLatex(u)},\\quad \\mathbf{v}=${vecLatex(v)},\\quad ${a}\\mathbf{u}+${b}\\mathbf{v}=?`, lines: [line(`${a}\\mathbf{u}=${vecLatex(mulVec(a,u))}`, "scalarMul"), line(`${b}\\mathbf{v}=${vecLatex(mulVec(b,v))}`, "scalarMul"), line(`${vecLatex(mulVec(a,u))}+${vecLatex(mulVec(b,v))}=${vecLatex(ans)}`, "componentAdd")], distractors: vectorDistractors(ans, [addVec(mulVec(a, u), v), addVec(u, mulVec(b, v)), mulVec(a + b, addVec(u, v))]) });
+    }
+    function qMissingVector() {
+      const u = randVec(2), x = randVec(2), w = addVec(u, x);
+      return makeQuestion({ difficulty: "medium", type: "missing-vector", promptKey: "promptMissing", answerKind: "vector2", answerVector: x, answer: vecOption(x), main: `\\mathbf{u}=${vecLatex(u)},\\quad \\mathbf{u}+\\mathbf{x}=${vecLatex(w)},\\quad \\mathbf{x}=?`, lines: [line(`\\mathbf{x}=${vecLatex(w)}-${vecLatex(u)}`, "missing"), line(`\\mathbf{x}=${vecLatex(x)}`, "final")], distractors: vectorDistractors(x, [addVec(w,u), subVec(u,w), negVec(x)]) });
+    }
+    function qDistributiveStatement() {
+      const pool = [
+        mathOption("id:dist-true", `2(\\mathbf{u}+\\mathbf{v})=2\\mathbf{u}+2\\mathbf{v}`),
+        mathOption("id:dist-miss", `2(\\mathbf{u}+\\mathbf{v})=2\\mathbf{u}+\\mathbf{v}`),
+        mathOption("id:subcomm", `\\mathbf{u}-\\mathbf{v}=\\mathbf{v}-\\mathbf{u}`),
+        mathOption("id:negwrong", `-(\\mathbf{u}-\\mathbf{v})=-\\mathbf{u}-\\mathbf{v}`)
+      ];
+      return makeQuestion({ difficulty: "easy", type: "distributive-statement", promptKey: "promptIdentity", answerKind: "identity", answer: pool[0], mainTextKey: "mainChooseIdentity", main: ``, lines: [line(`2(\\mathbf{u}+\\mathbf{v})=2\\mathbf{u}+2\\mathbf{v}`, "identity")], distractors: pool.slice(1), statementPool: pool });
+    }
+
+    function qNegativeCombo2() {
+      const u = randVec(2), v = randVec(2), a = -randInt(1, 4), b = randNonzero(2, 5), ans = addVec(mulVec(a, u), mulVec(b, v));
+      return makeQuestion({ difficulty: "hard", type: "negative-linear-combo", promptKey: "promptVector", answerKind: "vector2", answerVector: ans, answer: vecOption(ans), main: `\\mathbf{u}=${vecLatex(u)},\\quad \\mathbf{v}=${vecLatex(v)},\\quad ${a}\\mathbf{u}+${b}\\mathbf{v}=?`, lines: [line(`${a}\\mathbf{u}=${vecLatex(mulVec(a,u))}`, "scalarMul"), line(`${b}\\mathbf{v}=${vecLatex(mulVec(b,v))}`, "scalarMul"), line(`${vecLatex(mulVec(a,u))}+${vecLatex(mulVec(b,v))}=${vecLatex(ans)}`, "combine")], distractors: vectorDistractors(ans, [addVec(mulVec(-a, u), mulVec(b, v)), addVec(mulVec(a, u), v), subVec(mulVec(a,u), mulVec(b,v))]) });
+    }
+    function qCombo3() {
+      const u = randVec(3), v = randVec(3), w = randVec(3), a = randNonzero(-3, 3), b = randNonzero(-3, 3), c = randNonzero(-3, 3), ans = linearCombo([{k:a,v:u},{k:b,v:v},{k:c,v:w}]);
+      return makeQuestion({ difficulty: "hard", type: "linear-combo-3d", promptKey: "promptVector", answerKind: "vector3", answerVector: ans, answer: vecOption(ans), main: `\\mathbf{u}=${vecLatex(u)},\\quad \\mathbf{v}=${vecLatex(v)},\\quad \\mathbf{w}=${vecLatex(w)},\\quad ${coeffExpr([{k:a,name:"\\mathbf{u}"},{k:b,name:"\\mathbf{v}"},{k:c,name:"\\mathbf{w}"}])}=?`, lines: [line(`${a}\\mathbf{u}=${vecLatex(mulVec(a,u))}`, "scalarMul"), line(`${b}\\mathbf{v}=${vecLatex(mulVec(b,v))}`, "scalarMul"), line(`${c}\\mathbf{w}=${vecLatex(mulVec(c,w))}`, "scalarMul"), line(`${vecLatex(ans)}`, "final")], distractors: vectorDistractors(ans, [linearCombo([{k:-a,v:u},{k:b,v:v},{k:c,v:w}]), addMany([u,v,w]), linearCombo([{k:a,v:u},{k:b,v:v}])]) });
+    }
+    function qSolveVectorEquation() {
+      const x = randVec(2), u = randVec(2), v = subVec(mulVec(2, x), u);
+      return makeQuestion({ difficulty: "hard", type: "vector-equation", promptKey: "promptVector", answerKind: "vector2", answerVector: x, answer: vecOption(x), main: `2\\mathbf{x}-\\mathbf{u}=\\mathbf{v},\\quad \\mathbf{u}=${vecLatex(u)},\\quad \\mathbf{v}=${vecLatex(v)},\\quad \\mathbf{x}=?`, lines: [line(`2\\mathbf{x}=\\mathbf{v}+\\mathbf{u}`, "equation"), line(`2\\mathbf{x}=${vecLatex(v)}+${vecLatex(u)}=${vecLatex(addVec(v,u))}`, "componentAdd"), line(`\\mathbf{x}=\\frac12${vecLatex(addVec(v,u))}=${vecLatex(x)}`, "scalarMul")], distractors: vectorDistractors(x, [addVec(v,u), subVec(v,u), mulVec(2,x), negVec(x)]) });
+    }
+    function qDefinedDimensions() {
+      const dimA = choose([2,3]); const dimB = dimA === 2 ? 3 : 2;
+      const u = randVec(dimA), v = randVec(dimB);
+      const correct = textOption("undefinedDim");
+      const pool = [textOption("definedSameDim"), textOption("undefinedScalar"), textOption("definedScalar")];
+      return makeQuestion({ difficulty: "hard", type: "defined-dimensions", promptKey: "promptDefined", answerKind: "defined", answer: correct, main: `${vecLatex(u)}+${vecLatex(v)}`, lines: [line(`\\text{The dimensions are }${dimA}\\text{ and }${dimB}\\text{, so they do not match.}`, "defined")], distractors: pool });
+    }
+    function qPointVector() {
+      const A = randVec(2), B = randVec(2), ans = vectorFromPoints(A, B);
+      return makeQuestion({ difficulty: "hard", type: "point-vector", promptKey: "promptPoint", answerKind: "vector2", answerVector: ans, answer: vecOption(ans), main: `A=${pointLatex(A)},\\quad B=${pointLatex(B)},\\quad \\overrightarrow{AB}=?`, lines: [line(`\\overrightarrow{AB}=B-A`, "point"), line(`=${vecLatex(B)}-${vecLatex(A)}=${vecLatex(ans)}`, "componentSub")], distractors: vectorDistractors(ans, [vectorFromPoints(B,A), addVec(A,B), [B[0]-A[0], A[1]-B[1]]]) });
+    }
+
+    function qComplexCombo() {
+      const u = randVec(2), v = randVec(2), w = randVec(2);
+      const ans = addVec(mulVec(3, subVec(u, mulVec(2, v))), mulVec(-4, addVec(w, u)));
+      const compact = linearCombo([{k:-1,v:u},{k:-6,v:v},{k:-4,v:w}]);
+      return makeQuestion({ difficulty: "expert", type: "complex-combo", promptKey: "promptVector", answerKind: "vector2", answerVector: ans, answer: vecOption(ans), main: `\\mathbf{u}=${vecLatex(u)},\\quad \\mathbf{v}=${vecLatex(v)},\\quad \\mathbf{w}=${vecLatex(w)},\\quad 3(\\mathbf{u}-2\\mathbf{v})-4(\\mathbf{w}+\\mathbf{u})=?`, lines: [line(`3(\\mathbf{u}-2\\mathbf{v})-4(\\mathbf{w}+\\mathbf{u})=-\\mathbf{u}-6\\mathbf{v}-4\\mathbf{w}`, "combine"), line(`=${vecLatex(compact)}`, "final")], distractors: vectorDistractors(ans, [linearCombo([{k:3,v:u},{k:-6,v:v},{k:-4,v:w},{k:-4,v:u}]), linearCombo([{k:3,v:u},{k:-2,v:v},{k:-4,v:w},{k:-4,v:u}]), negVec(ans)]) });
+    }
+    function qExpressionEqualsTarget() {
+      const u = randVec(2), v = randVec(2), a = randNonzero(-3, 3), b = randNonzero(-3, 3);
+      const target = addVec(mulVec(a,u), mulVec(b,v));
+      const correct = mathOption("expr:correct", `${coeffExpr([{k:a,name:"\\mathbf{u}"},{k:b,name:"\\mathbf{v}"}])}`);
+      const pool = [correct, mathOption("expr:flip", `${coeffExpr([{k:b,name:"\\mathbf{u}"},{k:a,name:"\\mathbf{v}"}])}`), mathOption("expr:sum", `${a+b}\\mathbf{u}+\\mathbf{v}`), mathOption("expr:sub", `${coeffExpr([{k:a,name:"\\mathbf{u}"},{k:-b,name:"\\mathbf{v}"}])}`)];
+      return makeQuestion({ difficulty: "expert", type: "expression-target", promptKey: "promptStatement", answerKind: "statement", answer: correct, main: `\\mathbf{u}=${vecLatex(u)},\\quad \\mathbf{v}=${vecLatex(v)},\\quad ${vecLatex(target)}=?`, lines: [line(`${coeffExpr([{k:a,name:"\\mathbf{u}"},{k:b,name:"\\mathbf{v}"}])}=${vecLatex(target)}`, "combine")], distractors: pool.slice(1), statementPool: pool });
+    }
+    function qParameterScalar() {
+      const base = randVec(2, -5, 5, true);
+      const k = randNonzero(-5, 5);
+      const consistent = Math.random() < 0.75;
+      const nonzeroIndex = base.findIndex(x => x !== 0);
+      const target = consistent ? mulVec(k, base) : [k * base[0], k * base[1] + randNonzero(1, 3)];
+      const correct = consistent ? scalarOption(k) : noSolutionOption();
+      const distractors = consistent ? scalarDistractors(k, [k + 1, -k]) : [scalarOption(k), scalarOption(k + 1), scalarOption(-k), textOption("cannotDetermine")];
+      const lines = consistent
+        ? [line(`k=${target[nonzeroIndex]}\\div ${base[nonzeroIndex]}`, "parameter"), line(`k=${k}`, "final")]
+        : [line(`\\text{The component ratios do not match.}`, "parameter"), line(`\\text{So there is no solution.}`, "final")];
+      return makeQuestion({ difficulty: "expert", type: "parameter-scalar", promptKey: consistent ? "promptScalar" : "promptStatement", answerKind: consistent ? "scalar" : "statement", answerScalar: k, answer: correct, main: `k${vecLatex(base)}=${vecLatex(target)},\\quad k=?`, lines, distractors });
+    }
+    function qAdvancedVectorEquation3() {
+      const x = randVec(3), u = randVec(3), v = randVec(3);
+      const w = addVec(addVec(mulVec(2, x), u), mulVec(-3, v));
+      const rhs = addVec(subVec(w, u), mulVec(3, v));
+      return makeQuestion({
+        difficulty: "expert",
+        type: "advanced-vector-equation-3d",
+        promptKey: "promptVector",
+        answerKind: "vector3",
+        answerVector: x,
+        answer: vecOption(x),
+        main: `2\\mathbf{x}+\\mathbf{u}-3\\mathbf{v}=\\mathbf{w},\\quad \\mathbf{u}=${vecLatex(u)},\\quad \\mathbf{v}=${vecLatex(v)},\\quad \\mathbf{w}=${vecLatex(w)},\\quad \\mathbf{x}=?`,
+        lines: [
+          line(`2\\mathbf{x}=\\mathbf{w}-\\mathbf{u}+3\\mathbf{v}`, "equation"),
+          line(`2\\mathbf{x}=${vecLatex(w)}-${vecLatex(u)}+${vecLatex(mulVec(3,v))}=${vecLatex(rhs)}`, "combine"),
+          line(`\\mathbf{x}=\\frac12${vecLatex(rhs)}=${vecLatex(x)}`, "scalarMul")
+        ],
+        distractors: vectorDistractors(x, [rhs, subVec(w, u), addVec(w, v), negVec(x)])
+      });
+    }
+
+    function qIdentityExpert() {
+      const pool = [
+        mathOption("id:comm-add", `\\mathbf{u}+\\mathbf{v}=\\mathbf{v}+\\mathbf{u}`),
+        mathOption("id:comm-sub", `\\mathbf{u}-\\mathbf{v}=\\mathbf{v}-\\mathbf{u}`),
+        mathOption("id:dist-wrong", `2(\\mathbf{u}+\\mathbf{v})=2\\mathbf{u}+\\mathbf{v}`),
+        mathOption("id:neg-wrong", `-(\\mathbf{u}-\\mathbf{v})=-\\mathbf{u}-\\mathbf{v}`),
+        mathOption("id:scalar-wrong", `3\\mathbf{u}+2\\mathbf{u}=6\\mathbf{u}`)
+      ];
+      return makeQuestion({ difficulty: "easy", type: "identity", promptKey: "promptIdentity", answerKind: "identity", answer: pool[0], mainTextKey: "mainChooseIdentityForVectors", main: ``, lines: [line(`\\mathbf{u}+\\mathbf{v}=\\mathbf{v}+\\mathbf{u}`, "identity")], distractors: pool.slice(1), statementPool: pool });
+    }
+    function qPointCombo() {
+      const A = randVec(2), B = randVec(2), C = randVec(2);
+      const AB = vectorFromPoints(A,B), AC = vectorFromPoints(A,C), ans = subVec(mulVec(2, AB), mulVec(3, AC));
+      return makeQuestion({ difficulty: "expert", type: "point-combo", promptKey: "promptPoint", answerKind: "vector2", answerVector: ans, answer: vecOption(ans), main: `A=${pointLatex(A)},\\quad B=${pointLatex(B)},\\quad C=${pointLatex(C)},\\quad 2\\overrightarrow{AB}-3\\overrightarrow{AC}=?`, lines: [line(`\\overrightarrow{AB}=${vecLatex(AB)},\\quad \\overrightarrow{AC}=${vecLatex(AC)}`, "point"), line(`2\\overrightarrow{AB}=${vecLatex(mulVec(2,AB))},\\quad 3\\overrightarrow{AC}=${vecLatex(mulVec(3,AC))}`, "scalarMul"), line(`${vecLatex(mulVec(2,AB))}-${vecLatex(mulVec(3,AC))}=${vecLatex(ans)}`, "componentSub")], distractors: vectorDistractors(ans, [addVec(mulVec(2,AB), mulVec(3,AC)), subVec(mulVec(3,AC), mulVec(2,AB)), addVec(AB, AC)]) });
+    }
+
+    const BUILDERS = {
+      easy: [qAdd2, qSub2, qScalar2, qResultType, qDistributiveStatement, qIdentityExpert],
+      medium: [qAdd3, qSub3, qSimpleCombo2, qMissingVector],
+      hard: [qNegativeCombo2, qCombo3, qSolveVectorEquation, qDefinedDimensions, qPointVector],
+      expert: [qComplexCombo, qExpressionEqualsTarget, qParameterScalar, qAdvancedVectorEquation3, qPointCombo]
+    };
+
+    function buildQuestion(difficulty, forcedType = null) {
+      let builders = BUILDERS[difficulty] || BUILDERS.medium;
+      if (forcedType) builders = builders.filter(fn => {
+        const temp = fn();
+        return temp.type === forcedType;
+      });
+      if (!builders.length) builders = BUILDERS[difficulty] || BUILDERS.medium;
+      for (let i = 0; i < 50; i++) {
+        const q = choose(builders)();
+        if (forcedType && q.type !== forcedType) continue;
+        q.options = generateOptions(q, Number(optionCountEl.value || 4));
+        return q;
+      }
+      return BUILDERS.easy[0]();
+    }
+    function buildDifficultyPlan(count, difficulty) {
+      if (difficulty !== "mixed") return Array(count).fill(difficulty);
+      const plan = [];
+      while (plan.length < count) plan.push(...shuffle(REAL_DIFFICULTIES));
+      return plan.slice(0, count);
+    }
+    function pickDifficultyForSample(difficulty) { return difficulty === "mixed" ? choose(REAL_DIFFICULTIES) : difficulty; }
+    function clearTimer() { if (timerId !== null) { clearInterval(timerId); timerId = null; } }
+    function updateTimerControls() { timerLevelEl.disabled = !timedModeEl.checked; }
+    function updateTimerDisplay() {
+      if (!timedModeEl.checked || quizCard.classList.contains("hidden")) { timerDisplay.classList.add("hidden"); return; }
+      timerDisplay.classList.remove("hidden");
+      timerDisplay.textContent = tr().timerDisplay(timeLeft);
+      timerDisplay.classList.toggle("timer-danger", timeLeft <= 10);
+    }
+    function startTimerForQuestion() {
+      clearTimer();
+      if (!timedModeEl.checked) { timerDisplay.classList.add("hidden"); return; }
+      timeLeft = TIMER_DURATIONS[timerLevelEl.value] || 60;
+      updateTimerDisplay();
+      timerId = setInterval(() => { timeLeft -= 1; updateTimerDisplay(); if (timeLeft <= 0) handleTimeUp(); }, 1000);
+    }
+    function applyLanguage() {
+      lang = readGlobalLanguage();
+      const t = tr();
+      document.documentElement.lang = t.htmlLang;
+      document.title = t.title;
+      document.querySelectorAll("[data-i18n]").forEach(el => { const key = el.getAttribute("data-i18n"); if (t[key]) el.textContent = t[key]; });
+      document.getElementById("toolBadge").textContent = t.toolBadge;
+      document.getElementById("pageTitle").textContent = t.title;
+      document.getElementById("pageSubtitle").textContent = t.subtitle;
+      document.getElementById("setupTitle").textContent = t.setupTitle;
+      document.getElementById("difficultyLabel").textContent = t.difficultyLabel;
+      document.getElementById("questionCountLabel").textContent = t.questionCountLabel;
+      document.getElementById("optionCountLabel").textContent = t.optionCountLabel;
+      document.getElementById("timedModeText").textContent = t.timedModeText;
+      document.getElementById("timedModeHint").textContent = t.timedModeHint;
+      document.getElementById("timerLevelLabel").textContent = t.timerLevelLabel;
+      startBtn.textContent = t.startBtn;
+      sampleBtn.textContent = t.sampleBtn;
+      quitBtn.textContent = t.quitBtn;
+      nextBtn.textContent = answered && currentIndex === quiz.length - 1 ? t.resultBtn : t.nextBtn;
+      document.getElementById("resultTitle").textContent = t.resultTitle;
+      document.getElementById("scoreLabel").textContent = t.scoreLabel;
+      document.getElementById("accuracyLabel").textContent = t.accuracyLabel;
+      document.getElementById("wrongLabel").textContent = t.wrongLabel;
+      document.getElementById("wrongReviewTitle").textContent = t.wrongReviewTitle;
+      restartBtn.textContent = t.restartBtn;
+      reviewWrongBtn.textContent = t.reviewWrongBtn;
+      noteBox.textContent = t.note;
+      const selectedDifficulty = difficultyEl.value || "medium";
+      difficultyEl.innerHTML = ["easy", "medium", "hard", "expert", "mixed"].map(key => `<option value="${key}">${t.difficultyOptions[key]}</option>`).join("");
+      difficultyEl.value = selectedDifficulty;
+      const selectedOptionCount = optionCountEl.value || "4";
+      optionCountEl.innerHTML = [4, 5, 6].map(n => `<option value="${n}">${t.optionCount(n)}</option>`).join("");
+      optionCountEl.value = selectedOptionCount;
+      const selectedTimer = timerLevelEl.value || "timer_medium";
+      timerLevelEl.innerHTML = ["timer_easy", "timer_medium", "timer_hard", "timer_expert"].map(key => `<option value="${key}">${t.timerOptions[key]}</option>`).join("");
+      timerLevelEl.value = selectedTimer;
+      updateTimerControls();
+      if (!quizCard.classList.contains("hidden") && quiz.length) renderQuestion(false);
+      if (!resultCard.classList.contains("hidden")) renderResultBody();
+    }
+    function renderQuestion(resetTimer = true) {
+      const q = quiz[currentIndex];
+      answered = false;
+      qTitle.textContent = tr().questionTitle;
+      qExtra.textContent = tr()[q.promptKey] || tr().promptVector;
+      qMain.innerHTML = "";
+      qMain.classList.remove("math-render");
+      if (q.mainTextKey) {
+        qMain.textContent = tr()[q.mainTextKey] || q.mainTextKey;
+      } else {
+        renderLatex(qMain, q.main, false);
+      }
+      optionsEl.innerHTML = "";
+      feedbackEl.textContent = "";
+      feedbackEl.className = "feedback";
+      solutionBox.classList.add("hidden");
+      solutionBox.innerHTML = "";
+      q.options.forEach(option => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "option";
+        btn.dataset.answerKey = optKey(option);
+        renderOptionElement(btn, option);
+        btn.addEventListener("click", () => chooseOption(btn, option));
+        optionsEl.appendChild(btn);
+      });
+      progressText.textContent = tr().progress(currentIndex + 1, quiz.length);
+      difficultyText.textContent = tr().difficulties[q.difficulty];
+      progressBar.style.width = `${(currentIndex / quiz.length) * 100}%`;
+      nextBtn.textContent = currentIndex === quiz.length - 1 ? tr().resultBtn : tr().nextBtn;
+      nextBtn.disabled = true;
+      if (resetTimer) startTimerForQuestion(); else updateTimerDisplay();
+    }
+    function renderFeedback(isCorrect, correctOption, timeUp) {
+      feedbackEl.className = `feedback ${isCorrect ? "good" : "bad"}`;
+      if (isCorrect) feedbackEl.textContent = tr().correctFeedback;
+      else {
+        feedbackEl.innerHTML = `${timeUp ? tr().timeUpPrefix : tr().incorrectPrefix} ${optionToHtml(correctOption, "feedback-math")}`;
+        renderTaggedMath(feedbackEl);
+      }
+    }
+    function renderSolutionBox() {
+      const q = quiz[currentIndex];
+      if (!q) { solutionBox.classList.add("hidden"); solutionBox.innerHTML = ""; return; }
+      solutionBox.classList.remove("hidden");
+      solutionBox.innerHTML = `<h4>${tr().solutionTitle}</h4><div class="solution-chain">${q.lines.map(step => `<div class="chain-line">${mathSpan(step.line, "chain-math")}<span class="chain-note">${escapeHtml(step.note || "")}</span></div>`).join("")}</div><div class="solution-answer">${tr().solutionFinal} ${optionToHtml(q.answer, "answer-math")}</div>`;
+      renderTaggedMath(solutionBox);
+    }
+    function recordAttempt(q, correctDisplay, selectedDisplay, isCorrect, timeUp = false) {
+      void window.MCLProgress?.recordGameAttempt?.({ gameId: TOOL_CONFIG.gameId, question: { plain: q.plain, type: q.type, difficulty: q.difficulty }, course: TOOL_CONFIG.course, topic: q.type, correctAnswer: correctDisplay, selectedAnswer: selectedDisplay, isCorrect, timeUp });
+    }
+    function chooseOption(button, selected) {
+      if (answered) return;
+      answered = true; clearTimer();
+      const q = quiz[currentIndex];
+      const isCorrect = isSameAnswer(selected, q.answer);
+      [...optionsEl.querySelectorAll(".option")].forEach(btn => { btn.disabled = true; if (btn.dataset.answerKey === optKey(q.answer)) btn.classList.add("correct"); });
+      if (isCorrect) { correctCount += 1; renderFeedback(true, q.answer, false); }
+      else { button.classList.add("wrong"); renderFeedback(false, q.answer, false); wrongAnswers.push({ main: q.plain, answer: optionText(q.answer), selected: optionText(selected), type: q.type, difficulty: q.difficulty }); }
+      recordAttempt(q, optionText(q.answer), optionText(selected), isCorrect, false);
+      renderSolutionBox(); nextBtn.disabled = false; progressBar.style.width = `${((currentIndex + 1) / quiz.length) * 100}%`;
+    }
+    function handleTimeUp() {
+      if (answered) return;
+      clearTimer(); answered = true;
+      const q = quiz[currentIndex];
+      [...optionsEl.querySelectorAll(".option")].forEach(btn => { btn.disabled = true; if (btn.dataset.answerKey === optKey(q.answer)) btn.classList.add("correct"); });
+      renderFeedback(false, q.answer, true);
+      wrongAnswers.push({ main: q.plain, answer: optionText(q.answer), selected: null, timeUp: true, type: q.type, difficulty: q.difficulty });
+      recordAttempt(q, optionText(q.answer), "", false, true);
+      renderSolutionBox(); nextBtn.disabled = false; progressBar.style.width = `${((currentIndex + 1) / quiz.length) * 100}%`;
+    }
+    function nextQuestion() { if (!answered) return; if (currentIndex < quiz.length - 1) { currentIndex += 1; renderQuestion(true); } else showResult(); }
+    function showResult() { clearTimer(); quizCard.classList.add("hidden"); resultCard.classList.remove("hidden"); renderResultBody(); }
+    function renderResultBody() {
+      const total = quiz.length;
+      const accuracy = total ? Math.round((correctCount / total) * 100) : 0;
+      scoreNum.textContent = `${correctCount}/${total}`;
+      accuracyNum.textContent = `${accuracy}%`;
+      wrongNum.textContent = String(wrongAnswers.length);
+      if (!wrongAnswers.length) {
+        wrongList.innerHTML = `<div class="wrong-item"><div class="expr">${escapeHtml(tr().noWrong)}</div><p>${escapeHtml(tr().noWrongTip)}</p></div>`;
+        reviewWrongBtn.disabled = true;
+        return;
+      }
+      reviewWrongBtn.disabled = false;
+      wrongList.innerHTML = wrongAnswers.map(item => `<div class="wrong-item"><div class="expr">${mathSpan(item.main, "wrong-math")}</div><p><span class="tag-bad">${escapeHtml(tr().yourAnswer)}:</span> ${escapeHtml(item.timeUp ? tr().timeUpAnswer : item.selected)}</p><p><span class="tag-good">${escapeHtml(tr().correctAnswer)}:</span> ${escapeHtml(item.answer)}</p></div>`).join("");
+      renderTaggedMath(wrongList);
+    }
+    function startRound(forcedTypes = null) {
+      clearTimer();
+      lastDifficulty = difficultyEl.value || "medium";
+      const count = Math.max(1, Math.min(100, Number(questionCountEl.value || 10)));
+      questionCountEl.value = String(count);
+      const plan = buildDifficultyPlan(count, lastDifficulty);
+      quiz = plan.map((diff, i) => buildQuestion(diff, forcedTypes ? forcedTypes[i % forcedTypes.length] : null));
+      currentIndex = 0; correctCount = 0; wrongAnswers = [];
+      setupCard.classList.add("hidden"); resultCard.classList.add("hidden"); quizCard.classList.remove("hidden");
+      renderQuestion(true);
+    }
+    function showSample() {
+      const diff = pickDifficultyForSample(difficultyEl.value || "medium");
+      const q = buildQuestion(diff);
+      sampleBox.classList.remove("hidden");
+      sampleBox.innerHTML = `<strong>${tr().sampleTitle}</strong><br>${escapeHtml(tr().sampleQuestion)}: ${mathSpan(q.main, "sample-math")}<br>${escapeHtml(tr().sampleAnswer)}: ${optionToHtml(q.answer, "sample-math")}<br>${escapeHtml(tr().sampleOptions)}: ${q.options.map(opt => opt.kind === "math" ? mathSpan(opt.latex, "sample-math") : escapeHtml(optionText(opt))).join(" &nbsp; ")}`;
+      renderTaggedMath(sampleBox);
+    }
+    function reviewWrongTypes() {
+      if (!wrongAnswers.length) return;
+      const types = [...new Set(wrongAnswers.map(x => x.type))];
+      startRound(types);
+    }
+    function resetToSetup() { clearTimer(); quizCard.classList.add("hidden"); resultCard.classList.add("hidden"); setupCard.classList.remove("hidden"); progressBar.style.width = "0%"; }
+
+    startBtn.addEventListener("click", () => startRound());
+    sampleBtn.addEventListener("click", showSample);
+    nextBtn.addEventListener("click", nextQuestion);
+    quitBtn.addEventListener("click", showResult);
+    restartBtn.addEventListener("click", resetToSetup);
+    reviewWrongBtn.addEventListener("click", reviewWrongTypes);
+    timedModeEl.addEventListener("change", updateTimerControls);
+    window.addEventListener("storage", event => { if (event.key === "mathcomplete_lang") applyLanguage(); });
+    applyLanguage();
+  </script>
+  <script src="../assets/js/home-link.js"></script>
+</body>
+</html>

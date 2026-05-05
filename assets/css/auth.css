@@ -1,0 +1,37 @@
+.mcl-hidden,
+[hidden] {
+  display: none !important;
+}
+
+.auth-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 11px;
+  border-radius: 999px;
+  color: #475569;
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(148, 163, 184, 0.24);
+  font-weight: 850;
+}
+
+.auth-chip strong {
+  color: #0f172a;
+}
+
+.auth-logout-button {
+  color: #475569;
+  text-decoration: none;
+  font-weight: 850;
+  padding: 8px 11px;
+  border-radius: 999px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font: inherit;
+}
+
+.auth-logout-button:hover {
+  color: #1d4ed8;
+  background: #eff6ff;
+}

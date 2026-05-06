@@ -836,6 +836,15 @@
     <section id="setupCard" class="card">
       <h2 id="setupTitle"></h2>
       <div class="setup-grid">
+        <div class="mcl-tool-mode-field">
+          <label id="toolModeLabel" for="toolMode">Practice mode</label>
+          <select id="toolMode">
+            <option value="practice">Practice Mode</option>
+            <option value="learn" selected>Learn Mode</option>
+            <option value="exam">Exam Mode</option>
+          </select>
+          <p class="mcl-tool-mode-hint" id="mclToolModeHint">Every answer shows the solution, then you move on manually.</p>
+        </div>
         <div>
           <label id="difficultyLabel" for="difficulty"></label>
           <select id="difficulty"></select>
@@ -2325,6 +2334,7 @@ document.getElementById("setupTitle").textContent = t.setupTitle;
 
     applyLanguage();
   </script>
+  <script src="../assets/js/tool-modes.js"></script>
   <script src="../assets/js/home-link.js"></script>
 </body>
 </html>

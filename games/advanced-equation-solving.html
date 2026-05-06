@@ -493,6 +493,15 @@
       <div class="setup-grid">
         <div><label id="topicLabel" for="topic"></label><select id="topic"></select></div>
         <div><label id="difficultyLabel" for="difficulty"></label><select id="difficulty"></select></div>
+        <div class="mcl-tool-mode-field">
+          <label id="toolModeLabel" for="toolMode">Practice mode</label>
+          <select id="toolMode">
+            <option value="practice">Practice Mode</option>
+            <option value="learn" selected>Learn Mode</option>
+            <option value="exam">Exam Mode</option>
+          </select>
+          <p class="mcl-tool-mode-hint" id="mclToolModeHint">Every answer shows the solution, then you move on manually.</p>
+        </div>
         <div><label id="questionCountLabel" for="questionCount"></label><input id="questionCount" type="number" min="1" max="100" value="10" /></div>
         <div><label id="optionCountLabel" for="optionCount"></label><select id="optionCount"></select></div>
         <div><label class="checkbox-label" for="timedMode"><input id="timedMode" type="checkbox" /><span id="timedModeText"></span></label><p id="timedModeHint" class="mini-hint"></p></div>
@@ -601,7 +610,8 @@
     ["mixed", "Mixed"],
     ["easy", "Easy"],
     ["medium", "Medium"],
-    ["hard", "Hard"]
+    ["hard", "Hard"],
+    ["expert", "Expert"]
   ];
 
   const OPTION_COUNTS = [["4", "4 choices"], ["5", "5 choices"], ["6", "6 choices"]];
@@ -729,7 +739,7 @@
   }
 
   function buildQuestion(difficulty, topic) {
-    const resolvedDifficulty = difficulty === "mixed" ? choice(["easy", "medium", "hard"]) : difficulty;
+    const resolvedDifficulty = difficulty === "mixed" ? choice(["easy", "medium", "hard", "expert"]) : difficulty;
     const topicPool = topic === "mixed" ? TOPICS.slice(1).map(([value]) => value) : [topic];
     const shuffledTopics = shuffle([...topicPool]);
     for (const currentTopic of shuffledTopics) {
@@ -748,37 +758,44 @@
       polynomial: {
         easy: [genQuadratic],
         medium: [genQuadratic, genCubic],
-        hard: [genCubic, genQuadratic]
+        hard: [genCubic, genQuadratic],
+        expert: [genCubic, genQuadratic]
       },
       rational: {
         easy: [genRationalReciprocal],
         medium: [genRationalReciprocal, genRationalLinearFraction],
-        hard: [genRationalCancellation, genRationalTwoStep]
+        hard: [genRationalCancellation, genRationalTwoStep],
+        expert: [genRationalCancellation, genRationalTwoStep]
       },
       radical: {
         easy: [genRadicalSimple],
         medium: [genRadicalSquaring],
-        hard: [genRadicalSquaring]
+        hard: [genRadicalSquaring],
+        expert: [genRadicalSquaring]
       },
       exponential: {
         easy: [genExponentialSameBase],
         medium: [genExponentialSameBase, genExponentialSubstitution],
-        hard: [genExponentialSubstitution]
+        hard: [genExponentialSubstitution],
+        expert: [genExponentialSubstitution]
       },
       logarithmic: {
         easy: [genLogSimple],
         medium: [genLogSimple, genLogQuadratic],
-        hard: [genLogQuadratic]
+        hard: [genLogQuadratic],
+        expert: [genLogQuadratic]
       },
       absolute: {
         easy: [genAbsoluteSimple],
         medium: [genAbsoluteLinear],
-        hard: [genAbsoluteLinear, genAbsoluteBothSides]
+        hard: [genAbsoluteLinear, genAbsoluteBothSides],
+        expert: [genAbsoluteLinear, genAbsoluteBothSides]
       },
       trigonometric: {
         easy: [genTrigEquation],
         medium: [genTrigEquation],
-        hard: [genTrigEquation]
+        hard: [genTrigEquation],
+        expert: [genTrigEquation]
       }
     };
     return (map[topic] && map[topic][difficulty]) || [];
@@ -1016,18 +1033,21 @@
 
   async function saveAttempt(q, correct, selected) {
     const payload = {
-      game_id: GAME_ID,
+      gameId: GAME_ID,
+      question: { main: q.equationLatex, plain: q.equationLatex, type: q.topic, difficulty: q.difficulty },
+      course: "precalculus",
       topic: q.topic,
       difficulty: q.difficulty,
-      prompt: q.equationLatex,
-      correct_answer: q.answerLatex,
-      selected_answer: selected,
-      is_correct: correct,
+      correctAnswer: q.answerLatex,
+      selectedAnswer: selected,
+      isCorrect: correct,
       created_at: new Date().toISOString()
     };
     try {
       const progress = window.MathCompleteProgress || window.MCLProgress || window.progress;
-      if (progress && typeof progress.recordAttempt === "function") {
+      if (progress && typeof progress.recordGameAttempt === "function") {
+        await progress.recordGameAttempt(payload);
+      } else if (progress && typeof progress.recordAttempt === "function") {
         await progress.recordAttempt(payload);
       } else if (typeof window.recordPracticeAttempt === "function") {
         await window.recordPracticeAttempt(payload);
@@ -1390,37 +1410,67 @@
   }
 
   function genTrigEquation() {
-    const table = [
-      { fn: "\\sin", value: "0", sols: ["0", "\\pi"] },
-      { fn: "\\sin", value: "1", sols: ["\\frac{\\pi}{2}"] },
-      { fn: "\\sin", value: "-1", sols: ["\\frac{3\\pi}{2}"] },
-      { fn: "\\sin", value: "\\frac{1}{2}", sols: ["\\frac{\\pi}{6}", "\\frac{5\\pi}{6}"] },
-      { fn: "\\sin", value: "-\\frac{1}{2}", sols: ["\\frac{7\\pi}{6}", "\\frac{11\\pi}{6}"] },
+    const simpleTable = [
+      { fn: "\\sin", value: "0", rat: [0, 1], sols: ["0", "\\pi"] },
+      { fn: "\\sin", value: "1", rat: [1, 1], sols: ["\\frac{\\pi}{2}"] },
+      { fn: "\\sin", value: "-1", rat: [-1, 1], sols: ["\\frac{3\\pi}{2}"] },
+      { fn: "\\sin", value: "\\frac{1}{2}", rat: [1, 2], sols: ["\\frac{\\pi}{6}", "\\frac{5\\pi}{6}"] },
+      { fn: "\\sin", value: "-\\frac{1}{2}", rat: [-1, 2], sols: ["\\frac{7\\pi}{6}", "\\frac{11\\pi}{6}"] },
       { fn: "\\sin", value: "\\frac{\\sqrt{2}}{2}", sols: ["\\frac{\\pi}{4}", "\\frac{3\\pi}{4}"] },
       { fn: "\\sin", value: "-\\frac{\\sqrt{2}}{2}", sols: ["\\frac{5\\pi}{4}", "\\frac{7\\pi}{4}"] },
-      { fn: "\\cos", value: "0", sols: ["\\frac{\\pi}{2}", "\\frac{3\\pi}{2}"] },
-      { fn: "\\cos", value: "1", sols: ["0"] },
-      { fn: "\\cos", value: "-1", sols: ["\\pi"] },
-      { fn: "\\cos", value: "\\frac{1}{2}", sols: ["\\frac{\\pi}{3}", "\\frac{5\\pi}{3}"] },
-      { fn: "\\cos", value: "-\\frac{1}{2}", sols: ["\\frac{2\\pi}{3}", "\\frac{4\\pi}{3}"] },
+      { fn: "\\cos", value: "0", rat: [0, 1], sols: ["\\frac{\\pi}{2}", "\\frac{3\\pi}{2}"] },
+      { fn: "\\cos", value: "1", rat: [1, 1], sols: ["0"] },
+      { fn: "\\cos", value: "-1", rat: [-1, 1], sols: ["\\pi"] },
+      { fn: "\\cos", value: "\\frac{1}{2}", rat: [1, 2], sols: ["\\frac{\\pi}{3}", "\\frac{5\\pi}{3}"] },
+      { fn: "\\cos", value: "-\\frac{1}{2}", rat: [-1, 2], sols: ["\\frac{2\\pi}{3}", "\\frac{4\\pi}{3}"] },
       { fn: "\\cos", value: "\\frac{\\sqrt{2}}{2}", sols: ["\\frac{\\pi}{4}", "\\frac{7\\pi}{4}"] },
-      { fn: "\\cos", value: "-\\frac{\\sqrt{2}}{2}", sols: ["\\frac{3\\pi}{4}", "\\frac{5\\pi}{4}"] }
+      { fn: "\\cos", value: "-\\frac{\\sqrt{2}}{2}", sols: ["\\frac{3\\pi}{4}", "\\frac{5\\pi}{4}"] },
+      { fn: "\\tan", value: "0", rat: [0, 1], sols: ["0", "\\pi"] },
+      { fn: "\\tan", value: "1", rat: [1, 1], sols: ["\\frac{\\pi}{4}", "\\frac{5\\pi}{4}"] },
+      { fn: "\\tan", value: "-1", rat: [-1, 1], sols: ["\\frac{3\\pi}{4}", "\\frac{7\\pi}{4}"] }
     ];
-    const item = choice(table);
-    const wrongMirror = item.sols.map((s) => s.replace("5\\pi", "7\\pi").replace("7\\pi", "5\\pi"));
+    const squareTable = [
+      { fn: "\\sin", value: "0", rat: [0, 1], sols: ["0", "\\pi"] },
+      { fn: "\\sin", value: "\\frac{1}{4}", rat: [1, 4], sols: ["\\frac{\\pi}{6}", "\\frac{5\\pi}{6}", "\\frac{7\\pi}{6}", "\\frac{11\\pi}{6}"] },
+      { fn: "\\sin", value: "\\frac{1}{2}", rat: [1, 2], sols: ["\\frac{\\pi}{4}", "\\frac{3\\pi}{4}", "\\frac{5\\pi}{4}", "\\frac{7\\pi}{4}"] },
+      { fn: "\\sin", value: "\\frac{3}{4}", rat: [3, 4], sols: ["\\frac{\\pi}{3}", "\\frac{2\\pi}{3}", "\\frac{4\\pi}{3}", "\\frac{5\\pi}{3}"] },
+      { fn: "\\cos", value: "0", rat: [0, 1], sols: ["\\frac{\\pi}{2}", "\\frac{3\\pi}{2}"] },
+      { fn: "\\cos", value: "\\frac{1}{4}", rat: [1, 4], sols: ["\\frac{\\pi}{3}", "\\frac{2\\pi}{3}", "\\frac{4\\pi}{3}", "\\frac{5\\pi}{3}"] },
+      { fn: "\\cos", value: "\\frac{1}{2}", rat: [1, 2], sols: ["\\frac{\\pi}{4}", "\\frac{3\\pi}{4}", "\\frac{5\\pi}{4}", "\\frac{7\\pi}{4}"] },
+      { fn: "\\cos", value: "\\frac{3}{4}", rat: [3, 4], sols: ["\\frac{\\pi}{6}", "\\frac{5\\pi}{6}", "\\frac{7\\pi}{6}", "\\frac{11\\pi}{6}"] }
+    ];
+    const kind = choice(["basic", "linear", "square"]);
+    const item = kind === "square" ? choice(squareTable) : choice(kind === "linear" ? simpleTable.filter(x => x.rat) : simpleTable);
+    const a = kind === "basic" ? 1 : randIntExclude(-4, 4, [0]);
+    const b = kind === "basic" ? 0 : randInt(-5, 5);
+    const rhs = kind === "basic" ? item.value : rationalLatex(a * item.rat[0] + b * item.rat[1], item.rat[1]);
+    const trigPart = kind === "square" ? `${item.fn}^2 x` : `${item.fn} x`;
+    const leading = a === 1 ? "" : a === -1 ? "-" : String(a);
+    const expression = kind === "basic" ? `${trigPart}=${item.value}` : `${leading}${trigPart}${signed(b)}=${rhs}`;
+    const isolateLine = `${trigPart}=${item.value}`;
+    const wrongMirror = rotateTrigSolutions(item.sols);
     return {
       title: "Solve a trigonometric equation on one full cycle.",
-      extra: "Solve on the interval 0 ≤ x < 2π.",
-      equationLatex: `${item.fn} x=${item.value}`,
+      extra: "Solve on the interval 0 <= x < 2pi.",
+      equationLatex: `${expression},\\quad 0\\le x<2\\pi`,
       answerLatex: trigAnswerSet(item.sols),
       distractors: [trigAnswerSet(item.sols.slice(0, 1)), trigAnswerSet(wrongMirror), "x=0", "\\varnothing"],
       steps: [
-        { latex: `${item.fn} x=${item.value},\\quad 0\\le x<2\\pi`, note: "Use the unit circle on one full interval." },
+        { latex: expression, note: "Start with the generated trigonometric equation." },
+        { latex: isolateLine, note: "Isolate the trigonometric expression." },
         { latex: trigAnswerSet(item.sols), note: "Choose every angle in the interval with the required trig value." }
       ]
     };
   }
 
+  function rationalLatex(n, d) {
+    return fracLatex(makeFrac(n, d));
+  }
+
+  function rotateTrigSolutions(solutions) {
+    const pool = ["0", "\\frac{\\pi}{6}", "\\frac{\\pi}{4}", "\\frac{\\pi}{3}", "\\frac{\\pi}{2}", "\\frac{2\\pi}{3}", "\\frac{3\\pi}{4}", "\\frac{5\\pi}{6}", "\\pi", "\\frac{7\\pi}{6}", "\\frac{5\\pi}{4}", "\\frac{4\\pi}{3}", "\\frac{3\\pi}{2}", "\\frac{5\\pi}{3}", "\\frac{7\\pi}{4}", "\\frac{11\\pi}{6}"];
+    return solutions.map(sol => pool[(pool.indexOf(sol) + 2 + randInt(0, 2)) % pool.length]).filter(Boolean);
+  }
   function answerSet(roots) {
     const normalized = roots.filter(Boolean).map((root) => root.latex ? root : numRoot(root));
     const unique = [];
@@ -1564,6 +1614,7 @@
 })();
 
   </script>
+  <script src="../assets/js/tool-modes.js"></script>
   <script src="../assets/js/home-link.js"></script>
 </body>
 </html>

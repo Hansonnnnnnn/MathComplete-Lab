@@ -67,6 +67,178 @@
     word-break: normal;
     text-wrap: pretty;
   }
+
+
+  /* MathComplete Lab compact typography override
+     Matched to completing-the-square typography, with smaller set-theory prompt text. */
+  .container {
+    width: min(1040px, calc(100% - 32px)) !important;
+    padding: 38px 0 68px !important;
+  }
+
+  header {
+    margin-bottom: 24px !important;
+    overflow: visible !important;
+  }
+
+  h1 {
+    font-size: clamp(34px, 5.2vw, 56px) !important;
+    line-height: 1.16 !important;
+    letter-spacing: -0.055em !important;
+    margin: 16px 0 16px !important;
+    padding-bottom: 0.18em !important;
+    overflow: visible !important;
+  }
+
+  h2 {
+    margin: 0 0 12px !important;
+    font-size: clamp(24px, 4vw, 34px) !important;
+    letter-spacing: -0.045em !important;
+  }
+
+  h3 {
+    margin: 0 0 8px !important;
+    letter-spacing: -0.025em !important;
+  }
+
+  .subtitle {
+    margin: 14px 0 0 !important;
+    font-size: 17px !important;
+    line-height: 1.75 !important;
+  }
+
+  .card {
+    padding: 24px !important;
+    backdrop-filter: blur(16px) !important;
+  }
+
+  .setup-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 18px !important;
+    margin: 22px 0 !important;
+  }
+
+  .question-title {
+    font-size: 16px !important;
+  }
+
+  .question-extra {
+    font-size: 17px !important;
+    margin: -4px 0 14px !important;
+    line-height: 1.6 !important;
+  }
+
+  .question-main,
+  .expression,
+  .equation {
+    font-size: clamp(22px, 3vw, 34px) !important;
+    line-height: 1.45 !important;
+    font-weight: 500 !important;
+    letter-spacing: -0.02em !important;
+    margin: 10px 0 22px !important;
+    text-align: left !important;
+    overflow-wrap: anywhere !important;
+    word-break: normal !important;
+    text-wrap: pretty;
+    white-space: normal;
+  }
+
+  .question-text {
+    font-size: 20px !important;
+    font-weight: 650 !important;
+    line-height: 1.55 !important;
+    letter-spacing: -0.025em !important;
+  }
+
+  .question-line .katex,
+  .question-main .katex {
+    font-size: 1em !important;
+    line-height: 1.25 !important;
+  }
+
+  .option {
+    min-height: 64px !important;
+    font-size: 20px !important;
+    text-align: center !important;
+    padding: 12px !important;
+  }
+
+  .option .katex {
+    font-size: 1.1em !important;
+    line-height: 1.25 !important;
+  }
+
+  .pill {
+    font-size: 14px !important;
+    font-weight: 850 !important;
+  }
+
+  .solution-box h3 {
+    font-size: 18px !important;
+  }
+
+  .solution-steps {
+    font-size: 17px !important;
+  }
+
+  @media (max-width: 760px) {
+    .setup-grid, .options, .solution-grid, .result-grid { grid-template-columns: 1fr !important; }
+    .container { width: min(100% - 22px, 1040px) !important; padding-top: 26px !important; }
+    .card { padding: 18px !important; }
+    .question-main, .expression, .equation { font-size: 24px !important; }
+    .question-text { font-size: 19px !important; }
+  }
+
+
+
+  /* Compact, rendered wrong-answer review rows */
+  .wrong-item {
+    padding: 14px 18px !important;
+    border-radius: 16px !important;
+    border: 1px solid #fee2e2 !important;
+    background: #fff7f7 !important;
+    color: #7f1d1d !important;
+    font-size: 16px !important;
+    line-height: 1.65 !important;
+    font-weight: 800 !important;
+  }
+
+  .wrong-row {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin: 2px 0;
+  }
+
+  .wrong-label {
+    color: #991b1b;
+    font-weight: 950;
+  }
+
+  .wrong-value {
+    display: inline-flex;
+    align-items: baseline;
+    color: #7f1d1d;
+    font-weight: 850;
+  }
+
+  .wrong-value .katex {
+    color: #7f1d1d;
+    font-size: 1.04em;
+    line-height: 1.25;
+  }
+
+  .feedback-answer {
+    display: inline-flex;
+    align-items: baseline;
+  }
+
+  .feedback-answer .katex {
+    color: #dc2626;
+    font-size: 1.04em;
+  }
+
 </style>
 </head>
 <body>
@@ -89,6 +261,15 @@
       <h2 id="setupTitle"></h2>
       <div class="setup-grid">
         <div><label id="difficultyLabel" for="difficulty"></label><select id="difficulty"></select></div>
+        <div class="mcl-tool-mode-field">
+          <label id="toolModeLabel" for="toolMode">Practice mode</label>
+          <select id="toolMode">
+            <option value="practice">Practice Mode</option>
+            <option value="learn" selected>Learn Mode</option>
+            <option value="exam">Exam Mode</option>
+          </select>
+          <p class="mcl-tool-mode-hint" id="mclToolModeHint">Every answer shows the solution, then you move on manually.</p>
+        </div>
         <div><label id="questionCountLabel" for="questionCount"></label><input id="questionCount" type="number" min="1" max="100" value="10" /></div>
         <div><label id="optionCountLabel" for="optionCount"></label><select id="optionCount"></select></div>
         <div><label class="checkbox-label" for="timedMode"><input id="timedMode" type="checkbox" /><span id="timedModeText"></span></label><p id="timedModeHint" class="mini-hint"></p></div>
@@ -122,8 +303,8 @@
 <script>
 const TOOL_CONFIG = { gameId: "set-theory-basics", course: "pre-algebra", title: { en: "Set Theory Basics Practice", zh: "集合基础专项练习" }, subtitle: { en: "Practice elements, subsets, union, intersection, difference, complement, and basic set notation.", zh: "练习元素、子集、并集、交集、差集、补集和基础集合符号。" } };
 const T = {
-  en: { htmlLang:"en", navPractice:"Practice Library", navHome:"Home", toolBadge:"Pre-Algebra", title:TOOL_CONFIG.title.en, subtitle:TOOL_CONFIG.subtitle.en, note:"This tool builds the set language needed for algebra: membership, set operations, cardinality, intervals, and basic logic.", setupTitle:"Start Practice", difficultyLabel:"Difficulty", questionCountLabel:"Number of Questions", optionCountLabel:"Number of Choices", timedModeText:"Enable Timed Mode", timedModeHint:"Off means no countdown. On means each question has its own timer.", timerLevelLabel:"Timer Level", startBtn:"Start", sampleBtn:"Generate Sample Question", quitBtn:"End This Round", nextBtn:"Next Question", resultBtn:"See Results", questionTitle:"Read the set statement and choose the correct answer.", correctFeedback:"Correct!", resultTitle:"Practice Results", scoreLabel:"Correct Answers", accuracyLabel:"Accuracy", wrongLabel:"Wrong Answers", wrongReviewTitle:"Wrong Answer Review", restartBtn:"Practice Again", reviewWrongBtn:"Practice Similar Wrong Types", noWrong:"No wrong answers this round.", noWrongTip:"Great job. Try a harder level next.", yourAnswer:"Your answer", correctAnswer:"Correct answer", timeUpAnswer:"No answer: time is up", sampleTitle:"Sample Question", sampleQuestion:"Question", sampleAnswer:"Correct answer", sampleOptions:"Sample choices", solutionTitle:"Correct Solution", solutionFinal:"Answer:", incorrectPrefix:"Incorrect. The correct answer is", timeUpPrefix:"Time is up. The correct answer is", progress:(a,b)=>`Question ${a} / ${b}`, optionCount:n=>`${n} choices`, timerDisplay:s=>`Time left: ${formatTime(s)}`, promptMembership:"Decide whether the element belongs to the set.", promptChooseElement:"Choose one element that belongs to the set.", promptCardinality:"Find the number of distinct elements in the set.", promptEmpty:"Choose the set described.", promptUnion:"Find the union of the given sets.", promptIntersection:"Find the intersection of the given sets.", promptDifference:"Find the difference of the given sets.", promptSubset:"Decide whether the subset statement is true.", promptVerbal:"Choose the set described in words.", promptComplement:"Find the complement relative to the universal set.", promptCompound:"Compute the compound set operation.", promptProperty:"Choose the correct set identity.", promptNumber:"Find the requested number from the set information.", promptInterval:"Choose the interval notation.", promptFalseStatement:"Choose the statement that is always false.", trueText:"True", falseText:"False", emptySet:"empty set", wholeBetween:(a,b)=>`A is the set of whole numbers strictly between ${a} and ${b}.`, verbalEven:n=>`A is the set of even numbers from 1 to ${n}.`, verbalOdd:n=>`A is the set of odd numbers from 1 to ${n}.`, verbalMult:(k,n)=>`A is the set of multiples of ${k} from 1 to ${n}.`, classWord:(a,b,c)=>`In a class, ${a} students like math, ${b} like science, and ${c} like both. How many like math or science?`, notes:{ membership:"An element belongs to a set if it appears inside the braces.", chooseElement:"Only elements listed in the set belong to the set.", cardinality:"Cardinality counts distinct elements only.", empty:"No whole number satisfies the description.", union:"Union means elements in A or B.", intersection:"Intersection means elements in both sets.", difference:"A−B means elements in A that are not in B.", subset:"A⊆B means every element of A is also in B.", complement:"The complement depends on the universal set U.", compound:"Work inside the parentheses first.", demorgan:"De Morgan's law changes union to intersection and complement each set.", formula:"Use inclusion-exclusion.", powerset:"A set with n elements has 2^n subsets.", interval:"Use parentheses for strict inequalities and brackets for included endpoints.", inequality:"Solve the inequality first, then write the solution as an interval.", falseStatement:"Only one statement here is always false.", final:"final result" }, difficulties:{easy:"Easy",medium:"Medium",hard:"Hard",expert:"Expert",mixed:"Mixed"}, difficultyOptions:{ easy:"Easy: membership, elements, cardinality, and empty set", medium:"Medium: union, intersection, difference, subsets, and verbal descriptions", hard:"Hard: complements, compound operations, De Morgan's laws, and Venn-style counting", expert:"Expert: three-set counting, power sets, interval notation, inequalities, and statements", mixed:"Mixed: balanced practice from all difficulty levels"}, timerOptions:{ timer_easy:"Easy: 2 minutes per question", timer_medium:"Medium: 1 minute per question", timer_hard:"Hard: 30 seconds per question", timer_expert:"Expert: 15 seconds per question"}},
-  zh: { htmlLang:"zh-CN", navPractice:"练习库", navHome:"主页", toolBadge:"预备代数", title:TOOL_CONFIG.title.zh, subtitle:TOOL_CONFIG.subtitle.zh, note:"这个工具训练代数前需要的集合语言：属于关系、集合运算、集合大小、区间和基础逻辑。", setupTitle:"开始练习", difficultyLabel:"难度", questionCountLabel:"题目数量", optionCountLabel:"选项数量", timedModeText:"开启计时模式", timedModeHint:"关闭时没有倒计时。开启后每题都有独立计时。", timerLevelLabel:"计时等级", startBtn:"开始", sampleBtn:"生成示例题", quitBtn:"结束本轮", nextBtn:"下一题", resultBtn:"查看结果", questionTitle:"请阅读集合题干，并选择正确答案。", correctFeedback:"正确！", resultTitle:"练习结果", scoreLabel:"正确题数", accuracyLabel:"正确率", wrongLabel:"错题数", wrongReviewTitle:"错题回顾", restartBtn:"重新练习", reviewWrongBtn:"练习相似错题", noWrong:"本轮没有错题。", noWrongTip:"很好。可以尝试更高难度。", yourAnswer:"你的答案", correctAnswer:"正确答案", timeUpAnswer:"未作答：时间到", sampleTitle:"示例题", sampleQuestion:"题目", sampleAnswer:"正确答案", sampleOptions:"示例选项", solutionTitle:"正确解法", solutionFinal:"答案：", incorrectPrefix:"不正确。正确答案是", timeUpPrefix:"时间到。正确答案是", progress:(a,b)=>`第 ${a} / ${b} 题`, optionCount:n=>`${n} 个选项`, timerDisplay:s=>`剩余时间：${formatTime(s)}`, promptMembership:"请判断给定元素是否属于这个集合。", promptChooseElement:"选择属于该集合的元素。", promptCardinality:"请找出这个集合中不同元素的个数。", promptEmpty:"选择文字描述对应的集合。", promptUnion:"请求出两个集合的并集。", promptIntersection:"请求出两个集合的交集。", promptDifference:"请求出指定顺序下的集合差。", promptSubset:"判断子集关系是否成立。", promptVerbal:"选择文字描述对应的集合。", promptComplement:"请在给定全集中求出补集。", promptCompound:"计算复合集合运算。", promptProperty:"选择正确的集合恒等式。", promptNumber:"请根据集合信息求出要求的数量。", promptInterval:"选择区间表示法。", promptFalseStatement:"选择总是错误的说法。", trueText:"正确", falseText:"错误", emptySet:"空集", wholeBetween:(a,b)=>`A 是严格介于 ${a} 和 ${b} 之间的整数集合。`, verbalEven:n=>`A 是 1 到 ${n} 中的偶数集合。`, verbalOdd:n=>`A 是 1 到 ${n} 中的奇数集合。`, verbalMult:(k,n)=>`A 是 1 到 ${n} 中 ${k} 的倍数集合。`, classWord:(a,b,c)=>`一个班里有 ${a} 人喜欢数学，${b} 人喜欢科学，${c} 人两者都喜欢。喜欢数学或科学的一共有多少人？`, notes:{ membership:"如果一个元素出现在集合的大括号里，它就属于这个集合。", chooseElement:"只有列在集合里的对象才属于这个集合。", cardinality:"集合大小只计算不同的元素，重复元素只算一次。", empty:"没有整数满足这个描述。", union:"并集表示属于 A 或属于 B 的所有元素。", intersection:"交集表示同时属于 A 和 B 的元素。", difference:"A−B 表示在 A 中但不在 B 中的元素。", subset:"A⊆B 表示 A 的每个元素也都在 B 中。", complement:"补集一定依赖全集 U。", compound:"先计算括号里的集合运算。", demorgan:"德摩根律会把并集变成交集，并给每个集合取补。", formula:"使用容斥公式。", powerset:"含 n 个元素的集合有 2^n 个子集。", interval:"严格不等号用圆括号，包含端点用方括号。", inequality:"先解不等式，再写成区间。", falseStatement:"这里只有一个命题总是错误。", final:"最终结果" }, difficulties:{easy:"简单",medium:"中等",hard:"困难",expert:"专家",mixed:"混合"}, difficultyOptions:{ easy:"简单：属于关系、元素、集合大小和空集", medium:"中等：并集、交集、差集、子集和文字描述", hard:"困难：补集、复合运算、德摩根律和 Venn 文字计数", expert:"专家：三个集合计数、power set、区间表示、不等式和判断题", mixed:"混合：从所有难度中随机抽题"}, timerOptions:{ timer_easy:"简单：每题 2 分钟", timer_medium:"中等：每题 1 分钟", timer_hard:"困难：每题 30 秒", timer_expert:"专家：每题 15 秒"}}
+  en: { htmlLang:"en", navPractice:"Practice Library", navHome:"Home", toolBadge:"Pre-Algebra", title:TOOL_CONFIG.title.en, subtitle:TOOL_CONFIG.subtitle.en, note:"This tool builds the set language needed for algebra: membership, set operations, cardinality, intervals, and basic logic.", setupTitle:"Start Practice", difficultyLabel:"Difficulty", questionCountLabel:"Number of Questions", optionCountLabel:"Number of Choices", timedModeText:"Enable Timed Mode", timedModeHint:"Off means no countdown. On means each question has its own timer.", timerLevelLabel:"Timer Level", startBtn:"Start", sampleBtn:"Generate Sample Question", quitBtn:"End This Round", nextBtn:"Next Question", resultBtn:"See Results", questionTitle:"Read the set statement and choose the correct answer.", correctFeedback:"Correct!", resultTitle:"Practice Results", scoreLabel:"Correct Answers", accuracyLabel:"Accuracy", wrongLabel:"Wrong Answers", wrongReviewTitle:"Wrong Answer Review", restartBtn:"Practice Again", reviewWrongBtn:"Practice Similar Wrong Types", noWrong:"No wrong answers this round.", noWrongTip:"Great job. Try a harder level next.", yourAnswer:"Your answer", correctAnswer:"Correct answer", timeUpAnswer:"No answer: time is up", sampleTitle:"Sample Question", sampleQuestion:"Question", sampleAnswer:"Correct answer", sampleOptions:"Sample choices", solutionTitle:"Correct Solution", solutionFinal:"Answer:", incorrectPrefix:"Incorrect. The correct answer is", timeUpPrefix:"Time is up. The correct answer is", progress:(a,b)=>`Question ${a} / ${b}`, optionCount:n=>`${n} choices`, timerDisplay:s=>`Time left: ${formatTime(s)}`, promptMembership:"Decide whether the element belongs to the set.", promptChooseElement:"Choose one element that belongs to the set.", promptCardinality:"Find the number of distinct elements in the set.", promptEmpty:"Choose the set described.", promptUnion:"Find the union of the given sets.", promptIntersection:"Find the intersection of the given sets.", promptDifference:"Find the difference of the given sets.", promptSubset:"Decide whether the subset statement is true.", promptVerbal:"Choose the set described in words.", promptComplement:"Find the complement relative to the universal set.", promptCompound:"Compute the compound set operation.", promptProperty:"Choose the correct set identity.", promptNumber:"Find the requested number from the set information.", promptInterval:"Choose the interval notation.", promptFalseStatement:"Choose the statement that is always false.", promptNotAlwaysTrue:"Choose the statement that is not always true.", trueText:"True", falseText:"False", emptySet:"empty set", wholeBetween:(a,b)=>`A is the set of whole numbers strictly between ${a} and ${b}.`, verbalEven:n=>`A is the set of even numbers from 1 to ${n}.`, verbalOdd:n=>`A is the set of odd numbers from 1 to ${n}.`, verbalMult:(k,n)=>`A is the set of multiples of ${k} from 1 to ${n}.`, classWord:(a,b,c)=>`In a class, ${a} students like math, ${b} like science, and ${c} like both. How many like math or science?`, notes:{ membership:"An element belongs to a set if it appears inside the braces.", chooseElement:"Only elements listed in the set belong to the set.", cardinality:"Cardinality counts distinct elements only.", empty:"No whole number satisfies the description.", union:"Union means elements in A or B.", intersection:"Intersection means elements in both sets.", difference:"A−B means elements in A that are not in B.", subset:"A⊆B means every element of A is also in B.", complement:"The complement depends on the universal set U.", compound:"Work inside the parentheses first.", demorgan:"De Morgan's law changes union to intersection and complement each set.", formula:"Use inclusion-exclusion.", powerset:"A set with n elements has 2^n subsets.", interval:"Use parentheses for strict inequalities and brackets for included endpoints.", inequality:"Solve the inequality first, then write the solution as an interval.", falseStatement:"Only one statement here is always false.", notAlwaysTrue:"Only one statement here is not guaranteed to be true. A single counterexample is enough.", final:"final result" }, difficulties:{easy:"Easy",medium:"Medium",hard:"Hard",expert:"Expert",mixed:"Mixed"}, difficultyOptions:{ easy:"Easy: membership, elements, cardinality, and empty set", medium:"Medium: union, intersection, difference, subsets, and verbal descriptions", hard:"Hard: complements, compound operations, De Morgan's laws, and Venn-style counting", expert:"Expert: three-set counting, power sets, interval notation, inequalities, and statements", mixed:"Mixed: balanced practice from all difficulty levels"}, timerOptions:{ timer_easy:"Easy: 2 minutes per question", timer_medium:"Medium: 1 minute per question", timer_hard:"Hard: 30 seconds per question", timer_expert:"Expert: 15 seconds per question"}},
+  zh: { htmlLang:"zh-CN", navPractice:"练习库", navHome:"主页", toolBadge:"预备代数", title:TOOL_CONFIG.title.zh, subtitle:TOOL_CONFIG.subtitle.zh, note:"这个工具训练代数前需要的集合语言：属于关系、集合运算、集合大小、区间和基础逻辑。", setupTitle:"开始练习", difficultyLabel:"难度", questionCountLabel:"题目数量", optionCountLabel:"选项数量", timedModeText:"开启计时模式", timedModeHint:"关闭时没有倒计时。开启后每题都有独立计时。", timerLevelLabel:"计时等级", startBtn:"开始", sampleBtn:"生成示例题", quitBtn:"结束本轮", nextBtn:"下一题", resultBtn:"查看结果", questionTitle:"请阅读集合题干，并选择正确答案。", correctFeedback:"正确！", resultTitle:"练习结果", scoreLabel:"正确题数", accuracyLabel:"正确率", wrongLabel:"错题数", wrongReviewTitle:"错题回顾", restartBtn:"重新练习", reviewWrongBtn:"练习相似错题", noWrong:"本轮没有错题。", noWrongTip:"很好。可以尝试更高难度。", yourAnswer:"你的答案", correctAnswer:"正确答案", timeUpAnswer:"未作答：时间到", sampleTitle:"示例题", sampleQuestion:"题目", sampleAnswer:"正确答案", sampleOptions:"示例选项", solutionTitle:"正确解法", solutionFinal:"答案：", incorrectPrefix:"不正确。正确答案是", timeUpPrefix:"时间到。正确答案是", progress:(a,b)=>`第 ${a} / ${b} 题`, optionCount:n=>`${n} 个选项`, timerDisplay:s=>`剩余时间：${formatTime(s)}`, promptMembership:"请判断给定元素是否属于这个集合。", promptChooseElement:"选择属于该集合的元素。", promptCardinality:"请找出这个集合中不同元素的个数。", promptEmpty:"选择文字描述对应的集合。", promptUnion:"请求出两个集合的并集。", promptIntersection:"请求出两个集合的交集。", promptDifference:"请求出指定顺序下的集合差。", promptSubset:"判断子集关系是否成立。", promptVerbal:"选择文字描述对应的集合。", promptComplement:"请在给定全集中求出补集。", promptCompound:"计算复合集合运算。", promptProperty:"选择正确的集合恒等式。", promptNumber:"请根据集合信息求出要求的数量。", promptInterval:"选择区间表示法。", promptFalseStatement:"选择总是错误的说法。", promptNotAlwaysTrue:"选择不一定成立的说法。", trueText:"正确", falseText:"错误", emptySet:"空集", wholeBetween:(a,b)=>`A 是严格介于 ${a} 和 ${b} 之间的整数集合。`, verbalEven:n=>`A 是 1 到 ${n} 中的偶数集合。`, verbalOdd:n=>`A 是 1 到 ${n} 中的奇数集合。`, verbalMult:(k,n)=>`A 是 1 到 ${n} 中 ${k} 的倍数集合。`, classWord:(a,b,c)=>`一个班里有 ${a} 人喜欢数学，${b} 人喜欢科学，${c} 人两者都喜欢。喜欢数学或科学的一共有多少人？`, notes:{ membership:"如果一个元素出现在集合的大括号里，它就属于这个集合。", chooseElement:"只有列在集合里的对象才属于这个集合。", cardinality:"集合大小只计算不同的元素，重复元素只算一次。", empty:"没有整数满足这个描述。", union:"并集表示属于 A 或属于 B 的所有元素。", intersection:"交集表示同时属于 A 和 B 的元素。", difference:"A−B 表示在 A 中但不在 B 中的元素。", subset:"A⊆B 表示 A 的每个元素也都在 B 中。", complement:"补集一定依赖全集 U。", compound:"先计算括号里的集合运算。", demorgan:"德摩根律会把并集变成交集，并给每个集合取补。", formula:"使用容斥公式。", powerset:"含 n 个元素的集合有 2^n 个子集。", interval:"严格不等号用圆括号，包含端点用方括号。", inequality:"先解不等式，再写成区间。", falseStatement:"这里只有一个命题总是错误。", notAlwaysTrue:"这里只有一个命题不保证永远成立。一个反例就足够说明问题。", final:"最终结果" }, difficulties:{easy:"简单",medium:"中等",hard:"困难",expert:"专家",mixed:"混合"}, difficultyOptions:{ easy:"简单：属于关系、元素、集合大小和空集", medium:"中等：并集、交集、差集、子集和文字描述", hard:"困难：补集、复合运算、德摩根律和 Venn 文字计数", expert:"专家：三个集合计数、power set、区间表示、不等式和判断题", mixed:"混合：从所有难度中随机抽题"}, timerOptions:{ timer_easy:"简单：每题 2 分钟", timer_medium:"中等：每题 1 分钟", timer_hard:"困难：每题 30 秒", timer_expert:"专家：每题 15 秒"}}
 };
 let lang = localStorage.getItem("mathcomplete_lang") || localStorage.getItem("mcl-lang") || localStorage.getItem("mathcomplete-lang") || "en"; if(!T[lang]) lang = "en";
 const ids = ["navPractice","navHome","toolBadge","pageTitle","pageSubtitle","setupTitle","difficultyLabel","questionCountLabel","optionCountLabel","timedModeText","timedModeHint","timerLevelLabel","startBtn","sampleBtn","quitBtn","nextBtn","resultTitle","scoreLabel","accuracyLabel","wrongLabel","wrongReviewTitle","restartBtn","reviewWrongBtn"];
@@ -150,15 +331,64 @@ function optSet(a){return {kind:"set", key:setKey(a), latex:setLatex(a), plain:s
 function optNum(n){return {kind:"number", key:`num:${n}`, latex:String(n), plain:String(n)}}
 function optBool(v){return {kind:"bool", key:`bool:${v}`, text:()=>v?tr().trueText:tr().falseText, plain:v?"True":"False"}}
 function optText(key,en,zh){return {kind:"text", key, text:()=>lang==="zh"?zh:en, plain:en}}
-function optLatex(key, latex){return {kind:"latex", key, latex, plain:latex}}
+function optLatex(key, latex, meta={}){return {kind:"latex", key, latex, plain:latex, ...meta}}
+function sameSet(a,b){const A=sorted(a), B=sorted(b); return A.length===B.length && A.every((x,i)=>x===B[i])}
+function properSubset(a,b){return isSubset(a,b) && !sameSet(a,b)}
+function allSubsets(U){let out=[[]]; for(const x of U){out=out.concat(out.map(s=>[...s,x]));} return out.map(sorted)}
+function classifyStatementPredicate(predicate){const U=[1,2,3]; const subsets=allSubsets(U); let hasTrue=false, hasFalse=false; for(const A of subsets){for(const B of subsets){const value=!!predicate(A,B,U); if(value) hasTrue=true; else hasFalse=true; if(hasTrue&&hasFalse) return "sometimesTrue";}} return hasTrue?"alwaysTrue":"alwaysFalse"}
+function verifyStatementTruthType(stmt){if(!stmt.predicate) return true; const actual=classifyStatementPredicate(stmt.predicate); if(actual!==stmt.truthType){console.warn("Statement truth type mismatch", stmt.id, "expected", stmt.truthType, "actual", actual); return false;} return true}
+const SET_IDENTITY_BANK=[
+  {id:"subset-intersection",latex:"A\\subseteq B\\Rightarrow A\\cap B=A",truthType:"alwaysTrue",predicate:(A,B)=>!isSubset(A,B)||sameSet(inter(A,B),A)},
+  {id:"subset-union",latex:"A\\subseteq B\\Rightarrow A\\cup B=B",truthType:"alwaysTrue",predicate:(A,B)=>!isSubset(A,B)||sameSet(union(A,B),B)},
+  {id:"empty-subset",latex:"\\varnothing\\subseteq A",truthType:"alwaysTrue",predicate:A=>isSubset([],A)},
+  {id:"union-commutative",latex:"A\\cup B=B\\cup A",truthType:"alwaysTrue",predicate:(A,B)=>sameSet(union(A,B),union(B,A))},
+  {id:"intersection-commutative",latex:"A\\cap B=B\\cap A",truthType:"alwaysTrue",predicate:(A,B)=>sameSet(inter(A,B),inter(B,A))},
+  {id:"union-empty",latex:"A\\cup\\varnothing=A",truthType:"alwaysTrue",predicate:A=>sameSet(union(A,[]),A)},
+  {id:"intersection-empty",latex:"A\\cap\\varnothing=\\varnothing",truthType:"alwaysTrue",predicate:A=>sameSet(inter(A,[]),[])},
+  {id:"difference-self",latex:"A-A=\\varnothing",truthType:"alwaysTrue",predicate:A=>sameSet(diff(A,A),[])},
+  {id:"difference-commutative",latex:"A-B=B-A",truthType:"sometimesTrue",predicate:(A,B)=>sameSet(diff(A,B),diff(B,A)),explainEn:"Set difference is not commutative in general. It can be true in special cases, but it is not guaranteed.",explainZh:"差集一般不满足交换律。它在特殊情况下可能成立，但不能保证永远成立。",counterLatex:"A=\\{1\\},\\quad B=\\{1,2\\}",counterResultLatex:"A-B=\\varnothing,\\quad B-A=\\{2\\}"},
+  {id:"union-equals-intersection",latex:"A\\cup B=A\\cap B",truthType:"sometimesTrue",predicate:(A,B)=>sameSet(union(A,B),inter(A,B)),explainEn:"Union and intersection are usually different. They are equal only in special cases such as A=B.",explainZh:"并集和交集通常不同。它们只会在特殊情况下相等，例如 A=B。",counterLatex:"A=\\{1\\},\\quad B=\\{2\\}",counterResultLatex:"A\\cup B=\\{1,2\\},\\quad A\\cap B=\\varnothing"},
+  {id:"subset-symmetric",latex:"A\\subseteq B\\Rightarrow B\\subseteq A",truthType:"sometimesTrue",predicate:(A,B)=>!isSubset(A,B)||isSubset(B,A),explainEn:"A subset relation does not automatically go both ways. The reverse direction needs A and B to be equal.",explainZh:"子集关系不会自动反过来成立。反方向成立通常需要 A 和 B 相等。",counterLatex:"A=\\{1\\},\\quad B=\\{1,2\\}",counterResultLatex:"A\\subseteq B,\\quad B\\nsubseteq A"},
+  {id:"difference-keeps-left",latex:"A-B=A",truthType:"sometimesTrue",predicate:(A,B)=>sameSet(diff(A,B),A),explainEn:"A-B equals A only when B removes nothing from A. This is not guaranteed.",explainZh:"只有当 B 没有从 A 中删掉任何元素时，A-B 才等于 A。这不能保证永远成立。",counterLatex:"A=\\{1,2\\},\\quad B=\\{2\\}",counterResultLatex:"A-B=\\{1\\}\\ne A"}
+];
+SET_IDENTITY_BANK.forEach(verifyStatementTruthType);
+function statementOption(stmt){return optLatex(`stmt:${stmt.id}`,stmt.latex,{truthType:stmt.truthType,statementId:stmt.id})}
+function statementSolutionLines(stmt){const lines=[lineText(stmt.explainEn||"This statement is not guaranteed by the set laws.",stmt.explainZh||"这个说法不能由集合运算规律保证永远成立。")]; if(stmt.counterLatex){lines.push(lineText("Counterexample:","反例：")); lines.push(lineLatex(stmt.counterLatex)); if(stmt.counterResultLatex) lines.push(lineLatex(stmt.counterResultLatex)); lines.push(lineText("So the statement is not always true.","所以这个说法不一定成立。"));} return lines}
 function lineLatex(latex){return {latex}}
 function lineText(en,zh){return {text:()=>lang==="zh"?zh:en}}
 function qbase(type,difficulty,promptKey,main,answer,distractors,solution,noteKey){return {type,difficulty,promptKey,main,answer,distractors,solution,noteKey,plain:main.map(x=>x.latex||x.text()).join(" ")}}
 function renderLatex(latex, display=false){const span=document.createElement("span"); try{katex.render(latex,span,{throwOnError:false,displayMode:display})}catch(e){span.textContent=latex} return span}
 function optionNode(o){const span=document.createElement("span"); if(o.text){span.textContent=o.text()} else span.appendChild(renderLatex(o.latex||o.plain,false)); return span}
 function optionText(o){return o.text?o.text():(o.plain||o.latex||"")}
+function renderBadFeedback(prefix, answerOption){
+  feedback.innerHTML="";
+  feedback.appendChild(document.createTextNode(prefix+" "));
+  const value=document.createElement("span");
+  value.className="feedback-answer";
+  value.appendChild(optionNode(answerOption));
+  feedback.appendChild(value);
+}
+function appendWrongReviewRow(parent,label,option,isTimeUp=false){
+  const row=document.createElement("div");
+  row.className="wrong-row";
+  const labelEl=document.createElement("span");
+  labelEl.className="wrong-label";
+  labelEl.textContent=label+":";
+  const valueEl=document.createElement("span");
+  valueEl.className="wrong-value";
+  if(isTimeUp){
+    valueEl.textContent=tr().timeUpAnswer;
+  }else{
+    valueEl.appendChild(optionNode(option));
+  }
+  row.appendChild(labelEl);
+  row.appendChild(valueEl);
+  parent.appendChild(row);
+}
 function fallbackOptions(kind){ if(kind==="number") return [-3,-2,-1,0,1,2,3,4,5,6,8,10,12,16,18,20].map(optNum); if(kind==="bool") return [optBool(true), optBool(false)]; if(kind==="set") return [optSet([]), optSet([1]), optSet([1,2]), optSet([2,3]), optSet([1,2,3])]; if(kind==="interval") return [optLatex("i1","(0,\\infty)"),optLatex("i2","[0,\\infty)"),optLatex("i3","(-\\infty,0)"),optLatex("i4","(-\\infty,0]")]; return []}
 function makeOptions(q,count){const m=new Map(); const add=o=>{if(o && !m.has(o.key))m.set(o.key,o)}; add(q.answer); (q.distractors||[]).forEach(add); if(m.size<count) fallbackOptions(q.answer.kind).forEach(add); return shuffle([...m.values()].slice(0,count))}
+function auditQuestion(q){if(!q||!q.answer) throw new Error("Question is missing an answer."); const opts=[q.answer,...(q.distractors||[])]; const keys=opts.map(o=>o.key); if(new Set(keys).size!==keys.length) throw new Error(`Duplicate option keys in ${q.type}.`); if(q.promptKey==="promptNotAlwaysTrue"){if(q.answer.truthType==="alwaysTrue") throw new Error("A not-always-true question selected an always-true answer."); const bad=(q.distractors||[]).filter(o=>o.truthType&&o.truthType!=="alwaysTrue"); if(bad.length) throw new Error("A not-always-true question has a distractor that is not always true.");} return q}
+function safeBuildQuestion(builder){let lastError=null; for(let i=0;i<40;i++){try{return auditQuestion(builder())}catch(err){lastError=err}} console.warn("Question audit failed after retries.", lastError); return builder()}
 
 const builders=[]; function addBuilder(difficulty,type,fn){fn.difficulty=difficulty;fn.type=type;builders.push(fn)}
 addBuilder("easy","membership",()=>{const A=samplePool(4,1,10); const inside=Math.random()<.55; const x=inside?choice(A):choice(diff([1,2,3,4,5,6,7,8,9,10,11,12],A)); return qbase("membership","easy","promptMembership",[lineLatex(`A=${setLatex(A)}`),lineLatex(`${x}\\in A\ ?`)],optBool(inside),[optBool(!inside)],[lineText(`${x} ${inside?"is":"is not"} in A.`,`${x} ${inside?"在":"不在"} A 中。`),lineLatex(`${x}${inside?"\\in":"\\notin"}A`)],"membership")});
@@ -179,28 +409,57 @@ addBuilder("expert","three-set-count",()=>{const A=rint(15,25),B=rint(15,25),C=r
 addBuilder("expert","powerset",()=>{const n=rint(2,5); const A=Array.from({length:n},(_,i)=>i+1); const ans=2**n; return qbase("powerset","expert","promptNumber",[lineLatex(`A=${setLatex(A)}`),lineLatex(`|\\mathcal P(A)|=?`)],optNum(ans),[optNum(n*n),optNum(n+2),optNum(ans-1),optNum(ans+2),optNum(2*n)],[lineText("A set with n elements has 2^n subsets.","含 n 个元素的集合有 2^n 个子集。"),lineLatex(`|A|=${n}`),lineLatex(`|\\mathcal P(A)|=2^{${n}}=${ans}`)],"powerset")});
 addBuilder("expert","interval",()=>{const a=rint(-5,6); const kind=choice([">",">=","<","<="]); const ans=intervalLatex(kind,a); const expr=kind==="<="?`x\\le ${a}`:kind===">="?`x\\ge ${a}`:`x${kind}${a}`; return qbase("interval","expert","promptInterval",[lineLatex(`\\{x\\in\\mathbb R:${expr}\\}`)],optLatex(`int:${ans}`,ans),[optLatex("int:w1",intervalLatex(kind.includes(">")?"<":">",a)),optLatex("int:w2",intervalLatex(kind==="<"?"<=":kind==="<="?"<":kind===">"?">=":">",a)),optLatex("int:w3",`(${a},${a+3})`),optLatex("int:w4",`[${a},${a+3}]`)],[lineText("Translate the inequality into interval notation.","把不等式翻译成区间表示法。"),lineLatex(ans)],"interval")});
 addBuilder("expert","solve-inequality",()=>{let a=choice([2,3,4,5]), bound=rint(-4,6), b=rint(-8,8), sign=choice(["<",">"]); const rhs=a*bound+b; const ans=intervalLatex(sign,bound); return qbase("solve-inequality","expert","promptInterval",[lineLatex(`${a}x${b>=0?"+"+b:b}${sign}${rhs}`)],optLatex(`ineq:${ans}`,ans),[optLatex("ineq:w1",intervalLatex(sign==="<"?">":"<",bound)),optLatex("ineq:w2",intervalLatex(sign==="<"?"<=":">=",bound)),optLatex("ineq:w3",intervalLatex(sign, -bound)),optLatex("ineq:w4",`(${bound-2},${bound+2})`)],[lineText("Isolate x, then write the solution set as an interval.","先解出 x，再把解集写成区间。"),lineLatex(`${a}x${sign}${rhs-b}`),lineLatex(`x${sign}${bound}`),lineLatex(ans)],"inequality")});
-addBuilder("expert","false-statement",()=>{const opts=[optLatex("stmt:subcap","A\\subseteq B\\Rightarrow A\\cap B=A"),optLatex("stmt:subcup","A\\subseteq B\\Rightarrow A\\cup B=B"),optLatex("stmt:empty","\\varnothing\\subseteq A"),optLatex("stmt:diff","A-B=B-A")]; return qbase("false-statement","expert","promptFalseStatement",[lineText("Choose the statement that is always false.","选择总是错误的说法。")],opts[3],opts.slice(0,3),[lineText("Set difference is not commutative in general.","差集一般不满足交换律。"),lineLatex(`A-B\\ne B-A`)],"falseStatement")});
+addBuilder("expert","not-always-true-statement",()=>{const answers=SET_IDENTITY_BANK.filter(s=>s.truthType!=="alwaysTrue"); const truths=SET_IDENTITY_BANK.filter(s=>s.truthType==="alwaysTrue"); const ans=choice(answers); const distractors=shuffle(truths).slice(0,5).map(statementOption); return qbase("not-always-true-statement","expert","promptNotAlwaysTrue",[lineText("Check the identities below. Special cases matter.","判断下面的集合命题。注意特殊情况。")],statementOption(ans),distractors,statementSolutionLines(ans),"notAlwaysTrue")});
 
 function setLanguage(newLang){lang=newLang;document.documentElement.lang=tr().htmlLang; el.navPractice.textContent=tr().navPractice;el.navHome.textContent=tr().navHome;el.toolBadge.textContent=tr().toolBadge;el.pageTitle.textContent=tr().title;el.pageSubtitle.textContent=tr().subtitle;el.setupTitle.textContent=tr().setupTitle;el.difficultyLabel.textContent=tr().difficultyLabel;el.questionCountLabel.textContent=tr().questionCountLabel;el.optionCountLabel.textContent=tr().optionCountLabel;el.timedModeText.textContent=tr().timedModeText;el.timedModeHint.textContent=tr().timedModeHint;el.timerLevelLabel.textContent=tr().timerLevelLabel;el.startBtn.textContent=tr().startBtn;el.sampleBtn.textContent=tr().sampleBtn;el.quitBtn.textContent=tr().quitBtn;nextBtn.textContent=tr().nextBtn;el.resultTitle.textContent=tr().resultTitle;el.scoreLabel.textContent=tr().scoreLabel;el.accuracyLabel.textContent=tr().accuracyLabel;el.wrongLabel.textContent=tr().wrongLabel;el.wrongReviewTitle.textContent=tr().wrongReviewTitle;el.restartBtn.textContent=tr().restartBtn;el.reviewWrongBtn.textContent=tr().reviewWrongBtn; noteBox.textContent=tr().note; buildSelects(); if(quiz.length) renderQuestion();}
 function buildSelects(){const dVal=difficultySel.value||"easy", oVal=optionCount.value||"4", tVal=timerLevel.value||"timer_medium"; difficultySel.innerHTML=""; for(const k of ["easy","medium","hard","expert","mixed"]){const o=document.createElement("option");o.value=k;o.textContent=tr().difficultyOptions[k];difficultySel.appendChild(o)} difficultySel.value=dVal; optionCount.innerHTML=""; for(let n=2;n<=6;n++){const o=document.createElement("option");o.value=n;o.textContent=tr().optionCount(n);optionCount.appendChild(o)} optionCount.value=oVal; timerLevel.innerHTML=""; for(const k of ["timer_easy","timer_medium","timer_hard","timer_expert"]){const o=document.createElement("option");o.value=k;o.textContent=tr().timerOptions[k];timerLevel.appendChild(o)} timerLevel.value=tVal;}
 function pickBuilder(diff, forcedTypes=null){let pool=builders.filter(b=>diff==="mixed"||b.difficulty===diff); if(forcedTypes&&forcedTypes.length){const narrow=pool.filter(b=>forcedTypes.includes(b.type)); if(narrow.length) pool=narrow;} return choice(pool)}
 let quiz=[],currentIndex=0,answers=[],wrongQuestions=[],currentOptions=[],timer=null,timeLeft=0,currentForcedTypes=null;
 function secondsForTimer(){return {timer_easy:120,timer_medium:60,timer_hard:30,timer_expert:15}[timerLevel.value]||60}
-function startQuiz(forcedTypes=null){const count=Math.max(1,Math.min(100,parseInt(questionCount.value||"10",10))); const diff=difficultySel.value; currentForcedTypes=forcedTypes; quiz=Array.from({length:count},()=>pickBuilder(diff,forcedTypes)()); currentIndex=0; answers=[]; wrongQuestions=[]; setupCard.classList.add("hidden"); resultCard.classList.add("hidden"); quizCard.classList.remove("hidden"); renderQuestion();}
+function startQuiz(forcedTypes=null){const count=Math.max(1,Math.min(100,parseInt(questionCount.value||"10",10))); const diff=difficultySel.value; currentForcedTypes=forcedTypes; quiz=Array.from({length:count},()=>safeBuildQuestion(pickBuilder(diff,forcedTypes))); currentIndex=0; answers=[]; wrongQuestions=[]; setupCard.classList.add("hidden"); resultCard.classList.add("hidden"); quizCard.classList.remove("hidden"); renderQuestion();}
 function renderQuestion(){clearTimer(); const q=quiz[currentIndex]; currentOptions=makeOptions(q,parseInt(optionCount.value,10)); progressText.textContent=tr().progress(currentIndex+1,quiz.length); difficultyText.textContent=tr().difficulties[q.difficulty]; progressBar.style.width=`${(currentIndex/quiz.length)*100}%`; questionTitle.textContent=tr().questionTitle; questionExtra.textContent=tr()[q.promptKey]||""; questionMain.innerHTML=""; for(const line of q.main){const div=document.createElement("div");div.className=line.latex?"question-line":"question-text"; if(line.latex) div.appendChild(renderLatex(line.latex,false)); else div.textContent=line.text(); questionMain.appendChild(div)} optionsEl.innerHTML=""; feedback.textContent=""; feedback.className="feedback"; solutionBox.classList.add("hidden"); nextBtn.disabled=true; nextBtn.textContent=currentIndex===quiz.length-1?tr().resultBtn:tr().nextBtn; for(const op of currentOptions){const btn=document.createElement("button"); btn.className="option"; btn.type="button"; btn.appendChild(optionNode(op)); btn.onclick=()=>selectOption(op,btn); optionsEl.appendChild(btn)} if(timedMode.checked){timeLeft=secondsForTimer(); timerDisplay.textContent=tr().timerDisplay(timeLeft); timerDisplay.classList.remove("hidden"); timer=setInterval(()=>{timeLeft--;timerDisplay.textContent=tr().timerDisplay(timeLeft); if(timeLeft<=0) timeUp();},1000)} else timerDisplay.classList.add("hidden");}
-function selectOption(op,btn){clearTimer(); const q=quiz[currentIndex]; const correct=op.key===q.answer.key; [...optionsEl.children].forEach(b=>{b.disabled=true}); btn.classList.add(correct?"correct":"wrong"); [...optionsEl.children].forEach((b,i)=>{if(currentOptions[i].key===q.answer.key)b.classList.add("correct")}); feedback.textContent= correct?tr().correctFeedback:`${tr().incorrectPrefix} ${optionText(q.answer)}`; feedback.className="feedback "+(correct?"good":"bad"); answers.push({q,selected:op,correct}); if(!correct) wrongQuestions.push(q); recordAttempt(q,optionText(q.answer),optionText(op),correct,false); renderSolutionBox(q); nextBtn.disabled=false; progressBar.style.width=`${((currentIndex+1)/quiz.length)*100}%`;}
-function timeUp(){clearTimer(); const q=quiz[currentIndex]; [...optionsEl.children].forEach((b,i)=>{b.disabled=true;if(currentOptions[i].key===q.answer.key)b.classList.add("correct")}); feedback.textContent=`${tr().timeUpPrefix} ${optionText(q.answer)}`; feedback.className="feedback bad"; answers.push({q,selected:null,correct:false,timeUp:true}); wrongQuestions.push(q); recordAttempt(q,optionText(q.answer),"",false,true); renderSolutionBox(q); nextBtn.disabled=false; progressBar.style.width=`${((currentIndex+1)/quiz.length)*100}%`;}
+function selectOption(op,btn){clearTimer(); const q=quiz[currentIndex]; const correct=op.key===q.answer.key; [...optionsEl.children].forEach(b=>{b.disabled=true}); btn.classList.add(correct?"correct":"wrong"); [...optionsEl.children].forEach((b,i)=>{if(currentOptions[i].key===q.answer.key)b.classList.add("correct")}); if(correct){
+    feedback.textContent=tr().correctFeedback;
+  }else{
+    renderBadFeedback(tr().incorrectPrefix,q.answer);
+  }
+  feedback.className="feedback "+(correct?"good":"bad"); answers.push({q,selected:op,correct}); if(!correct) wrongQuestions.push(q); recordAttempt(q,optionText(q.answer),optionText(op),correct,false); renderSolutionBox(q); nextBtn.disabled=false; progressBar.style.width=`${((currentIndex+1)/quiz.length)*100}%`;}
+function timeUp(){clearTimer(); const q=quiz[currentIndex]; [...optionsEl.children].forEach((b,i)=>{b.disabled=true;if(currentOptions[i].key===q.answer.key)b.classList.add("correct")}); renderBadFeedback(tr().timeUpPrefix,q.answer); feedback.className="feedback bad"; answers.push({q,selected:null,correct:false,timeUp:true}); wrongQuestions.push(q); recordAttempt(q,optionText(q.answer),"",false,true); renderSolutionBox(q); nextBtn.disabled=false; progressBar.style.width=`${((currentIndex+1)/quiz.length)*100}%`;}
 function renderSolutionBox(q){solutionBox.innerHTML=""; const h=document.createElement("h3");h.textContent=tr().solutionTitle;solutionBox.appendChild(h); const grid=document.createElement("div");grid.className="solution-grid"; const steps=document.createElement("div");steps.className="solution-steps"; for(const s of q.solution){const div=document.createElement("div"); if(s.latex) div.appendChild(renderLatex(s.latex,false)); else div.textContent=s.text(); steps.appendChild(div)} const note=document.createElement("div");note.className="solution-note";note.textContent=tr().notes[q.noteKey]||""; grid.appendChild(steps);grid.appendChild(note);solutionBox.appendChild(grid); const ans=document.createElement("p");ans.innerHTML=`<strong>${tr().solutionFinal}</strong> `; const pill=document.createElement("span");pill.className="answer-pill";pill.appendChild(optionNode(q.answer)); ans.appendChild(pill); solutionBox.appendChild(ans); solutionBox.classList.remove("hidden");}
 function nextQuestion(){if(currentIndex<quiz.length-1){currentIndex++;renderQuestion()}else showResults()}
-function showResults(){clearTimer(); quizCard.classList.add("hidden"); resultCard.classList.remove("hidden"); const correct=answers.filter(a=>a.correct).length; scoreNum.textContent=`${correct}/${answers.length}`; accuracyNum.textContent=`${answers.length?Math.round(correct/answers.length*100):0}%`; wrongNum.textContent=String(answers.length-correct); wrongList.innerHTML=""; if(!wrongQuestions.length){const p=document.createElement("p");p.className="explain-box";p.textContent=`${tr().noWrong} ${tr().noWrongTip}`;wrongList.appendChild(p)} else {answers.filter(a=>!a.correct).forEach(a=>{const div=document.createElement("div");div.className="wrong-item";div.innerHTML=`<strong>${tr().correctAnswer}:</strong> ${optionText(a.q.answer)}<br><strong>${tr().yourAnswer}:</strong> ${a.timeUp?tr().timeUpAnswer:optionText(a.selected)}`;wrongList.appendChild(div)})}}
+function showResults(){
+  clearTimer();
+  quizCard.classList.add("hidden");
+  resultCard.classList.remove("hidden");
+  const correct=answers.filter(a=>a.correct).length;
+  scoreNum.textContent=`${correct}/${answers.length}`;
+  accuracyNum.textContent=`${answers.length?Math.round(correct/answers.length*100):0}%`;
+  wrongNum.textContent=String(answers.length-correct);
+  wrongList.innerHTML="";
+  if(!wrongQuestions.length){
+    const p=document.createElement("p");
+    p.className="explain-box";
+    p.textContent=`${tr().noWrong} ${tr().noWrongTip}`;
+    wrongList.appendChild(p);
+  } else {
+    answers.filter(a=>!a.correct).forEach(a=>{
+      const div=document.createElement("div");
+      div.className="wrong-item";
+      appendWrongReviewRow(div,tr().correctAnswer,a.q.answer,false);
+      appendWrongReviewRow(div,tr().yourAnswer,a.selected,Boolean(a.timeUp));
+      wrongList.appendChild(div);
+    });
+  }
+}
 function resetToSetup(){clearTimer();quizCard.classList.add("hidden");resultCard.classList.add("hidden");setupCard.classList.remove("hidden");progressBar.style.width="0%"}
 function clearTimer(){if(timer){clearInterval(timer);timer=null}}
 function recordAttempt(q, correctDisplay, selectedDisplay, isCorrect, timeUp=false){void window.MCLProgress?.recordGameAttempt?.({gameId:TOOL_CONFIG.gameId, question:{plain:q.plain,type:q.type,difficulty:q.difficulty}, course:TOOL_CONFIG.course, topic:q.type, correctAnswer:correctDisplay, selectedAnswer:selectedDisplay, isCorrect, timeUp})}
-function generateSample(){const q=pickBuilder(difficultySel.value)(); const opts=makeOptions(q,Math.min(4,parseInt(optionCount.value,10))); sampleBox.innerHTML=""; const h=document.createElement("strong");h.textContent=tr().sampleTitle; sampleBox.appendChild(h); const qd=document.createElement("div");qd.style.marginTop="10px"; qd.textContent=tr().sampleQuestion+":"; sampleBox.appendChild(qd); for(const line of q.main){const div=document.createElement("div");div.style.margin="8px 0"; if(line.latex)div.appendChild(renderLatex(line.latex,false)); else div.textContent=line.text(); sampleBox.appendChild(div)} const od=document.createElement("div");od.style.marginTop="10px";od.textContent=tr().sampleOptions+":";sampleBox.appendChild(od); opts.forEach(o=>{const d=document.createElement("div");d.style.margin="4px 0";d.appendChild(optionNode(o));sampleBox.appendChild(d)}); const ad=document.createElement("div");ad.style.marginTop="10px";ad.innerHTML=`<strong>${tr().sampleAnswer}:</strong> `;ad.appendChild(optionNode(q.answer));sampleBox.appendChild(ad); sampleBox.classList.remove("hidden")}
+function generateSample(){const q=safeBuildQuestion(pickBuilder(difficultySel.value)); const opts=makeOptions(q,Math.min(4,parseInt(optionCount.value,10))); sampleBox.innerHTML=""; const h=document.createElement("strong");h.textContent=tr().sampleTitle; sampleBox.appendChild(h); const qd=document.createElement("div");qd.style.marginTop="10px"; qd.textContent=tr().sampleQuestion+":"; sampleBox.appendChild(qd); for(const line of q.main){const div=document.createElement("div");div.style.margin="8px 0"; if(line.latex)div.appendChild(renderLatex(line.latex,false)); else div.textContent=line.text(); sampleBox.appendChild(div)} const od=document.createElement("div");od.style.marginTop="10px";od.textContent=tr().sampleOptions+":";sampleBox.appendChild(od); opts.forEach(o=>{const d=document.createElement("div");d.style.margin="4px 0";d.appendChild(optionNode(o));sampleBox.appendChild(d)}); const ad=document.createElement("div");ad.style.marginTop="10px";ad.innerHTML=`<strong>${tr().sampleAnswer}:</strong> `;ad.appendChild(optionNode(q.answer));sampleBox.appendChild(ad); sampleBox.classList.remove("hidden")}
 
 document.getElementById("startBtn").onclick=()=>startQuiz(); document.getElementById("sampleBtn").onclick=generateSample; document.getElementById("quitBtn").onclick=showResults; document.getElementById("nextBtn").onclick=nextQuestion; document.getElementById("restartBtn").onclick=resetToSetup; document.getElementById("reviewWrongBtn").onclick=()=>{const types=[...new Set(wrongQuestions.map(q=>q.type))]; if(types.length){setupCard.classList.add("hidden");resultCard.classList.add("hidden");startQuiz(types)}};
 setLanguage(lang);
 </script>
+  <script src="../assets/js/tool-modes.js"></script>
   <script src="../assets/js/home-link.js"></script>
 </body>
 </html>

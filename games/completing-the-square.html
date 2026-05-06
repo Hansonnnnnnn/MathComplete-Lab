@@ -470,6 +470,15 @@
       <h2 id="setupTitle"></h2>
       <div class="setup-grid">
         <div><label id="difficultyLabel" for="difficulty"></label><select id="difficulty"></select></div>
+        <div class="mcl-tool-mode-field">
+          <label id="toolModeLabel" for="toolMode">Practice mode</label>
+          <select id="toolMode">
+            <option value="practice">Practice Mode</option>
+            <option value="learn" selected>Learn Mode</option>
+            <option value="exam">Exam Mode</option>
+          </select>
+          <p class="mcl-tool-mode-hint" id="mclToolModeHint">Every answer shows the solution, then you move on manually.</p>
+        </div>
         <div><label id="questionCountLabel" for="questionCount"></label><input id="questionCount" type="number" min="1" max="100" value="10" /></div>
         <div><label id="optionCountLabel" for="optionCount"></label><select id="optionCount"></select></div>
         <div><label class="checkbox-label" for="timedMode"><input id="timedMode" type="checkbox" /><span id="timedModeText"></span></label><p id="timedModeHint" class="mini-hint"></p></div>
@@ -1361,6 +1370,7 @@
     window.addEventListener("storage", event => { if (event.key === "mathcomplete_lang") applyLanguage(); });
     applyLanguage();
   </script>
+  <script src="../assets/js/tool-modes.js"></script>
   <script src="../assets/js/home-link.js"></script>
 </body>
 </html>

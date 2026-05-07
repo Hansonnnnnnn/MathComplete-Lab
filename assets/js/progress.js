@@ -31,6 +31,7 @@
     "arithmetic-within-100": "pre-algebra",
     "arithmetic-within-1000": "pre-algebra",
     "set-theory-basics": "pre-algebra",
+    "gcd-lcm": "pre-algebra",
     "fraction-percent": "pre-algebra",
     "algebra-expression": "algebra-1",
     "algebra-simplification": "algebra-1",

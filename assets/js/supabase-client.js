@@ -13,6 +13,7 @@
   const SUPABASE_URL = "https://hcrxxfcvmrjahnjlbjur.supabase.co";
   const SUPABASE_ANON_KEY = "sb_publishable_NqpfpyfzywQpEq7JiRwxuQ_oVaTjRRU";
   const SUPABASE_STORAGE_KEY = "sb-hcrxxfcvmrjahnjlbjur-auth-token";
+  const AUTH_PERSISTENCE_KEY = "mcl_auth_persistence";
 
   function isPlaceholder(value) {
     return !value || value.includes("PASTE_YOUR_");
@@ -22,6 +23,7 @@
     url: SUPABASE_URL,
     key: SUPABASE_ANON_KEY,
     storageKey: SUPABASE_STORAGE_KEY,
+    persistenceKey: AUTH_PERSISTENCE_KEY,
     isConfigured: !isPlaceholder(SUPABASE_URL) && !isPlaceholder(SUPABASE_ANON_KEY)
   };
 
@@ -37,12 +39,45 @@
     return;
   }
 
+  function authPersistenceMode() {
+    return localStorage.getItem(AUTH_PERSISTENCE_KEY) === "local" ? "local" : "session";
+  }
+
+  function authStorage() {
+    const preferred = () => authPersistenceMode() === "local" ? localStorage : sessionStorage;
+    const secondary = () => authPersistenceMode() === "local" ? sessionStorage : localStorage;
+
+    return {
+      getItem(key) {
+        return preferred().getItem(key);
+      },
+      setItem(key, value) {
+        preferred().setItem(key, value);
+        secondary().removeItem(key);
+      },
+      removeItem(key) {
+        localStorage.removeItem(key);
+        sessionStorage.removeItem(key);
+      }
+    };
+  }
+
+  window.MCL.setAuthPersistence = function (mode) {
+    const next = mode === "local" ? "local" : "session";
+    localStorage.setItem(AUTH_PERSISTENCE_KEY, next);
+    if (next === "session") localStorage.removeItem(SUPABASE_STORAGE_KEY);
+    else sessionStorage.removeItem(SUPABASE_STORAGE_KEY);
+  };
+
+  window.MCL.getAuthPersistence = authPersistenceMode;
+
   window.MCL.supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
     auth: {
       persistSession: true,
       autoRefreshToken: true,
       detectSessionInUrl: true,
-      storageKey: SUPABASE_STORAGE_KEY
+      storageKey: SUPABASE_STORAGE_KEY,
+      storage: authStorage()
     }
   });
 })();

@@ -448,6 +448,15 @@
     word-break: normal;
     text-wrap: pretty;
   }
+
+  .question-main.long-text-question {
+    max-width: 980px;
+    font-size: clamp(24px, 3.1vw, 36px) !important;
+    line-height: 1.32 !important;
+    letter-spacing: 0 !important;
+    overflow-wrap: break-word !important;
+    word-break: normal !important;
+  }
 </style>
 </head>
 <body>
@@ -844,6 +853,21 @@
         .replaceAll("}", "\\}");
     }
     function textLatex(text) { return `\\text{${escapeLatexText(text)}}`; }
+    function textOnlyLatexToPlain(latex) {
+      const match = String(latex).match(/^\\text\{([\s\S]*)\}$/);
+      if (!match) return null;
+      return match[1]
+        .replaceAll("\\%", "%")
+        .replaceAll("\\$", "$")
+        .replaceAll("\\&", "&")
+        .replaceAll("\\_", "_")
+        .replaceAll("\\{", "{")
+        .replaceAll("\\}", "}");
+    }
+    function isLongTextQuestion(latex) {
+      const text = textOnlyLatexToPlain(latex);
+      return Boolean(text && text.length > 54);
+    }
     function renderLatex(el, latex, displayMode = false) {
       el.classList.add("math-render");
       if (window.katex) katex.render(latex, el, { throwOnError: false, displayMode });
@@ -1737,7 +1761,14 @@
       difficultyText.textContent = lastDifficulty === "mixed" ? `${tr().difficulties.mixed} · ${tr().difficulties[q.difficulty]}` : tr().difficulties[q.difficulty];
       progressBar.style.width = `${(currentIndex / quiz.length) * 100}%`;
       qExtra.textContent = tr()[q.promptKey];
-      renderLatex(qMain, q.main, true);
+      qMain.classList.remove("math-render", "long-text-question");
+      qMain.innerHTML = "";
+      if (isLongTextQuestion(q.main)) {
+        qMain.classList.add("long-text-question");
+        qMain.textContent = textOnlyLatexToPlain(q.main);
+      } else {
+        renderLatex(qMain, q.main, true);
+      }
       if (resetOptions) {
         optionsEl.innerHTML = "";
         q.options.forEach(option => {

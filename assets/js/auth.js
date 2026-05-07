@@ -27,6 +27,18 @@
     return window.MCL.supabaseConfig?.storageKey || "sb-hcrxxfcvmrjahnjlbjur-auth-token";
   }
 
+  function preferredStorage() {
+    return window.MCL?.getAuthPersistence?.() === "local" ? localStorage : sessionStorage;
+  }
+
+  function secondaryStorage() {
+    return window.MCL?.getAuthPersistence?.() === "local" ? sessionStorage : localStorage;
+  }
+
+  function setAuthPersistence(remember) {
+    window.MCL?.setAuthPersistence?.(remember ? "local" : "session");
+  }
+
   function normalizeSession(payload) {
     const expiresIn = Number(payload.expires_in || 3600);
     return {
@@ -40,12 +52,13 @@
   }
 
   function saveStoredSession(session) {
-    localStorage.setItem(storageKey(), JSON.stringify(session));
+    preferredStorage().setItem(storageKey(), JSON.stringify(session));
+    secondaryStorage().removeItem(storageKey());
   }
 
   function readStoredSession() {
     try {
-      const raw = localStorage.getItem(storageKey());
+      const raw = preferredStorage().getItem(storageKey());
       if (!raw) return null;
 
       const session = JSON.parse(raw);
@@ -59,6 +72,7 @@
 
   function clearStoredSession() {
     localStorage.removeItem(storageKey());
+    sessionStorage.removeItem(storageKey());
   }
 
   function publicBaseUrl() {
@@ -106,8 +120,11 @@
     }
   }
 
-  async function signIn(email, password) {
+  async function signIn(email, password, options = {}) {
     if (!isConfigured()) throw new Error("Supabase is not configured.");
+    if (Object.prototype.hasOwnProperty.call(options, "remember")) {
+      setAuthPersistence(Boolean(options.remember));
+    }
     let data;
     let error;
 
@@ -187,6 +204,7 @@
 
   async function signUp(email, password, displayName = "") {
     if (!isConfigured()) throw new Error("Supabase is not configured.");
+    setAuthPersistence(false);
     const { data, error } = await withTimeout(
       client().auth.signUp({
         email,
@@ -301,6 +319,7 @@
     isConfigured,
     publicBaseUrl,
     getCachedSession: readStoredSession,
+    setAuthPersistence,
     getSession,
     getUser,
     signIn,

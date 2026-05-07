@@ -1,0 +1,1208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GCD & LCM Practice</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../assets/js/supabase-client.js"></script>
+  <script src="../assets/js/auth.js"></script>
+  <script src="../assets/js/auth-ui.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <style>
+    :root {
+      --bg: #f7f7fb;
+      --text: #0f172a;
+      --muted: #64748b;
+      --border: #e5e7eb;
+      --accent: #2563eb;
+      --violet: #7c3aed;
+      --good: #16a34a;
+      --bad: #dc2626;
+      --shadow: 0 18px 42px rgba(15, 23, 42, 0.10);
+      --radius: 22px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", Arial, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(96, 165, 250, 0.35), transparent 34%),
+        radial-gradient(circle at top right, rgba(167, 139, 250, 0.28), transparent 32%),
+        linear-gradient(180deg, #f8fbff 0%, var(--bg) 52%, #ffffff 100%);
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.42;
+      background-image:
+        linear-gradient(rgba(15, 23, 42, 0.045) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(15, 23, 42, 0.045) 1px, transparent 1px);
+      background-size: 42px 42px;
+      mask-image: linear-gradient(180deg, black, transparent 72%);
+    }
+    .mc-site-shell {
+      width: min(1180px, calc(100% - 32px));
+      margin: 18px auto 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 12px 14px;
+      border: 1px solid rgba(255, 255, 255, 0.74);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.84);
+      backdrop-filter: blur(18px);
+      box-shadow: 0 16px 36px rgba(15, 23, 42, 0.10);
+      position: sticky;
+      top: 12px;
+      z-index: 20;
+    }
+    .mc-brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: #0f172a;
+      font-weight: 950;
+      text-decoration: none;
+      letter-spacing: -0.035em;
+      white-space: nowrap;
+    }
+    .mc-brand-mark {
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      border-radius: 12px;
+      color: white;
+      background: linear-gradient(135deg, #2563eb, #7c3aed);
+      box-shadow: 0 12px 24px rgba(37, 99, 235, 0.28);
+    }
+    .mc-links { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; justify-content: flex-end; }
+    .mc-link {
+      color: #475569;
+      text-decoration: none;
+      font-weight: 850;
+      padding: 8px 11px;
+      border-radius: 999px;
+      transition: background 0.2s, color 0.2s;
+    }
+    .mc-link:hover { color: #1d4ed8; background: #eff6ff; }
+    .mc-link.primary { color: white; background: #0f172a; }
+    .mc-link.primary:hover { color: white; background: #1e293b; }
+    .container {
+      width: min(1040px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 38px 0 68px;
+      position: relative;
+    }
+    header { margin-bottom: 24px; overflow: visible; }
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      color: #1d4ed8;
+      background: rgba(239, 246, 255, 0.86);
+      border: 1px solid rgba(191, 219, 254, 0.8);
+      font-weight: 950;
+      margin-bottom: 14px;
+    }
+    .eyebrow-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: #10b981;
+      box-shadow: 0 0 0 6px rgba(16, 185, 129, 0.12);
+    }
+    h1 {
+      margin: 0;
+      font-size: clamp(34px, 5.2vw, 56px);
+      line-height: 1.16;
+      letter-spacing: -0.055em;
+      background: linear-gradient(135deg, #0f172a 0%, #1d4ed8 48%, #7c3aed 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      padding-bottom: 0.18em;
+      overflow: visible;
+    }
+    h2 { margin: 0 0 12px; font-size: clamp(24px, 4vw, 34px); letter-spacing: -0.045em; }
+    h3 { margin: 0 0 8px; letter-spacing: -0.025em; }
+    .subtitle { margin: 14px 0 0; color: var(--muted); line-height: 1.75; max-width: 780px; font-size: 17px; }
+    .card {
+      background: rgba(255, 255, 255, 0.90);
+      border: 1px solid rgba(255, 255, 255, 0.76);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 24px;
+      backdrop-filter: blur(16px);
+    }
+    .setup-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+      margin: 22px 0;
+    }
+    label { display: block; font-weight: 900; margin-bottom: 8px; }
+    select, input {
+      width: 100%;
+      min-height: 46px;
+      padding: 12px 14px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      font-size: 16px;
+      background: white;
+      outline: none;
+    }
+    select:focus, input:focus { border-color: var(--accent); box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12); }
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 46px;
+      padding: 12px 14px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: white;
+      cursor: pointer;
+      margin-bottom: 6px;
+    }
+    .checkbox-label input { width: auto; min-height: 0; transform: scale(1.15); accent-color: var(--accent); }
+    .mini-hint { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.45; }
+    button {
+      appearance: none;
+      border: none;
+      background: linear-gradient(135deg, var(--accent), var(--violet));
+      color: white;
+      font-weight: 950;
+      padding: 12px 18px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: transform 0.14s, filter 0.2s, box-shadow 0.2s;
+      box-shadow: 0 12px 24px rgba(37, 99, 235, 0.24);
+    }
+    button:hover { transform: translateY(-1px); filter: brightness(0.98); }
+    button.secondary { background: #111827; box-shadow: 0 8px 18px rgba(17, 24, 39, 0.16); }
+    button.ghost { background: white; color: var(--text); border: 1px solid var(--border); box-shadow: none; }
+    button:disabled { cursor: not-allowed; opacity: 0.55; transform: none; }
+    .hidden { display: none !important; }
+    .actions { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+    .explain-box {
+      margin-top: 18px;
+      padding: 16px;
+      background: #f8fafc;
+      border: 1px dashed #cbd5e1;
+      border-radius: 18px;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+    .topbar { display: flex; gap: 12px; align-items: center; justify-content: space-between; margin-bottom: 18px; flex-wrap: wrap; }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: white;
+      color: var(--muted);
+      font-weight: 850;
+      font-size: 14px;
+      margin-right: 6px;
+      margin-bottom: 6px;
+    }
+    .timer-pill { color: #1d4ed8; background: #eff6ff; border-color: #bfdbfe; }
+    .timer-danger { color: #991b1b; background: #fef2f2; border-color: #fecaca; }
+    .progress-wrap { width: 100%; height: 10px; background: #e5e7eb; border-radius: 999px; overflow: hidden; margin: 10px 0 22px; }
+    .progress { width: 0%; height: 100%; background: linear-gradient(90deg, #2563eb, #7c3aed); transition: width 0.25s ease; }
+    .question-title { color: var(--muted); font-weight: 950; margin-bottom: 8px; }
+    .question-extra { color: var(--muted); font-weight: 900; margin: -4px 0 14px; line-height: 1.6; }
+    .question-main {
+      max-width: 100%;
+      font-size: clamp(28px, 5.4vw, 54px);
+      line-height: 1.2;
+      font-weight: 500;
+      letter-spacing: -0.045em;
+      margin: 10px 0 24px;
+      text-align: left;
+      overflow-wrap: anywhere;
+      word-break: normal;
+      text-wrap: pretty;
+      white-space: normal;
+    }
+    .question-main.long-question {
+      font-size: clamp(22px, 3.8vw, 38px);
+      line-height: 1.34;
+      letter-spacing: 0;
+    }
+    .question-main.text-question {
+      font-size: clamp(20px, 3.2vw, 32px);
+      line-height: 1.42;
+      letter-spacing: 0;
+    }
+    .math-render { display: inline-block; }
+    .question-main.math-render { display: block; width: 100%; }
+    .question-main .katex {
+      max-width: 100%;
+      font-size: 1.08em;
+      line-height: inherit;
+      white-space: normal;
+      text-align: left;
+      font-weight: 400;
+      overflow-wrap: break-word;
+      word-break: normal;
+    }
+    .question-main .katex-display {
+      max-width: 100%;
+      margin: 0;
+      overflow-x: auto;
+      overflow-y: hidden;
+      text-align: left;
+      white-space: normal;
+    }
+    .question-main .katex-html,
+    .question-main .mord.text,
+    .question-main .mord.text span {
+      max-width: 100%;
+      white-space: normal !important;
+      overflow-wrap: break-word;
+      word-break: normal;
+      text-wrap: pretty;
+    }
+    .question-main.text-question .katex-html,
+    .question-main.text-question .base,
+    .question-main.text-question .mord.text,
+    .question-main.text-question .mord.text span {
+      display: inline;
+      white-space: normal !important;
+      overflow-wrap: break-word;
+    }
+    .question-main .katex * { font-weight: 400 !important; }
+    .option .katex { font-size: 1.1em; line-height: 1.25; }
+    .chain-math .katex, .answer-math .katex, .feedback-math .katex, .sample-math .katex, .wrong-math .katex { font-size: 1.06em; line-height: 1.25; }
+    .math-render .katex { color: #0f172a; }
+    .options { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-bottom: 18px; }
+    .option {
+      border: 2px solid var(--border);
+      background: white;
+      color: var(--text);
+      box-shadow: none;
+      border-radius: 18px;
+      min-height: 64px;
+      font-size: 20px;
+      text-align: center;
+      padding: 12px;
+      overflow-wrap: anywhere;
+    }
+    .option:hover { border-color: var(--accent); background: #f8fbff; }
+    .option.correct { border-color: rgba(22, 163, 74, 0.5); background: #ecfdf5; color: #065f46; }
+    .option.wrong { border-color: rgba(220, 38, 38, 0.5); background: #fef2f2; color: #991b1b; }
+    .option.correct .katex { color: #065f46; }
+    .option.wrong .katex { color: #991b1b; }
+    .feedback { min-height: 30px; font-weight: 950; margin: 8px 0 16px; }
+    .feedback.good { color: var(--good); }
+    .feedback.bad { color: var(--bad); }
+    .feedback.bad .katex { color: #dc2626; }
+    .solution-box {
+      margin: 14px 0 18px;
+      padding: 18px;
+      border-radius: 20px;
+      border: 1px solid #dbeafe;
+      background: linear-gradient(180deg, #f8fbff, #fff);
+      color: #1f2937;
+      line-height: 1.7;
+    }
+    .solution-box h4 { margin: 0 0 12px; font-size: 18px; }
+    .solution-chain { background: white; border: 1px solid #e5e7eb; border-radius: 16px; padding: 14px 16px; overflow-x: auto; }
+    .chain-line {
+      display: grid;
+      grid-template-columns: minmax(250px, 1fr) minmax(170px, 0.65fr);
+      align-items: baseline;
+      gap: 18px;
+      margin: 8px 0;
+      font-size: 17px;
+      font-weight: 850;
+      white-space: nowrap;
+    }
+    .chain-note { color: #64748b; font-size: 13px; font-weight: 850; white-space: normal; }
+    .solution-answer { margin-top: 12px; font-weight: 950; color: #111827; }
+    .solution-answer > .answer-math {
+      display: inline-block;
+      background: #ecfdf5;
+      color: #065f46;
+      border: 1px solid #bbf7d0;
+      border-radius: 999px;
+      padding: 3px 10px;
+      margin-left: 4px;
+      vertical-align: middle;
+    }
+    .result-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin: 18px 0 24px; }
+    .stat { background: #f9fafb; border: 1px solid var(--border); border-radius: 18px; padding: 18px; }
+    .stat .num { font-size: 34px; font-weight: 950; letter-spacing: -0.05em; }
+    .stat .label { color: var(--muted); margin-top: 4px; font-weight: 850; }
+    .wrong-list { display: grid; gap: 14px; }
+    .wrong-item { border: 1px solid var(--border); border-radius: 18px; background: white; padding: 16px; }
+    .wrong-item .expr { font-size: 22px; font-weight: 950; margin-bottom: 8px; overflow-wrap: anywhere; }
+    .wrong-item p { margin: 6px 0; color: var(--muted); line-height: 1.6; }
+    .tag-good { color: var(--good); font-weight: 950; }
+    .tag-bad { color: var(--bad); font-weight: 950; }
+    @media (max-width: 760px) {
+      .mc-site-shell { border-radius: 22px; align-items: flex-start; flex-direction: column; }
+      .mc-links { justify-content: flex-start; }
+      .setup-grid, .options, .result-grid { grid-template-columns: 1fr; }
+      .card { padding: 18px; }
+      .container { width: min(100% - 22px, 1040px); padding-top: 26px; }
+      .chain-line { grid-template-columns: 1fr; gap: 2px; white-space: normal; }
+      .chain-note { padding-left: 12px; }
+    }
+  </style>
+</head>
+<body>
+  <nav class="mc-site-shell">
+    <a class="mc-brand" href="../index.html"><span class="mc-brand-mark">&sum;</span><span>MathComplete Lab</span></a>
+    <div class="mc-links">
+      <a class="mc-link" href="../practice.html" data-i18n="navPractice">Practice Library</a>
+      <a class="mc-link primary" href="../index.html" data-i18n="navHome">Home</a>
+    </div>
+  </nav>
+
+  <main class="container">
+    <header>
+      <div class="eyebrow"><span class="eyebrow-dot"></span><span id="toolBadge"></span></div>
+      <h1 id="pageTitle"></h1>
+      <p id="pageSubtitle" class="subtitle"></p>
+    </header>
+
+    <section id="setupCard" class="card">
+      <h2 id="setupTitle"></h2>
+      <div class="setup-grid">
+        <div><label id="difficultyLabel" for="difficulty"></label><select id="difficulty"></select></div>
+        <div class="mcl-tool-mode-field">
+          <label id="toolModeLabel" for="toolMode">Practice mode</label>
+          <select id="toolMode">
+            <option value="practice">Practice Mode</option>
+            <option value="learn" selected>Learn Mode</option>
+            <option value="exam">Exam Mode</option>
+          </select>
+          <p class="mcl-tool-mode-hint" id="mclToolModeHint">Every answer shows feedback and the solution, then you move on manually.</p>
+        </div>
+        <div><label id="questionCountLabel" for="questionCount"></label><input id="questionCount" type="number" min="1" max="100" value="10" /></div>
+        <div><label id="optionCountLabel" for="optionCount"></label><select id="optionCount"></select></div>
+        <div><label class="checkbox-label" for="timedMode"><input id="timedMode" type="checkbox" /><span id="timedModeText"></span></label><p id="timedModeHint" class="mini-hint"></p></div>
+        <div><label id="timerLevelLabel" for="timerLevel"></label><select id="timerLevel"></select></div>
+      </div>
+      <div class="actions"><button id="startBtn"></button><button id="sampleBtn" class="ghost"></button></div>
+      <div id="sampleBox" class="explain-box hidden"></div>
+      <div id="noteBox" class="explain-box"></div>
+    </section>
+
+    <section id="quizCard" class="card hidden">
+      <div class="topbar">
+        <div><span class="pill" id="progressText"></span><span class="pill" id="difficultyText"></span><span class="pill timer-pill hidden" id="timerDisplay"></span></div>
+        <button id="quitBtn" class="ghost"></button>
+      </div>
+      <div class="progress-wrap"><div id="progressBar" class="progress"></div></div>
+      <div id="questionTitle" class="question-title"></div>
+      <div id="questionExtra" class="question-extra"></div>
+      <div id="questionMain" class="question-main"></div>
+      <div id="options" class="options"></div>
+      <div id="feedback" class="feedback"></div>
+      <div id="solutionBox" class="solution-box hidden"></div>
+      <div class="actions"><button id="nextBtn" disabled></button></div>
+    </section>
+
+    <section id="resultCard" class="card hidden">
+      <h2 id="resultTitle"></h2>
+      <div class="result-grid">
+        <div class="stat"><div id="scoreNum" class="num">0/0</div><div id="scoreLabel" class="label"></div></div>
+        <div class="stat"><div id="accuracyNum" class="num">0%</div><div id="accuracyLabel" class="label"></div></div>
+        <div class="stat"><div id="wrongNum" class="num">0</div><div id="wrongLabel" class="label"></div></div>
+      </div>
+      <h3 id="wrongReviewTitle"></h3>
+      <div id="wrongList" class="wrong-list"></div>
+      <div class="actions" style="margin-top:22px;"><button id="restartBtn"></button><button id="reviewWrongBtn" class="secondary"></button></div>
+    </section>
+  </main>
+
+  <script>
+    const TOOL_CONFIG = {
+      gameId: "gcd-lcm",
+      course: "pre-algebra",
+      title: { en: "GCD & LCM Practice", zh: "\u6700\u5927\u516c\u56e0\u6570\u4e0e\u6700\u5c0f\u516c\u500d\u6570\u7ec3\u4e60" },
+      subtitle: {
+        en: "Practice greatest common divisors, least common multiples, prime factorization, and word problems.",
+        zh: "\u7ec3\u4e60\u6700\u5927\u516c\u56e0\u6570\u3001\u6700\u5c0f\u516c\u500d\u6570\u3001\u8d28\u56e0\u6570\u5206\u89e3\u548c\u5e94\u7528\u9898\u3002"
+      }
+    };
+
+    const T = {
+      en: {
+        htmlLang: "en",
+        navPractice: "Practice Library",
+        navHome: "Home",
+        toolBadge: "Pre-Algebra \u00b7 Algebra I",
+        title: TOOL_CONFIG.title.en,
+        subtitle: TOOL_CONFIG.subtitle.en,
+        note: "Every question is generated from factor templates. Harder levels include three numbers, missing values, applications, and the gcd-lcm product relationship.",
+        setupTitle: "Start Practice",
+        difficultyLabel: "Difficulty",
+        questionCountLabel: "Number of Questions",
+        optionCountLabel: "Number of Choices",
+        timedModeText: "Enable Timed Mode",
+        timedModeHint: "Off means no countdown. On means each question has its own timer.",
+        timerLevelLabel: "Timer Level",
+        startBtn: "Start",
+        sampleBtn: "Generate Sample Question",
+        quitBtn: "End This Round",
+        nextBtn: "Next Question",
+        resultBtn: "See Results",
+        questionTitle: "Read the question and choose the correct answer.",
+        promptGcd: "Find the greatest common divisor.",
+        promptLcm: "Find the least common multiple.",
+        promptFactor: "Use prime factorization to choose the correct value.",
+        promptFactorGcd: "Use the prime factorizations to find the greatest common divisor.",
+        promptFactorLcm: "Use the prime factorizations to find the least common multiple.",
+        promptCheck: "Decide whether the statement is true.",
+        promptMissing: "Use the given GCD or LCM condition.",
+        promptWord: "Model the situation with GCD or LCM.",
+        promptProduct: "Use a \u00d7 b = gcd(a,b) \u00d7 lcm(a,b).",
+        correctFeedback: "Correct!",
+        incorrectPrefix: "Not quite. The correct answer is",
+        timeUpPrefix: "Time is up. The correct answer is",
+        solutionTitle: "Correct Solution",
+        solutionFinal: "Answer:",
+        resultTitle: "Practice Results",
+        scoreLabel: "Correct Answers",
+        accuracyLabel: "Accuracy",
+        wrongLabel: "Wrong Answers",
+        wrongReviewTitle: "Wrong Answer Review",
+        restartBtn: "Practice Again",
+        reviewWrongBtn: "Practice Similar Wrong Types",
+        noWrong: "No wrong answers this round.",
+        noWrongTip: "Great job. Try a harder level next.",
+        yourAnswer: "Your answer",
+        correctAnswer: "Correct answer",
+        timeUpAnswer: "No answer: time is up",
+        sampleTitle: "Sample Question",
+        sampleQuestion: "Question",
+        sampleAnswer: "Correct answer",
+        sampleOptions: "Sample choices",
+        progress: (a, b) => `Question ${a} / ${b}`,
+        optionCount: n => `${n} choices`,
+        timerDisplay: s => `Time left: ${formatTime(s)}`,
+        difficulties: { easy: "Easy", medium: "Medium", hard: "Hard", expert: "Expert", mixed: "Mixed" },
+        difficultyOptions: { easy: "Easy", medium: "Medium", hard: "Hard", expert: "Expert", mixed: "Mixed" },
+        timerOptions: {
+          timer_easy: "Easy: 2 minutes per question",
+          timer_medium: "Medium: 1 minute per question",
+          timer_hard: "Hard: 30 seconds per question",
+          timer_expert: "Expert: 15 seconds per question"
+        },
+        notes: {
+          factor: "prime factorization",
+          common: "take the common prime powers",
+          allPowers: "take all prime powers",
+          divide: "divide by the GCD",
+          product: "gcd-lcm product relationship",
+          grouping: "largest equal group size uses GCD",
+          cycles: "first time together uses LCM",
+          check: "test divisibility",
+          final: "final result"
+        }
+      },
+      zh: {
+        htmlLang: "zh-CN",
+        navPractice: "\u7ec3\u4e60\u5e93",
+        navHome: "\u4e3b\u9875",
+        toolBadge: "\u9884\u5907\u4ee3\u6570 \u00b7 \u4ee3\u6570 I",
+        title: TOOL_CONFIG.title.zh,
+        subtitle: TOOL_CONFIG.subtitle.zh,
+        note: "\u6240\u6709\u9898\u90fd\u7531\u56e0\u6570\u6a21\u677f\u968f\u673a\u751f\u6210\u3002\u9ad8\u96be\u5ea6\u4f1a\u5305\u542b\u4e09\u4e2a\u6570\u3001\u7f3a\u5931\u503c\u3001\u5e94\u7528\u9898\u548c GCD\u00d7LCM \u5173\u7cfb\u3002",
+        setupTitle: "\u5f00\u59cb\u7ec3\u4e60",
+        difficultyLabel: "\u96be\u5ea6",
+        questionCountLabel: "\u9898\u76ee\u6570\u91cf",
+        optionCountLabel: "\u9009\u9879\u6570\u91cf",
+        timedModeText: "\u5f00\u542f\u8ba1\u65f6\u6a21\u5f0f",
+        timedModeHint: "\u5173\u95ed\u540e\u4e0d\u4f1a\u5012\u8ba1\u65f6\uff1b\u5f00\u542f\u540e\u6bcf\u9898\u5355\u72ec\u8ba1\u65f6\u3002",
+        timerLevelLabel: "\u8ba1\u65f6\u96be\u5ea6",
+        startBtn: "\u5f00\u59cb",
+        sampleBtn: "\u751f\u6210\u4e00\u9053\u6837\u9898",
+        quitBtn: "\u7ed3\u675f\u672c\u8f6e",
+        nextBtn: "\u4e0b\u4e00\u9898",
+        resultBtn: "\u67e5\u770b\u7ed3\u679c",
+        questionTitle: "\u8bf7\u9605\u8bfb\u9898\u5e72\uff0c\u5e76\u9009\u62e9\u6b63\u786e\u7b54\u6848\u3002",
+        promptGcd: "\u6c42\u6700\u5927\u516c\u56e0\u6570\u3002",
+        promptLcm: "\u6c42\u6700\u5c0f\u516c\u500d\u6570\u3002",
+        promptFactor: "\u7528\u8d28\u56e0\u6570\u5206\u89e3\u9009\u62e9\u6b63\u786e\u503c\u3002",
+        promptFactorGcd: "\u6839\u636e\u8d28\u56e0\u6570\u5206\u89e3\u6c42\u6700\u5927\u516c\u56e0\u6570\u3002",
+        promptFactorLcm: "\u6839\u636e\u8d28\u56e0\u6570\u5206\u89e3\u6c42\u6700\u5c0f\u516c\u500d\u6570\u3002",
+        promptCheck: "\u5224\u65ad\u8fd9\u4e2a\u8bf4\u6cd5\u662f\u5426\u6b63\u786e\u3002",
+        promptMissing: "\u4f7f\u7528\u7ed9\u5b9a\u7684 GCD \u6216 LCM \u6761\u4ef6\u3002",
+        promptWord: "\u7528 GCD \u6216 LCM \u5efa\u6a21\u89e3\u51b3\u5e94\u7528\u9898\u3002",
+        promptProduct: "\u4f7f\u7528 a \u00d7 b = gcd(a,b) \u00d7 lcm(a,b)\u3002",
+        correctFeedback: "\u6b63\u786e\uff01",
+        incorrectPrefix: "\u4e0d\u6b63\u786e\u3002\u6b63\u786e\u7b54\u6848\u662f",
+        timeUpPrefix: "\u65f6\u95f4\u5230\u3002\u6b63\u786e\u7b54\u6848\u662f",
+        solutionTitle: "\u6b63\u786e\u89e3\u6cd5",
+        solutionFinal: "\u7b54\u6848\uff1a",
+        resultTitle: "\u7ec3\u4e60\u7ed3\u679c",
+        scoreLabel: "\u6b63\u786e\u9898\u6570",
+        accuracyLabel: "\u6b63\u786e\u7387",
+        wrongLabel: "\u9519\u9898\u6570\u91cf",
+        wrongReviewTitle: "\u9519\u9898\u6574\u7406",
+        restartBtn: "\u518d\u7ec3\u4e00\u8f6e",
+        reviewWrongBtn: "\u53ea\u7ec3\u9519\u9898\u540c\u7c7b",
+        noWrong: "\u672c\u8f6e\u6ca1\u6709\u9519\u9898\u3002",
+        noWrongTip: "\u975e\u5e38\u597d\uff0c\u53ef\u4ee5\u5c1d\u8bd5\u66f4\u9ad8\u96be\u5ea6\u3002",
+        yourAnswer: "\u4f60\u7684\u7b54\u6848",
+        correctAnswer: "\u6b63\u786e\u7b54\u6848",
+        timeUpAnswer: "\u672a\u4f5c\u7b54\uff08\u65f6\u95f4\u5230\uff09",
+        sampleTitle: "\u6837\u9898",
+        sampleQuestion: "\u9898\u76ee",
+        sampleAnswer: "\u6b63\u786e\u7b54\u6848",
+        sampleOptions: "\u9009\u9879\u793a\u4f8b",
+        progress: (a, b) => `\u7b2c ${a} / ${b} \u9898`,
+        optionCount: n => `${n} \u4e2a\u9009\u9879`,
+        timerDisplay: s => `\u5269\u4f59\u65f6\u95f4\uff1a${formatTime(s)}`,
+        difficulties: { easy: "\u7b80\u5355", medium: "\u4e2d\u7b49", hard: "\u56f0\u96be", expert: "\u4e13\u5bb6", mixed: "\u6df7\u5408" },
+        difficultyOptions: { easy: "\u7b80\u5355", medium: "\u4e2d\u7b49", hard: "\u56f0\u96be", expert: "\u4e13\u5bb6", mixed: "\u6df7\u5408" },
+        timerOptions: {
+          timer_easy: "\u7b80\u5355\uff1a\u6bcf\u9898 2 \u5206\u949f",
+          timer_medium: "\u4e2d\u7b49\uff1a\u6bcf\u9898 1 \u5206\u949f",
+          timer_hard: "\u56f0\u96be\uff1a\u6bcf\u9898 30 \u79d2",
+          timer_expert: "\u4e13\u5bb6\uff1a\u6bcf\u9898 15 \u79d2"
+        },
+        notes: {
+          factor: "\u8d28\u56e0\u6570\u5206\u89e3",
+          common: "\u53d6\u516c\u5171\u8d28\u56e0\u6570\u7684\u6700\u5c0f\u6b21\u65b9",
+          allPowers: "\u53d6\u6240\u6709\u8d28\u56e0\u6570\u7684\u6700\u5927\u6b21\u65b9",
+          divide: "\u7528 GCD \u7ea6\u6389\u91cd\u590d\u90e8\u5206",
+          product: "GCD \u548c LCM \u7684\u4e58\u79ef\u5173\u7cfb",
+          grouping: "\u6700\u5927\u76f8\u540c\u5206\u7ec4\u5927\u5c0f\u7528 GCD",
+          cycles: "\u6700\u65e9\u540c\u65f6\u53d1\u751f\u7528 LCM",
+          check: "\u68c0\u67e5\u6574\u9664\u5173\u7cfb",
+          final: "\u6700\u7ec8\u7ed3\u679c"
+        }
+      }
+    };
+
+    const REAL_DIFFICULTIES = ["easy", "medium", "hard", "expert"];
+    const TIMER_DURATIONS = { timer_easy: 120, timer_medium: 60, timer_hard: 30, timer_expert: 15 };
+    const OPTION_COUNTS = [4, 5, 6];
+    const $ = id => document.getElementById(id);
+    const difficultyEl = $("difficulty");
+    const questionCountEl = $("questionCount");
+    const optionCountEl = $("optionCount");
+    const timedModeEl = $("timedMode");
+    const timerLevelEl = $("timerLevel");
+    const startBtn = $("startBtn");
+    const sampleBtn = $("sampleBtn");
+    const quitBtn = $("quitBtn");
+    const nextBtn = $("nextBtn");
+    const restartBtn = $("restartBtn");
+    const reviewWrongBtn = $("reviewWrongBtn");
+    const setupCard = $("setupCard");
+    const quizCard = $("quizCard");
+    const resultCard = $("resultCard");
+    const qTitle = $("questionTitle");
+    const qExtra = $("questionExtra");
+    const qMain = $("questionMain");
+    const optionsEl = $("options");
+    const feedbackEl = $("feedback");
+    const solutionBox = $("solutionBox");
+    const progressText = $("progressText");
+    const difficultyText = $("difficultyText");
+    const timerDisplay = $("timerDisplay");
+    const progressBar = $("progressBar");
+    const scoreNum = $("scoreNum");
+    const accuracyNum = $("accuracyNum");
+    const wrongNum = $("wrongNum");
+    const wrongList = $("wrongList");
+    const sampleBox = $("sampleBox");
+    const noteBox = $("noteBox");
+    let lang = readGlobalLanguage();
+    let quiz = [];
+    let currentIndex = 0;
+    let correctCount = 0;
+    let wrongAnswers = [];
+    let answered = false;
+    let lastDifficulty = "medium";
+    let timerId = null;
+    let timeLeft = 0;
+
+    function readGlobalLanguage() { return localStorage.getItem("mathcomplete_lang") === "zh" ? "zh" : "en"; }
+    function tr() { return T[lang]; }
+    function randInt(a, b) { return Math.floor(Math.random() * (b - a + 1)) + a; }
+    function choose(items) { return items[randInt(0, items.length - 1)]; }
+    function shuffle(items) {
+      const copy = [...items];
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = randInt(0, i);
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+    function clamp(n, a, b) { return Math.max(a, Math.min(b, n)); }
+    function formatTime(s) { return `${Math.floor(Math.max(0, s) / 60)}:${String(Math.max(0, s) % 60).padStart(2, "0")}`; }
+    function escapeHtml(value) {
+      return String(value).replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#039;");
+    }
+    function escapeLatexText(text) {
+      return String(text).replaceAll("\\", "\\textbackslash{}").replaceAll("&", "\\&").replaceAll("%", "\\%").replaceAll("_", "\\_").replaceAll("$", "\\$").replaceAll("{", "\\{").replaceAll("}", "\\}");
+    }
+    function textLatex(text) { return `\\text{${escapeLatexText(text)}}`; }
+    function renderLatex(el, latex, displayMode = false) {
+      el.classList.add("math-render");
+      if (window.katex) katex.render(latex, el, { throwOnError: false, displayMode });
+      else el.textContent = latex;
+    }
+    function mathSpan(latex, cls = "") { return `<span${cls ? ` class="${cls}"` : ""} data-latex="${escapeHtml(latex)}"></span>`; }
+    function renderTaggedMath(root) { root.querySelectorAll("[data-latex]").forEach(el => renderLatex(el, el.getAttribute("data-latex") || "")); }
+    function ans(latex) { return { latex: String(latex) }; }
+    function answerKey(item) { return String(item.latex).replace(/\s+/g, "").replaceAll("\\left", "").replaceAll("\\right", "").replaceAll("\\cdot", "*").toLowerCase(); }
+    function answerToString(item) { return item.latex; }
+    function isSameAnswer(a, b) { return answerKey(a) === answerKey(b); }
+    function gcd(a, b) {
+      a = Math.abs(a); b = Math.abs(b);
+      while (b) [a, b] = [b, a % b];
+      return a;
+    }
+    function lcm(a, b) { return Math.abs(a * b) / gcd(a, b); }
+    function gcdMany(nums) { return nums.reduce((acc, n) => gcd(acc, n)); }
+    function lcmMany(nums) { return nums.reduce((acc, n) => lcm(acc, n)); }
+    function factorMap(n) {
+      const map = new Map();
+      let x = Math.abs(n);
+      for (let p = 2; p * p <= x; p += p === 2 ? 1 : 2) {
+        while (x % p === 0) {
+          map.set(p, (map.get(p) || 0) + 1);
+          x /= p;
+        }
+      }
+      if (x > 1) map.set(x, (map.get(x) || 0) + 1);
+      return map;
+    }
+    function factorLatex(n) {
+      const parts = [...factorMap(n)].map(([p, e]) => e === 1 ? `${p}` : `${p}^{${e}}`);
+      return parts.length ? parts.join("\\cdot ") : "1";
+    }
+    function makeFromGcd(base, extraA, extraB) {
+      return [base * extraA, base * extraB];
+    }
+    function pairFromFactors(range) {
+      const base = choose(range.base);
+      const extras = shuffle(range.extra).slice(0, 2);
+      return makeFromGcd(base, extras[0], extras[1]);
+    }
+    function makeQuestion(difficulty, type, promptKey, main, answer, lines, distractors) {
+      const q = {
+        difficulty,
+        type,
+        promptKey,
+        main,
+        answer: ans(answer),
+        plain: main,
+        lines,
+        distractors: [...new Set(distractors.filter(Boolean).filter(x => answerKey(ans(x)) !== answerKey(ans(answer))))]
+      };
+      q.options = generateOptions(q, Number(optionCountEl.value || 4));
+      return q;
+    }
+    function generateOptions(q, count) {
+      const choices = new Map();
+      const add = value => {
+        if (value === undefined || value === null || value === "") return;
+        const item = ans(value);
+        if (answerKey(item) !== answerKey(q.answer)) choices.set(answerKey(item), item);
+      };
+      q.distractors.forEach(add);
+      if (/^-?\d+$/.test(q.answer.latex)) {
+        const n = Number(q.answer.latex);
+        [n + 1, n - 1, n * 2, Math.max(1, Math.floor(n / 2)), n + 2, n - 2].forEach(x => add(String(x)));
+      }
+      const picked = shuffle([...choices.values()]).slice(0, Math.max(0, count - 1));
+      return shuffle([q.answer, ...picked]);
+    }
+    function yesText() { return textLatex(lang === "zh" ? "\u662f" : "Yes"); }
+    function noText() { return textLatex(lang === "zh" ? "\u5426" : "No"); }
+    function cannotDetermineText() { return textLatex(lang === "zh" ? "\u65e0\u6cd5\u5224\u65ad" : "Cannot determine"); }
+    function sometimesText() { return textLatex(lang === "zh" ? "\u6709\u65f6\u662f" : "Sometimes"); }
+    function numbersList(nums) { return nums.join(",\\ "); }
+    function gcdLine(nums) { return `\\gcd(${numbersList(nums)})`; }
+    function lcmLine(nums) { return `\\operatorname{lcm}(${numbersList(nums)})`; }
+    function wordText(en, zh) { return textLatex(lang === "zh" ? zh : en); }
+
+    const BUILDERS = {
+      easy: [
+        () => {
+          const nums = pairFromFactors({ base: [2, 3, 4, 5, 6, 8], extra: [2, 3, 5, 7] });
+          const answer = gcdMany(nums);
+          return makeQuestion("easy", "gcd-two-small", "promptGcd", gcdLine(nums), String(answer), [
+            { line: `${nums[0]}=${factorLatex(nums[0])}`, note: tr().notes.factor },
+            { line: `${nums[1]}=${factorLatex(nums[1])}`, note: tr().notes.factor },
+            { line: `\\gcd=${answer}`, note: tr().notes.common }
+          ], [String(lcmMany(nums)), String(Math.min(...nums)), String(Math.max(1, answer / 2)), String(answer * 2)]);
+        },
+        () => {
+          const nums = pairFromFactors({ base: [1, 2, 3, 4], extra: [2, 3, 4, 5, 6, 7] });
+          const answer = lcmMany(nums);
+          return makeQuestion("easy", "lcm-two-small", "promptLcm", lcmLine(nums), String(answer), [
+            { line: `${nums[0]}=${factorLatex(nums[0])}`, note: tr().notes.factor },
+            { line: `${nums[1]}=${factorLatex(nums[1])}`, note: tr().notes.factor },
+            { line: `\\operatorname{lcm}=${answer}`, note: tr().notes.allPowers }
+          ], [String(gcdMany(nums)), String(nums[0] * nums[1]), String(Math.max(...nums)), String(answer / 2)]);
+        },
+        () => {
+          const nums = pairFromFactors({ base: [3, 4, 5, 6], extra: [2, 3, 5, 7] });
+          const g = gcdMany(nums);
+          const candidate = choose([g, g * 2, g + 1, Math.max(1, g - 1)]);
+          const ok = nums.every(n => n % candidate === 0);
+          return makeQuestion("easy", "common-factor-check", "promptCheck", wordText(`Is ${candidate} a common factor of ${nums[0]} and ${nums[1]}?`, `${candidate} \u662f ${nums[0]} \u548c ${nums[1]} \u7684\u516c\u56e0\u6570\u5417\uff1f`), ok ? yesText() : noText(), [
+            { line: `${nums[0]}\\div ${candidate}`, note: tr().notes.check },
+            { line: `${nums[1]}\\div ${candidate}`, note: tr().notes.check },
+            { line: ok ? yesText() : noText(), note: tr().notes.final }
+          ], [ok ? noText() : yesText(), cannotDetermineText(), sometimesText()]);
+        }
+      ],
+      medium: [
+        () => {
+          const base = choose([2, 3, 4, 5, 6, 8, 9]);
+          const nums = shuffle([2, 3, 4, 5, 7]).slice(0, 3).map(x => base * x);
+          const answer = gcdMany(nums);
+          return makeQuestion("medium", "gcd-three", "promptGcd", gcdLine(nums), String(answer), [
+            ...nums.map(n => ({ line: `${n}=${factorLatex(n)}`, note: tr().notes.factor })),
+            { line: `\\gcd=${answer}`, note: tr().notes.common }
+          ], [String(lcmMany(nums)), String(base * 2), String(Math.min(...nums)), String(answer + base)]);
+        },
+        () => {
+          const nums = shuffle([6, 8, 9, 10, 12, 15, 18, 20]).slice(0, 3);
+          const answer = lcmMany(nums);
+          return makeQuestion("medium", "lcm-three", "promptLcm", lcmLine(nums), String(answer), [
+            ...nums.map(n => ({ line: `${n}=${factorLatex(n)}`, note: tr().notes.factor })),
+            { line: `\\operatorname{lcm}=${answer}`, note: tr().notes.allPowers }
+          ], [String(gcdMany(nums)), String(nums[0] * nums[1]), String(Math.max(...nums)), String(Math.round(answer / 2))]);
+        },
+        () => {
+          const a = choose([24, 36, 40, 48, 60, 72]);
+          const b = choose([30, 42, 54, 66, 84, 90]);
+          const askGcd = Math.random() < 0.5;
+          const answer = askGcd ? gcd(a, b) : lcm(a, b);
+          const target = askGcd ? `\\gcd(${a},${b})` : `\\operatorname{lcm}(${a},${b})`;
+          return makeQuestion("medium", askGcd ? "factor-gcd" : "factor-lcm", askGcd ? "promptFactorGcd" : "promptFactorLcm", `\\begin{gathered}${target}=?\\\\${a}=${factorLatex(a)},\\quad ${b}=${factorLatex(b)}\\end{gathered}`, String(answer), [
+            { line: `${a}=${factorLatex(a)}`, note: tr().notes.factor },
+            { line: `${b}=${factorLatex(b)}`, note: tr().notes.factor },
+            { line: `${target}=${answer}`, note: askGcd ? tr().notes.common : tr().notes.allPowers }
+          ], [String(askGcd ? lcm(a, b) : gcd(a, b)), String(a + b), String(Math.max(a, b)), String(Math.abs(a - b))]);
+        }
+      ],
+      hard: [
+        () => {
+          const base = choose([6, 8, 9, 10, 12, 15]);
+          const [a, b] = makeFromGcd(base, choose([4, 7, 11, 13]), choose([5, 9, 14, 16]));
+          const answer = gcd(a, b);
+          return makeQuestion("hard", "large-gcd", "promptGcd", gcdLine([a, b]), String(answer), [
+            { line: `${a}=${factorLatex(a)}`, note: tr().notes.factor },
+            { line: `${b}=${factorLatex(b)}`, note: tr().notes.factor },
+            { line: `\\gcd=${answer}`, note: tr().notes.common }
+          ], [String(lcm(a, b)), String(base * 2), String(Math.min(a, b)), String(answer + 3)]);
+        },
+        () => {
+          const a = choose([18, 24, 30, 36, 45, 60]);
+          const b = choose([28, 35, 42, 50, 63, 75]);
+          const answer = lcm(a, b);
+          return makeQuestion("hard", "large-lcm", "promptLcm", lcmLine([a, b]), String(answer), [
+            { line: `${a}=${factorLatex(a)}`, note: tr().notes.factor },
+            { line: `${b}=${factorLatex(b)}`, note: tr().notes.factor },
+            { line: `\\operatorname{lcm}=${answer}`, note: tr().notes.allPowers }
+          ], [String(gcd(a, b)), String(a * b), String(Math.max(a, b)), String(answer - gcd(a, b))]);
+        },
+        () => {
+          const a = choose([24, 30, 36, 42, 48]);
+          const divisors = [2, 3, 4, 6].filter(d => a % d === 0);
+          const g = choose(divisors);
+          const reduced = a / g;
+          const coprimeChoices = [5, 7, 11, 13, 17].filter(k => gcd(reduced, k) === 1);
+          const answer = g * choose(coprimeChoices);
+          return makeQuestion("hard", "missing-gcd-value", "promptMissing", wordText(`Which value of b makes gcd(${a}, b) = ${g}?`, `\u54ea\u4e2a b \u4f7f gcd(${a}, b) = ${g}\uff1f`), String(answer), [
+            { line: `${a}=${factorLatex(a)}`, note: tr().notes.factor },
+            { line: `b=${answer}`, note: tr().notes.check },
+            { line: `\\gcd(${a},${answer})=${g}`, note: tr().notes.final }
+          ], [String(g), String(a), String(g * 2), String(a / gcd(a, g))]);
+        },
+        () => {
+          const x = choose([12, 18, 24, 30]);
+          const y = choose([20, 28, 36, 42]);
+          const answer = gcd(x, y);
+          return makeQuestion("hard", "word-grouping", "promptWord", wordText(`There are ${x} pencils and ${y} erasers. What is the largest equal group size with none left over?`, `\u6709 ${x} \u652f\u94c5\u7b14\u548c ${y} \u5757\u6a61\u76ae\u3002\u6bcf\u7ec4\u5b8c\u5168\u76f8\u540c\u4e14\u6ca1\u6709\u5269\u4f59\uff0c\u6bcf\u7ec4\u6700\u591a\u6709\u591a\u5c11\u4ef6\uff1f`), String(answer), [
+            { line: `\\gcd(${x},${y})`, note: tr().notes.grouping },
+            { line: `\\gcd=${answer}`, note: tr().notes.final }
+          ], [String(lcm(x, y)), String(Math.min(x, y)), String(answer * 2), String(Math.abs(x - y))]);
+        }
+      ],
+      expert: [
+        () => {
+          const g = choose([3, 4, 5, 6]);
+          const a = g * choose([5, 7, 8, 11]);
+          const b = g * choose([6, 9, 10, 13]);
+          const l = lcm(a, b);
+          const answer = l;
+          return makeQuestion("expert", "product-relation-lcm", "promptProduct", wordText(`If a=${a}, b=${b}, and gcd(a,b)=${gcd(a,b)}, find lcm(a,b).`, `\u5df2\u77e5 a=${a}\uff0cb=${b}\uff0cgcd(a,b)=${gcd(a,b)}\uff0c\u6c42 lcm(a,b)\u3002`), String(answer), [
+            { line: `a\\cdot b=\\gcd(a,b)\\cdot \\operatorname{lcm}(a,b)`, note: tr().notes.product },
+            { line: `${a}\\cdot ${b}=${gcd(a, b)}\\cdot \\operatorname{lcm}`, note: tr().notes.product },
+            { line: `\\operatorname{lcm}=${answer}`, note: tr().notes.divide }
+          ], [String(gcd(a, b)), String(a * b), String(Math.round((a * b) / Math.max(1, l / 2))), String(answer - gcd(a, b))]);
+        },
+        () => {
+          const a = choose([8, 10, 12, 15]);
+          const b = choose([12, 14, 18, 20]);
+          const answer = lcm(a, b);
+          return makeQuestion("expert", "word-cycles", "promptWord", wordText(`One light flashes every ${a} seconds and another every ${b} seconds. When do they flash together again?`, `\u4e00\u76cf\u706f\u6bcf ${a} \u79d2\u95ea\u4e00\u6b21\uff0c\u53e6\u4e00\u76cf\u706f\u6bcf ${b} \u79d2\u95ea\u4e00\u6b21\u3002\u5b83\u4eec\u6700\u65e9\u591a\u5c11\u79d2\u540e\u518d\u6b21\u540c\u65f6\u95ea\u70c1\uff1f`), String(answer), [
+            { line: `\\operatorname{lcm}(${a},${b})`, note: tr().notes.cycles },
+            { line: `\\operatorname{lcm}=${answer}`, note: tr().notes.final }
+          ], [String(gcd(a, b)), String(a + b), String(a * b), String(Math.max(a, b))]);
+        },
+        () => {
+          const g = choose([4, 6, 8, 10]);
+          const m = choose([3, 4, 5, 7]);
+          const n = choose([4, 5, 6, 11].filter(value => gcd(value, m) === 1));
+          const a = g * m;
+          const l = g * m * n;
+          const answer = g * n;
+          return makeQuestion("expert", "product-relation-missing", "promptProduct", wordText(`If gcd(a,b)=${g}, lcm(a,b)=${l}, and a=${a}, find b.`, `\u5df2\u77e5 gcd(a,b)=${g}\uff0clcm(a,b)=${l}\uff0ca=${a}\uff0c\u6c42 b\u3002`), String(answer), [
+            { line: `a\\cdot b=${g}\\cdot ${l}`, note: tr().notes.product },
+            { line: `${a}\\cdot b=${g * l}`, note: tr().notes.product },
+            { line: `b=${answer}`, note: tr().notes.divide }
+          ], [String(g), String(l), String(answer * 2), String(Math.max(1, answer - g))]);
+        },
+        () => {
+          const a = choose([36, 48, 60, 72]);
+          const b = choose([54, 80, 90, 96]);
+          const g = gcd(a, b);
+          const l = lcm(a, b);
+          const correct = textLatex(lang === "zh" ? `GCD \u662f ${g}\uff0cLCM \u662f ${l}` : `GCD is ${g} and LCM is ${l}`);
+          return makeQuestion("expert", "combined-statement", "promptFactor", `${a}=${factorLatex(a)},\\quad ${b}=${factorLatex(b)}`, correct, [
+            { line: `${a}=${factorLatex(a)}`, note: tr().notes.factor },
+            { line: `${b}=${factorLatex(b)}`, note: tr().notes.factor },
+            { line: `\\gcd=${g},\\quad \\operatorname{lcm}=${l}`, note: tr().notes.final }
+          ], [
+            textLatex(lang === "zh" ? `GCD \u662f ${l}\uff0cLCM \u662f ${g}` : `GCD is ${l} and LCM is ${g}`),
+            textLatex(lang === "zh" ? `GCD \u662f ${g}\uff0cLCM \u662f ${a * b}` : `GCD is ${g} and LCM is ${a * b}`),
+            textLatex(lang === "zh" ? `GCD \u662f ${Math.min(a, b)}\uff0cLCM \u662f ${l}` : `GCD is ${Math.min(a, b)} and LCM is ${l}`)
+          ]);
+        }
+      ]
+    };
+
+    function generateQuestion(difficulty, forcedType = null) {
+      let builders = BUILDERS[difficulty] || BUILDERS.medium;
+      if (forcedType) {
+        const matches = [];
+        for (const fn of builders) {
+          const q = fn();
+          if (q.type === forcedType) matches.push(fn);
+        }
+        if (matches.length) builders = matches;
+      }
+      for (let i = 0; i < 80; i++) {
+        const q = choose(builders)();
+        if (forcedType && q.type !== forcedType) continue;
+        q.options = generateOptions(q, Number(optionCountEl.value || 4));
+        return q;
+      }
+      return BUILDERS.easy[0]();
+    }
+    function buildDifficultyPlan(count, difficulty) {
+      if (difficulty !== "mixed") return Array(count).fill(difficulty);
+      const plan = [];
+      while (plan.length < count) plan.push(...shuffle(REAL_DIFFICULTIES));
+      return plan.slice(0, count);
+    }
+    function pickDifficultyForSample(difficulty) { return difficulty === "mixed" ? choose(REAL_DIFFICULTIES) : difficulty; }
+    function isTextQuestion(latex) { return /^\\text\{[\s\S]*\}$/.test(String(latex || "")); }
+    function isLongQuestion(latex) {
+      const text = String(latex || "");
+      return text.length > 54 || isTextQuestion(text);
+    }
+    function clearTimer() { if (timerId !== null) { clearInterval(timerId); timerId = null; } }
+    function updateTimerControls() { timerLevelEl.disabled = !timedModeEl.checked; }
+    function updateTimerDisplay() {
+      if (!timedModeEl.checked || quizCard.classList.contains("hidden")) { timerDisplay.classList.add("hidden"); return; }
+      timerDisplay.classList.remove("hidden");
+      timerDisplay.textContent = tr().timerDisplay(timeLeft);
+      timerDisplay.classList.toggle("timer-danger", timeLeft <= 10);
+    }
+    function startTimerForQuestion() {
+      clearTimer();
+      if (!timedModeEl.checked) { timerDisplay.classList.add("hidden"); return; }
+      timeLeft = TIMER_DURATIONS[timerLevelEl.value] || 60;
+      updateTimerDisplay();
+      timerId = setInterval(() => {
+        timeLeft -= 1;
+        updateTimerDisplay();
+        if (timeLeft <= 0) handleTimeUp();
+      }, 1000);
+    }
+    function applyLanguage() {
+      lang = readGlobalLanguage();
+      const t = tr();
+      document.documentElement.lang = t.htmlLang;
+      document.title = t.title;
+      document.querySelectorAll("[data-i18n]").forEach(el => {
+        const key = el.getAttribute("data-i18n");
+        if (t[key]) el.textContent = t[key];
+      });
+      $("toolBadge").textContent = t.toolBadge;
+      $("pageTitle").textContent = t.title;
+      $("pageSubtitle").textContent = t.subtitle;
+      $("setupTitle").textContent = t.setupTitle;
+      $("difficultyLabel").textContent = t.difficultyLabel;
+      $("questionCountLabel").textContent = t.questionCountLabel;
+      $("optionCountLabel").textContent = t.optionCountLabel;
+      $("timedModeText").textContent = t.timedModeText;
+      $("timedModeHint").textContent = t.timedModeHint;
+      $("timerLevelLabel").textContent = t.timerLevelLabel;
+      startBtn.textContent = t.startBtn;
+      sampleBtn.textContent = t.sampleBtn;
+      quitBtn.textContent = t.quitBtn;
+      nextBtn.textContent = answered && currentIndex === quiz.length - 1 ? t.resultBtn : t.nextBtn;
+      $("resultTitle").textContent = t.resultTitle;
+      $("scoreLabel").textContent = t.scoreLabel;
+      $("accuracyLabel").textContent = t.accuracyLabel;
+      $("wrongLabel").textContent = t.wrongLabel;
+      $("wrongReviewTitle").textContent = t.wrongReviewTitle;
+      restartBtn.textContent = t.restartBtn;
+      reviewWrongBtn.textContent = t.reviewWrongBtn;
+      noteBox.textContent = t.note;
+
+      const selectedDifficulty = difficultyEl.value || "medium";
+      difficultyEl.innerHTML = ["easy", "medium", "hard", "expert", "mixed"].map(key => `<option value="${key}">${t.difficultyOptions[key]}</option>`).join("");
+      difficultyEl.value = t.difficultyOptions[selectedDifficulty] ? selectedDifficulty : "medium";
+
+      const selectedOptionCount = optionCountEl.value || "4";
+      optionCountEl.innerHTML = OPTION_COUNTS.map(n => `<option value="${n}">${t.optionCount(n)}</option>`).join("");
+      optionCountEl.value = selectedOptionCount;
+
+      const selectedTimer = timerLevelEl.value || "timer_medium";
+      timerLevelEl.innerHTML = Object.entries(t.timerOptions).map(([key, label]) => `<option value="${key}">${label}</option>`).join("");
+      timerLevelEl.value = TIMER_DURATIONS[selectedTimer] ? selectedTimer : "timer_medium";
+      updateTimerControls();
+      if (!quizCard.classList.contains("hidden") && quiz.length) renderQuestion(false);
+      if (!resultCard.classList.contains("hidden")) renderResultBody();
+    }
+    function renderQuestion(resetTimer = true) {
+      const q = quiz[currentIndex];
+      if (resetTimer) answered = false;
+      qTitle.textContent = tr().questionTitle;
+      qExtra.textContent = tr()[q.promptKey] || tr().promptGcd;
+      qMain.innerHTML = "";
+      qMain.classList.remove("math-render");
+      qMain.classList.toggle("long-question", isLongQuestion(q.main));
+      qMain.classList.toggle("text-question", isTextQuestion(q.main));
+      renderLatex(qMain, q.main, true);
+      if (resetTimer) {
+        optionsEl.innerHTML = "";
+        feedbackEl.textContent = "";
+        feedbackEl.className = "feedback";
+        solutionBox.classList.add("hidden");
+        solutionBox.innerHTML = "";
+        q.options.forEach(option => {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "option";
+          btn.dataset.answerKey = answerKey(option);
+          renderLatex(btn, answerToString(option));
+          btn.addEventListener("click", () => chooseOption(btn, option));
+          optionsEl.appendChild(btn);
+        });
+      }
+      progressText.textContent = tr().progress(currentIndex + 1, quiz.length);
+      difficultyText.textContent = tr().difficulties[q.difficulty];
+      progressBar.style.width = `${(currentIndex / quiz.length) * 100}%`;
+      nextBtn.textContent = currentIndex === quiz.length - 1 ? tr().resultBtn : tr().nextBtn;
+      if (resetTimer) nextBtn.disabled = true;
+      if (resetTimer) startTimerForQuestion(); else updateTimerDisplay();
+    }
+    function renderFeedback(isCorrect, correctDisplay, timeUp) {
+      feedbackEl.className = `feedback ${isCorrect ? "good" : "bad"}`;
+      if (isCorrect) feedbackEl.textContent = tr().correctFeedback;
+      else {
+        feedbackEl.innerHTML = `${timeUp ? tr().timeUpPrefix : tr().incorrectPrefix} ${mathSpan(correctDisplay, "feedback-math")}`;
+        renderTaggedMath(feedbackEl);
+      }
+    }
+    function renderSolutionBox() {
+      const q = quiz[currentIndex];
+      if (!q) {
+        solutionBox.classList.add("hidden");
+        solutionBox.innerHTML = "";
+        return;
+      }
+      const correct = answerToString(q.answer);
+      solutionBox.classList.remove("hidden");
+      solutionBox.innerHTML = `<h4>${tr().solutionTitle}</h4><div class="solution-chain">${q.lines.map(step => `<div class="chain-line">${mathSpan(step.line, "chain-math")}<span class="chain-note">${escapeHtml(step.note || "")}</span></div>`).join("")}</div><div class="solution-answer">${tr().solutionFinal} ${mathSpan(correct, "answer-math")}</div>`;
+      renderTaggedMath(solutionBox);
+    }
+    function recordAttempt(q, correctDisplay, selectedDisplay, isCorrect, timeUp = false) {
+      void window.MCLProgress?.recordGameAttempt?.({
+        gameId: TOOL_CONFIG.gameId,
+        question: { plain: q.plain, type: q.type, difficulty: q.difficulty },
+        course: TOOL_CONFIG.course,
+        topic: q.type,
+        correctAnswer: correctDisplay,
+        selectedAnswer: selectedDisplay,
+        isCorrect,
+        timeUp
+      });
+    }
+    function chooseOption(button, selected) {
+      if (answered) return;
+      answered = true;
+      clearTimer();
+      const q = quiz[currentIndex];
+      const correct = q.answer;
+      const correctDisplay = answerToString(correct);
+      const isCorrect = isSameAnswer(selected, correct);
+      [...optionsEl.querySelectorAll(".option")].forEach(btn => {
+        btn.disabled = true;
+        if (btn.dataset.answerKey === answerKey(correct)) btn.classList.add("correct");
+      });
+      if (isCorrect) {
+        correctCount += 1;
+        renderFeedback(true, correctDisplay, false);
+      } else {
+        button.classList.add("wrong");
+        renderFeedback(false, correctDisplay, false);
+        wrongAnswers.push({ main: q.plain, answer: correctDisplay, selected: answerToString(selected), type: q.type, difficulty: q.difficulty });
+      }
+      recordAttempt(q, correctDisplay, answerToString(selected), isCorrect, false);
+      renderSolutionBox();
+      nextBtn.disabled = false;
+      progressBar.style.width = `${((currentIndex + 1) / quiz.length) * 100}%`;
+    }
+    function handleTimeUp() {
+      if (answered) return;
+      clearTimer();
+      answered = true;
+      const q = quiz[currentIndex];
+      const correct = q.answer;
+      const correctDisplay = answerToString(correct);
+      [...optionsEl.querySelectorAll(".option")].forEach(btn => {
+        btn.disabled = true;
+        if (btn.dataset.answerKey === answerKey(correct)) btn.classList.add("correct");
+      });
+      renderFeedback(false, correctDisplay, true);
+      wrongAnswers.push({ main: q.plain, answer: correctDisplay, selected: null, timeUp: true, type: q.type, difficulty: q.difficulty });
+      recordAttempt(q, correctDisplay, "", false, true);
+      renderSolutionBox();
+      nextBtn.disabled = false;
+      progressBar.style.width = `${((currentIndex + 1) / quiz.length) * 100}%`;
+    }
+    function nextQuestion() {
+      if (!answered) return;
+      if (currentIndex < quiz.length - 1) {
+        currentIndex += 1;
+        renderQuestion(true);
+      } else {
+        showResult();
+      }
+    }
+    function showResult() {
+      clearTimer();
+      quizCard.classList.add("hidden");
+      resultCard.classList.remove("hidden");
+      renderResultBody();
+    }
+    function renderResultBody() {
+      const total = quiz.length;
+      const accuracy = total ? Math.round((correctCount / total) * 100) : 0;
+      scoreNum.textContent = `${correctCount}/${total}`;
+      accuracyNum.textContent = `${accuracy}%`;
+      wrongNum.textContent = String(wrongAnswers.length);
+      wrongList.innerHTML = "";
+      reviewWrongBtn.disabled = wrongAnswers.length === 0;
+      if (!wrongAnswers.length) {
+        wrongList.innerHTML = `<div class="wrong-item"><div class="expr">${escapeHtml(tr().noWrong)}</div><p>${escapeHtml(tr().noWrongTip)}</p></div>`;
+        return;
+      }
+      wrongAnswers.forEach(w => {
+        const item = document.createElement("div");
+        item.className = "wrong-item";
+        item.innerHTML = `<div class="expr">${mathSpan(w.main, "wrong-math")}</div><p><span class="tag-bad">${escapeHtml(tr().yourAnswer)}:</span> ${w.timeUp ? escapeHtml(tr().timeUpAnswer) : mathSpan(w.selected, "wrong-math")}</p><p><span class="tag-good">${escapeHtml(tr().correctAnswer)}:</span> ${mathSpan(w.answer, "wrong-math")}</p>`;
+        wrongList.appendChild(item);
+        renderTaggedMath(item);
+      });
+    }
+    function buildQuiz() {
+      const count = clamp(Number(questionCountEl.value || 10), 1, 100);
+      questionCountEl.value = count;
+      const difficulty = difficultyEl.value || "medium";
+      lastDifficulty = difficulty;
+      const plan = buildDifficultyPlan(count, difficulty);
+      quiz = plan.map(level => generateQuestion(level));
+      currentIndex = 0;
+      correctCount = 0;
+      wrongAnswers = [];
+      setupCard.classList.add("hidden");
+      resultCard.classList.add("hidden");
+      quizCard.classList.remove("hidden");
+      renderQuestion(true);
+    }
+    function buildWrongTypeQuiz() {
+      if (!wrongAnswers.length) return;
+      const count = clamp(Number(questionCountEl.value || wrongAnswers.length), 1, 100);
+      const wrongPool = shuffle(wrongAnswers);
+      quiz = [];
+      while (quiz.length < count) {
+        const w = wrongPool[quiz.length % wrongPool.length];
+        quiz.push(generateQuestion(w.difficulty || pickDifficultyForSample(lastDifficulty), w.type));
+      }
+      currentIndex = 0;
+      correctCount = 0;
+      wrongAnswers = [];
+      setupCard.classList.add("hidden");
+      resultCard.classList.add("hidden");
+      quizCard.classList.remove("hidden");
+      renderQuestion(true);
+    }
+    function resetToSetup() {
+      clearTimer();
+      setupCard.classList.remove("hidden");
+      quizCard.classList.add("hidden");
+      resultCard.classList.add("hidden");
+      progressBar.style.width = "0%";
+      sampleBox.classList.add("hidden");
+      sampleBox.innerHTML = "";
+      solutionBox.classList.add("hidden");
+      solutionBox.innerHTML = "";
+    }
+    function quitQuiz() { if (answered || currentIndex > 0) showResult(); else resetToSetup(); }
+    function showSample() {
+      const q = generateQuestion(pickDifficultyForSample(difficultyEl.value));
+      const correct = answerToString(q.answer);
+      sampleBox.classList.remove("hidden");
+      sampleBox.innerHTML = `<strong>${tr().sampleTitle}:</strong><br>${tr().sampleQuestion}: ${mathSpan(q.plain, "sample-math")}<br>${tr()[q.promptKey]}<br>${tr().sampleAnswer}: ${mathSpan(correct, "sample-math")}<br>${tr().sampleOptions}: ${q.options.map(item => mathSpan(answerToString(item), "sample-math")).join(" ")}`;
+      renderTaggedMath(sampleBox);
+    }
+    timedModeEl.addEventListener("change", updateTimerControls);
+    startBtn.addEventListener("click", buildQuiz);
+    sampleBtn.addEventListener("click", showSample);
+    nextBtn.addEventListener("click", nextQuestion);
+    quitBtn.addEventListener("click", quitQuiz);
+    restartBtn.addEventListener("click", resetToSetup);
+    reviewWrongBtn.addEventListener("click", buildWrongTypeQuiz);
+    window.addEventListener("storage", event => { if (event.key === "mathcomplete_lang") applyLanguage(); });
+    applyLanguage();
+  </script>
+  <script src="../assets/js/tool-modes.js"></script>
+  <script src="../assets/js/home-link.js"></script>
+</body>
+</html>

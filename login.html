@@ -264,6 +264,25 @@
       box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
     }
 
+    .remember-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: -2px 0 16px;
+      color: #475569;
+      font-size: 14px;
+      font-weight: 850;
+      line-height: 1.4;
+      cursor: pointer;
+    }
+
+    .remember-row input {
+      width: auto;
+      min-height: 0;
+      accent-color: var(--blue);
+      transform: scale(1.08);
+    }
+
     .button {
       display: inline-flex;
       align-items: center;
@@ -446,6 +465,11 @@
               <input id="password" name="password" type="password" autocomplete="current-password" required minlength="6" placeholder="At least 6 characters" />
             </div>
 
+            <label class="remember-row" id="rememberField">
+              <input id="rememberMe" type="checkbox" />
+              <span data-i18n="rememberMe">Remember me on this device</span>
+            </label>
+
             <button class="button primary" id="submitBtn" type="submit" data-i18n="signInButton">Sign in</button>
 
             <div class="button-row">
@@ -512,6 +536,7 @@
         displayNameLabel: "Display name",
         emailLabel: "Email",
         passwordLabel: "Password",
+        rememberMe: "Remember me on this device",
         signInButton: "Sign in",
         signUpButton: "Create account",
         forgotPassword: "Forgot password?",
@@ -548,6 +573,7 @@
         displayNameLabel: "显示名称",
         emailLabel: "邮箱",
         passwordLabel: "密码",
+        rememberMe: "在这台设备上记住我",
         signInButton: "登录",
         signUpButton: "注册",
         forgotPassword: "忘记密码？",
@@ -583,6 +609,8 @@
     const submitBtn = document.getElementById("submitBtn");
     const message = document.getElementById("message");
     const forgotBtn = document.getElementById("forgotBtn");
+    const rememberField = document.getElementById("rememberField");
+    const rememberMe = document.getElementById("rememberMe");
     const loggedOutPanel = document.getElementById("loggedOutPanel");
     const loggedInPanel = document.getElementById("loggedInPanel");
     const configWarning = document.getElementById("configWarning");
@@ -632,6 +660,7 @@
       signInTab.classList.toggle("active", mode === "signin");
       signUpTab.classList.toggle("active", mode === "signup");
       nameField.classList.toggle("mcl-hidden", mode === "signin");
+      rememberField.classList.toggle("mcl-hidden", mode !== "signin");
       formTitle.textContent = mode === "signin" ? t("signInTitle") : t("signUpTitle");
       formLead.textContent = mode === "signin" ? t("signInLead") : t("signUpLead");
       submitBtn.textContent = mode === "signin" ? t("signInButton") : t("signUpButton");
@@ -714,7 +743,9 @@
 
       try {
         if (mode === "signin") {
-          const data = await window.MCLAuth.signIn(email, password);
+          const data = await window.MCLAuth.signIn(email, password, {
+            remember: rememberMe.checked
+          });
           showMessage(message, t("signedIn"), "good");
           if (data?.session?.user || data?.user) {
             showLoggedInPanelNow();

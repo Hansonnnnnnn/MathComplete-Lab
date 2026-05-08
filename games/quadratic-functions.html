@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quadratic Functions Practice</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <link rel="stylesheet" href="../assets/css/auth.css">
+  <link rel="stylesheet" href="../assets/css/progress.css">
+  <link rel="stylesheet" href="../assets/css/quiz-tool.css">
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../assets/js/supabase-client.js"></script>
+  <script src="../assets/js/auth.js"></script>
+  <script src="../assets/js/auth-ui.js"></script>
+  <script src="../assets/js/progress.js"></script>
+</head>
+<body>
+  <nav class="mc-site-shell"><a class="mc-brand" href="../index.html"><span class="mc-brand-mark">&sum;</span><span>MathComplete Lab</span></a><div class="mc-links"><a class="mc-link" href="../practice.html" data-i18n="navPractice">Practice Library</a><a class="mc-link primary" href="../index.html" data-i18n="navHome">Home</a></div></nav>
+  <main class="container">
+    <header><div class="eyebrow"><span class="eyebrow-dot"></span><span id="toolBadge"></span></div><h1 id="pageTitle"></h1><p id="pageSubtitle" class="subtitle"></p></header>
+    <section id="setupCard" class="card"><h2 id="setupTitle"></h2><div class="setup-grid"><div><label id="difficultyLabel" for="difficulty"></label><select id="difficulty"></select></div><div class="mcl-tool-mode-field"><label id="toolModeLabel" for="toolMode">Practice mode</label><select id="toolMode"><option value="practice">Practice Mode</option><option value="learn" selected>Learn Mode</option><option value="exam">Exam Mode</option></select><p class="mcl-tool-mode-hint" id="mclToolModeHint">Every answer shows feedback and the solution, then you move on manually.</p></div><div><label id="questionCountLabel" for="questionCount"></label><input id="questionCount" type="number" min="1" max="100" value="10" /></div><div><label id="optionCountLabel" for="optionCount"></label><select id="optionCount"></select></div><div><label class="checkbox-label" for="timedMode"><input id="timedMode" type="checkbox" /><span id="timedModeText"></span></label><p id="timedModeHint" class="mini-hint"></p></div><div><label id="timerLevelLabel" for="timerLevel"></label><select id="timerLevel"></select></div></div><div class="actions"><button id="startBtn"></button><button id="sampleBtn" class="ghost"></button></div><div id="sampleBox" class="explain-box hidden"></div><div id="noteBox" class="explain-box"></div></section>
+    <section id="quizCard" class="card hidden"><div class="topbar"><div><span class="pill" id="progressText"></span><span class="pill" id="difficultyText"></span><span class="pill timer-pill hidden" id="timerDisplay"></span></div><button id="quitBtn" class="ghost"></button></div><div class="progress-wrap"><div id="progressBar" class="progress"></div></div><div id="questionTitle" class="question-title"></div><div id="questionExtra" class="question-extra"></div><div id="questionMain" class="question-main"></div><div id="options" class="options"></div><div id="feedback" class="feedback"></div><div id="solutionBox" class="solution-box hidden"></div><div class="actions"><button id="nextBtn" disabled></button></div></section>
+    <section id="resultCard" class="card hidden"><h2 id="resultTitle"></h2><div class="result-grid"><div class="stat"><div id="scoreNum" class="num">0/0</div><div id="scoreLabel" class="label"></div></div><div class="stat"><div id="accuracyNum" class="num">0%</div><div id="accuracyLabel" class="label"></div></div><div class="stat"><div id="wrongNum" class="num">0</div><div id="wrongLabel" class="label"></div></div></div><h3 id="wrongReviewTitle"></h3><div id="wrongList" class="wrong-list"></div><div class="actions" style="margin-top:22px;"><button id="restartBtn"></button><button id="reviewWrongBtn" class="secondary"></button></div></section>
+  </main>
+  <script>
+    (function () {
+      function builder(type, fn) { fn.__type = type; return fn; }
+      function point(h, k) { return `\\left(${h},${k}\\right)`; }
+      function vertexForm(a, h, k) {
+        const coef = a === 1 ? "" : a === -1 ? "-" : `${a}`;
+        const inside = h === 0 ? "x" : h > 0 ? `x-${h}` : `x+${-h}`;
+        return `${coef}(${inside})^2${k === 0 ? "" : k > 0 ? `+${k}` : `${k}`}`;
+      }
+      function standard(a, b, c) {
+        return `${a === 1 ? "" : a === -1 ? "-" : a}x^2${b === 0 ? "" : b > 0 ? `+${b}x` : `${b}x`}${c === 0 ? "" : c > 0 ? `+${c}` : `${c}`}`;
+      }
+      window.MCLQuizTool = {
+        gameId: "quadratic-functions",
+        course: "algebra-2",
+        text: {
+          en: {
+            toolBadge: "Algebra II",
+            title: "Quadratic Functions Practice",
+            subtitle: "Practice vertices, axes of symmetry, opening direction, extrema, intercepts, and equivalent quadratic forms.",
+            note: "This tool focuses on reading features of a parabola from vertex, standard, and factored forms.",
+            promptVertex: "Find the vertex.",
+            promptAxis: "Find the axis of symmetry.",
+            promptOpen: "Identify the opening direction.",
+            promptRange: "Find the range.",
+            promptStandard: "Use standard form to find the vertex.",
+            promptZeros: "Find the zeros.",
+            difficultyOptions: {
+              easy: "Easy: vertex form features",
+              medium: "Medium: range and extrema",
+              hard: "Hard: standard form to vertex information",
+              expert: "Expert: zeros and equivalent forms",
+              mixed: "Mixed: balanced practice from all difficulty levels"
+            },
+            notes: { vertex: "vertex form is a(x-h)^2+k", axis: "axis passes through the vertex", open: "sign of a gives direction", range: "range depends on vertex and opening", standard: "use h=-b/(2a)", zeros: "set each factor equal to zero", final: "final result" }
+          },
+          zh: {
+            toolBadge: "代数 II",
+            title: "二次函数专项练习",
+            subtitle: "练习顶点、对称轴、开口方向、最值、截距和不同二次函数形式。",
+            note: "这个工具专注于从顶点式、标准式和因式分解式读取抛物线特征。",
+            promptVertex: "求顶点。",
+            promptAxis: "求对称轴。",
+            promptOpen: "判断开口方向。",
+            promptRange: "求值域。",
+            promptStandard: "根据标准式求顶点。",
+            promptZeros: "求零点。",
+            difficultyOptions: {
+              easy: "简单：顶点式特征",
+              medium: "中等：值域和最值",
+              hard: "困难：标准式求顶点信息",
+              expert: "专家：零点和等价形式",
+              mixed: "混合：从所有难度中均衡出题"
+            },
+            notes: { vertex: "顶点式是 a(x-h)^2+k", axis: "对称轴经过顶点", open: "a 的符号决定开口方向", range: "值域取决于顶点和开口方向", standard: "使用 h=-b/(2a)", zeros: "令每个因式等于 0", final: "最终结果" }
+          }
+        },
+        builders: {
+          easy: [
+            builder("vertex-from-vertex-form", h => {
+              const a = h.choice([-3, -2, -1, 1, 2, 3]);
+              const vx = h.randInt(-6, 6);
+              const vy = h.randInt(-7, 7);
+              return {
+                difficulty: "easy",
+                type: "vertex-from-vertex-form",
+                promptKey: "promptVertex",
+                main: `f(x)=${vertexForm(a, vx, vy)}`,
+                plain: `f(x)=${vertexForm(a, vx, vy)}`,
+                answer: point(vx, vy),
+                lines: [
+                  { line: `f(x)=a(x-h)^2+k`, note: h.tr().notes.vertex },
+                  { line: `(h,k)=${point(vx, vy)}`, note: h.tr().notes.final }
+                ],
+                distractors: [point(-vx, vy), point(vx, -vy), point(vy, vx), point(-vx, -vy)]
+              };
+            }),
+            builder("axis-from-vertex-form", h => {
+              const a = h.choice([-2, -1, 1, 2]);
+              const vx = h.randInt(-8, 8);
+              const vy = h.randInt(-6, 6);
+              return {
+                difficulty: "easy",
+                type: "axis-from-vertex-form",
+                promptKey: "promptAxis",
+                main: `f(x)=${vertexForm(a, vx, vy)}`,
+                plain: `f(x)=${vertexForm(a, vx, vy)}`,
+                answer: `x=${vx}`,
+                lines: [
+                  { line: `h=${vx}`, note: h.tr().notes.axis },
+                  { line: `x=${vx}`, note: h.tr().notes.final }
+                ],
+                distractors: [`x=${-vx}`, `y=${vx}`, `x=${vy}`, `y=${vy}`]
+              };
+            })
+          ],
+          medium: [
+            builder("opening-direction", h => {
+              const a = h.choice([-4, -3, -2, -1, 1, 2, 3, 4]);
+              const vx = h.randInt(-5, 5);
+              const vy = h.randInt(-5, 5);
+              const answer = a > 0 ? h.textAnswer("opens upward", "开口向上", "up") : h.textAnswer("opens downward", "开口向下", "down");
+              return {
+                difficulty: "medium",
+                type: "opening-direction",
+                promptKey: "promptOpen",
+                main: `f(x)=${vertexForm(a, vx, vy)}`,
+                plain: `f(x)=${vertexForm(a, vx, vy)}`,
+                answer,
+                lines: [
+                  { line: `a=${a}`, note: h.tr().notes.open },
+                  { line: answer.latex, note: h.tr().notes.final }
+                ],
+                distractors: [a > 0 ? h.textAnswer("opens downward", "开口向下", "down") : h.textAnswer("opens upward", "开口向上", "up"), h.textAnswer("has no vertex", "没有顶点", "no-vertex"), h.textAnswer("is a line", "是一条直线", "line")]
+              };
+            }),
+            builder("range", h => {
+              const a = h.choice([-3, -2, -1, 1, 2, 3]);
+              const vx = h.randInt(-5, 5);
+              const vy = h.randInt(-8, 8);
+              const answer = a > 0 ? `y\\ge ${vy}` : `y\\le ${vy}`;
+              return {
+                difficulty: "medium",
+                type: "range",
+                promptKey: "promptRange",
+                main: `f(x)=${vertexForm(a, vx, vy)}`,
+                plain: `f(x)=${vertexForm(a, vx, vy)}`,
+                answer,
+                lines: [
+                  { line: `\\text{vertex}= ${point(vx, vy)}`, note: h.tr().notes.vertex },
+                  { line: answer, note: h.tr().notes.range }
+                ],
+                distractors: [a > 0 ? `y\\le ${vy}` : `y\\ge ${vy}`, `x\\ge ${vx}`, `x\\le ${vx}`, `y\\ge ${vx}`]
+              };
+            })
+          ],
+          hard: [
+            builder("standard-vertex", h => {
+              const a = h.choice([1, 2, -1, -2]);
+              const vx = h.randInt(-5, 5);
+              const vy = h.randInt(-6, 6);
+              const b = -2 * a * vx;
+              const c = a * vx * vx + vy;
+              return {
+                difficulty: "hard",
+                type: "standard-vertex",
+                promptKey: "promptStandard",
+                main: `f(x)=${standard(a, b, c)}`,
+                plain: `f(x)=${standard(a, b, c)}`,
+                answer: point(vx, vy),
+                lines: [
+                  { line: `h=-\\frac{b}{2a}=-\\frac{${b}}{2(${a})}=${vx}`, note: h.tr().notes.standard },
+                  { line: `f(${vx})=${vy}`, note: h.tr().notes.final }
+                ],
+                distractors: [point(-vx, vy), point(vx, -vy), point(-b, c), point(b, c)]
+              };
+            })
+          ],
+          expert: [
+            builder("zeros-factored", h => {
+              const r1 = h.randInt(-7, 3);
+              const r2 = h.randInt(r1 + 1, 8);
+              const a = h.choice([-2, -1, 1, 2]);
+              const answer = `x=${r1},\\ ${r2}`;
+              return {
+                difficulty: "expert",
+                type: "zeros-factored",
+                promptKey: "promptZeros",
+                main: `f(x)=${a === 1 ? "" : a === -1 ? "-" : a}(x${h.signedTerm(-r1)})(x${h.signedTerm(-r2)})`,
+                plain: `f(x)=${a}(x${h.signedTerm(-r1)})(x${h.signedTerm(-r2)})`,
+                answer,
+                lines: [
+                  { line: `x${h.signedTerm(-r1)}=0\\Rightarrow x=${r1}`, note: h.tr().notes.zeros },
+                  { line: `x${h.signedTerm(-r2)}=0\\Rightarrow x=${r2}`, note: h.tr().notes.final }
+                ],
+                distractors: [`x=${-r1},\\ ${-r2}`, `x=${r1 + r2}`, `x=${r1},\\ ${-r2}`, point(r1, r2)]
+              };
+            }),
+            builder("form-match", h => {
+              const a = h.choice([1, -1, 2]);
+              const r1 = h.randInt(-5, 1);
+              const r2 = h.randInt(r1 + 1, 6);
+              const b = -a * (r1 + r2);
+              const c = a * r1 * r2;
+              const factored = `${a === 1 ? "" : a === -1 ? "-" : a}(x${h.signedTerm(-r1)})(x${h.signedTerm(-r2)})`;
+              return {
+                difficulty: "expert",
+                type: "form-match",
+                promptKey: "promptZeros",
+                main: `f(x)=${standard(a, b, c)}`,
+                plain: `f(x)=${standard(a, b, c)}`,
+                answer: factored,
+                lines: [
+                  { line: `${r1}+${r2}=${r1 + r2},\\quad ${r1}\\cdot ${r2}=${r1 * r2}`, note: h.tr().notes.zeros },
+                  { line: factored, note: h.tr().notes.final }
+                ],
+                distractors: [`${a}(x${h.signedTerm(r1)})(x${h.signedTerm(r2)})`, `${a}(x${h.signedTerm(-r1)})(x${h.signedTerm(r2)})`, `${standard(a, -b, c)}`, `x=${r1},\\ ${r2}`]
+              };
+            })
+          ]
+        }
+      };
+    })();
+  </script>
+  <script src="../assets/js/quiz-tool-engine.js"></script>
+  <script src="../assets/js/tool-modes.js"></script>
+  <script src="../assets/js/report-export.js"></script>
+  <script src="../assets/js/home-link.js"></script>
+</body>
+</html>

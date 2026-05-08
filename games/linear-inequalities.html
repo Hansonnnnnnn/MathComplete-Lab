@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Linear Inequalities Practice</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <link rel="stylesheet" href="../assets/css/auth.css">
+  <link rel="stylesheet" href="../assets/css/progress.css">
+  <link rel="stylesheet" href="../assets/css/quiz-tool.css">
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../assets/js/supabase-client.js"></script>
+  <script src="../assets/js/auth.js"></script>
+  <script src="../assets/js/auth-ui.js"></script>
+  <script src="../assets/js/progress.js"></script>
+</head>
+<body>
+  <nav class="mc-site-shell">
+    <a class="mc-brand" href="../index.html"><span class="mc-brand-mark">&sum;</span><span>MathComplete Lab</span></a>
+    <div class="mc-links"><a class="mc-link" href="../practice.html" data-i18n="navPractice">Practice Library</a><a class="mc-link primary" href="../index.html" data-i18n="navHome">Home</a></div>
+  </nav>
+  <main class="container">
+    <header><div class="eyebrow"><span class="eyebrow-dot"></span><span id="toolBadge"></span></div><h1 id="pageTitle"></h1><p id="pageSubtitle" class="subtitle"></p></header>
+    <section id="setupCard" class="card"><h2 id="setupTitle"></h2><div class="setup-grid"><div><label id="difficultyLabel" for="difficulty"></label><select id="difficulty"></select></div><div class="mcl-tool-mode-field"><label id="toolModeLabel" for="toolMode">Practice mode</label><select id="toolMode"><option value="practice">Practice Mode</option><option value="learn" selected>Learn Mode</option><option value="exam">Exam Mode</option></select><p class="mcl-tool-mode-hint" id="mclToolModeHint">Every answer shows feedback and the solution, then you move on manually.</p></div><div><label id="questionCountLabel" for="questionCount"></label><input id="questionCount" type="number" min="1" max="100" value="10" /></div><div><label id="optionCountLabel" for="optionCount"></label><select id="optionCount"></select></div><div><label class="checkbox-label" for="timedMode"><input id="timedMode" type="checkbox" /><span id="timedModeText"></span></label><p id="timedModeHint" class="mini-hint"></p></div><div><label id="timerLevelLabel" for="timerLevel"></label><select id="timerLevel"></select></div></div><div class="actions"><button id="startBtn"></button><button id="sampleBtn" class="ghost"></button></div><div id="sampleBox" class="explain-box hidden"></div><div id="noteBox" class="explain-box"></div></section>
+    <section id="quizCard" class="card hidden"><div class="topbar"><div><span class="pill" id="progressText"></span><span class="pill" id="difficultyText"></span><span class="pill timer-pill hidden" id="timerDisplay"></span></div><button id="quitBtn" class="ghost"></button></div><div class="progress-wrap"><div id="progressBar" class="progress"></div></div><div id="questionTitle" class="question-title"></div><div id="questionExtra" class="question-extra"></div><div id="questionMain" class="question-main"></div><div id="options" class="options"></div><div id="feedback" class="feedback"></div><div id="solutionBox" class="solution-box hidden"></div><div class="actions"><button id="nextBtn" disabled></button></div></section>
+    <section id="resultCard" class="card hidden"><h2 id="resultTitle"></h2><div class="result-grid"><div class="stat"><div id="scoreNum" class="num">0/0</div><div id="scoreLabel" class="label"></div></div><div class="stat"><div id="accuracyNum" class="num">0%</div><div id="accuracyLabel" class="label"></div></div><div class="stat"><div id="wrongNum" class="num">0</div><div id="wrongLabel" class="label"></div></div></div><h3 id="wrongReviewTitle"></h3><div id="wrongList" class="wrong-list"></div><div class="actions" style="margin-top:22px;"><button id="restartBtn"></button><button id="reviewWrongBtn" class="secondary"></button></div></section>
+  </main>
+  <script>
+    (function () {
+      function builder(type, fn) { fn.__type = type; return fn; }
+      function flip(op) { return { "<": ">", ">": "<", "\\le": "\\ge", "\\ge": "\\le" }[op] || op; }
+      function interval(bound, op) {
+        if (op === "<") return `(-\\infty,${bound})`;
+        if (op === "\\le") return `(-\\infty,${bound}]`;
+        if (op === ">") return `(${bound},\\infty)`;
+        return `[${bound},\\infty)`;
+      }
+      function relation(x, op, n) { return `x${op}${n}`; }
+      function compoundAnswer(lo, hi, leftStrict, rightStrict) {
+        return `${lo}${leftStrict ? "<" : "\\le"}x${rightStrict ? "<" : "\\le"}${hi}`;
+      }
+      function compoundInterval(lo, hi, leftStrict, rightStrict) {
+        return `${leftStrict ? "(" : "["}${lo},${hi}${rightStrict ? ")" : "]"}`;
+      }
+      window.MCLQuizTool = {
+        gameId: "linear-inequalities",
+        course: "algebra-1",
+        text: {
+          en: {
+            toolBadge: "Algebra I",
+            title: "Linear Inequalities Practice",
+            subtitle: "Solve one-step, multi-step, negative-coefficient, compound, and interval-notation inequalities.",
+            note: "Watch the inequality sign carefully. Multiplying or dividing by a negative number reverses the direction.",
+            promptSolve: "Solve the inequality.",
+            promptInterval: "Solve and choose the interval notation.",
+            promptCompound: "Solve the compound inequality.",
+            promptMeaning: "Choose the inequality that matches the interval.",
+            difficultyOptions: {
+              easy: "Easy: one-step inequalities",
+              medium: "Medium: multiply or divide, including negative coefficients",
+              hard: "Hard: multi-step and parentheses",
+              expert: "Expert: compound inequalities and interval notation",
+              mixed: "Mixed: balanced practice from all difficulty levels"
+            },
+            notes: { isolate: "isolate x", reverse: "divide by a negative, so reverse the sign", simplify: "simplify", interval: "write in interval notation", final: "final result" }
+          },
+          zh: {
+            toolBadge: "代数 I",
+            title: "一次不等式专项练习",
+            subtitle: "练习一步、多步、负系数、复合不等式和区间表示法。",
+            note: "特别注意不等号方向。乘以或除以负数时，不等号需要反向。",
+            promptSolve: "解这个不等式。",
+            promptInterval: "解不等式，并选择区间表示。",
+            promptCompound: "解这个复合不等式。",
+            promptMeaning: "选择与区间对应的不等式。",
+            difficultyOptions: {
+              easy: "简单：一步不等式",
+              medium: "中等：乘除不等式，包含负系数",
+              hard: "困难：多步和括号",
+              expert: "专家：复合不等式和区间表示",
+              mixed: "混合：从所有难度中均衡出题"
+            },
+            notes: { isolate: "单独留下 x", reverse: "除以负数，所以不等号反向", simplify: "化简", interval: "写成区间表示", final: "最终结果" }
+          }
+        },
+        builders: {
+          easy: [
+            builder("add-subtract", h => {
+              const ans = h.randInt(-8, 10);
+              const c = h.choice([-7, -5, -4, -3, 2, 3, 4, 6, 8]);
+              const op = h.choice(["<", ">", "\\le", "\\ge"]);
+              const rhs = ans + c;
+              const expr = c >= 0 ? `x+${c}` : `x-${Math.abs(c)}`;
+              return {
+                difficulty: "easy",
+                type: "add-subtract",
+                promptKey: "promptSolve",
+                main: `${expr}${op}${rhs}`,
+                plain: `${expr}${op}${rhs}`,
+                answer: relation("x", op, ans),
+                lines: [
+                  { line: `${expr}${op}${rhs}`, note: h.tr().notes.isolate },
+                  { line: `x${op}${ans}`, note: h.tr().notes.final }
+                ],
+                distractors: [relation("x", flip(op), ans), relation("x", op, rhs), relation("x", op, ans + c), relation("x", flip(op), ans + c)]
+              };
+            })
+          ],
+          medium: [
+            builder("divide-positive", h => {
+              const a = h.choice([2, 3, 4, 5, 6, 8]);
+              const ans = h.randInt(-6, 9);
+              const op = h.choice(["<", ">", "\\le", "\\ge"]);
+              return {
+                difficulty: "medium",
+                type: "divide-positive",
+                promptKey: "promptSolve",
+                main: `${a}x${op}${a * ans}`,
+                plain: `${a}x${op}${a * ans}`,
+                answer: relation("x", op, ans),
+                lines: [
+                  { line: `${a}x${op}${a * ans}`, note: h.tr().notes.isolate },
+                  { line: `x${op}${ans}`, note: h.tr().notes.final }
+                ],
+                distractors: [relation("x", flip(op), ans), relation("x", op, a * ans), relation("x", op, ans + 1), relation("x", flip(op), ans + 1)]
+              };
+            }),
+            builder("divide-negative", h => {
+              const a = -h.choice([2, 3, 4, 5, 6, 8]);
+              const ans = h.randInt(-7, 8);
+              const shownOp = h.choice(["<", ">", "\\le", "\\ge"]);
+              const correctOp = flip(shownOp);
+              return {
+                difficulty: "medium",
+                type: "divide-negative",
+                promptKey: "promptSolve",
+                main: `${a}x${shownOp}${a * ans}`,
+                plain: `${a}x${shownOp}${a * ans}`,
+                answer: relation("x", correctOp, ans),
+                lines: [
+                  { line: `${a}x${shownOp}${a * ans}`, note: h.tr().notes.isolate },
+                  { line: `x${correctOp}${ans}`, note: h.tr().notes.reverse }
+                ],
+                distractors: [relation("x", shownOp, ans), relation("x", correctOp, -ans), relation("x", shownOp, -ans), relation("x", correctOp, ans + 1)]
+              };
+            })
+          ],
+          hard: [
+            builder("multi-step", h => {
+              const a = h.choice([2, 3, 4, 5, -2, -3, -4]);
+              const b = h.randInt(-9, 9);
+              const ans = h.randInt(-6, 8);
+              const shownOp = h.choice(["<", ">", "\\le", "\\ge"]);
+              const correctOp = a < 0 ? flip(shownOp) : shownOp;
+              const left = `${a}x${h.signedTerm(b)}`;
+              return {
+                difficulty: "hard",
+                type: "multi-step",
+                promptKey: "promptSolve",
+                main: `${left}${shownOp}${a * ans + b}`,
+                plain: `${left}${shownOp}${a * ans + b}`,
+                answer: relation("x", correctOp, ans),
+                lines: [
+                  { line: `${a}x${shownOp}${a * ans}`, note: h.tr().notes.simplify },
+                  { line: `x${correctOp}${ans}`, note: a < 0 ? h.tr().notes.reverse : h.tr().notes.final }
+                ],
+                distractors: [relation("x", shownOp, ans), relation("x", correctOp, ans + b), relation("x", flip(correctOp), ans), relation("x", correctOp, -ans)]
+              };
+            }),
+            builder("parentheses", h => {
+              const a = h.choice([2, 3, -2, -3]);
+              const shift = h.randInt(-5, 5);
+              const ans = h.randInt(-5, 8);
+              const shownOp = h.choice(["<", ">", "\\le", "\\ge"]);
+              const correctOp = a < 0 ? flip(shownOp) : shownOp;
+              return {
+                difficulty: "hard",
+                type: "parentheses",
+                promptKey: "promptSolve",
+                main: `${a}(x${h.signedTerm(shift)})${shownOp}${a * (ans + shift)}`,
+                plain: `${a}(x${h.signedTerm(shift)})${shownOp}${a * (ans + shift)}`,
+                answer: relation("x", correctOp, ans),
+                lines: [
+                  { line: `x${h.signedTerm(shift)}${correctOp}${ans + shift}`, note: a < 0 ? h.tr().notes.reverse : h.tr().notes.isolate },
+                  { line: `x${correctOp}${ans}`, note: h.tr().notes.final }
+                ],
+                distractors: [relation("x", shownOp, ans), relation("x", correctOp, ans + shift), relation("x", flip(correctOp), ans), relation("x", correctOp, -ans)]
+              };
+            })
+          ],
+          expert: [
+            builder("compound", h => {
+              const lo = h.randInt(-8, 1);
+              const hi = h.randInt(3, 12);
+              const shift = h.randInt(-5, 5);
+              const leftStrict = Math.random() < 0.5;
+              const rightStrict = Math.random() < 0.5;
+              const left = lo + shift;
+              const right = hi + shift;
+              const answer = compoundAnswer(lo, hi, leftStrict, rightStrict);
+              return {
+                difficulty: "expert",
+                type: "compound",
+                promptKey: "promptCompound",
+                main: `${left}${leftStrict ? "<" : "\\le"}x${h.signedTerm(shift)}${rightStrict ? "<" : "\\le"}${right}`,
+                plain: `${left}${leftStrict ? "<" : "\\le"}x${h.signedTerm(shift)}${rightStrict ? "<" : "\\le"}${right}`,
+                answer,
+                lines: [
+                  { line: `${left - shift}${leftStrict ? "<" : "\\le"}x${rightStrict ? "<" : "\\le"}${right - shift}`, note: h.tr().notes.isolate },
+                  { line: answer, note: h.tr().notes.final }
+                ],
+                distractors: [
+                  compoundAnswer(lo, hi, !leftStrict, rightStrict),
+                  compoundAnswer(lo, hi, leftStrict, !rightStrict),
+                  compoundAnswer(left, right, leftStrict, rightStrict),
+                  compoundInterval(lo, hi, leftStrict, rightStrict)
+                ]
+              };
+            }),
+            builder("interval-notation", h => {
+              const bound = h.randInt(-9, 9);
+              const op = h.choice(["<", ">", "\\le", "\\ge"]);
+              const ans = interval(bound, op);
+              const sameDirectionWrongBracket = op === "<" ? "\\le" : op === "\\le" ? "<" : op === ">" ? "\\ge" : ">";
+              return {
+                difficulty: "expert",
+                type: "interval-notation",
+                promptKey: "promptInterval",
+                main: relation("x", op, bound),
+                plain: relation("x", op, bound),
+                answer: ans,
+                lines: [
+                  { line: relation("x", op, bound), note: h.tr().notes.isolate },
+                  { line: ans, note: h.tr().notes.interval }
+                ],
+                distractors: [interval(bound, flip(op)), interval(bound, sameDirectionWrongBracket), relation("x", op, bound), interval(-bound, op)]
+              };
+            })
+          ]
+        }
+      };
+    })();
+  </script>
+  <script src="../assets/js/quiz-tool-engine.js"></script>
+  <script src="../assets/js/tool-modes.js"></script>
+  <script src="../assets/js/report-export.js"></script>
+  <script src="../assets/js/home-link.js"></script>
+</body>
+</html>

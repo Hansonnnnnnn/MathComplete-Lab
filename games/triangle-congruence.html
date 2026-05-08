@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Triangle Congruence Proofs</title>
+  <link rel="stylesheet" href="../assets/css/auth.css">
+  <link rel="stylesheet" href="../assets/css/progress.css">
+  <link rel="stylesheet" href="../assets/css/quiz-tool.css">
+  <link rel="stylesheet" href="../assets/css/triangle-congruence.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../assets/js/supabase-client.js"></script>
+  <script src="../assets/js/auth.js"></script>
+  <script src="../assets/js/auth-ui.js"></script>
+  <script src="../assets/js/progress.js"></script>
+</head>
+<body>
+  <nav class="mc-site-shell">
+    <a class="mc-brand" href="../index.html"><span class="mc-brand-mark">&sum;</span><span>MathComplete Lab</span></a>
+    <div class="mc-links"><a class="mc-link" href="../practice.html" data-i18n="navPractice">Practice Library</a><a class="mc-link primary" href="../index.html" data-i18n="navHome">Home</a></div>
+  </nav>
+
+  <main class="container">
+    <header>
+      <div class="eyebrow"><span class="eyebrow-dot"></span><span id="toolBadge"></span></div>
+      <h1 id="pageTitle"></h1>
+      <p id="pageSubtitle" class="subtitle"></p>
+    </header>
+
+    <section id="setupCard" class="card">
+      <h2 id="setupTitle"></h2>
+      <div class="setup-grid">
+        <div>
+          <label id="difficultyLabel" for="difficulty"></label>
+          <select id="difficulty"></select>
+        </div>
+        <div>
+          <label id="questionCountLabel" for="questionCount"></label>
+          <input id="questionCount" type="number" min="1" max="50" value="8" />
+        </div>
+        <div>
+          <label class="checkbox-label" for="timedMode"><input id="timedMode" type="checkbox" /><span id="timedModeText"></span></label>
+          <p id="timedModeHint" class="mini-hint"></p>
+        </div>
+        <div>
+          <label id="timerLevelLabel" for="timerLevel"></label>
+          <select id="timerLevel"></select>
+        </div>
+      </div>
+      <div class="actions">
+        <button id="startBtn"></button>
+        <button id="sampleBtn" class="ghost"></button>
+      </div>
+      <div id="sampleBox" class="explain-box hidden"></div>
+      <div id="noteBox" class="explain-box"></div>
+    </section>
+
+    <section id="quizCard" class="card hidden">
+      <div class="topbar">
+        <div>
+          <span class="pill" id="progressText"></span>
+          <span class="pill" id="difficultyText"></span>
+          <span class="pill timer-pill hidden" id="timerDisplay"></span>
+        </div>
+        <button id="quitBtn" class="ghost"></button>
+      </div>
+      <div class="progress-wrap"><div id="progressBar" class="progress"></div></div>
+      <div class="question-title" id="promptText"></div>
+
+      <div class="geo-layout">
+        <div>
+          <div class="diagram-panel">
+            <svg id="diagram" class="geometry-diagram" viewBox="0 0 720 420" role="img" aria-label="Triangle congruence diagram"></svg>
+          </div>
+          <div id="givenList" class="given-list"></div>
+          <div id="targetBox" class="target-box"></div>
+        </div>
+
+        <div class="proof-workspace">
+          <div>
+            <h3 data-i18n="theoremTitle">Congruence Theorem</h3>
+            <div id="theoremGrid" class="theorem-grid"></div>
+          </div>
+          <div>
+            <h3 data-i18n="proofTitle">Proof Table</h3>
+            <div class="proof-table-wrap">
+              <table class="proof-table">
+                <thead>
+                  <tr>
+                    <th></th>
+                    <th data-i18n="statement">Statement</th>
+                    <th data-i18n="reason">Reason</th>
+                  </tr>
+                </thead>
+                <tbody id="proofTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="feedback" class="feedback"></div>
+      <div id="solutionBox" class="solution-box hidden"></div>
+      <div class="actions">
+        <button id="submitBtn"></button>
+        <button id="nextBtn" class="secondary" disabled></button>
+      </div>
+    </section>
+
+    <section id="resultCard" class="card hidden">
+      <h2 id="resultTitle"></h2>
+      <div class="result-grid">
+        <div class="stat"><div id="scoreNum" class="num">0/0</div><div id="scoreLabel" class="label"></div></div>
+        <div class="stat"><div id="accuracyNum" class="num">0%</div><div id="accuracyLabel" class="label"></div></div>
+        <div class="stat"><div id="wrongNum" class="num">0</div><div id="wrongLabel" class="label"></div></div>
+      </div>
+      <h3 id="wrongReviewTitle"></h3>
+      <div id="wrongList" class="wrong-list"></div>
+      <div class="actions" style="margin-top:22px;">
+        <button id="restartBtn"></button>
+        <button id="reviewWrongBtn" class="secondary"></button>
+      </div>
+    </section>
+  </main>
+
+  <script src="../assets/js/triangle-congruence.js"></script>
+  <script src="../assets/js/tool-modes.js"></script>
+  <script src="../assets/js/report-export.js"></script>
+  <script src="../assets/js/home-link.js"></script>
+</body>
+</html>

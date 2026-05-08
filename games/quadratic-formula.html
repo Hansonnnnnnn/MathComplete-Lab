@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quadratic Formula Practice</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <link rel="stylesheet" href="../assets/css/auth.css">
+  <link rel="stylesheet" href="../assets/css/progress.css">
+  <link rel="stylesheet" href="../assets/css/quiz-tool.css">
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../assets/js/supabase-client.js"></script>
+  <script src="../assets/js/auth.js"></script>
+  <script src="../assets/js/auth-ui.js"></script>
+  <script src="../assets/js/progress.js"></script>
+</head>
+<body>
+  <nav class="mc-site-shell"><a class="mc-brand" href="../index.html"><span class="mc-brand-mark">&sum;</span><span>MathComplete Lab</span></a><div class="mc-links"><a class="mc-link" href="../practice.html" data-i18n="navPractice">Practice Library</a><a class="mc-link primary" href="../index.html" data-i18n="navHome">Home</a></div></nav>
+  <main class="container">
+    <header><div class="eyebrow"><span class="eyebrow-dot"></span><span id="toolBadge"></span></div><h1 id="pageTitle"></h1><p id="pageSubtitle" class="subtitle"></p></header>
+    <section id="setupCard" class="card"><h2 id="setupTitle"></h2><div class="setup-grid"><div><label id="difficultyLabel" for="difficulty"></label><select id="difficulty"></select></div><div class="mcl-tool-mode-field"><label id="toolModeLabel" for="toolMode">Practice mode</label><select id="toolMode"><option value="practice">Practice Mode</option><option value="learn" selected>Learn Mode</option><option value="exam">Exam Mode</option></select><p class="mcl-tool-mode-hint" id="mclToolModeHint">Every answer shows feedback and the solution, then you move on manually.</p></div><div><label id="questionCountLabel" for="questionCount"></label><input id="questionCount" type="number" min="1" max="100" value="10" /></div><div><label id="optionCountLabel" for="optionCount"></label><select id="optionCount"></select></div><div><label class="checkbox-label" for="timedMode"><input id="timedMode" type="checkbox" /><span id="timedModeText"></span></label><p id="timedModeHint" class="mini-hint"></p></div><div><label id="timerLevelLabel" for="timerLevel"></label><select id="timerLevel"></select></div></div><div class="actions"><button id="startBtn"></button><button id="sampleBtn" class="ghost"></button></div><div id="sampleBox" class="explain-box hidden"></div><div id="noteBox" class="explain-box"></div></section>
+    <section id="quizCard" class="card hidden"><div class="topbar"><div><span class="pill" id="progressText"></span><span class="pill" id="difficultyText"></span><span class="pill timer-pill hidden" id="timerDisplay"></span></div><button id="quitBtn" class="ghost"></button></div><div class="progress-wrap"><div id="progressBar" class="progress"></div></div><div id="questionTitle" class="question-title"></div><div id="questionExtra" class="question-extra"></div><div id="questionMain" class="question-main"></div><div id="options" class="options"></div><div id="feedback" class="feedback"></div><div id="solutionBox" class="solution-box hidden"></div><div class="actions"><button id="nextBtn" disabled></button></div></section>
+    <section id="resultCard" class="card hidden"><h2 id="resultTitle"></h2><div class="result-grid"><div class="stat"><div id="scoreNum" class="num">0/0</div><div id="scoreLabel" class="label"></div></div><div class="stat"><div id="accuracyNum" class="num">0%</div><div id="accuracyLabel" class="label"></div></div><div class="stat"><div id="wrongNum" class="num">0</div><div id="wrongLabel" class="label"></div></div></div><h3 id="wrongReviewTitle"></h3><div id="wrongList" class="wrong-list"></div><div class="actions" style="margin-top:22px;"><button id="restartBtn"></button><button id="reviewWrongBtn" class="secondary"></button></div></section>
+  </main>
+  <script>
+    (function () {
+      function builder(type, fn) { fn.__type = type; return fn; }
+      function standard(a, b, c) {
+        return `${a === 1 ? "" : a === -1 ? "-" : a}x^2${b === 0 ? "" : b > 0 ? `+${b}x` : `${b}x`}${c === 0 ? "" : c > 0 ? `+${c}` : `${c}`}=0`;
+      }
+      function sqrtSimplify(n) {
+        let outside = 1;
+        let inside = n;
+        for (let k = 2; k * k <= inside; k++) {
+          while (inside % (k * k) === 0) {
+            outside *= k;
+            inside /= k * k;
+          }
+        }
+        return { outside, inside };
+      }
+      function rootPair(a, b, d) {
+        const den = 2 * a;
+        if (d === 0) return `x=${frac(-b, den)}`;
+        const root = Math.sqrt(d);
+        if (Number.isInteger(root)) {
+          const r1 = frac(-b + root, den);
+          const r2 = frac(-b - root, den);
+          return r1 === r2 ? `x=${r1}` : `x=${r1},\\ ${r2}`;
+        }
+        const s = sqrtSimplify(d);
+        const rad = s.outside === 1 ? `\\sqrt{${s.inside}}` : `${s.outside}\\sqrt{${s.inside}}`;
+        return `x=\\frac{${-b}\\pm ${rad}}{${den}}`;
+      }
+      function complexPair(a, b, d) {
+        const den = 2 * a;
+        const s = sqrtSimplify(Math.abs(d));
+        const rad = s.outside === 1 ? `\\sqrt{${s.inside}}` : `${s.outside}\\sqrt{${s.inside}}`;
+        return `x=\\frac{${-b}\\pm ${rad}i}{${den}}`;
+      }
+      function frac(n, d) {
+        const g = gcd(Math.abs(n), Math.abs(d));
+        let a = n / g, b = d / g;
+        if (b < 0) { a = -a; b = -b; }
+        if (b === 1) return `${a}`;
+        if (a < 0) return `-\\frac{${Math.abs(a)}}{${b}}`;
+        return `\\frac{${a}}{${b}}`;
+      }
+      function gcd(a, b) { while (b) [a, b] = [b, a % b]; return a || 1; }
+      window.MCLQuizTool = {
+        gameId: "quadratic-formula",
+        course: "algebra-2",
+        text: {
+          en: {
+            toolBadge: "Algebra II",
+            title: "Quadratic Formula & Discriminant",
+            subtitle: "Practice discriminants, number of solutions, real roots, irrational roots, and simple complex roots.",
+            note: "Use D=b^2-4ac to classify solutions, then use the quadratic formula when roots are requested.",
+            promptDiscriminant: "Find the discriminant.",
+            promptCount: "Use the discriminant to choose the number of solutions.",
+            promptSolve: "Solve using the quadratic formula.",
+            promptComplex: "Find the complex solutions.",
+            difficultyOptions: {
+              easy: "Easy: discriminant",
+              medium: "Medium: number of real solutions",
+              hard: "Hard: real roots",
+              expert: "Expert: irrational and complex roots",
+              mixed: "Mixed: balanced practice from all difficulty levels"
+            },
+            notes: { discriminant: "D=b^2-4ac", classify: "classify by the sign of D", formula: "use x=(-b±sqrt(D))/(2a)", simplify: "simplify", final: "final result" }
+          },
+          zh: {
+            toolBadge: "代数 II",
+            title: "二次公式与判别式专项练习",
+            subtitle: "练习判别式、解的个数、实数根、无理根和简单复数根。",
+            note: "先用 D=b^2-4ac 判断解的类型，需要求根时再使用二次公式。",
+            promptDiscriminant: "求判别式。",
+            promptCount: "根据判别式选择解的个数。",
+            promptSolve: "用二次公式求解。",
+            promptComplex: "求复数解。",
+            difficultyOptions: {
+              easy: "简单：判别式",
+              medium: "中等：实数解个数",
+              hard: "困难：实数根",
+              expert: "专家：无理根和复数根",
+              mixed: "混合：从所有难度中均衡出题"
+            },
+            notes: { discriminant: "D=b^2-4ac", classify: "根据 D 的符号分类", formula: "使用 x=(-b±sqrt(D))/(2a)", simplify: "化简", final: "最终结果" }
+          }
+        },
+        builders: {
+          easy: [
+            builder("discriminant", h => {
+              const r1 = h.randInt(-6, 4);
+              const r2 = h.randInt(r1 + 1, 8);
+              const a = h.choice([1, 2, -1]);
+              const b = -a * (r1 + r2);
+              const c = a * r1 * r2;
+              const d = b * b - 4 * a * c;
+              return {
+                difficulty: "easy",
+                type: "discriminant",
+                promptKey: "promptDiscriminant",
+                main: standard(a, b, c),
+                plain: standard(a, b, c),
+                answer: `D=${d}`,
+                lines: [
+                  { line: `D=b^2-4ac`, note: h.tr().notes.discriminant },
+                  { line: `D=${b}^2-4(${a})(${c})=${d}`, note: h.tr().notes.final }
+                ],
+                distractors: [`D=${b * b + 4 * a * c}`, `D=${-d}`, `D=${d + 4 * a * c}`, `${d}`]
+              };
+            })
+          ],
+          medium: [
+            builder("solution-count", h => {
+              const mode = h.choice(["two", "one", "none"]);
+              let a = 1, b = 0, c = 0, d = 0;
+              if (mode === "two") {
+                const r1 = h.randInt(-5, 2), r2 = h.randInt(r1 + 1, 7);
+                b = -(r1 + r2); c = r1 * r2; d = b * b - 4 * c;
+              } else if (mode === "one") {
+                const r = h.randInt(-5, 6);
+                b = -2 * r; c = r * r; d = 0;
+              } else {
+                b = h.choice([-6, -4, -2, 2, 4, 6]); c = h.randInt(Math.floor((b * b) / 4) + 1, Math.floor((b * b) / 4) + 8); d = b * b - 4 * c;
+              }
+              const answer = mode === "two" ? h.textAnswer("two real solutions", "两个实数解", "two-real") : mode === "one" ? h.textAnswer("one real solution", "一个实数解", "one-real") : h.textAnswer("no real solutions", "没有实数解", "no-real");
+              return {
+                difficulty: "medium",
+                type: "solution-count",
+                promptKey: "promptCount",
+                main: standard(a, b, c),
+                plain: standard(a, b, c),
+                answer,
+                lines: [
+                  { line: `D=${b}^2-4(${a})(${c})=${d}`, note: h.tr().notes.discriminant },
+                  { line: answer.latex, note: h.tr().notes.classify }
+                ],
+                distractors: [h.textAnswer("two real solutions", "两个实数解", "two-real"), h.textAnswer("one real solution", "一个实数解", "one-real"), h.textAnswer("no real solutions", "没有实数解", "no-real"), h.textAnswer("infinitely many solutions", "无穷多解", "infinitely-many")]
+              };
+            })
+          ],
+          hard: [
+            builder("real-roots", h => {
+              const r1 = h.randInt(-6, 3);
+              const r2 = h.randInt(r1 + 1, 8);
+              const a = h.choice([1, 2, -1]);
+              const b = -a * (r1 + r2);
+              const c = a * r1 * r2;
+              const d = b * b - 4 * a * c;
+              const answer = rootPair(a, b, d);
+              return {
+                difficulty: "hard",
+                type: "real-roots",
+                promptKey: "promptSolve",
+                main: standard(a, b, c),
+                plain: standard(a, b, c),
+                answer,
+                lines: [
+                  { line: `D=${d}`, note: h.tr().notes.discriminant },
+                  { line: `x=\\frac{-(${b})\\pm\\sqrt{${d}}}{2(${a})}`, note: h.tr().notes.formula },
+                  { line: answer, note: h.tr().notes.final }
+                ],
+                distractors: [`x=${-r1},\\ ${-r2}`, `x=${r1 + r2}`, `D=${d}`, `x=${r2},\\ ${r1 + 1}`]
+              };
+            })
+          ],
+          expert: [
+            builder("irrational-roots", h => {
+              const a = 1;
+              const b = h.choice([-6, -4, -2, 2, 4, 6]);
+              const d = h.choice([8, 12, 20, 24, 28]);
+              const c = (b * b - d) / 4;
+              const answer = rootPair(a, b, d);
+              return {
+                difficulty: "expert",
+                type: "irrational-roots",
+                promptKey: "promptSolve",
+                main: standard(a, b, c),
+                plain: standard(a, b, c),
+                answer,
+                lines: [
+                  { line: `D=${d}`, note: h.tr().notes.discriminant },
+                  { line: answer, note: h.tr().notes.simplify }
+                ],
+                distractors: [`x=\\frac{${b}\\pm\\sqrt{${d}}}{2}`, `x=${-b}\\pm\\sqrt{${d}}`, `D=${d}`, complexPair(a, b, -d)]
+              };
+            }),
+            builder("complex-roots", h => {
+              const a = 1;
+              const b = h.choice([-6, -4, -2, 2, 4, 6]);
+              const negD = -h.choice([4, 8, 12, 16, 20]);
+              const c = (b * b - negD) / 4;
+              const answer = complexPair(a, b, negD);
+              return {
+                difficulty: "expert",
+                type: "complex-roots",
+                promptKey: "promptComplex",
+                main: standard(a, b, c),
+                plain: standard(a, b, c),
+                answer,
+                lines: [
+                  { line: `D=${negD}`, note: h.tr().notes.discriminant },
+                  { line: answer, note: h.tr().notes.formula }
+                ],
+                distractors: [rootPair(a, b, Math.abs(negD)), `x=\\frac{${-b}\\pm\\sqrt{${Math.abs(negD)}}}{2}`, h.textAnswer("no solution", "无解", "no-solution"), `D=${negD}`]
+              };
+            })
+          ]
+        }
+      };
+    })();
+  </script>
+  <script src="../assets/js/quiz-tool-engine.js"></script>
+  <script src="../assets/js/tool-modes.js"></script>
+  <script src="../assets/js/report-export.js"></script>
+  <script src="../assets/js/home-link.js"></script>
+</body>
+</html>

@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Systems of Linear Equations Practice</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <link rel="stylesheet" href="../assets/css/auth.css">
+  <link rel="stylesheet" href="../assets/css/progress.css">
+  <link rel="stylesheet" href="../assets/css/quiz-tool.css">
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../assets/js/supabase-client.js"></script>
+  <script src="../assets/js/auth.js"></script>
+  <script src="../assets/js/auth-ui.js"></script>
+  <script src="../assets/js/progress.js"></script>
+</head>
+<body>
+  <nav class="mc-site-shell"><a class="mc-brand" href="../index.html"><span class="mc-brand-mark">&sum;</span><span>MathComplete Lab</span></a><div class="mc-links"><a class="mc-link" href="../practice.html" data-i18n="navPractice">Practice Library</a><a class="mc-link primary" href="../index.html" data-i18n="navHome">Home</a></div></nav>
+  <main class="container">
+    <header><div class="eyebrow"><span class="eyebrow-dot"></span><span id="toolBadge"></span></div><h1 id="pageTitle"></h1><p id="pageSubtitle" class="subtitle"></p></header>
+    <section id="setupCard" class="card"><h2 id="setupTitle"></h2><div class="setup-grid"><div><label id="difficultyLabel" for="difficulty"></label><select id="difficulty"></select></div><div class="mcl-tool-mode-field"><label id="toolModeLabel" for="toolMode">Practice mode</label><select id="toolMode"><option value="practice">Practice Mode</option><option value="learn" selected>Learn Mode</option><option value="exam">Exam Mode</option></select><p class="mcl-tool-mode-hint" id="mclToolModeHint">Every answer shows feedback and the solution, then you move on manually.</p></div><div><label id="questionCountLabel" for="questionCount"></label><input id="questionCount" type="number" min="1" max="100" value="10" /></div><div><label id="optionCountLabel" for="optionCount"></label><select id="optionCount"></select></div><div><label class="checkbox-label" for="timedMode"><input id="timedMode" type="checkbox" /><span id="timedModeText"></span></label><p id="timedModeHint" class="mini-hint"></p></div><div><label id="timerLevelLabel" for="timerLevel"></label><select id="timerLevel"></select></div></div><div class="actions"><button id="startBtn"></button><button id="sampleBtn" class="ghost"></button></div><div id="sampleBox" class="explain-box hidden"></div><div id="noteBox" class="explain-box"></div></section>
+    <section id="quizCard" class="card hidden"><div class="topbar"><div><span class="pill" id="progressText"></span><span class="pill" id="difficultyText"></span><span class="pill timer-pill hidden" id="timerDisplay"></span></div><button id="quitBtn" class="ghost"></button></div><div class="progress-wrap"><div id="progressBar" class="progress"></div></div><div id="questionTitle" class="question-title"></div><div id="questionExtra" class="question-extra"></div><div id="questionMain" class="question-main"></div><div id="options" class="options"></div><div id="feedback" class="feedback"></div><div id="solutionBox" class="solution-box hidden"></div><div class="actions"><button id="nextBtn" disabled></button></div></section>
+    <section id="resultCard" class="card hidden"><h2 id="resultTitle"></h2><div class="result-grid"><div class="stat"><div id="scoreNum" class="num">0/0</div><div id="scoreLabel" class="label"></div></div><div class="stat"><div id="accuracyNum" class="num">0%</div><div id="accuracyLabel" class="label"></div></div><div class="stat"><div id="wrongNum" class="num">0</div><div id="wrongLabel" class="label"></div></div></div><h3 id="wrongReviewTitle"></h3><div id="wrongList" class="wrong-list"></div><div class="actions" style="margin-top:22px;"><button id="restartBtn"></button><button id="reviewWrongBtn" class="secondary"></button></div></section>
+  </main>
+  <script>
+    (function () {
+      function builder(type, fn) { fn.__type = type; return fn; }
+      function point(x, y) { return `\\left(${x},${y}\\right)`; }
+      function answerPoint(x, y) { return { latex: point(x, y), key: `${x},${y}` }; }
+      function lineEq(a, b, c) { return `${a}x${b < 0 ? "-" : "+"}${Math.abs(b)}y=${c}`; }
+      function cases(a, b) { return `\\begin{cases}${a}\\\\${b}\\end{cases}`; }
+      window.MCLQuizTool = {
+        gameId: "systems-linear-equations",
+        course: "algebra-1",
+        text: {
+          en: {
+            toolBadge: "Algebra I",
+            title: "Systems of Linear Equations Practice",
+            subtitle: "Solve systems by substitution, elimination, special cases, and short word-problem models.",
+            note: "A system solution is the ordered pair that makes both equations true. Watch for no solution and infinitely many solutions.",
+            promptSubstitution: "Solve the system by substitution.",
+            promptElimination: "Solve the system by elimination.",
+            promptSpecial: "Classify the system.",
+            promptWord: "Write and solve the system.",
+            difficultyOptions: {
+              easy: "Easy: substitution with y isolated",
+              medium: "Medium: elimination",
+              hard: "Hard: no solution and infinitely many solutions",
+              expert: "Expert: word problems",
+              mixed: "Mixed: balanced practice from all difficulty levels"
+            },
+            notes: { substitute: "substitute into the second equation", eliminate: "add or subtract to eliminate a variable", classify: "compare the two equations", model: "define variables and solve", final: "final result" }
+          },
+          zh: {
+            toolBadge: "代数 I",
+            title: "二元一次方程组专项练习",
+            subtitle: "练习代入法、消元法、特殊情况和简短应用题建模。",
+            note: "方程组的解是同时满足两个方程的有序数对。注意无解和无穷多解。",
+            promptSubstitution: "用代入法解方程组。",
+            promptElimination: "用消元法解方程组。",
+            promptSpecial: "判断方程组的解的情况。",
+            promptWord: "建立并解出方程组。",
+            difficultyOptions: {
+              easy: "简单：y 已经单独表示的代入法",
+              medium: "中等：消元法",
+              hard: "困难：无解和无穷多解",
+              expert: "专家：应用题",
+              mixed: "混合：从所有难度中均衡出题"
+            },
+            notes: { substitute: "代入另一个方程", eliminate: "相加或相减消去一个变量", classify: "比较两个方程", model: "设变量并求解", final: "最终结果" }
+          }
+        },
+        builders: {
+          easy: [
+            builder("substitution", h => {
+              const x = h.randInt(-5, 6);
+              const y = h.randInt(-5, 8);
+              const m = h.choice([-3, -2, -1, 1, 2, 3]);
+              const b = y - m * x;
+              const a2 = h.choice([1, 2, 3, -1, -2]);
+              const b2 = h.choice([1, 2, -1, -2, 3]);
+              const c2 = a2 * x + b2 * y;
+              return {
+                difficulty: "easy",
+                type: "substitution",
+                promptKey: "promptSubstitution",
+                main: cases(`y=${m}x${h.signedTerm(b)}`, lineEq(a2, b2, c2)),
+                plain: cases(`y=${m}x${h.signedTerm(b)}`, lineEq(a2, b2, c2)),
+                answer: answerPoint(x, y),
+                lines: [
+                  { line: `${a2}x+${b2}(${m}x${h.signedTerm(b)})=${c2}`, note: h.tr().notes.substitute },
+                  { line: `x=${x},\\quad y=${y}`, note: h.tr().notes.final }
+                ],
+                distractors: [answerPoint(y, x), answerPoint(-x, y), answerPoint(x, -y), answerPoint(x + 1, y)]
+              };
+            })
+          ],
+          medium: [
+            builder("elimination", h => {
+              const x = h.randInt(-5, 6);
+              const y = h.randInt(-5, 7);
+              const a = h.choice([2, 3, 4, -2, -3]);
+              const b = h.choice([1, 2, 3, -1, -2]);
+              const d = h.choice([1, 2, -1, -2, 3].filter(value => value !== b));
+              const c1 = a * x + b * y;
+              const c2 = a * x + d * y;
+              return {
+                difficulty: "medium",
+                type: "elimination",
+                promptKey: "promptElimination",
+                main: cases(lineEq(a, b, c1), lineEq(a, d, c2)),
+                plain: cases(lineEq(a, b, c1), lineEq(a, d, c2)),
+                answer: answerPoint(x, y),
+                lines: [
+                  { line: `(${b - d})y=${c1 - c2}`, note: h.tr().notes.eliminate },
+                  { line: `y=${y},\\quad x=${x}`, note: h.tr().notes.final }
+                ],
+                distractors: [answerPoint(y, x), answerPoint(-x, y), answerPoint(x, y + 1), answerPoint(x + 1, y)]
+              };
+            })
+          ],
+          hard: [
+            builder("no-solution", h => {
+              const a = h.choice([1, 2, 3, -2]);
+              const b = h.choice([1, 2, -1, 3]);
+              const c = h.randInt(-8, 8);
+              const k = h.choice([2, 3, -2]);
+              const c2 = k * c + h.choice([1, -1, 2]);
+              return {
+                difficulty: "hard",
+                type: "no-solution",
+                promptKey: "promptSpecial",
+                main: cases(lineEq(a, b, c), lineEq(k * a, k * b, c2)),
+                plain: cases(lineEq(a, b, c), lineEq(k * a, k * b, c2)),
+                answer: h.textAnswer("no solution", "无解", "no-solution"),
+                lines: [
+                  { line: `${k}(${lineEq(a, b, c)})\\Rightarrow ${lineEq(k * a, k * b, k * c)}`, note: h.tr().notes.classify },
+                  { line: h.textLatex(h.lang === "zh" ? "左边成比例，但常数项不同。" : "The left sides are proportional, but the constants differ."), note: h.tr().notes.final }
+                ],
+                distractors: [h.textAnswer("infinitely many solutions", "无穷多解", "infinitely-many"), answerPoint(0, c), answerPoint(c, 0), h.textAnswer("one solution", "一个解", "one-solution")]
+              };
+            }),
+            builder("infinite-solutions", h => {
+              const a = h.choice([1, 2, 3, -2]);
+              const b = h.choice([1, 2, -1, 3]);
+              const c = h.randInt(-8, 8);
+              const k = h.choice([2, 3, -2]);
+              return {
+                difficulty: "hard",
+                type: "infinite-solutions",
+                promptKey: "promptSpecial",
+                main: cases(lineEq(a, b, c), lineEq(k * a, k * b, k * c)),
+                plain: cases(lineEq(a, b, c), lineEq(k * a, k * b, k * c)),
+                answer: h.textAnswer("infinitely many solutions", "无穷多解", "infinitely-many"),
+                lines: [
+                  { line: `${k}(${lineEq(a, b, c)})=${lineEq(k * a, k * b, k * c)}`, note: h.tr().notes.classify },
+                  { line: h.textLatex(h.lang === "zh" ? "两个方程表示同一条直线。" : "The equations describe the same line."), note: h.tr().notes.final }
+                ],
+                distractors: [h.textAnswer("no solution", "无解", "no-solution"), answerPoint(0, c), answerPoint(c, 0), h.textAnswer("one solution", "一个解", "one-solution")]
+              };
+            })
+          ],
+          expert: [
+            builder("word-problem", h => {
+              const adult = h.randInt(8, 15);
+              const student = h.randInt(4, adult - 2);
+              const adults = h.randInt(2, 8);
+              const students = h.randInt(3, 12);
+              const totalTickets = adults + students;
+              const totalCost = adult * adults + student * students;
+              const text = h.lang === "zh"
+                ? `成人票 ${adult} 美元，学生票 ${student} 美元。一共卖出 ${totalTickets} 张票，总收入 ${totalCost} 美元。成人票和学生票各卖出多少张？`
+                : `Adult tickets cost $${adult}, student tickets cost $${student}. A total of ${totalTickets} tickets were sold for $${totalCost}. How many adult and student tickets were sold?`;
+              return {
+                difficulty: "expert",
+                type: "word-problem",
+                promptKey: "promptWord",
+                main: h.textLatex(text),
+                plain: h.textLatex(text),
+                answer: { latex: h.lang === "zh" ? `\\text{成人 }${adults}\\text{ 张，学生 }${students}\\text{ 张}` : `\\text{adult }${adults}\\text{, student }${students}`, key: `${adults},${students}` },
+                lines: [
+                  { line: `a+s=${totalTickets}`, note: h.tr().notes.model },
+                  { line: `${adult}a+${student}s=${totalCost}`, note: h.tr().notes.model },
+                  { line: `a=${adults},\\quad s=${students}`, note: h.tr().notes.final }
+                ],
+                distractors: [
+                  { latex: h.lang === "zh" ? `\\text{成人 }${students}\\text{ 张，学生 }${adults}\\text{ 张}` : `\\text{adult }${students}\\text{, student }${adults}`, key: `${students},${adults}` },
+                  { latex: h.lang === "zh" ? `\\text{成人 }${adults + 1}\\text{ 张，学生 }${students - 1}\\text{ 张}` : `\\text{adult }${adults + 1}\\text{, student }${students - 1}`, key: `${adults + 1},${students - 1}` },
+                  answerPoint(adults, students),
+                  h.textAnswer("no solution", "无解", "no-solution")
+                ]
+              };
+            })
+          ]
+        }
+      };
+    })();
+  </script>
+  <script src="../assets/js/quiz-tool-engine.js"></script>
+  <script src="../assets/js/tool-modes.js"></script>
+  <script src="../assets/js/report-export.js"></script>
+  <script src="../assets/js/home-link.js"></script>
+</body>
+</html>

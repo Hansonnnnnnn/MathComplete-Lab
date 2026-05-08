@@ -1,0 +1,268 @@
+:root {
+  --geo-ink: #0f172a;
+  --geo-muted: #64748b;
+  --geo-line: #1f2937;
+  --geo-accent: #2563eb;
+  --geo-warm: #f59e0b;
+  --geo-good: #16a34a;
+  --geo-bad: #dc2626;
+  --geo-soft: #f8fafc;
+  --geo-border: #e5e7eb;
+}
+
+.geo-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(320px, 0.95fr);
+  gap: 18px;
+  align-items: start;
+}
+
+.diagram-panel {
+  border: 1px solid var(--geo-border);
+  border-radius: 18px;
+  background: linear-gradient(180deg, #ffffff, #f8fbff);
+  padding: 12px;
+}
+
+.geometry-diagram {
+  display: block;
+  width: 100%;
+  min-height: 320px;
+  border-radius: 14px;
+  background:
+    linear-gradient(rgba(15, 23, 42, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(15, 23, 42, 0.035) 1px, transparent 1px),
+    #ffffff;
+  background-size: 24px 24px;
+}
+
+.geo-line {
+  stroke: var(--geo-line);
+  stroke-width: 3;
+  stroke-linecap: round;
+  fill: none;
+}
+
+.geo-helper {
+  stroke: #94a3b8;
+  stroke-width: 2;
+  stroke-dasharray: 7 6;
+  fill: none;
+}
+
+.geo-point {
+  fill: var(--geo-ink);
+}
+
+.geo-label {
+  fill: var(--geo-ink);
+  font-size: 18px;
+  font-weight: 900;
+  paint-order: stroke;
+  stroke: #ffffff;
+  stroke-width: 4px;
+  stroke-linejoin: round;
+}
+
+.geo-mark-blue {
+  stroke: #2563eb;
+  fill: none;
+}
+
+.geo-mark-amber {
+  stroke: #f59e0b;
+  fill: none;
+}
+
+.geo-mark-green {
+  stroke: #16a34a;
+  fill: none;
+}
+
+.geo-mark-rose {
+  stroke: #e11d48;
+  fill: none;
+}
+
+.geo-mark {
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.given-list,
+.target-box {
+  display: grid;
+  gap: 10px;
+  margin: 14px 0 0;
+}
+
+.given-item,
+.target-box {
+  border: 1px solid var(--geo-border);
+  border-radius: 14px;
+  background: #fff;
+  padding: 12px 14px;
+  line-height: 1.55;
+  font-weight: 850;
+}
+
+.target-box {
+  background: #eff6ff;
+  border-color: #bfdbfe;
+  color: #1d4ed8;
+}
+
+.proof-workspace {
+  display: grid;
+  gap: 16px;
+}
+
+.theorem-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.theorem-option {
+  min-height: 48px;
+  border: 2px solid var(--geo-border);
+  border-radius: 14px;
+  background: #fff;
+  color: var(--geo-ink);
+  box-shadow: none;
+  padding: 10px 8px;
+  font-size: 15px;
+}
+
+.theorem-option.selected {
+  border-color: var(--geo-accent);
+  background: #eff6ff;
+  color: #1d4ed8;
+}
+
+.proof-table-wrap {
+  overflow-x: auto;
+}
+
+.proof-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 8px;
+}
+
+.proof-table th {
+  color: var(--geo-muted);
+  font-size: 13px;
+  text-align: left;
+  padding: 0 6px;
+}
+
+.proof-table td {
+  padding: 0 6px;
+  vertical-align: middle;
+}
+
+.proof-row-number {
+  width: 34px;
+  color: var(--geo-muted);
+  font-weight: 950;
+  text-align: center;
+}
+
+.proof-select {
+  min-width: 210px;
+  border-radius: 12px;
+  font-size: 14px;
+  min-height: 44px;
+  padding: 8px 10px;
+}
+
+.proof-row.correct .proof-select {
+  border-color: rgba(22, 163, 74, 0.55);
+  background: #ecfdf5;
+}
+
+.proof-row.wrong .proof-select {
+  border-color: rgba(220, 38, 38, 0.55);
+  background: #fef2f2;
+}
+
+.hint-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.hint-chip {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--geo-border);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--geo-muted);
+  padding: 7px 10px;
+  font-size: 13px;
+  font-weight: 850;
+}
+
+.solution-proof {
+  display: grid;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.solution-step {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(140px, 0.55fr);
+  gap: 12px;
+  border: 1px solid var(--geo-border);
+  border-radius: 14px;
+  background: #fff;
+  padding: 10px 12px;
+  line-height: 1.5;
+}
+
+.solution-step strong {
+  color: var(--geo-ink);
+}
+
+.solution-step span {
+  color: var(--geo-muted);
+  font-weight: 850;
+}
+
+.geo-feedback-detail {
+  color: var(--geo-muted);
+  font-weight: 800;
+  line-height: 1.6;
+}
+
+@media (max-width: 880px) {
+  .geo-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .theorem-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  .geometry-diagram {
+    min-height: 260px;
+  }
+
+  .theorem-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .proof-select {
+    min-width: 180px;
+  }
+
+  .solution-step {
+    grid-template-columns: 1fr;
+  }
+}

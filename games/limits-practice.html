@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Limits Practice</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <link rel="stylesheet" href="../assets/css/auth.css">
+  <link rel="stylesheet" href="../assets/css/progress.css">
+  <link rel="stylesheet" href="../assets/css/quiz-tool.css">
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../assets/js/supabase-client.js"></script>
+  <script src="../assets/js/auth.js"></script>
+  <script src="../assets/js/auth-ui.js"></script>
+  <script src="../assets/js/progress.js"></script>
+</head>
+<body>
+  <nav class="mc-site-shell"><a class="mc-brand" href="../index.html"><span class="mc-brand-mark">&sum;</span><span>MathComplete Lab</span></a><div class="mc-links"><a class="mc-link" href="../practice.html" data-i18n="navPractice">Practice Library</a><a class="mc-link primary" href="../index.html" data-i18n="navHome">Home</a></div></nav>
+  <main class="container">
+    <header><div class="eyebrow"><span class="eyebrow-dot"></span><span id="toolBadge"></span></div><h1 id="pageTitle"></h1><p id="pageSubtitle" class="subtitle"></p></header>
+    <section id="setupCard" class="card"><h2 id="setupTitle"></h2><div class="setup-grid"><div><label id="difficultyLabel" for="difficulty"></label><select id="difficulty"></select></div><div class="mcl-tool-mode-field"><label id="toolModeLabel" for="toolMode">Practice mode</label><select id="toolMode"><option value="practice">Practice Mode</option><option value="learn" selected>Learn Mode</option><option value="exam">Exam Mode</option></select><p class="mcl-tool-mode-hint" id="mclToolModeHint">Every answer shows feedback and the solution, then you move on manually.</p></div><div><label id="questionCountLabel" for="questionCount"></label><input id="questionCount" type="number" min="1" max="100" value="10" /></div><div><label id="optionCountLabel" for="optionCount"></label><select id="optionCount"></select></div><div><label class="checkbox-label" for="timedMode"><input id="timedMode" type="checkbox" /><span id="timedModeText"></span></label><p id="timedModeHint" class="mini-hint"></p></div><div><label id="timerLevelLabel" for="timerLevel"></label><select id="timerLevel"></select></div></div><div class="actions"><button id="startBtn"></button><button id="sampleBtn" class="ghost"></button></div><div id="sampleBox" class="explain-box hidden"></div><div id="noteBox" class="explain-box"></div></section>
+    <section id="quizCard" class="card hidden"><div class="topbar"><div><span class="pill" id="progressText"></span><span class="pill" id="difficultyText"></span><span class="pill timer-pill hidden" id="timerDisplay"></span></div><button id="quitBtn" class="ghost"></button></div><div class="progress-wrap"><div id="progressBar" class="progress"></div></div><div id="questionTitle" class="question-title"></div><div id="questionExtra" class="question-extra"></div><div id="questionMain" class="question-main"></div><div id="options" class="options"></div><div id="feedback" class="feedback"></div><div id="solutionBox" class="solution-box hidden"></div><div class="actions"><button id="nextBtn" disabled></button></div></section>
+    <section id="resultCard" class="card hidden"><h2 id="resultTitle"></h2><div class="result-grid"><div class="stat"><div id="scoreNum" class="num">0/0</div><div id="scoreLabel" class="label"></div></div><div class="stat"><div id="accuracyNum" class="num">0%</div><div id="accuracyLabel" class="label"></div></div><div class="stat"><div id="wrongNum" class="num">0</div><div id="wrongLabel" class="label"></div></div></div><h3 id="wrongReviewTitle"></h3><div id="wrongList" class="wrong-list"></div><div class="actions" style="margin-top:22px;"><button id="restartBtn"></button><button id="reviewWrongBtn" class="secondary"></button></div></section>
+  </main>
+  <script>
+    (function () {
+      function builder(type, fn) { fn.__type = type; return fn; }
+      function lim(to, expr) { return `\\lim_{x\\to ${to}} ${expr}`; }
+      function limInf(sign, expr) { return `\\lim_{x\\to ${sign}\\infty} ${expr}`; }
+      function frac(n, d) {
+        const g = gcd(Math.abs(n), Math.abs(d));
+        let a = n / g, b = d / g;
+        if (b < 0) { a = -a; b = -b; }
+        if (b === 1) return `${a}`;
+        if (a < 0) return `-\\frac{${Math.abs(a)}}{${b}}`;
+        return `\\frac{${a}}{${b}}`;
+      }
+      function gcd(a, b) { while (b) [a, b] = [b, a % b]; return a || 1; }
+      function term(coef, power, first) {
+        if (coef === 0) return "";
+        const sign = coef < 0 ? "-" : first ? "" : "+";
+        const abs = Math.abs(coef);
+        const body = power === 0 ? `${abs}` : `${abs === 1 ? "" : abs}x${power === 1 ? "" : `^${power}`}`;
+        return `${sign}${body}`;
+      }
+      function poly2(a, b, c) {
+        const out = [term(a, 2, true), term(b, 1, a === 0), term(c, 0, a === 0 && b === 0)].join("");
+        return out || "0";
+      }
+      function poly1(a, b) {
+        const out = [term(a, 1, true), term(b, 0, a === 0)].join("");
+        return out || "0";
+      }
+      function dne(h) { return h.textAnswer("DNE", "不存在", "dne"); }
+      function inf(pos = true) { return pos ? "\\infty" : "-\\infty"; }
+      function t(h, en, zh, key) { return h.textAnswer(en, zh, key); }
+
+      window.MCLQuizTool = {
+        gameId: "limits-practice",
+        course: "single-variable-calculus",
+        text: {
+          en: {
+            toolBadge: "Single Variable Calculus",
+            title: "Limits Practice",
+            subtitle: "Practice direct substitution, removable discontinuities, rationalization, infinite limits, one-sided limits, trig limits, and continuity parameters.",
+            note: "Every random problem is built from a verified limit structure, then checked for a clean answer and useful distractors.",
+            promptDirect: "Evaluate the limit by direct substitution.",
+            promptCancel: "Evaluate the limit by factoring and canceling.",
+            promptRationalize: "Evaluate the limit by rationalizing.",
+            promptInfinity: "Evaluate the limit at infinity.",
+            promptOneSided: "Evaluate the two-sided limit.",
+            promptTrig: "Evaluate the trigonometric limit.",
+            promptContinuity: "Find the value that makes the function continuous.",
+            difficultyOptions: {
+              easy: "Easy: direct substitution and clean finite limits",
+              medium: "Medium: canceling factors, rationalizing, and leading coefficients",
+              hard: "Hard: one-sided limits, trig limits, and infinite behavior",
+              expert: "Expert: continuity parameters and mixed conceptual traps",
+              mixed: "Mixed: balanced limit practice"
+            },
+            notes: {
+              substitute: "substitute the target value",
+              factor: "factor the numerator",
+              cancel: "cancel the common factor before substituting",
+              rationalize: "multiply by the conjugate",
+              highest: "compare the highest-degree terms",
+              oneSided: "compare the left-hand and right-hand limits",
+              trig: "use the basic trig limit",
+              continuity: "set the point value equal to the limit",
+              final: "final result"
+            }
+          },
+          zh: {
+            toolBadge: "\u4e00\u5143\u5fae\u79ef\u5206",
+            title: "\u6781\u9650\u4e13\u9879\u7ec3\u4e60",
+            subtitle: "\u7ec3\u4e60\u76f4\u63a5\u4ee3\u5165\u3001\u53ef\u53bb\u95f4\u65ad\u3001\u6709\u7406\u5316\u3001\u65e0\u7a77\u8fdc\u6781\u9650\u3001\u5de6\u53f3\u6781\u9650\u3001\u4e09\u89d2\u57fa\u672c\u6781\u9650\u548c\u8fde\u7eed\u6027\u53c2\u6570\u3002",
+            note: "\u6bcf\u9053\u968f\u673a\u9898\u90fd\u5148\u6765\u81ea\u53ef\u9a8c\u8bc1\u7684\u6781\u9650\u7ed3\u6784\uff0c\u518d\u68c0\u67e5\u7b54\u6848\u548c\u5e72\u6270\u9879\u662f\u5426\u5e72\u51c0\u3002",
+            promptDirect: "\u7528\u76f4\u63a5\u4ee3\u5165\u6c42\u6781\u9650\u3002",
+            promptCancel: "\u901a\u8fc7\u56e0\u5f0f\u5206\u89e3\u5e76\u7ea6\u53bb\u516c\u56e0\u5f0f\u6c42\u6781\u9650\u3002",
+            promptRationalize: "\u901a\u8fc7\u6709\u7406\u5316\u6c42\u6781\u9650\u3002",
+            promptInfinity: "\u6c42\u65e0\u7a77\u8fdc\u5904\u7684\u6781\u9650\u3002",
+            promptOneSided: "\u6c42\u53cc\u4fa7\u6781\u9650\u3002",
+            promptTrig: "\u6c42\u4e09\u89d2\u51fd\u6570\u6781\u9650\u3002",
+            promptContinuity: "\u6c42\u4f7f\u51fd\u6570\u8fde\u7eed\u7684\u53c2\u6570\u503c\u3002",
+            difficultyOptions: {
+              easy: "\u7b80\u5355\uff1a\u76f4\u63a5\u4ee3\u5165\u548c\u5e72\u51c0\u7684\u6709\u9650\u6781\u9650",
+              medium: "\u4e2d\u7b49\uff1a\u7ea6\u53bb\u56e0\u5f0f\u3001\u6709\u7406\u5316\u548c\u6700\u9ad8\u6b21\u9879\u6bd4\u8f83",
+              hard: "\u56f0\u96be\uff1a\u5de6\u53f3\u6781\u9650\u3001\u4e09\u89d2\u6781\u9650\u548c\u65e0\u7a77\u884c\u4e3a",
+              expert: "\u4e13\u5bb6\uff1a\u8fde\u7eed\u6027\u53c2\u6570\u548c\u6982\u5ff5\u9677\u9631",
+              mixed: "\u6df7\u5408\uff1a\u7efc\u5408\u6781\u9650\u7ec3\u4e60"
+            },
+            notes: {
+              substitute: "\u4ee3\u5165\u76ee\u6807\u503c",
+              factor: "\u5206\u5b50\u56e0\u5f0f\u5206\u89e3",
+              cancel: "\u5148\u7ea6\u53bb\u516c\u56e0\u5f0f\uff0c\u518d\u4ee3\u5165",
+              rationalize: "\u4e58\u4ee5\u5171\u8f6d\u5f0f",
+              highest: "\u6bd4\u8f83\u6700\u9ad8\u6b21\u9879",
+              oneSided: "\u6bd4\u8f83\u5de6\u6781\u9650\u548c\u53f3\u6781\u9650",
+              trig: "\u4f7f\u7528\u4e09\u89d2\u57fa\u672c\u6781\u9650",
+              continuity: "\u4ee4\u70b9\u503c\u7b49\u4e8e\u6781\u9650\u503c",
+              final: "\u6700\u7ec8\u7ed3\u679c"
+            }
+          }
+        },
+        builders: {
+          easy: [
+            builder("direct-polynomial", h => {
+              const a = h.choice([-3, -2, -1, 1, 2, 3]);
+              const b = h.randInt(-5, 5);
+              const c = h.randInt(-6, 6);
+              const target = h.randInt(-3, 4);
+              const ans = a * target * target + b * target + c;
+              const expr = poly2(a, b, c);
+              return {
+                difficulty: "easy",
+                type: "direct-polynomial",
+                promptKey: "promptDirect",
+                main: lim(target, `(${expr})`),
+                plain: lim(target, `(${expr})`),
+                answer: `${ans}`,
+                lines: [
+                  { line: lim(target, `(${expr})`), note: h.tr().notes.substitute },
+                  { line: `${a}(${target})^2${h.signedTerm(b)}(${target})${h.signedTerm(c)}=${ans}`, note: h.tr().notes.final }
+                ],
+                distractors: [`${ans + 1}`, `${ans - 1}`, `${a * target + b + c}`, `${-ans}`]
+              };
+            }),
+            builder("direct-rational", h => {
+              const target = h.randInt(-4, 4);
+              const p = h.choice([-3, -2, -1, 1, 2, 3]);
+              const q = h.randInt(-5, 5);
+              const d = h.choice([-4, -3, -2, 2, 3, 4]);
+              let e = h.randInt(-5, 5);
+              if (d * target + e === 0) e += 1;
+              const n = p * target + q;
+              const den = d * target + e;
+              const ans = frac(n, den);
+              const expr = `\\frac{${poly1(p, q)}}{${poly1(d, e)}}`;
+              return {
+                difficulty: "easy",
+                type: "direct-rational",
+                promptKey: "promptDirect",
+                main: lim(target, expr),
+                plain: lim(target, expr),
+                answer: ans,
+                lines: [
+                  { line: `\\frac{${p}(${target})${h.signedTerm(q)}}{${d}(${target})${h.signedTerm(e)}}`, note: h.tr().notes.substitute },
+                  { line: ans, note: h.tr().notes.final }
+                ],
+                distractors: [frac(n + den, den), frac(n - den, den), `${n}`, dne(h)]
+              };
+            })
+          ],
+          medium: [
+            builder("factor-cancel", h => {
+              const a = h.choice([-4, -3, -2, -1, 1, 2, 3, 4]);
+              const m = h.choice([-3, -2, -1, 1, 2, 3]);
+              const b = h.randInt(-5, 5);
+              const A = m;
+              const B = b - a * m;
+              const C = -a * b;
+              const ans = m * a + b;
+              const expr = `\\frac{${poly2(A, B, C)}}{x${h.signedTerm(-a)}}`;
+              return {
+                difficulty: "medium",
+                type: "factor-cancel",
+                promptKey: "promptCancel",
+                main: lim(a, expr),
+                plain: lim(a, expr),
+                answer: `${ans}`,
+                lines: [
+                  { line: `${poly2(A, B, C)}=(x${h.signedTerm(-a)})(${poly1(m, b)})`, note: h.tr().notes.factor },
+                  { line: lim(a, `(${poly1(m, b)})=${ans}`), note: h.tr().notes.cancel }
+                ],
+                distractors: [dne(h), "0", `${m + b}`, `${ans + a}`]
+              };
+            }),
+            builder("rationalize", h => {
+              const s = h.choice([2, 3, 4, 5]);
+              const a = h.randInt(-3, 5);
+              const c = s * s - a;
+              const ans = frac(1, 2 * s);
+              const expr = `\\frac{\\sqrt{x${h.signedTerm(c)}}-${s}}{x${h.signedTerm(-a)}}`;
+              return {
+                difficulty: "medium",
+                type: "rationalize",
+                promptKey: "promptRationalize",
+                main: lim(a, expr),
+                plain: lim(a, expr),
+                answer: ans,
+                lines: [
+                  { line: `\\frac{\\sqrt{x${h.signedTerm(c)}}-${s}}{x${h.signedTerm(-a)}}\\cdot\\frac{\\sqrt{x${h.signedTerm(c)}}+${s}}{\\sqrt{x${h.signedTerm(c)}}+${s}}`, note: h.tr().notes.rationalize },
+                  { line: `\\frac{1}{\\sqrt{x${h.signedTerm(c)}}+${s}}`, note: h.tr().notes.cancel },
+                  { line: ans, note: h.tr().notes.final }
+                ],
+                distractors: [`${2 * s}`, frac(1, s), `0`, dne(h)]
+              };
+            }),
+            builder("infinity-same-degree", h => {
+              const a = h.choice([-5, -4, -3, -2, 2, 3, 4, 5]);
+              const d = h.choice([-5, -4, -3, -2, 2, 3, 4, 5]);
+              const b = h.randInt(-6, 6), c = h.randInt(-6, 6), e = h.randInt(-6, 6), f = h.randInt(-6, 6);
+              const ans = frac(a, d);
+              const expr = `\\frac{${poly2(a, b, c)}}{${poly2(d, e, f)}}`;
+              return {
+                difficulty: "medium",
+                type: "infinity-same-degree",
+                promptKey: "promptInfinity",
+                main: limInf("+", expr),
+                plain: limInf("+", expr),
+                answer: ans,
+                lines: [
+                  { line: `\\frac{${a}x^2}{${d}x^2}`, note: h.tr().notes.highest },
+                  { line: ans, note: h.tr().notes.final }
+                ],
+                distractors: [frac(b || 1, e || 1), "0", inf(a * d > 0), frac(d, a)]
+              };
+            })
+          ],
+          hard: [
+            builder("one-sided-dne", h => {
+              const a = h.randInt(-3, 3);
+              const left = h.randInt(-5, 2);
+              let right = h.randInt(-2, 6);
+              if (right === left) right += 2;
+              const expr = `f(x)=\\begin{cases}${left},&x<${a}\\\\${right},&x\\ge ${a}\\end{cases}`;
+              return {
+                difficulty: "hard",
+                type: "one-sided-dne",
+                promptKey: "promptOneSided",
+                main: `${expr},\\quad \\lim_{x\\to ${a}} f(x)`,
+                plain: `lim x->${a} f(x)`,
+                answer: dne(h),
+                lines: [
+                  { line: `\\lim_{x\\to ${a}^-}f(x)=${left}`, note: h.tr().notes.oneSided },
+                  { line: `\\lim_{x\\to ${a}^+}f(x)=${right}`, note: h.tr().notes.oneSided },
+                  { line: h.lang === "zh" ? "\\text{不存在}" : "\\text{DNE}", note: h.tr().notes.final }
+                ],
+                distractors: [`${left}`, `${right}`, frac(left + right, 2), t(h, "continuous", "\u8fde\u7eed", "continuous")]
+              };
+            }),
+            builder("trig-basic", h => {
+              const k = h.choice([2, 3, 4, 5, -2, -3]);
+              const m = h.choice([1, 2, 3, 4, 5]);
+              const kind = h.choice(["sin", "tan"]);
+              const ans = frac(k, m);
+              const expr = `\\frac{\\${kind}(${k}x)}{${m === 1 ? "" : m}x}`;
+              return {
+                difficulty: "hard",
+                type: "trig-basic",
+                promptKey: "promptTrig",
+                main: lim(0, expr),
+                plain: lim(0, expr),
+                answer: ans,
+                lines: [
+                  { line: `\\lim_{u\\to 0}\\frac{\\${kind}(u)}{u}=1`, note: h.tr().notes.trig },
+                  { line: `\\frac{${k}}{${m}}=${ans}`, note: h.tr().notes.final }
+                ],
+                distractors: [frac(m, k), "0", "1", `${k}`]
+              };
+            }),
+            builder("infinity-growth", h => {
+              const highTop = Math.random() < 0.5;
+              const a = h.choice([-4, -3, -2, 2, 3, 4]);
+              const d = h.choice([1, 2, 3, 4]);
+              const sign = h.choice(["+", "-"]);
+              const expr = highTop
+                ? `\\frac{${poly2(a, h.randInt(-4, 4), h.randInt(-4, 4))}}{${poly1(d, h.randInt(-4, 4))}}`
+                : `\\frac{${poly1(a, h.randInt(-4, 4))}}{${poly2(d, h.randInt(-4, 4), h.randInt(-4, 4))}}`;
+              const positive = sign === "+" ? a / d > 0 : highTop ? -a / d > 0 : true;
+              const ans = highTop ? inf(positive) : "0";
+              return {
+                difficulty: "hard",
+                type: "infinity-growth",
+                promptKey: "promptInfinity",
+                main: limInf(sign, expr),
+                plain: limInf(sign, expr),
+                answer: ans,
+                lines: [
+                  { line: highTop ? "\\text{numerator degree is larger}" : "\\text{denominator degree is larger}", note: h.tr().notes.highest },
+                  { line: ans, note: h.tr().notes.final }
+                ],
+                distractors: highTop ? ["0", inf(!positive), frac(a, d), dne(h)] : [inf(true), inf(false), frac(a, d), dne(h)]
+              };
+            })
+          ],
+          expert: [
+            builder("continuity-parameter", h => {
+              const a = h.choice([-4, -3, -2, -1, 1, 2, 3, 4]);
+              const ans = 2 * a;
+              const expr = `f(x)=\\begin{cases}\\frac{x^2-${a * a}}{x${h.signedTerm(-a)}},&x\\ne ${a}\\\\k,&x=${a}\\end{cases}`;
+              return {
+                difficulty: "expert",
+                type: "continuity-parameter",
+                promptKey: "promptContinuity",
+                main: expr,
+                plain: expr,
+                answer: `k=${ans}`,
+                lines: [
+                  { line: `\\frac{x^2-${a * a}}{x${h.signedTerm(-a)}}=x${h.signedTerm(a)}`, note: h.tr().notes.cancel },
+                  { line: `\\lim_{x\\to ${a}}f(x)=${ans}`, note: h.tr().notes.continuity },
+                  { line: `k=${ans}`, note: h.tr().notes.final }
+                ],
+                distractors: [`k=${a}`, `k=${-ans}`, "k=0", dne(h)]
+              };
+            }),
+            builder("trig-cosine", h => {
+              const k = h.choice([1, 2, 3, 4, 5]);
+              const expr = `\\frac{1-\\cos(${k}x)}{x}`;
+              return {
+                difficulty: "expert",
+                type: "trig-cosine",
+                promptKey: "promptTrig",
+                main: lim(0, expr),
+                plain: lim(0, expr),
+                answer: "0",
+                lines: [
+                  { line: `1-\\cos(${k}x)\\sim \\frac{(${k}x)^2}{2}`, note: h.tr().notes.trig },
+                  { line: `\\frac{1-\\cos(${k}x)}{x}\\sim \\frac{${k * k}x}{2}\\to 0`, note: h.tr().notes.final }
+                ],
+                distractors: ["1", `${k}`, frac(k * k, 2), dne(h)]
+              };
+            })
+          ]
+        }
+      };
+    })();
+  </script>
+  <script src="../assets/js/quiz-tool-engine.js"></script>
+  <script src="../assets/js/tool-modes.js"></script>
+  <script src="../assets/js/report-export.js"></script>
+  <script src="../assets/js/home-link.js"></script>
+</body>
+</html>

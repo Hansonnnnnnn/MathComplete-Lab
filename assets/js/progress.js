@@ -53,6 +53,7 @@
     "geometry-formula": "geometry-1",
     "triangle-congruence": "geometry-1",
     "derivative-practice": "single-variable-calculus",
+    "limits-practice": "single-variable-calculus",
     "vector-operations": "linear-algebra",
     "matrix-multiplication": "linear-algebra",
     "determinant-practice": "linear-algebra"

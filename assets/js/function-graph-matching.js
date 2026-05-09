@@ -391,10 +391,11 @@
     const kinds = shuffle(kindsFor(level));
     while (kinds.length < count) kinds.push(choice(kindsFor(level)));
     const functions = kinds.slice(0, count).map((kind, index) => makeFunction(kind, index + 1));
+    const graphs = shuffle(functions).map((fn, index) => ({ ...fn, label: String.fromCharCode(65 + index) }));
     return {
       difficulty: level,
       functions,
-      graphs: shuffle(functions.map((fn, index) => ({ ...fn, label: String.fromCharCode(65 + index) })))
+      graphs
     };
   }
 

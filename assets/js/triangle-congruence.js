@@ -825,6 +825,14 @@
         questionLatex: "",
         correctAnswerLatex: q.theorem,
         selectedAnswerLatex: forceTimeUp ? "Time up" : selectedTheorem || "",
+        options: THEOREMS.map(theorem => ({
+          label: theorem,
+          latex: theorem,
+          isCorrect: theorem === q.theorem,
+          isSelected: theorem === selectedTheorem
+        })),
+        correctOptionLabel: q.theorem,
+        selectedOptionLabel: selectedTheorem || "",
         isCorrect,
         timeSpentSeconds
       });

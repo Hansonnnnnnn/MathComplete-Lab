@@ -491,7 +491,28 @@
     renderTaggedMath(elements.solutionBox);
   }
 
-  function recordAttempt(q, correctDisplay, selectedDisplay, isCorrect, timeUp = false) {
+  function optionPayload(q, selected = null) {
+    const correctKey = answerKey(q.answer);
+    const selectedKey = selected ? answerKey(selected) : "";
+    return q.options.map((option, index) => {
+      const key = answerKey(option);
+      return {
+        label: String.fromCharCode(65 + index),
+        latex: answerToString(option),
+        key,
+        isCorrect: key === correctKey,
+        isSelected: Boolean(selectedKey && key === selectedKey)
+      };
+    });
+  }
+
+  function optionLabelFrom(q, answer) {
+    const key = answer ? answerKey(answer) : "";
+    const index = q.options.findIndex(option => answerKey(option) === key);
+    return index >= 0 ? String.fromCharCode(65 + index) : "";
+  }
+
+  function recordAttempt(q, correctDisplay, selectedDisplay, isCorrect, timeUp = false, selected = null) {
     void window.MCLProgress?.recordGameAttempt?.({
       gameId: config.gameId,
       question: { plain: q.plain, type: q.type, difficulty: q.difficulty },
@@ -499,6 +520,9 @@
       topic: q.type,
       correctAnswer: correctDisplay,
       selectedAnswer: selectedDisplay,
+      options: optionPayload(q, selected),
+      correctOptionLabel: optionLabelFrom(q, q.answer),
+      selectedOptionLabel: selected ? optionLabelFrom(q, selected) : "",
       isCorrect,
       timeUp
     });
@@ -525,7 +549,7 @@
       renderFeedback(false, correctDisplay, false);
       wrongAnswers.push({ main: q.plain, answer: correctDisplay, selected: selectedDisplay, type: q.type, difficulty: q.difficulty });
     }
-    recordAttempt(q, correctDisplay, selectedDisplay, isCorrect, false);
+    recordAttempt(q, correctDisplay, selectedDisplay, isCorrect, false, selected);
     renderSolutionBox();
     elements.nextBtn.disabled = false;
     elements.progressBar.style.width = `${((currentIndex + 1) / quiz.length) * 100}%`;
@@ -543,7 +567,7 @@
     });
     renderFeedback(false, correctDisplay, true);
     wrongAnswers.push({ main: q.plain, answer: correctDisplay, selected: null, timeUp: true, type: q.type, difficulty: q.difficulty });
-    recordAttempt(q, correctDisplay, "", false, true);
+    recordAttempt(q, correctDisplay, "", false, true, null);
     renderSolutionBox();
     elements.nextBtn.disabled = false;
     elements.progressBar.style.width = `${((currentIndex + 1) / quiz.length) * 100}%`;

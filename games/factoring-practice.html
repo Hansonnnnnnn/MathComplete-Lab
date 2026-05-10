@@ -1191,8 +1191,18 @@
       if(["No solution","Infinitely many solutions","无解","无穷多个解"].includes(s)) return true;
       if(/[=^/*+\-()π%²³]/.test(s)) return true;
       if(/^\s*-?\d+(\.\d+)?\s*$/.test(s)) return true;
+      if(isSimpleMonomial(s)) return true;
       if(/^[A-Za-z]\s*\(/.test(s)) return true;
       return false;
+    }
+
+    function isSimpleMonomial(expr){
+      const compact = String(expr ?? "").replace(/\s+/g, "");
+      if(!/^-?(?:\d+(?:\.\d+)?)?[A-Za-z]{1,4}$/.test(compact)) return false;
+      const letters = compact.replace(/^-?(?:\d+(?:\.\d+)?)?/, "");
+      if(!letters) return false;
+      if(/^(sin|cos|tan|sec|log|ln|area|base|rate|time|easy|hard)$/i.test(letters)) return false;
+      return /\d/.test(compact) || /^[xyzabcmnptuv]/i.test(letters) || letters.length <= 2;
     }
 
     function renderLatex(el, latex, displayMode=false){

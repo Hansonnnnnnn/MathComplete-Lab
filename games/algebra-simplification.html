@@ -602,6 +602,44 @@
       line-height: 1.6;
     }
 
+    .wrong-choices {
+      display: grid;
+      gap: 8px;
+      margin: 10px 0 8px;
+    }
+
+    .wrong-choice {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 8px 12px;
+      color: var(--text);
+      background: #f8fafc;
+      font-weight: 850;
+    }
+
+    .wrong-choice.correct {
+      border-color: rgba(22, 163, 74, 0.45);
+      background: #ecfdf5;
+      color: #065f46;
+    }
+
+    .wrong-choice.selected:not(.correct) {
+      border-color: rgba(220, 38, 38, 0.45);
+      background: #fef2f2;
+      color: #991b1b;
+    }
+
+    .wrong-choice-badge {
+      flex: 0 0 auto;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 950;
+    }
+
     .tag-good {
       color: var(--good);
       font-weight: 950;
@@ -677,6 +715,14 @@
     }
 
     .option.wrong .katex {
+      color: #991b1b;
+    }
+
+    .wrong-choice.correct .katex {
+      color: #065f46;
+    }
+
+    .wrong-choice.selected:not(.correct) .katex {
       color: #991b1b;
     }
 
@@ -934,6 +980,9 @@
         noWrongTip:"Great job. Try a harder level next.",
         yourAnswer:"Your answer",
         correctAnswer:"Correct answer",
+        choices:"Choices",
+        yourChoice:"Your choice",
+        correctChoice:"Correct choice",
         timeUpAnswer:"No answer: time is up",
         sampleTitle:"Sample Question",
         sampleQuestion:"Question",
@@ -979,6 +1028,9 @@
         noWrongTip:"非常好，可以尝试更高难度。",
         yourAnswer:"你的答案",
         correctAnswer:"正确答案",
+        choices:"选项",
+        yourChoice:"你的选择",
+        correctChoice:"正确选项",
         timeUpAnswer:"未作答（时间到）",
         sampleTitle:"样题",
         sampleQuestion:"题目",
@@ -1430,8 +1482,18 @@
       if(["No solution","Infinitely many solutions","无解","无穷多个解"].includes(s)) return true;
       if(/[=^/*+\-()π%²³]/.test(s)) return true;
       if(/^\s*-?\d+(\.\d+)?\s*$/.test(s)) return true;
+      if(isSimpleMonomial(s)) return true;
       if(/^[A-Za-z]\s*\(/.test(s)) return true;
       return false;
+    }
+
+    function isSimpleMonomial(expr){
+      const compact = String(expr ?? "").replace(/\s+/g, "");
+      if(!/^-?(?:\d+(?:\.\d+)?)?[A-Za-z]{1,4}$/.test(compact)) return false;
+      const letters = compact.replace(/^-?(?:\d+(?:\.\d+)?)?/, "");
+      if(!letters) return false;
+      if(/^(sin|cos|tan|sec|log|ln|area|base|rate|time|easy|hard)$/i.test(letters)) return false;
+      return /\d/.test(compact) || /^[xyzabcmnptuv]/i.test(letters) || letters.length <= 2;
     }
 
     function renderLatex(el, latex, displayMode=false){
@@ -1611,6 +1673,22 @@
     function answerToString(a){ return GAME.answerToString(a); }
     function correctAnswer(q){ return q.answer; }
     function isSameAnswer(a,b){ return answerKey(a) === answerKey(b); }
+    function optionLabel(index){ return String.fromCharCode(65 + index); }
+    function optionPayload(q, selected=null){
+      const correct = correctAnswer(q);
+      return (q.options || []).map((option, index) => ({
+        label: optionLabel(index),
+        latex: answerToString(option),
+        key: answerKey(option),
+        isCorrect: isSameAnswer(option, correct),
+        isSelected: selected ? isSameAnswer(option, selected) : false
+      }));
+    }
+    function optionLabelFor(q, target){
+      if(!target) return "";
+      const index = (q.options || []).findIndex(option => isSameAnswer(option, target));
+      return index >= 0 ? optionLabel(index) : "";
+    }
 
     function buildQuiz(){
       const selectedDifficulty = difficultyEl.value;
@@ -1768,15 +1846,20 @@
           main: q.plain,
           answer: correctDisplay,
           selected: answerToString(selected),
+          options: optionPayload(q, selected),
           type: q.type,
           difficulty: q.difficulty
         });
       }
 
+      const options = optionPayload(q, selected);
       void window.MCLProgress?.recordGameAttempt?.({
         question: q,
         correctAnswer: correctDisplay,
         selectedAnswer: answerToString(selected),
+        options,
+        correctOptionLabel: optionLabelFor(q, correct),
+        selectedOptionLabel: optionLabelFor(q, selected),
         isCorrect: isSameAnswer(selected, correct)
       });
 
@@ -1806,15 +1889,20 @@
         main: q.plain,
         answer: correctDisplay,
         selected: null,
+        options: optionPayload(q, null),
         timeUp: true,
         type: q.type,
         difficulty: q.difficulty
       });
 
+      const options = optionPayload(q, null);
       void window.MCLProgress?.recordGameAttempt?.({
         question: q,
         correctAnswer: correctDisplay,
         selectedAnswer: "",
+        options,
+        correctOptionLabel: optionLabelFor(q, correct),
+        selectedOptionLabel: "",
         isCorrect: false,
         timeUp: true
       });
@@ -1841,6 +1929,26 @@
       renderResultBody();
     }
 
+    function wrongChoicesHtml(w){
+      if(!w.options || !w.options.length) return "";
+      return `
+        <div><strong>${tr().choices}:</strong></div>
+        <div class="wrong-choices">
+          ${w.options.map(option => {
+            const badges = [];
+            if(option.isSelected) badges.push(tr().yourChoice);
+            if(option.isCorrect) badges.push(tr().correctChoice);
+            return `
+              <div class="wrong-choice ${option.isCorrect ? "correct" : ""} ${option.isSelected ? "selected" : ""}">
+                <span><strong>${escapeHtml(option.label)}.</strong> ${mathSpan(option.latex, "wrong-math")}</span>
+                ${badges.length ? `<span class="wrong-choice-badge">${escapeHtml(badges.join(" · "))}</span>` : ""}
+              </div>
+            `;
+          }).join("")}
+        </div>
+      `;
+    }
+
     function renderResultBody(){
       const total = quiz.length;
       const accuracy = total === 0 ? 0 : Math.round((correctCount / total) * 100);
@@ -1860,11 +1968,13 @@
           item.className = "wrong-item";
           item.innerHTML = `
             <div class="expr">${i+1}. ${escapeHtml(w.main)}</div>
+            ${wrongChoicesHtml(w)}
             <p>${tr().yourAnswer}: <span class="tag-bad">${escapeHtml(w.timeUp ? tr().timeUpAnswer : w.selected)}</span></p>
             <p>${tr().correctAnswer}: <span class="tag-good">${escapeHtml(w.answer)}</span></p>
             <p>${tr().suggestion}</p>
           `;
           wrongList.appendChild(item);
+          renderTaggedMath(item);
         });
       }
     }

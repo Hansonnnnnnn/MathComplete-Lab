@@ -752,11 +752,11 @@
   .expression,
   .equation {
     max-width: 100%;
-    font-size: clamp(28px, 5.4vw, 54px) !important;
-    line-height: 1.2 !important;
-    font-weight: 500 !important;
-    letter-spacing: -0.045em !important;
-    margin: 10px 0 24px !important;
+    font-size: clamp(22px, 3.2vw, 34px) !important;
+    line-height: 1.28 !important;
+    font-weight: 850 !important;
+    letter-spacing: -0.025em !important;
+    margin: 10px 0 12px !important;
     text-align: left !important;
     overflow-wrap: anywhere !important;
     word-break: normal !important;
@@ -779,13 +779,21 @@
   .equation .katex {
     white-space: normal !important;
     text-align: left !important;
-    font-weight: 400 !important;
+    font-weight: 850 !important;
+    font-size: 1em !important;
   }
 
   .question-main .katex *,
   .expression .katex *,
   .equation .katex * {
-    font-weight: 400 !important;
+    font-weight: 850 !important;
+  }
+
+  .question-extra {
+    margin: 0 0 22px !important;
+    color: #475569 !important;
+    font-size: clamp(17px, 2.1vw, 22px) !important;
+    font-weight: 800 !important;
   }
 
   .question-line,
@@ -916,25 +924,48 @@
 
     function ans(v){return {kind:"value",value:String(v)};}
     function piTerm(n){if(n===1)return "π";return `${n}π`;}
+    function geometryPrompt(target, shape){
+      const en = {
+        area: "Find the area of the",
+        perimeter: "Find the perimeter of the",
+        circumference: "Find the circumference of the",
+        volume: "Find the volume of the",
+        halfArea: "Find half of the area of the",
+        areaCoefficient: "Find the coefficient of pi in the area of the"
+      };
+      const zh = {
+        area: "求这个图形的面积：",
+        perimeter: "求这个图形的周长：",
+        circumference: "求这个圆的圆周长：",
+        volume: "求这个立体图形的体积：",
+        halfArea: "求这个图形面积的一半：",
+        areaCoefficient: "求这个圆面积中 pi 前面的系数："
+      };
+      if(lang === "zh") return zh[target] || "求指定的量：";
+      return `${en[target] || "Find the requested value of the"} ${shape}.`;
+    }
+    function geometryGiven(shape, values){
+      return `${shape}: ${values}`;
+    }
     const GAME={
       answerToString(a){return a.value;},
       generateQuestion(difficulty, forcedType=null){
         let type;if(difficulty==="easy")type=choose(["rect_area","rect_perim","tri_area"]);else if(difficulty==="medium")type=choose(["circle_area","circle_circ"]);else if(difficulty==="hard")type=choose(["box_volume","cube_volume","cylinder_volume"]);else if(difficulty==="expert")type=choose(["circle_area_diameter","circle_circ_diameter","mixed_rect"]);else type=choose(["missing_rect_perim","discount_area","circle_combo","cylinder_volume"]);
         if(forcedType)type=forcedType;let q;
-        if(type==="rect_area"){const l=randInt(3,15),w=randInt(2,12);q={difficulty,type,main:`Rectangle: l = ${l}, w = ${w}`,extra:"Area?",plain:`Rectangle l=${l}, w=${w}, find area`,answer:ans(l*w),data:{l,w}};}
-        else if(type==="rect_perim"){const l=randInt(3,15),w=randInt(2,12);q={difficulty,type,main:`Rectangle: l = ${l}, w = ${w}`,extra:"Perimeter?",plain:`Rectangle l=${l}, w=${w}, find perimeter`,answer:ans(2*(l+w)),data:{l,w}};}
-        else if(type==="tri_area"){const b=randInt(4,18),h=randInt(3,12);q={difficulty,type,main:`Triangle: b = ${b}, h = ${h}`,extra:"Area?",plain:`Triangle b=${b}, h=${h}, find area`,answer:ans(b*h/2),data:{b,h}};}
-        else if(type==="circle_area"){const r=randInt(2,10);q={difficulty,type,main:`Circle: r = ${r}`,extra:"Area?",plain:`Circle r=${r}, find area`,answer:ans(piTerm(r*r)),data:{r}};}
-        else if(type==="circle_circ"){const r=randInt(2,10);q={difficulty,type,main:`Circle: r = ${r}`,extra:"Circumference?",plain:`Circle r=${r}, find circumference`,answer:ans(piTerm(2*r)),data:{r}};}
-        else if(type==="box_volume"){const l=randInt(2,10),w=randInt(2,8),h=randInt(2,8);q={difficulty,type,main:`Rectangular prism: ${l} × ${w} × ${h}`,extra:"Volume?",plain:`Rectangular prism ${l}x${w}x${h}`,answer:ans(l*w*h),data:{l,w,h}};}
-        else if(type==="cube_volume"){const s=randInt(2,9);q={difficulty,type,main:`Cube: side = ${s}`,extra:"Volume?",plain:`Cube side=${s}`,answer:ans(s*s*s),data:{s}};}
-        else if(type==="cylinder_volume"){const r=randInt(2,7),h=randInt(2,9);q={difficulty,type,main:`Cylinder: r = ${r}, h = ${h}`,extra:"Volume?",plain:`Cylinder r=${r}, h=${h}`,answer:ans(piTerm(r*r*h)),data:{r,h}};}
-        else if(type==="circle_area_diameter"){const d=choose([4,6,8,10,12,14]);const r=d/2;q={difficulty,type,main:`Circle: d = ${d}`,extra:"Area?",plain:`Circle diameter=${d}, find area`,answer:ans(piTerm(r*r)),data:{d,r}};}
-        else if(type==="circle_circ_diameter"){const d=choose([4,6,8,10,12,14]);q={difficulty,type,main:`Circle: d = ${d}`,extra:"Circumference?",plain:`Circle diameter=${d}, find circumference`,answer:ans(piTerm(d)),data:{d}};}
-        else if(type==="mixed_rect"){const area=choose([24,36,48,60,72]),w=choose([3,4,6]);const l=area/w;q={difficulty,type,main:`Rectangle: area = ${area}, w = ${w}`,extra:"Perimeter?",plain:`Rectangle area=${area}, w=${w}, find perimeter`,answer:ans(2*(l+w)),data:{area,w,l}};}
-        else if(type==="missing_rect_perim"){const area=choose([48,60,72,96]),w=choose([4,6,8]);const l=area/w;q={difficulty,type,main:`Rectangle: area = ${area}, w = ${w}`,extra:"Perimeter?",plain:`Rectangle area=${area}, w=${w}`,answer:ans(2*(l+w)),data:{area,w,l}};}
-        else if(type==="discount_area"){const l=randInt(8,16),w=randInt(3,9);q={difficulty,type,main:`Rectangle: l = ${l}, w = ${w}`,extra:"Half of the area?",plain:`Rectangle l=${l}, w=${w}, find half area`,answer:ans(l*w/2),data:{l,w}};}
-        else {const r=randInt(2,8);q={difficulty,type:"circle_combo",main:`Circle: r = ${r}`,extra:"Area minus circumference coefficient? A = ?π",plain:`Circle r=${r}, find area coefficient`,answer:ans(String(r*r)+"π"),data:{r}};}
+        if(type==="rect_area"){const l=randInt(3,15),w=randInt(2,12);q={difficulty,type,main:geometryPrompt("area","rectangle"),extra:geometryGiven("Rectangle",`l = ${l}, w = ${w}`),plain:`Find the area of the rectangle. Rectangle l=${l}, w=${w}`,answer:ans(l*w),data:{l,w}};}
+        else if(type==="rect_perim"){const l=randInt(3,15),w=randInt(2,12);q={difficulty,type,main:geometryPrompt("perimeter","rectangle"),extra:geometryGiven("Rectangle",`l = ${l}, w = ${w}`),plain:`Find the perimeter of the rectangle. Rectangle l=${l}, w=${w}`,answer:ans(2*(l+w)),data:{l,w}};}
+        else if(type==="tri_area"){const b=randInt(4,18),h=randInt(3,12);q={difficulty,type,main:geometryPrompt("area","triangle"),extra:geometryGiven("Triangle",`b = ${b}, h = ${h}`),plain:`Find the area of the triangle. Triangle b=${b}, h=${h}`,answer:ans(b*h/2),data:{b,h}};}
+        else if(type==="circle_area"){const r=randInt(2,10);q={difficulty,type,main:geometryPrompt("area","circle"),extra:geometryGiven("Circle",`r = ${r}`),plain:`Find the area of the circle. Circle r=${r}`,answer:ans(piTerm(r*r)),data:{r}};}
+        else if(type==="circle_circ"){const r=randInt(2,10);q={difficulty,type,main:geometryPrompt("circumference","circle"),extra:geometryGiven("Circle",`r = ${r}`),plain:`Find the circumference of the circle. Circle r=${r}`,answer:ans(piTerm(2*r)),data:{r}};}
+        else if(type==="box_volume"){const l=randInt(2,10),w=randInt(2,8),h=randInt(2,8);q={difficulty,type,main:geometryPrompt("volume","rectangular prism"),extra:geometryGiven("Rectangular prism",`l = ${l}, w = ${w}, h = ${h}`),plain:`Find the volume of the rectangular prism. Rectangular prism l=${l}, w=${w}, h=${h}`,answer:ans(l*w*h),data:{l,w,h}};}
+        else if(type==="cube_volume"){const s=randInt(2,9);q={difficulty,type,main:geometryPrompt("volume","cube"),extra:geometryGiven("Cube",`side = ${s}`),plain:`Find the volume of the cube. Cube side=${s}`,answer:ans(s*s*s),data:{s}};}
+        else if(type==="cylinder_volume"){const r=randInt(2,7),h=randInt(2,9);q={difficulty,type,main:geometryPrompt("volume","cylinder"),extra:geometryGiven("Cylinder",`r = ${r}, h = ${h}`),plain:`Find the volume of the cylinder. Cylinder r=${r}, h=${h}`,answer:ans(piTerm(r*r*h)),data:{r,h}};}
+        else if(type==="circle_area_diameter"){const d=choose([4,6,8,10,12,14]);const r=d/2;q={difficulty,type,main:geometryPrompt("area","circle"),extra:geometryGiven("Circle",`d = ${d}`),plain:`Find the area of the circle. Circle diameter=${d}`,answer:ans(piTerm(r*r)),data:{d,r}};}
+        else if(type==="circle_circ_diameter"){const d=choose([4,6,8,10,12,14]);q={difficulty,type,main:geometryPrompt("circumference","circle"),extra:geometryGiven("Circle",`d = ${d}`),plain:`Find the circumference of the circle. Circle diameter=${d}`,answer:ans(piTerm(d)),data:{d}};}
+        else if(type==="mixed_rect"){const area=choose([24,36,48,60,72]),w=choose([3,4,6]);const l=area/w;q={difficulty,type,main:geometryPrompt("perimeter","rectangle"),extra:geometryGiven("Rectangle",`area = ${area}, w = ${w}`),plain:`Find the perimeter of the rectangle. Rectangle area=${area}, w=${w}`,answer:ans(2*(l+w)),data:{area,w,l}};}
+        else if(type==="missing_rect_perim"){const area=choose([48,60,72,96]),w=choose([4,6,8]);const l=area/w;q={difficulty,type,main:geometryPrompt("perimeter","rectangle"),extra:geometryGiven("Rectangle",`area = ${area}, w = ${w}`),plain:`Find the perimeter of the rectangle. Rectangle area=${area}, w=${w}`,answer:ans(2*(l+w)),data:{area,w,l}};}
+        else if(type==="discount_area"){const l=randInt(8,16),w=randInt(3,9);q={difficulty,type,main:geometryPrompt("halfArea","rectangle"),extra:geometryGiven("Rectangle",`l = ${l}, w = ${w}`),plain:`Find half of the area of the rectangle. Rectangle l=${l}, w=${w}`,answer:ans(l*w/2),data:{l,w}};}
+        else {const r=randInt(2,8);q={difficulty,type:"circle_combo",main:geometryPrompt("areaCoefficient","circle"),extra:geometryGiven("Circle",`r = ${r}`),plain:`Find the coefficient of pi in the area of the circle. Circle r=${r}`,answer:ans(String(r*r)+"π"),data:{r}};}
         q.options=this.options(q,Number(optionCountEl.value||4));return q;
       },
       options(q,count){
@@ -1145,8 +1176,18 @@
       if(["No solution","Infinitely many solutions","无解","无穷多个解"].includes(s)) return true;
       if(/[=^/*+\-()π%²³]/.test(s)) return true;
       if(/^\s*-?\d+(\.\d+)?\s*$/.test(s)) return true;
+      if(isSimpleMonomial(s)) return true;
       if(/^[A-Za-z]\s*\(/.test(s)) return true;
       return false;
+    }
+
+    function isSimpleMonomial(expr){
+      const compact = String(expr ?? "").replace(/\s+/g, "");
+      if(!/^-?(?:\d+(?:\.\d+)?)?[A-Za-z]{1,4}$/.test(compact)) return false;
+      const letters = compact.replace(/^-?(?:\d+(?:\.\d+)?)?/, "");
+      if(!letters) return false;
+      if(/^(sin|cos|tan|sec|log|ln|area|base|rate|time|easy|hard)$/i.test(letters)) return false;
+      return /\d/.test(compact) || /^[xyzabcmnptuv]/i.test(letters) || letters.length <= 2;
     }
 
     function renderLatex(el, latex, displayMode=false){

@@ -423,8 +423,8 @@ function selectOption(op,btn){clearTimer(); const q=quiz[currentIndex]; const co
   }else{
     renderBadFeedback(tr().incorrectPrefix,q.answer);
   }
-  feedback.className="feedback "+(correct?"good":"bad"); answers.push({q,selected:op,correct}); if(!correct) wrongQuestions.push(q); recordAttempt(q,optionText(q.answer),optionText(op),correct,false); renderSolutionBox(q); nextBtn.disabled=false; progressBar.style.width=`${((currentIndex+1)/quiz.length)*100}%`;}
-function timeUp(){clearTimer(); const q=quiz[currentIndex]; [...optionsEl.children].forEach((b,i)=>{b.disabled=true;if(currentOptions[i].key===q.answer.key)b.classList.add("correct")}); renderBadFeedback(tr().timeUpPrefix,q.answer); feedback.className="feedback bad"; answers.push({q,selected:null,correct:false,timeUp:true}); wrongQuestions.push(q); recordAttempt(q,optionText(q.answer),"",false,true); renderSolutionBox(q); nextBtn.disabled=false; progressBar.style.width=`${((currentIndex+1)/quiz.length)*100}%`;}
+  feedback.className="feedback "+(correct?"good":"bad"); answers.push({q,selected:op,correct}); if(!correct) wrongQuestions.push(q); recordAttempt(q,optionText(q.answer),optionText(op),correct,false,op); renderSolutionBox(q); nextBtn.disabled=false; progressBar.style.width=`${((currentIndex+1)/quiz.length)*100}%`;}
+function timeUp(){clearTimer(); const q=quiz[currentIndex]; [...optionsEl.children].forEach((b,i)=>{b.disabled=true;if(currentOptions[i].key===q.answer.key)b.classList.add("correct")}); renderBadFeedback(tr().timeUpPrefix,q.answer); feedback.className="feedback bad"; answers.push({q,selected:null,correct:false,timeUp:true}); wrongQuestions.push(q); recordAttempt(q,optionText(q.answer),"",false,true,null); renderSolutionBox(q); nextBtn.disabled=false; progressBar.style.width=`${((currentIndex+1)/quiz.length)*100}%`;}
 function renderSolutionBox(q){solutionBox.innerHTML=""; const h=document.createElement("h3");h.textContent=tr().solutionTitle;solutionBox.appendChild(h); const grid=document.createElement("div");grid.className="solution-grid"; const steps=document.createElement("div");steps.className="solution-steps"; for(const s of q.solution){const div=document.createElement("div"); if(s.latex) div.appendChild(renderLatex(s.latex,false)); else div.textContent=s.text(); steps.appendChild(div)} const note=document.createElement("div");note.className="solution-note";note.textContent=tr().notes[q.noteKey]||""; grid.appendChild(steps);grid.appendChild(note);solutionBox.appendChild(grid); const ans=document.createElement("p");ans.innerHTML=`<strong>${tr().solutionFinal}</strong> `; const pill=document.createElement("span");pill.className="answer-pill";pill.appendChild(optionNode(q.answer)); ans.appendChild(pill); solutionBox.appendChild(ans); solutionBox.classList.remove("hidden");}
 function nextQuestion(){if(currentIndex<quiz.length-1){currentIndex++;renderQuestion()}else showResults()}
 function showResults(){
@@ -453,14 +453,43 @@ function showResults(){
 }
 function resetToSetup(){clearTimer();quizCard.classList.add("hidden");resultCard.classList.add("hidden");setupCard.classList.remove("hidden");progressBar.style.width="0%"}
 function clearTimer(){if(timer){clearInterval(timer);timer=null}}
-function recordAttempt(q, correctDisplay, selectedDisplay, isCorrect, timeUp=false){void window.MCLProgress?.recordGameAttempt?.({gameId:TOOL_CONFIG.gameId, question:{plain:q.plain,type:q.type,difficulty:q.difficulty}, course:TOOL_CONFIG.course, topic:q.type, correctAnswer:correctDisplay, selectedAnswer:selectedDisplay, isCorrect, timeUp})}
+function optionLabel(index){return String.fromCharCode(65+index)}
+function optionPayload(selected=null){
+  return (currentOptions||[]).map((op,index)=>({
+    label: optionLabel(index),
+    latex: optionText(op),
+    key: op.key,
+    isCorrect: op.key===quiz[currentIndex].answer.key,
+    isSelected: selected ? op.key===selected.key : false
+  }))
+}
+function optionLabelFor(target){
+  if(!target) return "";
+  const index=(currentOptions||[]).findIndex(op=>op.key===target.key);
+  return index>=0?optionLabel(index):"";
+}
+function recordAttempt(q, correctDisplay, selectedDisplay, isCorrect, timeUp=false, selectedOption=null){
+  void window.MCLProgress?.recordGameAttempt?.({
+    gameId:TOOL_CONFIG.gameId,
+    question:{plain:q.plain,type:q.type,difficulty:q.difficulty},
+    course:TOOL_CONFIG.course,
+    topic:q.type,
+    correctAnswer:correctDisplay,
+    selectedAnswer:selectedDisplay,
+    options:optionPayload(selectedOption),
+    correctOptionLabel:optionLabelFor(q.answer),
+    selectedOptionLabel:optionLabelFor(selectedOption),
+    isCorrect,
+    timeUp
+  })
+}
 function generateSample(){const q=safeBuildQuestion(pickBuilder(difficultySel.value)); const opts=makeOptions(q,Math.min(4,parseInt(optionCount.value,10))); sampleBox.innerHTML=""; const h=document.createElement("strong");h.textContent=tr().sampleTitle; sampleBox.appendChild(h); const qd=document.createElement("div");qd.style.marginTop="10px"; qd.textContent=tr().sampleQuestion+":"; sampleBox.appendChild(qd); for(const line of q.main){const div=document.createElement("div");div.style.margin="8px 0"; if(line.latex)div.appendChild(renderLatex(line.latex,false)); else div.textContent=line.text(); sampleBox.appendChild(div)} const od=document.createElement("div");od.style.marginTop="10px";od.textContent=tr().sampleOptions+":";sampleBox.appendChild(od); opts.forEach(o=>{const d=document.createElement("div");d.style.margin="4px 0";d.appendChild(optionNode(o));sampleBox.appendChild(d)}); const ad=document.createElement("div");ad.style.marginTop="10px";ad.innerHTML=`<strong>${tr().sampleAnswer}:</strong> `;ad.appendChild(optionNode(q.answer));sampleBox.appendChild(ad); sampleBox.classList.remove("hidden")}
 
 document.getElementById("startBtn").onclick=()=>startQuiz(); document.getElementById("sampleBtn").onclick=generateSample; document.getElementById("quitBtn").onclick=showResults; document.getElementById("nextBtn").onclick=nextQuestion; document.getElementById("restartBtn").onclick=resetToSetup; document.getElementById("reviewWrongBtn").onclick=()=>{const types=[...new Set(wrongQuestions.map(q=>q.type))]; if(types.length){setupCard.classList.add("hidden");resultCard.classList.add("hidden");startQuiz(types)}};
 setLanguage(lang);
 </script>
   <script src="../assets/js/tool-modes.js"></script>
-  <script src="../assets/js/report-export.js"></script>
+  <script src="../assets/js/report-export.js?v=options-20260510"></script>
   <script src="../assets/js/home-link.js"></script>
 </body>
 </html>

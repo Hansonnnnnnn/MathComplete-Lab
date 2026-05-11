@@ -233,22 +233,59 @@
     return safe(value);
   }
 
-  function normalizeOptions(payload = {}) {
-    const raw = Array.isArray(payload.options) ? payload.options : Array.isArray(payload.answerOptions) ? payload.answerOptions : [];
-    return raw.map((option, index) => {
-      if (option && typeof option === "object") {
-        return {
-          label: safe(option.label || option.id || String.fromCharCode(65 + index)),
-          latex: answerText(option.latex ?? option.text ?? option.value ?? option.answer ?? ""),
-          isCorrect: Boolean(option.isCorrect || option.correct),
-          isSelected: Boolean(option.isSelected || option.selected)
-        };
-      }
+  function comparableAnswer(value) {
+    return answerText(value).replace(/\s+/g, "");
+  }
+
+  function domOptions(selected = "", correct = "") {
+    const optionsRoot = document.getElementById("options");
+    if (!optionsRoot) return [];
+    const selectedKey = comparableAnswer(selected);
+    const correctKey = comparableAnswer(correct);
+    return [...optionsRoot.querySelectorAll("button, .option")].map((node, index) => {
+      const latex = safe(node.getAttribute("aria-label") || node.dataset?.latex || node.textContent || "").trim();
+      const key = comparableAnswer(latex);
       return {
         label: String.fromCharCode(65 + index),
-        latex: answerText(option),
-        isCorrect: false,
-        isSelected: false
+        latex,
+        isCorrect: node.classList.contains("correct") || Boolean(correctKey && key === correctKey),
+        isSelected: node.classList.contains("wrong") || Boolean(selectedKey && key === selectedKey)
+      };
+    }).filter(option => option.latex);
+  }
+
+  function normalizeOptions(payload = {}, selected = "", correct = "") {
+    const question = payload.question || payload.questionSnapshot || {};
+    const raw = Array.isArray(payload.options)
+      ? payload.options
+      : Array.isArray(payload.answerOptions)
+        ? payload.answerOptions
+        : Array.isArray(question.options)
+          ? question.options
+          : Array.isArray(question.choices)
+            ? question.choices
+            : [];
+    if (!raw.length) return domOptions(selected, correct);
+    const selectedKey = comparableAnswer(selected);
+    const correctKey = comparableAnswer(correct);
+    return raw.map((option, index) => {
+      if (option && typeof option === "object") {
+        const latex = answerText(option.latex ?? option.text ?? option.value ?? option.answer ?? option);
+        const optionKey = comparableAnswer(option.key ?? latex);
+        return {
+          label: safe(option.label || option.id || String.fromCharCode(65 + index)),
+          latex,
+          isCorrect: Boolean(option.isCorrect || option.correct || (correctKey && (optionKey === correctKey || comparableAnswer(latex) === correctKey))),
+          isSelected: Boolean(option.isSelected || option.selected || (selectedKey && (optionKey === selectedKey || comparableAnswer(latex) === selectedKey)))
+        };
+      }
+      const latex = answerText(option);
+      const optionKey = comparableAnswer(latex);
+      return {
+        label: String.fromCharCode(65 + index),
+        latex,
+        isCorrect: Boolean(correctKey && optionKey === correctKey),
+        isSelected: Boolean(selectedKey && optionKey === selectedKey)
       };
     }).filter(option => option.latex);
   }
@@ -259,7 +296,7 @@
       ? ""
       : (payload.selectedAnswer ?? payload.selectedAnswerLatex ?? payload.selected_answer_latex ?? payload.selected_answer ?? "");
     const correct = payload.correctAnswer ?? payload.correctAnswerLatex ?? payload.correct_answer_latex ?? payload.correct_answer ?? "";
-    const options = normalizeOptions(payload);
+    const options = normalizeOptions(payload, selected, correct);
     const selectedOptionLabel = safe(payload.selectedOptionLabel || payload.selected_option_label || options.find(option => option.isSelected)?.label || "");
     const correctOptionLabel = safe(payload.correctOptionLabel || payload.correct_option_label || options.find(option => option.isCorrect)?.label || "");
 

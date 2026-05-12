@@ -946,9 +946,9 @@
 
   function finishQuiz() {
     clearTimer();
-    const total = state.questions.length || 1;
+    const total = state.totalAnswered;
     const wrongCount = state.wrong.length;
-    const accuracy = Math.round((state.score / total) * 100);
+    const accuracy = total ? Math.round((state.score / total) * 100) : 0;
     els.scoreNum.textContent = `${state.score}/${total}`;
     els.accuracyNum.textContent = `${accuracy}%`;
     els.wrongNum.textContent = String(wrongCount);

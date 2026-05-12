@@ -1248,7 +1248,7 @@
     function nextQuestion() { if (!answered) return; if (currentIndex < quiz.length - 1) { currentIndex += 1; renderQuestion(true); } else showResult(); }
     function showResult() { clearTimer(); quizCard.classList.add("hidden"); resultCard.classList.remove("hidden"); renderResultBody(); }
     function renderResultBody() {
-      const total = quiz.length;
+      const total = Math.min(quiz.length, currentIndex + (answered ? 1 : 0));
       const accuracy = total ? Math.round((correctCount / total) * 100) : 0;
       scoreNum.textContent = `${correctCount}/${total}`;
       accuracyNum.textContent = `${accuracy}%`;

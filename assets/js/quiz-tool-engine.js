@@ -591,7 +591,7 @@
   }
 
   function renderResultBody() {
-    const total = quiz.length;
+    const total = Math.min(quiz.length, currentIndex + (answered ? 1 : 0));
     const accuracy = total ? Math.round((correctCount / total) * 100) : 0;
     elements.scoreNum.textContent = `${correctCount}/${total}`;
     elements.accuracyNum.textContent = `${accuracy}%`;

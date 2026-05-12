@@ -78,8 +78,13 @@
               const y = h.randInt(-5, 8);
               const m = h.choice([-3, -2, -1, 1, 2, 3]);
               const b = y - m * x;
-              const a2 = h.choice([1, 2, 3, -1, -2]);
-              const b2 = h.choice([1, 2, -1, -2, 3]);
+              const coefficientPairs = [];
+              [1, 2, 3, -1, -2].forEach(a => {
+                [1, 2, -1, -2, 3].forEach(bCoef => {
+                  if (a + bCoef * m !== 0) coefficientPairs.push([a, bCoef]);
+                });
+              });
+              const [a2, b2] = h.choice(coefficientPairs);
               const c2 = a2 * x + b2 * y;
               return {
                 difficulty: "easy",
@@ -163,31 +168,112 @@
           ],
           expert: [
             builder("word-problem", h => {
-              const adult = h.randInt(8, 15);
-              const student = h.randInt(4, adult - 2);
-              const adults = h.randInt(2, 8);
-              const students = h.randInt(3, 12);
-              const totalTickets = adults + students;
-              const totalCost = adult * adults + student * students;
-              const text = h.lang === "zh"
-                ? `成人票 ${adult} 美元，学生票 ${student} 美元。一共卖出 ${totalTickets} 张票，总收入 ${totalCost} 美元。成人票和学生票各卖出多少张？`
-                : `Adult tickets cost $${adult}, student tickets cost $${student}. A total of ${totalTickets} tickets were sold for $${totalCost}. How many adult and student tickets were sold?`;
+              const scenario = h.choice([
+                () => {
+                  const adult = h.randInt(8, 15);
+                  const student = h.randInt(4, adult - 2);
+                  const adults = h.randInt(2, 8);
+                  const students = h.randInt(3, 12);
+                  const total = adults + students;
+                  const weighted = adult * adults + student * students;
+                  return {
+                    first: adults,
+                    second: students,
+                    firstCoeff: adult,
+                    secondCoeff: student,
+                    firstEn: "adult tickets",
+                    secondEn: "student tickets",
+                    firstZh: "成人票",
+                    secondZh: "学生票",
+                    textEn: `Adult tickets cost $${adult}, student tickets cost $${student}. A total of ${total} tickets were sold for $${weighted}. How many adult and student tickets were sold?`,
+                    textZh: `成人票 ${adult} 美元，学生票 ${student} 美元。一共卖出 ${total} 张票，总收入 ${weighted} 美元。成人票和学生票各卖出多少张？`,
+                    total,
+                    weighted
+                  };
+                },
+                () => {
+                  const notebook = h.randInt(4, 9);
+                  const pen = h.randInt(1, notebook - 1);
+                  const notebooks = h.randInt(3, 10);
+                  const pens = h.randInt(4, 14);
+                  const total = notebooks + pens;
+                  const weighted = notebook * notebooks + pen * pens;
+                  return {
+                    first: notebooks,
+                    second: pens,
+                    firstCoeff: notebook,
+                    secondCoeff: pen,
+                    firstEn: "notebooks",
+                    secondEn: "pens",
+                    firstZh: "笔记本",
+                    secondZh: "钢笔",
+                    textEn: `A student bought notebooks for $${notebook} each and pens for $${pen} each. They bought ${total} items for $${weighted}. How many notebooks and pens did they buy?`,
+                    textZh: `一名学生买了每本 ${notebook} 美元的笔记本和每支 ${pen} 美元的钢笔。一共买了 ${total} 件物品，花了 ${weighted} 美元。笔记本和钢笔各买了多少？`,
+                    total,
+                    weighted
+                  };
+                },
+                () => {
+                  const car = 4;
+                  const motorcycle = 2;
+                  const cars = h.randInt(3, 10);
+                  const motorcycles = h.randInt(4, 14);
+                  const total = cars + motorcycles;
+                  const weighted = car * cars + motorcycle * motorcycles;
+                  return {
+                    first: cars,
+                    second: motorcycles,
+                    firstCoeff: car,
+                    secondCoeff: motorcycle,
+                    firstEn: "cars",
+                    secondEn: "motorcycles",
+                    firstZh: "汽车",
+                    secondZh: "摩托车",
+                    textEn: `A parking lot has ${total} vehicles. Cars have 4 wheels and motorcycles have 2 wheels. There are ${weighted} wheels in all. How many cars and motorcycles are there?`,
+                    textZh: `停车场里共有 ${total} 辆车。汽车有 4 个轮子，摩托车有 2 个轮子，一共有 ${weighted} 个轮子。汽车和摩托车各有多少辆？`,
+                    total,
+                    weighted
+                  };
+                },
+                () => {
+                  const large = h.randInt(6, 12);
+                  const small = h.randInt(2, large - 2);
+                  const largeBoxes = h.randInt(2, 8);
+                  const smallBoxes = h.randInt(4, 12);
+                  const total = largeBoxes + smallBoxes;
+                  const weighted = large * largeBoxes + small * smallBoxes;
+                  return {
+                    first: largeBoxes,
+                    second: smallBoxes,
+                    firstCoeff: large,
+                    secondCoeff: small,
+                    firstEn: "large boxes",
+                    secondEn: "small boxes",
+                    firstZh: "大盒",
+                    secondZh: "小盒",
+                    textEn: `A shelf has ${total} boxes. Each large box holds ${large} markers and each small box holds ${small} markers. The boxes hold ${weighted} markers altogether. How many large and small boxes are there?`,
+                    textZh: `架子上共有 ${total} 个盒子。每个大盒装 ${large} 支马克笔，每个小盒装 ${small} 支马克笔，一共装了 ${weighted} 支。大盒和小盒各有多少个？`,
+                    total,
+                    weighted
+                  };
+                }
+              ])();
               return {
                 difficulty: "expert",
                 type: "word-problem",
                 promptKey: "promptWord",
-                main: h.textLatex(text),
-                plain: h.textLatex(text),
-                answer: { latex: h.lang === "zh" ? `\\text{成人 }${adults}\\text{ 张，学生 }${students}\\text{ 张}` : `\\text{adult }${adults}\\text{, student }${students}`, key: `${adults},${students}` },
+                main: h.textLatex(h.lang === "zh" ? scenario.textZh : scenario.textEn),
+                plain: h.textLatex(h.lang === "zh" ? scenario.textZh : scenario.textEn),
+                answer: { latex: h.lang === "zh" ? `\\text{${scenario.firstZh} }${scenario.first}\\text{，${scenario.secondZh} }${scenario.second}` : `\\text{${scenario.firstEn} }${scenario.first}\\text{, ${scenario.secondEn} }${scenario.second}`, key: `${scenario.first},${scenario.second}` },
                 lines: [
-                  { line: `a+s=${totalTickets}`, note: h.tr().notes.model },
-                  { line: `${adult}a+${student}s=${totalCost}`, note: h.tr().notes.model },
-                  { line: `a=${adults},\\quad s=${students}`, note: h.tr().notes.final }
+                  { line: `a+s=${scenario.total}`, note: h.tr().notes.model },
+                  { line: `${scenario.firstCoeff}a+${scenario.secondCoeff}s=${scenario.weighted}`, note: h.tr().notes.model },
+                  { line: `a=${scenario.first},\\quad s=${scenario.second}`, note: h.tr().notes.final }
                 ],
                 distractors: [
-                  { latex: h.lang === "zh" ? `\\text{成人 }${students}\\text{ 张，学生 }${adults}\\text{ 张}` : `\\text{adult }${students}\\text{, student }${adults}`, key: `${students},${adults}` },
-                  { latex: h.lang === "zh" ? `\\text{成人 }${adults + 1}\\text{ 张，学生 }${students - 1}\\text{ 张}` : `\\text{adult }${adults + 1}\\text{, student }${students - 1}`, key: `${adults + 1},${students - 1}` },
-                  answerPoint(adults, students),
+                  { latex: h.lang === "zh" ? `\\text{${scenario.firstZh} }${scenario.second}\\text{，${scenario.secondZh} }${scenario.first}` : `\\text{${scenario.firstEn} }${scenario.second}\\text{, ${scenario.secondEn} }${scenario.first}`, key: `${scenario.second},${scenario.first}` },
+                  { latex: h.lang === "zh" ? `\\text{${scenario.firstZh} }${scenario.first + 1}\\text{，${scenario.secondZh} }${scenario.second - 1}` : `\\text{${scenario.firstEn} }${scenario.first + 1}\\text{, ${scenario.secondEn} }${scenario.second - 1}`, key: `${scenario.first + 1},${scenario.second - 1}` },
+                  answerPoint(scenario.first, scenario.second),
                   h.textAnswer("no solution", "无解", "no-solution")
                 ]
               };

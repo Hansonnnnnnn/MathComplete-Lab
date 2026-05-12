@@ -862,18 +862,18 @@
       en:{
         toolBadge:"Function evaluation", title:"Function Evaluation",
         subtitle:"Evaluate functions by substitution. Practice linear functions, negative inputs, quadratics, expression inputs, and simple composition.",
-        note:"Expert uses expression inputs. Hell includes simple composition such as f(g(2)).",
+        note:"Expert uses quadratic expression inputs. Hell includes simple composition such as f(g(2)).",
         questionTitle:"Evaluate:",
-        difficultyOptions:{easy:"Easy: linear functions, positive inputs",medium:"Medium: negative inputs",hard:"Hard: quadratic functions",expert:"Expert: expression inputs",hell:"Hell: simple function composition",mixed:"Mixed: balanced practice from all difficulty levels"},
+        difficultyOptions:{easy:"Easy: linear functions, positive inputs",medium:"Medium: negative inputs",hard:"Hard: quadratic functions",expert:"Expert: quadratic expression inputs",hell:"Hell: simple function composition",mixed:"Mixed: balanced practice from all difficulty levels"},
         suggestion:"Suggestion: use parentheses when substituting negatives and compute powers before adding.",
         notes:{given:"given",substitute:"substitute",simplify:"simplify",compose:"evaluate inside function first"}
       },
       zh:{
         toolBadge:"函数代入练习", title:"函数代入练习",
         subtitle:"通过代入求函数值，练习线性函数、负数输入、二次函数、表达式输入和简单复合函数。",
-        note:"专家难度会出现表达式输入；地狱难度会出现简单复合函数，例如 f(g(2))。",
+        note:"专家难度会出现二次函数的表达式输入；地狱难度会出现简单复合函数，例如 f(g(2))。",
         questionTitle:"计算：",
-        difficultyOptions:{easy:"简单：线性函数，正数输入",medium:"中等：负数输入",hard:"困难：二次函数",expert:"专家：表达式输入",hell:"地狱：简单复合函数",mixed:"混合：从所有难度中均衡出题"},
+        difficultyOptions:{easy:"简单：线性函数，正数输入",medium:"中等：负数输入",hard:"困难：二次函数",expert:"专家：二次表达式输入",hell:"地狱：简单复合函数",mixed:"混合：从所有难度中均衡出题"},
         suggestion:"建议检查：代入负数时要加括号，先算平方再做加减。",
         notes:{given:"已知",substitute:"代入",simplify:"化简",compose:"先计算内层函数"}
       }
@@ -941,6 +941,17 @@
 
       return result;
     }
+    function formatAQuadratic(a,b,c){
+      const terms = [];
+      if(a) terms.push(a===1 ? "a^2" : a===-1 ? "-a^2" : `${a}a^2`);
+      if(b) terms.push(b>0 ? (b===1 ? "a" : `${b}a`) : (b===-1 ? "-a" : `${b}a`));
+      if(c) terms.push(String(c));
+      if(!terms.length) return "0";
+      return terms.map((term,index)=>{
+        if(index===0) return term;
+        return term.startsWith("-") ? ` - ${term.slice(1)}` : ` + ${term}`;
+      }).join("");
+    }
     function formatQuad(a,b,c){let s=a===1?"x²":a===-1?"-x²":`${a}x²`; if(b) s+= b>0?` + ${Math.abs(b)}x`:` - ${Math.abs(b)}x`; if(c) s+= c>0?` + ${c}`:` - ${Math.abs(c)}`; return s;}
     function ans(v){return {kind:"value",value:String(v),num:v};}
     const GAME={
@@ -956,9 +967,16 @@
           const fx=formatQuad(a,b,c),y=valQuad(a,b,c,x);
           q={difficulty,type:"quadratic",main:`f(x) = ${fx}`,extra:`f(${x}) = ?`,plain:`f(x) = ${fx}, find f(${x})`,answer:ans(y),data:{fx,a,b,c,x,y}};
         } else if(difficulty==="expert"){
-          const a=choose([-4,-3,-2,2,3,4]),b=randInt(-6,6),k=randInt(-5,5),m=randInt(-5,5);
-          const fx=formatLinearFn(a,b),expr=`a ${m>=0?"+ "+m:"- "+Math.abs(m)}`, simplified=formatLinearA(a, a*m+b);
-          q={difficulty,type:"expression-input",main:`f(x) = ${fx}`,extra:`f(${expr}) = ?`,plain:`f(x) = ${fx}, find f(${expr})`,answer:{kind:"value",value:simplified,num:null},data:{fx,a,b,expr,simplified,m}};
+          const A=choose([-2,-1,1,2]),B=randInt(-5,5),C=randInt(-6,6),m=randInt(-4,4);
+          const fx=formatQuad(A,B,C),expr=`a ${m>=0?"+ "+m:"- "+Math.abs(m)}`;
+          const qa=A, qb=2*A*m+B, qc=A*m*m+B*m+C;
+          const simplified=formatAQuadratic(qa,qb,qc);
+          q={difficulty,type:"quadratic-expression-input",main:`f(x) = ${fx}`,extra:`f(${expr}) = ?`,plain:`f(x) = ${fx}, find f(${expr})`,answer:{kind:"value",value:simplified,num:null},data:{fx,A,B,C,expr,m,simplified,qa,qb,qc},distractors:[
+            {kind:"value",value:formatAQuadratic(qa,B,qc),num:null},
+            {kind:"value",value:formatAQuadratic(qa,-qb,qc),num:null},
+            {kind:"value",value:formatAQuadratic(qa,qb,C),num:null},
+            {kind:"value",value:formatAQuadratic(qa,qb,qc+1),num:null}
+          ]};
         } else {
           const a=choose([-3,-2,2,3]),b=randInt(-5,5),c=choose([-2,-1,1,2]),d=randInt(-5,5),x=randInt(-5,5);
           const f=formatLinearFn(a,b),g=formatLinearFn(c,d),gx=c*x+d,y=a*gx+b;
@@ -975,6 +993,7 @@
             distractors.set(answerKey(a), a);
           }
         };
+        (q.distractors || []).forEach(addDistractor);
 
         if (q.answer.num !== null) {
           const y = q.answer.num;
@@ -1040,6 +1059,14 @@
           return [
             {line:`f(x) = ${d.fx}`,note:t.given},
             {line:`f(${d.expr}) = ${d.a}(${d.expr})${signedConstant(d.b)}`,note:t.substitute},
+            {line:`f(${d.expr}) = ${d.simplified}`,note:t.simplify}
+          ];
+        }
+
+        if(q.type==="quadratic-expression-input"){
+          return [
+            {line:`f(x) = ${d.fx}`,note:t.given},
+            {line:`f(${d.expr}) = ${d.A}(${d.expr})^2${signedLinearTerm(d.B,d.expr)}${signedConstant(d.C)}`,note:t.substitute},
             {line:`f(${d.expr}) = ${d.simplified}`,note:t.simplify}
           ];
         }
@@ -1299,7 +1326,7 @@
     function handleTimeUp(){if(answered)return;clearTimer();answered=true;const q=quiz[currentIndex],correct=correctAnswer(q),correctDisplay=answerToString(correct),buttons=[...optionsEl.querySelectorAll(".option")];buttons.forEach(btn=>{btn.disabled=true;if(btn.dataset.answerKey===answerKey(correct))btn.classList.add("correct");});lastFeedback={correct:false,answer:correctDisplay,timeUp:true};renderFeedback(false,correctDisplay,true);wrongAnswers.push({main:q.plain||q.main.replace(/<[^>]+>/g,""),answer:correctDisplay,selected:null,timeUp:true,type:q.type,difficulty:q.difficulty});void window.MCLProgress?.recordGameAttempt?.({question:q,correctAnswer:correctDisplay,selectedAnswer:"",isCorrect:false,timeUp:true});renderSolutionBox();nextBtn.disabled=false;progressBar.style.width=`${((currentIndex+1)/quiz.length)*100}%`;}
     function nextQuestion(){if(!answered)return;if(currentIndex<quiz.length-1){currentIndex++;renderQuestion(true);}else showResult();}
     function showResult(){clearTimer();quizCard.classList.add("hidden");resultCard.classList.remove("hidden");renderResultBody();}
-    function renderResultBody(){const total=quiz.length,accuracy=total===0?0:Math.round((correctCount/total)*100);scoreNum.textContent=`${correctCount}/${total}`;accuracyNum.textContent=`${accuracy}%`;wrongNum.textContent=`${wrongAnswers.length}`;wrongList.innerHTML="";if(wrongAnswers.length===0){const item=document.createElement("div");item.className="wrong-item";item.innerHTML=`<div class="expr">${tr().noWrong}</div><p class="tag-good">${tr().noWrongTip}</p>`;wrongList.appendChild(item);}else{wrongAnswers.forEach((w,i)=>{const item=document.createElement("div");item.className="wrong-item";item.innerHTML=`<div class="expr">${i+1}. ${escapeHtml(w.main)}</div><p>${tr().yourAnswer}: <span class="tag-bad">${escapeHtml(w.timeUp?tr().timeUpAnswer:w.selected)}</span></p><p>${tr().correctAnswer}: <span class="tag-good">${escapeHtml(w.answer)}</span></p><p>${tr().suggestion}</p>`;wrongList.appendChild(item);});}}
+    function renderResultBody(){const total=Math.min(quiz.length,currentIndex+(answered?1:0)),accuracy=total===0?0:Math.round((correctCount/total)*100);scoreNum.textContent=`${correctCount}/${total}`;accuracyNum.textContent=`${accuracy}%`;wrongNum.textContent=`${wrongAnswers.length}`;wrongList.innerHTML="";if(wrongAnswers.length===0){const item=document.createElement("div");item.className="wrong-item";item.innerHTML=`<div class="expr">${tr().noWrong}</div><p class="tag-good">${tr().noWrongTip}</p>`;wrongList.appendChild(item);}else{wrongAnswers.forEach((w,i)=>{const item=document.createElement("div");item.className="wrong-item";item.innerHTML=`<div class="expr">${i+1}. ${escapeHtml(w.main)}</div><p>${tr().yourAnswer}: <span class="tag-bad">${escapeHtml(w.timeUp?tr().timeUpAnswer:w.selected)}</span></p><p>${tr().correctAnswer}: <span class="tag-good">${escapeHtml(w.answer)}</span></p><p>${tr().suggestion}</p>`;wrongList.appendChild(item);});}}
     function resetToSetup(){clearTimer();setupCard.classList.remove("hidden");quizCard.classList.add("hidden");resultCard.classList.add("hidden");progressBar.style.width="0%";sampleBox.classList.add("hidden");sampleBox.innerHTML="";solutionBox.classList.add("hidden");solutionBox.innerHTML="";lastFeedback=null;}
     function quitQuiz(){if(answered||currentIndex>0)showResult();else resetToSetup();}
     function showSample(){const sampleDifficulty=pickDifficultyForSample(difficultyEl.value);const q=GAME.generateQuestion(sampleDifficulty),correct=answerToString(correctAnswer(q));sampleBox.classList.remove("hidden");sampleBox.innerHTML=`<strong>${tr().sampleTitle}:</strong><br>${tr().sampleQuestion}: <code>${escapeHtml(q.plain||q.main.replace(/<[^>]+>/g,""))}</code><br>${tr().sampleAnswer}: <code>${escapeHtml(correct)}</code><br>${tr().sampleOptions}: ${q.options.map(x=>`<code>${escapeHtml(answerToString(x))}</code>`).join(" ")}`;}

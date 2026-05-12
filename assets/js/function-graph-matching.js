@@ -683,9 +683,9 @@
     els.quizCard.classList.add("hidden");
     els.resultCard.classList.remove("hidden");
     els.progressBar.style.width = "100%";
-    const total = quiz.length || 1;
+    const total = Math.min(quiz.length, current + (answered ? 1 : 0));
     els.scoreNum.textContent = `${correctGroups}/${total}`;
-    els.accuracyNum.textContent = `${Math.round((correctGroups / total) * 100)}%`;
+    els.accuracyNum.textContent = `${total ? Math.round((correctGroups / total) * 100) : 0}%`;
     els.wrongNum.textContent = String(wrongGroups.length);
     if (!wrongGroups.length) {
       els.wrongList.innerHTML = `<div class="wrong-item"><strong>${escapeHtml(tr().noWrong)}</strong><p>${escapeHtml(tr().noWrongTip)}</p></div>`;

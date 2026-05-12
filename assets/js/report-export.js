@@ -362,6 +362,21 @@
     return { total, correct, wrong, accuracy };
   }
 
+  function syncVisibleResultStats() {
+    const resultCard = document.getElementById("resultCard");
+    if (!resultCard || resultCard.classList.contains("hidden") || !attempts.length) return;
+    const s = stats();
+    const scoreNum = document.getElementById("scoreNum");
+    const accuracyNum = document.getElementById("accuracyNum");
+    const wrongNum = document.getElementById("wrongNum");
+    const scoreText = `${s.correct}/${s.total}`;
+    const accuracyText = `${s.accuracy}%`;
+    const wrongText = String(s.wrong);
+    if (scoreNum && scoreNum.textContent !== scoreText) scoreNum.textContent = scoreText;
+    if (accuracyNum && accuracyNum.textContent !== accuracyText) accuracyNum.textContent = accuracyText;
+    if (wrongNum && wrongNum.textContent !== wrongText) wrongNum.textContent = wrongText;
+  }
+
   function renderMath(value) {
     const text = safe(value);
     if (!text) return `<span class="blank">${escapeHtml(copy().blank)}</span>`;
@@ -521,6 +536,7 @@
   function addButton() {
     const resultCard = document.getElementById("resultCard");
     if (!resultCard || resultCard.classList.contains("hidden")) return;
+    syncVisibleResultStats();
     if (resultCard.querySelector("[data-report-download]")) return;
 
     const actions = resultCard.querySelector(".actions") || resultCard;
@@ -543,7 +559,7 @@
     const resultCard = document.getElementById("resultCard");
     if (!resultCard || buttonObserver) return;
     buttonObserver = new MutationObserver(addButton);
-    buttonObserver.observe(resultCard, { attributes: true, attributeFilter: ["class"], childList: true, subtree: true });
+    buttonObserver.observe(resultCard, { attributes: true, attributeFilter: ["class"] });
     addButton();
   }
 

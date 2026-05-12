@@ -340,9 +340,31 @@
     return attempt?.selectedAnswer ?? attempt?.selectedAnswerLatex ?? attempt?.selected_answer_latex ?? attempt?.selected_answer ?? "";
   }
 
+  function syncPracticeResultStats(attempts) {
+    if (!Array.isArray(attempts) || !attempts.length) return;
+    const scoreNum = document.getElementById("scoreNum");
+    const accuracyNum = document.getElementById("accuracyNum");
+    const wrongNum = document.getElementById("wrongNum");
+    if (!scoreNum && !accuracyNum && !wrongNum) return;
+
+    const total = attempts.length;
+    const correct = attempts.filter(attempt => Boolean(attempt.isCorrect ?? attempt.is_correct)).length;
+    const wrong = total - correct;
+    const accuracy = total ? Math.round((correct / total) * 100) : 0;
+
+    const scoreText = `${correct}/${total}`;
+    const accuracyText = `${accuracy}%`;
+    const wrongText = String(wrong);
+    if (scoreNum && scoreNum.textContent !== scoreText) scoreNum.textContent = scoreText;
+    if (accuracyNum && accuracyNum.textContent !== accuracyText) accuracyNum.textContent = accuracyText;
+    if (wrongNum && wrongNum.textContent !== wrongText) wrongNum.textContent = wrongText;
+  }
+
   function renderExamReview(attempts) {
     const resultCard = document.getElementById("resultCard");
-    if (!resultCard || !attempts.length || document.getElementById("mclExamReview")) return;
+    if (!resultCard || !attempts.length) return;
+    syncPracticeResultStats(attempts);
+    if (document.getElementById("mclExamReview")) return;
     const t = lang() === "zh"
       ? { title: "\u8003\u8bd5\u6279\u6539", correct: "\u6b63\u786e", incorrect: "\u9519\u8bef", your: "\u4f60\u7684\u7b54\u6848", answer: "\u6b63\u786e\u7b54\u6848", blank: "\u672a\u4f5c\u7b54" }
       : { title: "Exam Review", correct: "Correct", incorrect: "Incorrect", your: "Your answer", answer: "Correct answer", blank: "No answer" };

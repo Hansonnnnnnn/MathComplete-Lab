@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Exponent Laws Practice</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <style>
+    :root { --bg:#f7f8ff; --ink:#111827; --muted:#667085; --line:#e5e7eb; --brand:#4f46e5; --brand2:#7c3aed; --good:#15803d; --bad:#b91c1c; }
+    * { box-sizing:border-box; }
+    body { margin:0; min-height:100vh; font-family:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", Arial, sans-serif; color:var(--ink); background:linear-gradient(120deg,#edf4ff,#fff 42%,#f4efff); }
+    body::before { content:""; position:fixed; inset:0; pointer-events:none; background-image:linear-gradient(rgba(79,70,229,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(79,70,229,.06) 1px,transparent 1px); background-size:36px 36px; }
+    .top-nav { position:sticky; top:8px; z-index:5; width:min(1840px,calc(100% - 48px)); margin:8px auto 0; border-radius:999px; background:rgba(255,255,255,.92); box-shadow:0 18px 50px rgba(15,23,42,.12); display:flex; align-items:center; justify-content:space-between; padding:16px 24px; backdrop-filter:blur(14px); }
+    .brand { display:flex; align-items:center; gap:14px; font-weight:950; font-size:24px; color:#111827; text-decoration:none; }
+    .brand-mark { width:52px; height:52px; border-radius:16px; display:grid; place-items:center; color:white; background:linear-gradient(135deg,#4f46e5,#7c3aed); font-size:30px; font-weight:950; }
+    .nav-links { display:flex; align-items:center; gap:14px; }
+    .nav-links a { color:#4b5563; text-decoration:none; font-weight:900; font-size:20px; }
+    .nav-links a:last-child { color:white; background:#111827; padding:13px 22px; border-radius:999px; }
+    main { position:relative; width:min(1540px,calc(100% - 44px)); margin:0 auto; padding:52px 0 70px; }
+    .badge { display:inline-flex; align-items:center; gap:8px; border:1px solid #bfdbfe; color:#3949d4; background:#eff6ff; border-radius:999px; padding:10px 18px; font-weight:950; font-size:20px; }
+    .badge::before { content:""; width:11px; height:11px; background:#62bf8b; border-radius:999px; box-shadow:0 0 0 7px rgba(98,191,139,.16); }
+    h1 { margin:28px 0 22px; font-size:clamp(48px,7vw,84px); line-height:.95; letter-spacing:0; color:#17205a; }
+    .subtitle { max-width:1120px; color:#667085; font-size:26px; line-height:1.55; margin-bottom:38px; }
+    .card { background:rgba(255,255,255,.94); border-radius:28px; border:1px solid rgba(229,231,235,.9); box-shadow:0 30px 80px rgba(15,23,42,.10); padding:34px 38px; }
+    .hidden { display:none !important; }
+    .setup-grid { display:grid; grid-template-columns:repeat(2,minmax(220px,1fr)); gap:22px; margin:24px 0; }
+    label { display:block; font-weight:900; margin-bottom:10px; font-size:18px; }
+    select,input { width:100%; border:1px solid var(--line); border-radius:16px; padding:16px 18px; font-size:20px; background:white; color:#111827; }
+    .check-row { display:flex; gap:12px; align-items:flex-start; padding:16px; border:1px solid var(--line); border-radius:16px; }
+    .check-row input { width:22px; height:22px; margin-top:3px; }
+    .hint,.note-box { color:#667085; line-height:1.45; font-size:17px; }
+    .note-box { border:1px dashed #c7d2fe; background:#f8fbff; border-radius:18px; padding:16px 18px; margin-top:18px; }
+    button,.button { border:0; border-radius:999px; padding:18px 28px; font-weight:950; font-size:20px; cursor:pointer; color:white; background:linear-gradient(135deg,var(--brand),var(--brand2)); box-shadow:0 18px 35px rgba(79,70,229,.18); }
+    button.secondary { color:#111827; background:white; border:3px solid #111827; box-shadow:none; }
+    button.ghost { color:#111827; background:white; border:1px solid var(--line); box-shadow:none; }
+    button:disabled { opacity:.45; cursor:not-allowed; }
+    .actions { display:flex; flex-wrap:wrap; gap:16px; align-items:center; margin-top:24px; }
+    .topbar { display:flex; align-items:center; justify-content:space-between; gap:20px; }
+    .pill { display:inline-flex; margin:0 10px 10px 0; border:1px solid var(--line); border-radius:999px; padding:12px 20px; color:#667085; font-size:18px; font-weight:900; }
+    .progress-wrap { height:16px; border-radius:999px; background:#e5e7eb; overflow:hidden; margin:22px 0 34px; }
+    .progress { height:100%; width:0; background:linear-gradient(90deg,#4f46e5,#7c3aed); }
+    .question-title { color:#667085; font-size:24px; line-height:1.35; font-weight:950; margin-bottom:8px; }
+    .question-extra { color:#111827; font-size:22px; font-weight:900; margin-bottom:14px; }
+    .question-main { min-height:120px; display:flex; align-items:center; font-size:38px; overflow-wrap:anywhere; }
+    .question-main .katex-display { margin:0; }
+    .options { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:20px; margin-top:24px; }
+    .option { min-height:86px; border-radius:18px; border:3px solid #e5e7eb; background:white; color:#111827; box-shadow:none; display:grid; place-items:center; padding:14px; }
+    .option.correct { background:#f0fdf4; border-color:#bbf7d0; color:#166534; }
+    .option.wrong { background:#fef2f2; border-color:#fecaca; color:#991b1b; }
+    .feedback { min-height:36px; margin-top:22px; font-size:22px; font-weight:950; }
+    .feedback.good { color:var(--good); }
+    .feedback.bad { color:var(--bad); }
+    .solution-box { border:1px solid #bfdbfe; background:#f8fbff; border-radius:22px; padding:22px 26px; margin-top:22px; }
+    .chain-line { display:grid; grid-template-columns:minmax(240px,1fr) minmax(160px,320px); gap:20px; align-items:center; background:white; border:1px solid var(--line); border-radius:16px; padding:14px 18px; margin:10px 0; }
+    .chain-note { color:#667085; font-weight:900; }
+    .solution-answer { margin-top:16px; font-weight:950; font-size:22px; }
+    .solution-answer .answer-math { background:#ecfdf5; border:1px solid #bbf7d0; border-radius:999px; padding:4px 12px; display:inline-block; }
+    .result-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:18px; margin:22px 0 28px; }
+    .stat { border:1px solid var(--line); border-radius:18px; padding:22px 24px; }
+    .stat .num { font-size:42px; color:#4f46e5; font-weight:950; }
+    .stat .label { color:#667085; font-weight:900; font-size:18px; }
+    .wrong-list { display:grid; gap:16px; }
+    .wrong-item { border:1px solid var(--line); border-radius:18px; padding:18px 22px; }
+    .expr { font-size:22px; font-weight:950; margin-bottom:8px; }
+    .tag-bad { color:#b91c1c; font-weight:950; }
+    .tag-good { color:#15803d; font-weight:950; }
+    @media (max-width:760px) { .top-nav,main{width:min(100% - 24px,1540px)} .top-nav{padding:12px 14px}.brand{font-size:18px}.brand-mark{width:42px;height:42px}.nav-links a{font-size:16px}.setup-grid,.options,.result-grid{grid-template-columns:1fr}.card{padding:24px 18px}.question-main{font-size:30px}.chain-line{grid-template-columns:1fr} }
+  </style>
+</head>
+<body>
+  <nav class="top-nav">
+    <a class="brand" href="../index.html"><span class="brand-mark">Σ</span><span>MathComplete Lab</span></a>
+    <div class="nav-links"><a href="../practice.html" data-i18n="navPractice">Practice Library</a><a href="../index.html" data-i18n="navHome">Home</a></div>
+  </nav>
+
+  <main>
+    <span class="badge" id="toolBadge">Algebra I · Algebra II</span>
+    <h1 id="pageTitle">Exponent Laws Practice</h1>
+    <p class="subtitle" id="pageSubtitle">Simplify exponent expressions using product, quotient, power, zero, and negative exponent rules.</p>
+
+    <section id="setupCard" class="card">
+      <h2 id="setupTitle">Start Practice</h2>
+      <div class="setup-grid">
+        <div><label id="difficultyLabel" for="difficulty">Difficulty</label><select id="difficulty"></select></div>
+        <div><label id="questionCountLabel" for="questionCount">Number of Questions</label><input id="questionCount" type="number" min="1" max="100" value="10"></div>
+        <div><label id="optionCountLabel" for="optionCount">Number of Choices</label><select id="optionCount"></select></div>
+        <div><label id="timerLevelLabel" for="timerLevel">Timer Level</label><select id="timerLevel"></select></div>
+      </div>
+      <label class="check-row"><input id="timedMode" type="checkbox"><span><strong id="timedModeText">Enable Timed Mode</strong><br><span class="hint" id="timedModeHint">Off means no countdown. On means each question has its own timer.</span></span></label>
+      <div class="note-box" id="noteBox"></div>
+      <div class="actions"><button id="startBtn">Start</button><button id="sampleBtn" class="secondary">Generate Sample Question</button></div>
+      <div id="sampleBox" class="note-box hidden"></div>
+    </section>
+
+    <section id="quizCard" class="card hidden">
+      <div class="topbar"><div><span class="pill" id="progressText"></span><span class="pill" id="difficultyText"></span><span class="pill hidden" id="timerDisplay"></span></div><button id="quitBtn" class="ghost">End This Round</button></div>
+      <div class="progress-wrap"><div id="progressBar" class="progress"></div></div>
+      <div id="questionTitle" class="question-title"></div>
+      <div id="questionExtra" class="question-extra"></div>
+      <div id="questionMain" class="question-main"></div>
+      <div id="options" class="options"></div>
+      <div id="feedback" class="feedback"></div>
+      <div id="solutionBox" class="solution-box hidden"></div>
+      <div class="actions"><button id="nextBtn" disabled>Next Question</button></div>
+    </section>
+
+    <section id="resultCard" class="card hidden">
+      <h2 id="resultTitle">Practice Results</h2>
+      <div class="result-grid">
+        <div class="stat"><div id="scoreNum" class="num">0/0</div><div id="scoreLabel" class="label">Correct Answers</div></div>
+        <div class="stat"><div id="accuracyNum" class="num">0%</div><div id="accuracyLabel" class="label">Accuracy</div></div>
+        <div class="stat"><div id="wrongNum" class="num">0</div><div id="wrongLabel" class="label">Wrong Answers</div></div>
+      </div>
+      <h3 id="wrongReviewTitle">Wrong Answer Review</h3>
+      <div id="wrongList" class="wrong-list"></div>
+      <div class="actions"><button id="restartBtn">Practice Again</button><button id="reviewWrongBtn" class="secondary">Practice Similar Wrong Types</button></div>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script>
+    function tag(type, fn){ fn.__type = type; return fn; }
+    function gcd(a,b){ a=Math.abs(a); b=Math.abs(b); while(b) [a,b]=[b,a%b]; return a || 1; }
+    function reduce(n,d){ const g=gcd(n,d); n/=g; d/=g; if(d<0){ n=-n; d=-d; } return {n,d}; }
+    function varPart(v,e){ return e===1 ? v : `${v}^{${e}}`; }
+    function part(coef,powers){
+      const vars = Object.keys(powers).sort().filter(v => powers[v] > 0).map(v => varPart(v,powers[v]));
+      if(coef === 1 && vars.length) return vars.join("");
+      return `${coef}${vars.join("")}`;
+    }
+    function mono(coefNum, coefDen, powers){
+      const frac = reduce(coefNum, coefDen);
+      const numP = {}, denP = {};
+      Object.keys(powers).forEach(v => {
+        const e = powers[v];
+        if(e > 0) numP[v] = e;
+        if(e < 0) denP[v] = -e;
+      });
+      const num = part(Math.abs(frac.n), numP);
+      const den = part(frac.d, denP);
+      const sign = frac.n < 0 ? "-" : "";
+      const hasDen = frac.d !== 1 || Object.keys(denP).length;
+      const latex = hasDen ? `${sign}\\frac{${num || "1"}}{${den || "1"}}` : `${sign}${num}`;
+      const key = `${frac.n}/${frac.d}|${Object.keys(powers).sort().map(v => `${v}:${powers[v]}`).join(",")}`;
+      return { latex, key };
+    }
+    const T = {
+      en:{
+        toolBadge:"Algebra I · Algebra II", title:"Exponent Laws Practice",
+        subtitle:"Simplify exponent expressions using product, quotient, power, zero, and negative exponent rules.",
+        note:"Every answer is written with positive exponents. Distractors are built from common exponent-law mistakes.",
+        questionTitle:"Choose the correct simplification.",
+        promptSimplify:"Simplify. Write your answer using positive exponents.",
+        difficultyOptions:{easy:"Easy: one exponent law at a time",medium:"Medium: coefficients and two variables",hard:"Hard: negative exponents and fractions",expert:"Expert: multi-step mixed laws",mixed:"Mixed: balanced practice from all levels"},
+        suggestion:"Suggestion: check whether bases match, distribute powers carefully, and move negative exponents across the fraction bar.",
+        notes:{product:"add exponents",quotient:"subtract exponents",power:"multiply exponents",productPower:"distribute the outside power",negative:"rewrite with positive exponents",final:"positive exponents"}
+      },
+      zh:{
+        toolBadge:"Algebra I · Algebra II", title:"指数运算法则练习",
+        subtitle:"专项练习同底数乘除、幂的幂、积的幂、零指数和负指数化简。",
+        note:"所有答案统一写成正指数形式。干扰项来自常见指数法则错误。",
+        questionTitle:"选择正确的化简结果。",
+        promptSimplify:"化简，并用正指数形式表示答案。",
+        difficultyOptions:{easy:"简单：每题一个指数法则",medium:"中等：系数和两个变量",hard:"困难：负指数和分式",expert:"专家：多步混合指数法则",mixed:"混合：从所有难度中均衡出题"},
+        suggestion:"建议：先确认底数是否相同，幂的幂要乘指数，负指数要移到分式另一侧。",
+        notes:{product:"指数相加",quotient:"指数相减",power:"指数相乘",productPower:"把外层指数分配进去",negative:"改写成正指数",final:"正指数形式"}
+      }
+    };
+    function tr(){ return T[localStorage.getItem("mathcomplete_lang")==="zh" ? "zh" : "en"]; }
+    function line(main, answer, noteKey){ return [{line:main,note:tr().notes[noteKey]},{line:answer.latex,note:tr().notes.final}]; }
+    function make(type, main, answer, distractors, noteKey){ return { type, promptKey:"promptSimplify", main, plain:main, answer, distractors, lines:line(main,answer,noteKey) }; }
+    const B = {
+      easy:[
+        tag("same-base-product", h => { const v=h.choice(["x","a","m"]); const a=h.randInt(2,7), b=h.randInt(2,7), ans=mono(1,1,{[v]:a+b}); return make("same-base-product",`${v}^{${a}}\\cdot ${v}^{${b}}`,ans,[mono(1,1,{[v]:a*b}),mono(1,1,{[v]:Math.abs(a-b)}),mono(1,1,{[v]:a+b+1})],"product"); }),
+        tag("same-base-quotient", h => { const v=h.choice(["x","b","n"]); const b=h.randInt(2,6), a=b+h.randInt(2,7), ans=mono(1,1,{[v]:a-b}); return make("same-base-quotient",`\\frac{${v}^{${a}}}{${v}^{${b}}}`,ans,[mono(1,1,{[v]:a+b}),mono(1,1,{[v]:a*b}),mono(1,1,{[v]:b-a})],"quotient"); }),
+        tag("power-of-power", h => { const v=h.choice(["x","y","p"]); const a=h.randInt(2,5), b=h.randInt(2,5), ans=mono(1,1,{[v]:a*b}); return make("power-of-power",`\\left(${v}^{${a}}\\right)^{${b}}`,ans,[mono(1,1,{[v]:a+b}),mono(1,1,{[v]:Math.pow(a,b)}),mono(1,1,{[v]:a*b+1})],"power"); }),
+        tag("product-power", h => { const n=h.randInt(2,5), ans=mono(1,1,{x:n,y:n}); return make("product-power",`\\left(xy\\right)^{${n}}`,ans,[mono(1,1,{x:n,y:1}),mono(1,1,{x:n+1,y:n}),mono(1,1,{x:n+n})],"productPower"); })
+      ],
+      medium:[
+        tag("coefficient-power", h => { const c=h.choice([2,3,4]), m=h.randInt(2,4), n=h.randInt(2,3), ans=mono(c**n,1,{x:m*n}); return make("coefficient-power",`\\left(${c}x^{${m}}\\right)^{${n}}`,ans,[mono(c,1,{x:m*n}),mono(c**n,1,{x:m+n}),mono(c*n,1,{x:m*n})],"productPower"); }),
+        tag("two-variable-product", h => { const a=h.randInt(2,5), b=h.randInt(2,5), c=h.randInt(2,5), d=h.randInt(2,5), ans=mono(1,1,{x:a+c,y:b+d}); return make("two-variable-product",`x^{${a}}y^{${b}}\\cdot x^{${c}}y^{${d}}`,ans,[mono(1,1,{x:a*c,y:b*d}),mono(1,1,{x:a+c,y:Math.abs(b-d)||1}),mono(1,1,{x:a+c})],"product"); }),
+        tag("two-variable-quotient", h => { const c=h.randInt(2,3), d=h.randInt(2,3), a=c+h.randInt(2,5), b=d+h.randInt(2,5), ans=mono(1,1,{x:a-c,y:b-d}); return make("two-variable-quotient",`\\frac{x^{${a}}y^{${b}}}{x^{${c}}y^{${d}}}`,ans,[mono(1,1,{x:a+c,y:b+d}),mono(1,1,{x:a-c,y:b+d}),mono(1,1,{x:a+c,y:b-d})],"quotient"); }),
+        tag("negative-simple", h => { const n=h.randInt(2,8), ans=mono(1,1,{x:-n}); return make("negative-simple",`x^{-${n}}`,ans,[mono(1,1,{x:n}),mono(-1,1,{x:n}),mono(1,1,{x:-n-1})],"negative"); })
+      ],
+      hard:[
+        tag("power-negative", h => { const a=h.randInt(2,4), b=h.randInt(1,4), n=h.randInt(2,3), ans=mono(1,1,{x:a*n,y:-b*n}); return make("power-negative",`\\left(x^{${a}}y^{-${b}}\\right)^{${n}}`,ans,[mono(1,1,{x:a+n,y:-b+n}),mono(1,1,{x:a*n,y:b*n}),mono(1,1,{x:a*n,y:-b})],"power"); }),
+        tag("fraction-power", h => { const c=h.choice([2,3]), a=h.randInt(2,3), b=h.randInt(2,3), n=h.randInt(2,3), ans=mono(c**n,1,{x:a*n,y:-b*n}); return make("fraction-power",`\\left(\\frac{${c}x^{${a}}}{y^{${b}}}\\right)^{${n}}`,ans,[mono(c,1,{x:a*n,y:-b*n}),mono(c**n,1,{x:a+n,y:-b-n}),mono(c*n,1,{x:a*n,y:-b*n})],"productPower"); }),
+        tag("quotient-negative", h => { const a=h.randInt(2,4), c=a+h.randInt(2,4), b=h.randInt(2,4), d=h.randInt(2,4), ans=mono(1,1,{x:a-c,y:-b-d}); return make("quotient-negative",`\\frac{x^{${a}}y^{-${b}}}{x^{${c}}y^{${d}}}`,ans,[mono(1,1,{x:a+c,y:-b+d}),mono(1,1,{x:c-a,y:b+d}),mono(1,1,{x:a-c,y:b-d})],"quotient"); }),
+        tag("mixed-product", h => { const a=h.randInt(2,4), b=h.randInt(3,5), c=h.randInt(2,3), d=h.randInt(2,b-1), e=h.randInt(2,a+c-1), ans=mono(6,1,{x:a+c-e,y:b-d}); return make("mixed-product",`\\frac{3x^{${a}}y^{${b}}\\cdot 2x^{${c}}y^{-${d}}}{x^{${e}}}`,ans,[mono(5,1,{x:a+c-e,y:b-d}),mono(6,1,{x:a+c+e,y:b-d}),mono(6,1,{x:a+c-e,y:b+d})],"final"); })
+      ],
+      expert:[
+        tag("expert-quotient-power", h => { const a=h.randInt(2,3), b=h.randInt(2,3), n=2, c=h.randInt(2,3), d=h.randInt(2,3), ans=mono(1,1,{x:-a*n-c,y:b*n+d}); return make("expert-quotient-power",`\\frac{\\left(2x^{-${a}}y^{${b}}\\right)^2}{4x^{${c}}y^{-${d}}}`,ans,[mono(1,1,{x:a*n-c,y:b*n+d}),mono(1,1,{x:-a*n-c,y:b*n-d}),mono(1,1,{x:-a*n+c,y:b*n+d})],"final"); }),
+        tag("expert-symbolic", h => { const m=h.randInt(2,4), n=h.randInt(2,3), p=h.randInt(2,3), q=h.randInt(2,4), r=h.randInt(2,4), ans=mono(1,1,{a:m*p+q,b:-n*p-r}); return make("expert-symbolic",`\\frac{\\left(a^{${m}}b^{-${n}}\\right)^{${p}}}{a^{-${q}}b^{${r}}}`,ans,[mono(1,1,{a:m+p+q,b:-n*p-r}),mono(1,1,{a:m*p-q,b:-n*p+r}),mono(1,1,{a:m*p+q,b:n*p-r})],"final"); }),
+        tag("expert-fraction", h => { const a=h.randInt(2,3), b=h.randInt(2,3), c=h.randInt(2,3), ans=mono(9,4,{x:-2*a-c,y:2*b}); return make("expert-fraction",`\\left(\\frac{3y^{${b}}}{2x^{${a}}}\\right)^2\\cdot x^{-${c}}`,ans,[mono(3,2,{x:-2*a-c,y:2*b}),mono(9,4,{x:2*a-c,y:2*b}),mono(9,4,{x:-2*a+c,y:b+2})],"final"); }),
+        tag("expert-zero-negative", h => { const a=h.randInt(2,5), b=h.randInt(2,4), ans=mono(1,1,{x:a,y:-b}); return make("expert-zero-negative",`\\frac{x^{${a}}y^0}{y^{${b}}}`,ans,[mono(1,1,{x:a,y:b}),mono(1,1,{x:a+b}),mono(1,1,{x:a,y:0})],"negative"); })
+      ]
+    };
+    window.MCLQuizTool = { text:T, builders:B };
+  </script>
+  <script src="../assets/js/quiz-tool-engine.js"></script>
+  <script src="../assets/js/tool-modes.js"></script>
+  <script src="../assets/js/report-export.js"></script>
+  <script src="../assets/js/home-link.js"></script>
+</body>
+</html>

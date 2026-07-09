@@ -1,0 +1,593 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Powers &amp; Roots Practice</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../assets/js/supabase-client.js"></script>
+  <script src="../assets/js/auth.js"></script>
+  <script src="../assets/js/auth-ui.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <style>
+    :root {
+      --bg: #f7f7fb;
+      --text: #0f172a;
+      --muted: #64748b;
+      --border: #e5e7eb;
+      --accent: #2563eb;
+      --violet: #7c3aed;
+      --good: #16a34a;
+      --bad: #dc2626;
+      --shadow: 0 18px 42px rgba(15, 23, 42, 0.10);
+      --radius: 22px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", Arial, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(96, 165, 250, 0.35), transparent 34%),
+        radial-gradient(circle at top right, rgba(167, 139, 250, 0.28), transparent 32%),
+        linear-gradient(180deg, #f8fbff 0%, var(--bg) 52%, #ffffff 100%);
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.42;
+      background-image:
+        linear-gradient(rgba(15, 23, 42, 0.045) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(15, 23, 42, 0.045) 1px, transparent 1px);
+      background-size: 42px 42px;
+      mask-image: linear-gradient(180deg, black, transparent 72%);
+    }
+
+    .mc-site-shell {
+      width: min(1180px, calc(100% - 32px));
+      margin: 18px auto 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 12px 14px;
+      border: 1px solid rgba(255, 255, 255, 0.74);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.84);
+      backdrop-filter: blur(18px);
+      box-shadow: 0 16px 36px rgba(15, 23, 42, 0.10);
+      position: sticky;
+      top: 12px;
+      z-index: 20;
+    }
+
+    .mc-brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: #0f172a;
+      font-weight: 950;
+      text-decoration: none;
+      letter-spacing: -0.035em;
+      white-space: nowrap;
+    }
+
+    .mc-brand-mark {
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      border-radius: 12px;
+      color: white;
+      background: linear-gradient(135deg, #2563eb, #7c3aed);
+      box-shadow: 0 12px 24px rgba(37, 99, 235, 0.28);
+    }
+
+    .mc-links {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .mc-link {
+      color: #475569;
+      text-decoration: none;
+      font-weight: 850;
+      padding: 8px 11px;
+      border-radius: 999px;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .mc-link:hover { color: #1d4ed8; background: #eff6ff; }
+    .mc-link.primary { color: white; background: #0f172a; }
+    .mc-link.primary:hover { color: white; background: #1e293b; }
+
+    .container {
+      width: min(1040px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 38px 0 68px;
+      position: relative;
+    }
+
+    header { margin-bottom: 24px; overflow: visible; }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      color: #1d4ed8;
+      background: rgba(239, 246, 255, 0.86);
+      border: 1px solid rgba(191, 219, 254, 0.8);
+      font-weight: 950;
+      margin-bottom: 14px;
+    }
+
+    .eyebrow-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: #10b981;
+      box-shadow: 0 0 0 6px rgba(16, 185, 129, 0.12);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(34px, 5.2vw, 56px);
+      line-height: 1.16;
+      letter-spacing: -0.055em;
+      background: linear-gradient(135deg, #0f172a 0%, #1d4ed8 48%, #7c3aed 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      padding-bottom: 0.18em;
+      overflow: visible;
+    }
+
+    h2 { margin: 0 0 12px; font-size: clamp(24px, 4vw, 34px); letter-spacing: -0.045em; }
+    h3 { margin: 0 0 8px; letter-spacing: -0.025em; }
+
+    .subtitle {
+      margin: 14px 0 0;
+      color: var(--muted);
+      line-height: 1.75;
+      max-width: 780px;
+      font-size: 17px;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.90);
+      border: 1px solid rgba(255, 255, 255, 0.76);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 24px;
+      backdrop-filter: blur(16px);
+    }
+
+    .setup-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+      margin: 22px 0;
+    }
+
+    label { display: block; font-weight: 900; margin-bottom: 8px; }
+
+    select,
+    input {
+      width: 100%;
+      min-height: 46px;
+      padding: 12px 14px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      font-size: 16px;
+      background: white;
+      outline: none;
+    }
+
+    select:focus,
+    input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+    }
+
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 46px;
+      padding: 12px 14px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: white;
+      cursor: pointer;
+      margin-bottom: 6px;
+    }
+
+    .checkbox-label input {
+      width: auto;
+      min-height: 0;
+      transform: scale(1.15);
+      accent-color: var(--accent);
+    }
+
+    .mini-hint { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.45; }
+
+    button {
+      appearance: none;
+      border: none;
+      background: linear-gradient(135deg, var(--accent), var(--violet));
+      color: white;
+      font-weight: 950;
+      padding: 12px 18px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: transform 0.14s, filter 0.2s, box-shadow 0.2s;
+      box-shadow: 0 12px 24px rgba(37, 99, 235, 0.24);
+    }
+
+    button:hover { transform: translateY(-1px); filter: brightness(0.98); }
+    button.secondary { background: #111827; box-shadow: 0 8px 18px rgba(17, 24, 39, 0.16); }
+    button.ghost { background: white; color: var(--text); border: 1px solid var(--border); box-shadow: none; }
+    button:disabled { cursor: not-allowed; opacity: 0.55; transform: none; }
+
+    .hidden { display: none !important; }
+    .actions { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+
+    .explain-box {
+      margin-top: 18px;
+      padding: 16px;
+      background: #f8fafc;
+      border: 1px dashed #cbd5e1;
+      border-radius: 18px;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .topbar {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: white;
+      color: var(--muted);
+      font-weight: 850;
+      font-size: 14px;
+      margin-right: 6px;
+      margin-bottom: 6px;
+    }
+
+    .timer-pill { color: #1d4ed8; background: #eff6ff; border-color: #bfdbfe; }
+    .timer-danger { color: #991b1b; background: #fef2f2; border-color: #fecaca; }
+
+    .progress-wrap {
+      width: 100%;
+      height: 10px;
+      background: #e5e7eb;
+      border-radius: 999px;
+      overflow: hidden;
+      margin: 10px 0 22px;
+    }
+
+    .progress {
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(90deg, #2563eb, #7c3aed);
+      transition: width 0.25s ease;
+    }
+
+    .question-title { color: var(--muted); font-weight: 950; margin-bottom: 8px; }
+    .question-extra { color: var(--muted); font-weight: 900; margin: -4px 0 14px; line-height: 1.6; }
+
+    .question-main {
+      font-size: clamp(28px, 5.4vw, 54px);
+      line-height: 1.2;
+      font-weight: 950;
+      letter-spacing: -0.045em;
+      margin: 10px 0 24px;
+      overflow-wrap: anywhere;
+    }
+
+    .math-render { display: inline-block; }
+    .question-main.math-render { display: block; width: 100%; }
+    .question-main .katex { font-size: 1.08em; line-height: 1.2; }
+    .option .katex { font-size: 1.1em; line-height: 1.25; }
+    .chain-math .katex, .answer-math .katex, .feedback-math .katex, .sample-math .katex, .wrong-math .katex { font-size: 1.06em; line-height: 1.25; }
+    .math-render .katex { color: #0f172a; }
+
+    .options {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .option {
+      border: 2px solid var(--border);
+      background: white;
+      color: var(--text);
+      box-shadow: none;
+      border-radius: 18px;
+      min-height: 64px;
+      font-size: 20px;
+      text-align: center;
+      padding: 12px;
+      overflow-wrap: anywhere;
+    }
+
+    .option:hover { border-color: var(--accent); background: #f8fbff; }
+    .option.correct { border-color: rgba(22, 163, 74, 0.5); background: #ecfdf5; color: #065f46; }
+    .option.wrong { border-color: rgba(220, 38, 38, 0.5); background: #fef2f2; color: #991b1b; }
+    .option.correct .katex { color: #065f46; }
+    .option.wrong .katex { color: #991b1b; }
+
+    .feedback { min-height: 30px; font-weight: 950; margin: 8px 0 16px; }
+    .feedback.good { color: var(--good); }
+    .feedback.bad { color: var(--bad); }
+    .feedback.bad .katex { color: #dc2626; }
+
+    .solution-box {
+      margin: 14px 0 18px;
+      padding: 18px;
+      border-radius: 20px;
+      border: 1px solid #dbeafe;
+      background: linear-gradient(180deg, #f8fbff, #fff);
+      color: #1f2937;
+      line-height: 1.7;
+    }
+
+    .solution-box h4 { margin: 0 0 12px; font-size: 18px; }
+    .solution-chain { background: white; border: 1px solid #e5e7eb; border-radius: 16px; padding: 14px 16px; overflow-x: auto; }
+
+    .chain-line {
+      display: grid;
+      grid-template-columns: minmax(250px, 1fr) minmax(170px, 0.65fr);
+      align-items: baseline;
+      gap: 18px;
+      margin: 8px 0;
+      font-size: 17px;
+      font-weight: 850;
+      white-space: nowrap;
+    }
+
+    .chain-note { color: #64748b; font-size: 13px; font-weight: 850; white-space: normal; }
+    .solution-answer { margin-top: 12px; font-weight: 950; color: #111827; }
+    .solution-answer > .answer-math { display: inline-block; background: #ecfdf5; color: #065f46; border: 1px solid #bbf7d0; border-radius: 999px; padding: 3px 10px; margin-left: 4px; vertical-align: middle; }
+
+    .result-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin: 18px 0 24px; }
+    .stat { background: #f9fafb; border: 1px solid var(--border); border-radius: 18px; padding: 18px; }
+    .stat .num { font-size: 34px; font-weight: 950; letter-spacing: -0.05em; }
+    .stat .label { color: var(--muted); margin-top: 4px; font-weight: 850; }
+    .wrong-list { display: grid; gap: 14px; }
+    .wrong-item { border: 1px solid var(--border); border-radius: 18px; background: white; padding: 16px; }
+    .wrong-item .expr { font-size: 22px; font-weight: 950; margin-bottom: 8px; overflow-wrap: anywhere; }
+    .wrong-item p { margin: 6px 0; color: var(--muted); line-height: 1.6; }
+    .tag-good { color: var(--good); font-weight: 950; }
+    .tag-bad { color: var(--bad); font-weight: 950; }
+
+    @media (max-width: 760px) {
+      .mc-site-shell { border-radius: 22px; align-items: flex-start; flex-direction: column; }
+      .mc-links { justify-content: flex-start; }
+      .setup-grid, .options, .result-grid { grid-template-columns: 1fr; }
+      .card { padding: 18px; }
+      .container { width: min(100% - 22px, 1040px); padding-top: 26px; }
+      .chain-line { grid-template-columns: 1fr; gap: 2px; white-space: normal; }
+      .chain-note { padding-left: 12px; }
+    }
+
+
+  /* MathComplete Lab shared tool question layout override */
+  .question-main,
+  .expression,
+  .equation {
+    max-width: 100%;
+    font-size: clamp(28px, 5.4vw, 54px) !important;
+    line-height: 1.2 !important;
+    font-weight: 500 !important;
+    letter-spacing: -0.045em !important;
+    margin: 10px 0 24px !important;
+    text-align: left !important;
+    overflow-wrap: anywhere !important;
+    word-break: normal !important;
+    text-wrap: pretty;
+    white-space: normal;
+    justify-content: flex-start !important;
+    align-items: flex-start !important;
+  }
+
+  .question-main.math-render,
+  .expression.math-render,
+  .equation.math-render {
+    display: block !important;
+    width: 100% !important;
+    text-align: left !important;
+  }
+
+  .question-main .katex,
+  .expression .katex,
+  .equation .katex {
+    white-space: normal !important;
+    text-align: left !important;
+    font-weight: 400 !important;
+  }
+
+  .question-main .katex *,
+  .expression .katex *,
+  .equation .katex * {
+    font-weight: 400 !important;
+  }
+
+  .question-line,
+  .question-text {
+    max-width: 100%;
+    text-align: left !important;
+    overflow-wrap: anywhere;
+    word-break: normal;
+    text-wrap: pretty;
+  }
+</style>
+</head>
+<body>
+  <nav class="mc-site-shell">
+    <a class="mc-brand" href="../index.html"><span class="mc-brand-mark">∑</span><span>MathComplete Lab</span></a>
+    <div class="mc-links">
+      <a class="mc-link" href="../practice.html" data-i18n="navPractice">Practice Library</a>
+      <a class="mc-link primary" href="../index.html" data-i18n="navHome">Home</a>
+    </div>
+  </nav>
+
+  <main class="container">
+    <header>
+      <div class="eyebrow"><span class="eyebrow-dot"></span><span id="toolBadge"></span></div>
+      <h1 id="pageTitle"></h1>
+      <p id="pageSubtitle" class="subtitle"></p>
+    </header>
+
+    <section id="setupCard" class="card">
+      <h2 id="setupTitle"></h2>
+      <div class="setup-grid">
+        <div><label id="difficultyLabel" for="difficulty"></label><select id="difficulty"></select></div>
+        <div class="mcl-tool-mode-field">
+          <label id="toolModeLabel" for="toolMode">Practice mode</label>
+          <select id="toolMode">
+            <option value="practice">Practice Mode</option>
+            <option value="learn" selected>Learn Mode</option>
+            <option value="exam">Exam Mode</option>
+          </select>
+          <p class="mcl-tool-mode-hint" id="mclToolModeHint">Every answer shows the solution, then you move on manually.</p>
+        </div>
+        <div><label id="questionCountLabel" for="questionCount"></label><input id="questionCount" type="number" min="1" max="100" value="10" /></div>
+        <div><label id="optionCountLabel" for="optionCount"></label><select id="optionCount"></select></div>
+        <div><label class="checkbox-label" for="timedMode"><input id="timedMode" type="checkbox" /><span id="timedModeText"></span></label><p id="timedModeHint" class="mini-hint"></p></div>
+        <div><label id="timerLevelLabel" for="timerLevel"></label><select id="timerLevel"></select></div>
+      </div>
+      <div class="actions"><button id="startBtn"></button><button id="sampleBtn" class="ghost"></button></div>
+      <div id="sampleBox" class="explain-box hidden"></div>
+      <div id="noteBox" class="explain-box"></div>
+    </section>
+
+    <section id="quizCard" class="card hidden">
+      <div class="topbar">
+        <div><span class="pill" id="progressText"></span><span class="pill" id="difficultyText"></span><span class="pill timer-pill hidden" id="timerDisplay"></span></div>
+        <button id="quitBtn" class="ghost"></button>
+      </div>
+      <div class="progress-wrap"><div id="progressBar" class="progress"></div></div>
+      <div id="questionTitle" class="question-title"></div>
+      <div id="questionExtra" class="question-extra"></div>
+      <div id="questionMain" class="question-main"></div>
+      <div id="options" class="options"></div>
+      <div id="feedback" class="feedback"></div>
+      <div id="solutionBox" class="solution-box hidden"></div>
+      <div class="actions"><button id="nextBtn" disabled></button></div>
+    </section>
+
+    <section id="resultCard" class="card hidden">
+      <h2 id="resultTitle"></h2>
+      <div class="result-grid">
+        <div class="stat"><div id="scoreNum" class="num">0/0</div><div id="scoreLabel" class="label"></div></div>
+        <div class="stat"><div id="accuracyNum" class="num">0%</div><div id="accuracyLabel" class="label"></div></div>
+        <div class="stat"><div id="wrongNum" class="num">0</div><div id="wrongLabel" class="label"></div></div>
+      </div>
+      <h3 id="wrongReviewTitle"></h3>
+      <div id="wrongList" class="wrong-list"></div>
+      <div class="actions" style="margin-top:22px;"><button id="restartBtn"></button><button id="reviewWrongBtn" class="secondary"></button></div>
+    </section>
+  </main>
+
+  <script>
+    function tag(type, fn){ fn.__type = type; return fn; }
+    function make(type, promptKey, main, answer, distractors, lines){
+      return { type, promptKey, main, plain:main, answer:String(answer), distractors:distractors.map(String), lines };
+    }
+    function evaluate(type, main, answer, distractors, work){
+      return make(type, "promptEvaluate", main, answer, distractors, [
+        {line:work,note:tr().notes.compute},
+        {line:String(answer),note:tr().notes.final}
+      ]);
+    }
+    function nearby(answer, values=[]){
+      const candidates=[...values,answer+1,answer-1,answer+2,answer-2,-answer];
+      return [...new Set(candidates.filter(value => Number.isFinite(value) && value !== answer))].slice(0,5);
+    }
+    const T = {
+      en:{
+        toolBadge:"Pre-Algebra", title:"Powers & Roots Practice",
+        subtitle:"Build fluency with powers, square roots, cube roots, perfect powers, and mixed numerical expressions.",
+        note:"All roots are exact whole numbers or simple fractions. No calculator approximations are required.",
+        questionTitle:"Choose the correct answer.",
+        promptEvaluate:"Evaluate.",
+        promptFindBase:"Find the positive missing number.",
+        difficultyOptions:{easy:"Easy: squares, cubes, square roots, and cube roots",medium:"Medium: higher powers, negative bases, and missing values",hard:"Hard: order of operations and nested roots",expert:"Expert: mixed powers, roots, and fractions",mixed:"Mixed: balanced practice from all levels"},
+        suggestion:"Suggestion: identify the base and exponent first, and remember that roots undo matching powers.",
+        notes:{compute:"compute the power or root",inverse:"use the inverse relationship",order:"follow the order of operations",final:"final value"}
+      },
+      zh:{
+        toolBadge:"预备代数", title:"幂与根专项练习",
+        subtitle:"练习整数幂、平方根、立方根、完全幂以及幂与根的混合数值运算。",
+        note:"所有根式都能得到精确整数或简单分数，不需要使用小数近似。",
+        questionTitle:"选择正确答案。",
+        promptEvaluate:"计算。",
+        promptFindBase:"求正的空缺数。",
+        difficultyOptions:{easy:"简单：平方、立方、平方根和立方根",medium:"中等：较高次幂、负底数和空缺数",hard:"困难：运算顺序和嵌套根式",expert:"专家：幂、根与分数综合",mixed:"混合：从所有难度中均衡出题"},
+        suggestion:"建议：先确认底数和指数；对应次数的根运算与幂运算互为逆运算。",
+        notes:{compute:"计算幂或根",inverse:"使用互逆关系",order:"按照运算顺序",final:"最终结果"}
+      }
+    };
+    function tr(){ return T[localStorage.getItem("mathcomplete_lang")==="zh" ? "zh" : "en"]; }
+    const B = {
+      easy:[
+        tag("square", h => { const a=h.randInt(2,15), ans=a*a; return evaluate("square",`${a}^{2}`,ans,nearby(ans,[a*2,a+2]),`${a}\\times ${a}=${ans}`); }),
+        tag("cube", h => { const a=h.randInt(2,8), ans=a**3; return evaluate("cube",`${a}^{3}`,ans,nearby(ans,[a*3,a*a]),`${a}\\times ${a}\\times ${a}=${ans}`); }),
+        tag("square-root", h => { const a=h.randInt(2,15), n=a*a; return evaluate("square-root",`\\sqrt{${n}}`,a,nearby(a,[n,Math.floor(n/2)]),`${a}^{2}=${n}`); }),
+        tag("cube-root", h => { const a=h.randInt(2,8), n=a**3; return evaluate("cube-root",`\\sqrt[3]{${n}}`,a,nearby(a,[a*a,n]),`${a}^{3}=${n}`); })
+      ],
+      medium:[
+        tag("higher-power", h => { const a=h.randInt(2,5), p=h.randInt(4,5), ans=a**p; return evaluate("higher-power",`${a}^{${p}}`,ans,nearby(ans,[a*p,a**(p-1)]),`${Array(p).fill(a).join("\\times ")}=${ans}`); }),
+        tag("negative-base", h => { const a=h.randInt(2,8), p=h.randInt(2,5), ans=(-a)**p; return evaluate("negative-base",`\\left(-${a}\\right)^{${p}}`,ans,nearby(ans,[a**p,-a*p]),p%2===0?`\\text{even exponent}\\Rightarrow ${ans}`:`\\text{odd exponent}\\Rightarrow ${ans}`); }),
+        tag("missing-square", h => { const a=h.randInt(3,18), n=a*a; return make("missing-square","promptFindBase",`\\Box^{2}=${n}`,a,nearby(a,[n]),[{line:`\\sqrt{${n}}=${a}`,note:tr().notes.inverse},{line:String(a),note:tr().notes.final}]); }),
+        tag("missing-cube", h => { const a=h.randInt(2,10), n=a**3; return make("missing-cube","promptFindBase",`\\Box^{3}=${n}`,a,nearby(a,[a*a,n]),[{line:`\\sqrt[3]{${n}}=${a}`,note:tr().notes.inverse},{line:String(a),note:tr().notes.final}]); })
+      ],
+      hard:[
+        tag("power-plus-root", h => { const a=h.randInt(2,9), b=h.randInt(2,12), ans=a*a+b; return evaluate("power-plus-root",`${a}^{2}+\\sqrt{${b*b}}`,ans,nearby(ans,[a*2+b,a*a+b*b]),`${a*a}+${b}=${ans}`); }),
+        tag("root-times-power", h => { const a=h.randInt(2,10), b=h.randInt(2,6), ans=a*b*b; return evaluate("root-times-power",`\\sqrt{${a*a}}\\cdot ${b}^{2}`,ans,nearby(ans,[a+b*b,a*a*b]),`${a}\\cdot ${b*b}=${ans}`); }),
+        tag("nested-power-root", h => { const a=h.randInt(2,8), ans=a*a; return evaluate("nested-power-root",`\\sqrt[3]{\\left(${a}^{3}\\right)^{2}}`,ans,nearby(ans,[a,a**3]),`\\sqrt[3]{${a}^{6}}=${a}^{2}=${ans}`); }),
+        tag("fourth-root", h => { const a=h.randInt(2,9), n=a**4; return evaluate("fourth-root",`\\sqrt[4]{${n}}`,a,nearby(a,[a*a,a**3]),`${a}^{4}=${n}`); })
+      ],
+      expert:[
+        tag("pythagorean-root", h => { const triple=h.choice([[3,4,5],[5,12,13],[6,8,10],[8,15,17]]), a=triple[0],b=triple[1],c=triple[2]; return evaluate("pythagorean-root",`\\sqrt{${a}^{2}+${b}^{2}}`,c,nearby(c,[a+b,a*b]),`\\sqrt{${a*a}+${b*b}}=\\sqrt{${c*c}}=${c}`); }),
+        tag("cube-root-expression", h => { const a=h.randInt(2,7), b=h.randInt(2,7), ans=a+b; return evaluate("cube-root-expression",`\\sqrt[3]{${a**3}}+\\sqrt[3]{${b**3}}`,ans,nearby(ans,[a*b,a**3+b**3]),`${a}+${b}=${ans}`); }),
+        tag("fraction-power", h => { const pair=h.choice([[2,3],[2,5],[3,4],[3,5],[4,5],[5,6],[5,7]]), a=pair[0], b=pair[1], ans=`\\frac{${a*a}}{${b*b}}`; return make("fraction-power","promptEvaluate",`\\left(\\frac{${a}}{${b}}\\right)^{2}`,ans,[`\\frac{${a}}{${b*b}}`,`\\frac{${a*a}}{${b}}`,`\\frac{${2*a}}{${2*b}}`,`\\frac{${a+b}}{${b*b}}`],[{line:`\\frac{${a}^{2}}{${b}^{2}}`,note:tr().notes.compute},{line:ans,note:tr().notes.final}]); }),
+        tag("mixed-order", h => { const a=h.randInt(2,7), b=h.randInt(2,7), c=h.randInt(2,5), ans=a*a-b+c**3; return evaluate("mixed-order",`${a}^{2}-\\sqrt{${b*b}}+${c}^{3}`,ans,nearby(ans,[a*2-b+c*3,a*a-b*b+c**3]),`${a*a}-${b}+${c**3}=${ans}`); })
+      ]
+    };
+    window.MCLQuizTool = { text:T, builders:B };
+  </script>
+  <script src="../assets/js/quiz-tool-engine.js"></script>
+  <script src="../assets/js/tool-modes.js"></script>
+  <script src="../assets/js/report-export.js"></script>
+  <script src="../assets/js/home-link.js"></script>
+</body>
+</html>

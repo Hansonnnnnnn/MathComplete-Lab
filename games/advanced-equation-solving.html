@@ -756,46 +756,46 @@
   function getGenerators(topic, difficulty) {
     const map = {
       polynomial: {
-        easy: [genQuadratic],
-        medium: [genQuadratic, genCubic],
-        hard: [genCubic, genQuadratic],
-        expert: [genCubic, genQuadratic]
+        easy: [genLinearMultiStep, genQuadratic],
+        medium: [genQuadratic, genQuadraticLeadingCoeff],
+        hard: [genCubic],
+        expert: [genQuarticSubstitution]
       },
       rational: {
         easy: [genRationalReciprocal],
         medium: [genRationalReciprocal, genRationalLinearFraction],
-        hard: [genRationalCancellation, genRationalTwoStep],
-        expert: [genRationalCancellation, genRationalTwoStep]
+        hard: [genRationalTwoStep],
+        expert: [genRationalCancellation, genRationalZeroExcluded]
       },
       radical: {
         easy: [genRadicalSimple],
-        medium: [genRadicalSquaring],
+        medium: [genRadicalIsolated],
         hard: [genRadicalSquaring],
-        expert: [genRadicalSquaring]
+        expert: [genRadicalTwoSided]
       },
       exponential: {
         easy: [genExponentialSameBase],
         medium: [genExponentialSameBase, genExponentialSubstitution],
         hard: [genExponentialSubstitution],
-        expert: [genExponentialSubstitution]
+        expert: [genExponentialQuadraticNoSolution]
       },
       logarithmic: {
         easy: [genLogSimple],
-        medium: [genLogSimple, genLogQuadratic],
+        medium: [genLogSimple, genLogCoefficient],
         hard: [genLogQuadratic],
-        expert: [genLogQuadratic]
+        expert: [genLogProduct]
       },
       absolute: {
         easy: [genAbsoluteSimple],
         medium: [genAbsoluteLinear],
-        hard: [genAbsoluteLinear, genAbsoluteBothSides],
-        expert: [genAbsoluteLinear, genAbsoluteBothSides]
+        hard: [genAbsoluteBothSides],
+        expert: [genAbsoluteQuadratic]
       },
       trigonometric: {
-        easy: [genTrigEquation],
-        medium: [genTrigEquation],
-        hard: [genTrigEquation],
-        expert: [genTrigEquation]
+        easy: [genTrigBasic],
+        medium: [genTrigLinear],
+        hard: [genTrigSquare],
+        expert: [genTrigIdentity]
       }
     };
     return (map[topic] && map[topic][difficulty]) || [];
@@ -1111,6 +1111,50 @@
     };
   }
 
+  function genLinearMultiStep() {
+    const sol = randIntExclude(-8, 8, [0]);
+    const a = randIntExclude(2, 7, []);
+    const b = randInt(-5, 5);
+    const c = randInt(-9, 9);
+    const d = randIntExclude(-5, 5, [0, a]);
+    const rhsConst = a * (sol + b) + c - d * sol;
+    return {
+      title: "Solve a multi-step linear equation.",
+      equationLatex: `${a}(x${signed(b)})${signed(c)}=${coeffX(d)}${signed(rhsConst)}`,
+      answerLatex: answerSet([numRoot(sol)]),
+      distractors: [answerSet([numRoot(-sol)]), answerSet([numRoot(sol + 1)]), answerSet([numRoot(sol - 1)]), "\\varnothing"],
+      steps: [
+        { latex: `${coeffX(a)}${signed(a * b + c)}=${coeffX(d)}${signed(rhsConst)}`, note: "Distribute and combine constants on the left." },
+        { latex: `${coeffX(a - d)}=${rhsConst - a * b - c}`, note: "Move x terms to one side and constants to the other." },
+        { latex: answerSet([numRoot(sol)]), note: "Divide by the coefficient of x." }
+      ]
+    };
+  }
+
+  function genQuadraticLeadingCoeff() {
+    const leading = randIntExclude(2, 5, []);
+    const r1 = randIntExclude(-6, 6, [0]);
+    const r2 = randIntExclude(-6, 6, [0, r1]);
+    const sum = r1 + r2;
+    const prod = r1 * r2;
+    return {
+      title: "Solve a quadratic equation with a leading coefficient.",
+      equationLatex: `${polyLatex([leading, -leading * sum, leading * prod])}=0`,
+      answerLatex: answerSet([numRoot(r1), numRoot(r2)]),
+      distractors: [
+        answerSet([numRoot(-r1), numRoot(-r2)]),
+        answerSet([numRoot(leading * r1), numRoot(leading * r2)]),
+        answerSet([numRoot(r1)]),
+        "\\varnothing"
+      ],
+      steps: [
+        { latex: `${leading}(x${signed(-r1)})(x${signed(-r2)})=0`, note: "Factor out the quadratic structure." },
+        { latex: `x${signed(-r1)}=0\\quad\\text{or}\\quad x${signed(-r2)}=0`, note: "The nonzero leading coefficient does not change the roots." },
+        { latex: answerSet([numRoot(r1), numRoot(r2)]), note: "Solve each factor." }
+      ]
+    };
+  }
+
   function genCubic() {
     const roots = uniqueInts(3, -5, 6, [0]);
     const [a, b, c] = roots;
@@ -1131,6 +1175,32 @@
         { latex: `${polyLatex([1, -s1, s2, -s3])}=0`, note: "Start with the polynomial." },
         { latex: `(x${signed(-a)})(x${signed(-b)})(x${signed(-c)})=0`, note: "Factor into linear factors." },
         { latex: answerSet(roots.map(numRoot)), note: "Set each factor equal to zero." }
+      ]
+    };
+  }
+
+  function genQuarticSubstitution() {
+    const u1 = choice([1, 4, 9, 16]);
+    const u2 = randIntExclude(2, 12, [u1]);
+    const sum = u1 + u2;
+    const prod = u1 * u2;
+    const roots = [...sqrtRootPair(u1), ...sqrtRootPair(u2)];
+    return {
+      title: "Solve a polynomial equation using substitution.",
+      equationLatex: `x^4${signed(-sum)}x^2${signed(prod)}=0`,
+      answerLatex: answerSet(roots),
+      distractors: [
+        answerSet([numRoot(u1), numRoot(u2)]),
+        answerSet(sqrtRootPair(u1)),
+        `x=\\pm\\sqrt{${sum}}`,
+        "\\varnothing"
+      ],
+      steps: [
+        { latex: `u=x^2`, note: "Use a substitution because the equation is quadratic in x squared." },
+        { latex: `u^2${signed(-sum)}u${signed(prod)}=0`, note: "Rewrite as a quadratic in u." },
+        { latex: `(u-${u1})(u-${u2})=0`, note: "Factor the equation in u." },
+        { latex: `x^2=${u1}\\quad\\text{or}\\quad x^2=${u2}`, note: "Substitute x squared back for u." },
+        { latex: answerSet(roots), note: "Take both positive and negative square roots." }
       ]
     };
   }
@@ -1220,6 +1290,26 @@
     };
   }
 
+  function genRationalZeroExcluded() {
+    const excluded = randIntExclude(-5, 5, [0]);
+    const valid = randIntExclude(-8, 8, [excluded, 0]);
+    const sum = excluded + valid;
+    const prod = excluded * valid;
+    return {
+      title: "Solve a rational equation and remove an excluded root.",
+      extra: `Solve for real x. The original denominator excludes x = ${excluded}.`,
+      equationLatex: `\\frac{${polyLatex([1, -sum, prod])}}{x${signed(-excluded)}}=0`,
+      answerLatex: answerSet([numRoot(valid)]),
+      distractors: [answerSet([numRoot(excluded), numRoot(valid)]), answerSet([numRoot(excluded)]), answerSet([numRoot(sum)]), "\\varnothing"],
+      steps: [
+        { latex: `x${signed(-excluded)}\\ne0`, note: `The denominator excludes x=${excluded}.` },
+        { latex: `\\frac{(x${signed(-excluded)})(x${signed(-valid)})}{x${signed(-excluded)}}=0`, note: "Factor the numerator." },
+        { latex: `x=${excluded}\\quad\\text{or}\\quad x=${valid}`, note: "The numerator gives two candidate roots." },
+        { latex: answerSet([numRoot(valid)]), note: "Discard the excluded value and keep the valid solution." }
+      ]
+    };
+  }
+
   function genRadicalSimple() {
     const s = randInt(0, 10);
     const a = randInt(-4, 8);
@@ -1236,6 +1326,26 @@
         { latex: `\\sqrt{x${signed(h)}}=${r}`, note: "Start with the radical equation." },
         { latex: `x${signed(h)}=${target}`, note: "Square both sides." },
         { latex: answerSet([numRoot(target - h)]), note: "Solve and check in the original equation." }
+      ]
+    };
+  }
+
+  function genRadicalIsolated() {
+    const sol = randInt(0, 12);
+    const root = randInt(2, 8);
+    const shift = root * root - sol;
+    const outside = randIntExclude(-5, 5, [0]);
+    const rhs = root + outside;
+    return {
+      title: "Solve a radical equation after isolating the square root.",
+      extra: "Solve for real x. Isolate the radical before squaring.",
+      equationLatex: `\\sqrt{x${signed(shift)}}${signed(outside)}=${rhs}`,
+      answerLatex: answerSet([numRoot(sol)]),
+      distractors: [answerSet([numRoot(root * root)]), answerSet([numRoot(sol + outside)]), answerSet([numRoot(-sol)]), "\\varnothing"],
+      steps: [
+        { latex: `\\sqrt{x${signed(shift)}}=${root}`, note: "Move the outside constant before squaring." },
+        { latex: `x${signed(shift)}=${root * root}`, note: "Square both sides." },
+        { latex: answerSet([numRoot(sol)]), note: "Solve and check the original equation." }
       ]
     };
   }
@@ -1260,6 +1370,25 @@
         { latex: `${polyLatex([1, -(2 * b + 1), b * b - a])}=0`, note: "Move everything to one side." },
         { latex: candidates.length === 1 ? `x=${candidates[0]}` : answerSet(candidates.map(numRoot)), note: "Solve the resulting quadratic candidate equation." },
         { latex: valid.length ? answerSet(valid.map(numRoot)) : "\\varnothing", note: "Check candidates in the original equation and keep only valid ones." }
+      ]
+    };
+  }
+
+  function genRadicalTwoSided() {
+    const sol = randInt(1, 10);
+    const leftShift = randInt(-3, 5);
+    const rightCoeff = randIntExclude(2, 4, []);
+    const rightShift = sol + leftShift - rightCoeff * sol;
+    return {
+      title: "Solve a radical equation with radicals on both sides.",
+      extra: "Solve for real x. Both radicands must be nonnegative.",
+      equationLatex: `\\sqrt{x${signed(leftShift)}}=\\sqrt{${rightCoeff}x${signed(rightShift)}}`,
+      answerLatex: answerSet([numRoot(sol)]),
+      distractors: [answerSet([numRoot(-sol)]), answerSet([numRoot(sol + leftShift)]), answerSet([numRoot(rightShift)]), "\\varnothing"],
+      steps: [
+        { latex: `x${signed(leftShift)}\\ge0\\quad\\text{and}\\quad ${rightCoeff}x${signed(rightShift)}\\ge0`, note: "Record the domain restrictions." },
+        { latex: `x${signed(leftShift)}=${rightCoeff}x${signed(rightShift)}`, note: "Square both sides; both sides are principal square roots." },
+        { latex: answerSet([numRoot(sol)]), note: "Solve the resulting linear equation and check the domains." }
       ]
     };
   }
@@ -1306,6 +1435,27 @@
     };
   }
 
+  function genExponentialQuadraticNoSolution() {
+    const base = choice([2, 3]);
+    const y1 = -randInt(1, 4);
+    const y2 = base === 2 ? choice([3, 5, 6, 7]) : choice([2, 4, 5, 7]);
+    const sum = y1 + y2;
+    const prod = y1 * y2;
+    return {
+      title: "Solve an exponential equation with no valid substituted value.",
+      equationLatex: `${base}^{2x}${signed(-sum)}\\cdot ${base}^{x}${signed(prod)}=0`,
+      answerLatex: "\\varnothing",
+      distractors: [answerSet([numRoot(y1), numRoot(y2)]), answerSet([numRoot(-y1), numRoot(y2)]), `x=${y2}`, "\\varnothing"],
+      steps: [
+        { latex: `y=${base}^x\\quad\\text{so}\\quad y>0`, note: "Use a positive exponential substitution." },
+        { latex: `y^2${signed(-sum)}y${signed(prod)}=0`, note: "Rewrite the equation as a quadratic in y." },
+        { latex: `(y${signed(-y1)})(y${signed(-y2)})=0`, note: "Factor the quadratic." },
+        { latex: `${base}^x=${y1}\\quad\\text{or}\\quad ${base}^x=${y2}`, note: "Reject any nonpositive substituted value." },
+        { latex: "\\varnothing", note: "Neither substituted value gives a real x for this base." }
+      ]
+    };
+  }
+
   function genLogSimple() {
     const base = choice([2, 3, 4, 5]);
     const shift = randInt(-6, 6);
@@ -1320,6 +1470,27 @@
       steps: [
         { latex: `x${signed(-shift)}>0`, note: "Record the logarithm domain restriction." },
         { latex: `\\log_{${base}}(x${signed(-shift)})=${k}`, note: "Start with the log equation." },
+        { latex: `x${signed(-shift)}=${base}^{${k}}=${Math.pow(base, k)}`, note: "Convert logarithmic form to exponential form." },
+        { latex: answerSet([numRoot(sol)]), note: "Solve and check the domain." }
+      ]
+    };
+  }
+
+  function genLogCoefficient() {
+    const base = choice([2, 3, 5]);
+    const coeff = randIntExclude(2, 4, []);
+    const shift = randInt(-5, 5);
+    const k = randInt(1, 3);
+    const sol = shift + Math.pow(base, k);
+    return {
+      title: "Solve a logarithmic equation after dividing by a coefficient.",
+      extra: `Solve for real x. Domain restriction: x${plainSigned(-shift)} > 0.`,
+      equationLatex: `${coeff}\\log_{${base}}(x${signed(-shift)})=${coeff * k}`,
+      answerLatex: answerSet([numRoot(sol)]),
+      distractors: [answerSet([numRoot(Math.pow(base, coeff * k))]), answerSet([numRoot(k + shift)]), answerSet([numRoot(-sol)]), "\\varnothing"],
+      steps: [
+        { latex: `x${signed(-shift)}>0`, note: "Record the logarithm domain restriction." },
+        { latex: `\\log_{${base}}(x${signed(-shift)})=${k}`, note: "Divide both sides by the coefficient." },
         { latex: `x${signed(-shift)}=${base}^{${k}}=${Math.pow(base, k)}`, note: "Convert logarithmic form to exponential form." },
         { latex: answerSet([numRoot(sol)]), note: "Solve and check the domain." }
       ]
@@ -1348,6 +1519,27 @@
         { latex: `(y-${p})(y-${q})=0`, note: "Factor." },
         { latex: `\\log_{${base}}x=${p}\\quad\\text{or}\\quad\\log_{${base}}x=${q}`, note: "Substitute back." },
         { latex: answerSet([numRoot(x1), numRoot(x2)]), note: "Convert to exponential form." }
+      ]
+    };
+  }
+
+  function genLogProduct() {
+    const a = randInt(1, 5);
+    const b = randInt(a + 1, a + 6);
+    const sol = a + b;
+    const product = (sol - a) * (sol - b);
+    return {
+      title: "Solve a logarithmic equation with a product rule and domain check.",
+      extra: `Solve for real x. Domain restriction: x > ${b}.`,
+      equationLatex: `\\log_2(x-${a})+\\log_2(x-${b})=\\log_2(${product})`,
+      answerLatex: answerSet([numRoot(sol)]),
+      distractors: [answerSet([numRoot(0), numRoot(sol)]), answerSet([numRoot(product)]), answerSet([numRoot(b)]), "\\varnothing"],
+      steps: [
+        { latex: `x-${a}>0\\quad\\text{and}\\quad x-${b}>0`, note: `The domain requires x>${b}.` },
+        { latex: `\\log_2((x-${a})(x-${b}))=\\log_2(${product})`, note: "Combine the logarithms using the product rule." },
+        { latex: `(x-${a})(x-${b})=${product}`, note: "Equal logs with the same base have equal positive arguments." },
+        { latex: `x^2${signed(-(a + b))}x=0`, note: "Move all terms to one side." },
+        { latex: answerSet([numRoot(sol)]), note: "The other candidate is outside the domain." }
       ]
     };
   }
@@ -1409,7 +1601,40 @@
     };
   }
 
-  function genTrigEquation() {
+  function genAbsoluteQuadratic() {
+    const center = choice([1, 4, 9]);
+    const distance = choice([3, 5, 7]);
+    const plus = center + distance;
+    const minus = center - distance;
+    const roots = [];
+    roots.push(...sqrtRootPair(plus));
+    if (minus >= 0) roots.push(...sqrtRootPair(minus));
+    return {
+      title: "Solve an absolute-value equation with a quadratic expression.",
+      equationLatex: `|x^2-${center}|=${distance}`,
+      answerLatex: answerSet(roots),
+      distractors: [`x=\\pm ${center}`, answerSet(sqrtRootPair(center)), minus >= 0 ? answerSet(sqrtRootPair(minus)) : "\\varnothing", answerSet([numRoot(distance)])],
+      steps: [
+        { latex: `x^2-${center}=${distance}\\quad\\text{or}\\quad x^2-${center}=-${distance}`, note: "Split the absolute-value equation into two cases." },
+        { latex: `x^2=${plus}${minus >= 0 ? `\\quad\\text{or}\\quad x^2=${minus}` : ""}`, note: "Solve each quadratic case." },
+        { latex: answerSet(roots), note: "Include real roots only." }
+      ]
+    };
+  }
+
+  function genTrigBasic() {
+    return genTrigEquation("basic");
+  }
+
+  function genTrigLinear() {
+    return genTrigEquation("linear");
+  }
+
+  function genTrigSquare() {
+    return genTrigEquation("square");
+  }
+
+  function genTrigEquation(kindPreference) {
     const simpleTable = [
       { fn: "\\sin", value: "0", rat: [0, 1], sols: ["0", "\\pi"] },
       { fn: "\\sin", value: "1", rat: [1, 1], sols: ["\\frac{\\pi}{2}"] },
@@ -1439,7 +1664,7 @@
       { fn: "\\cos", value: "\\frac{1}{2}", rat: [1, 2], sols: ["\\frac{\\pi}{4}", "\\frac{3\\pi}{4}", "\\frac{5\\pi}{4}", "\\frac{7\\pi}{4}"] },
       { fn: "\\cos", value: "\\frac{3}{4}", rat: [3, 4], sols: ["\\frac{\\pi}{6}", "\\frac{5\\pi}{6}", "\\frac{7\\pi}{6}", "\\frac{11\\pi}{6}"] }
     ];
-    const kind = choice(["basic", "linear", "square"]);
+    const kind = kindPreference || choice(["basic", "linear", "square"]);
     const item = kind === "square" ? choice(squareTable) : choice(kind === "linear" ? simpleTable.filter(x => x.rat) : simpleTable);
     const a = kind === "basic" ? 1 : randIntExclude(-4, 4, [0]);
     const b = kind === "basic" ? 0 : randInt(-5, 5);
@@ -1448,9 +1673,14 @@
     const leading = a === 1 ? "" : a === -1 ? "-" : String(a);
     const expression = kind === "basic" ? `${trigPart}=${item.value}` : `${leading}${trigPart}${signed(b)}=${rhs}`;
     const isolateLine = `${trigPart}=${item.value}`;
+    const title = kind === "basic"
+      ? "Solve a basic trigonometric equation on one full cycle."
+      : kind === "linear"
+        ? "Solve a linear trigonometric equation on one full cycle."
+        : "Solve a squared trigonometric equation on one full cycle.";
     const wrongMirror = rotateTrigSolutions(item.sols);
     return {
-      title: "Solve a trigonometric equation on one full cycle.",
+      title,
       extra: "Solve on the interval 0 <= x < 2pi.",
       equationLatex: `${expression},\\quad 0\\le x<2\\pi`,
       answerLatex: trigAnswerSet(item.sols),
@@ -1459,6 +1689,28 @@
         { latex: expression, note: "Start with the generated trigonometric equation." },
         { latex: isolateLine, note: "Isolate the trigonometric expression." },
         { latex: trigAnswerSet(item.sols), note: "Choose every angle in the interval with the required trig value." }
+      ]
+    };
+  }
+
+  function genTrigIdentity() {
+    const useCos = Math.random() < 0.5;
+    const fn = useCos ? "\\cos" : "\\sin";
+    const sols = useCos
+      ? ["\\frac{\\pi}{4}", "\\frac{3\\pi}{4}", "\\frac{5\\pi}{4}", "\\frac{7\\pi}{4}"]
+      : ["\\frac{\\pi}{4}", "\\frac{3\\pi}{4}", "\\frac{5\\pi}{4}", "\\frac{7\\pi}{4}"];
+    const expression = `2${fn}^2 x-1=0`;
+    return {
+      title: "Solve a trigonometric equation using an identity-style square.",
+      extra: "Solve on the interval 0 <= x < 2pi.",
+      equationLatex: `${expression},\\quad 0\\le x<2\\pi`,
+      answerLatex: trigAnswerSet(sols),
+      distractors: [trigAnswerSet(sols.slice(0, 2)), trigAnswerSet(["\\frac{\\pi}{2}", "\\frac{3\\pi}{2}"]), "x=0", "\\varnothing"],
+      steps: [
+        { latex: expression, note: "Start with the squared trigonometric equation." },
+        { latex: `${fn}^2 x=\\frac{1}{2}`, note: "Isolate the squared trigonometric expression." },
+        { latex: `${fn} x=\\pm\\frac{\\sqrt{2}}{2}`, note: "Take both positive and negative square-root cases." },
+        { latex: trigAnswerSet(sols), note: "List every angle in the interval." }
       ]
     };
   }
@@ -1524,6 +1776,21 @@
   function signed(n) {
     if (n === 0) return "";
     return n > 0 ? `+${n}` : `${n}`;
+  }
+
+  function coeffX(n) {
+    if (n === 1) return "x";
+    if (n === -1) return "-x";
+    return `${n}x`;
+  }
+
+  function sqrtRootPair(n) {
+    const root = Math.sqrt(n);
+    if (Number.isInteger(root)) return [numRoot(-root), numRoot(root)];
+    return [
+      { value: -root, latex: `-\\sqrt{${n}}` },
+      { value: root, latex: `\\sqrt{${n}}` }
+    ];
   }
 
   function makeFrac(n, d) {

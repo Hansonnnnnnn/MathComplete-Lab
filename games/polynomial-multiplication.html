@@ -564,7 +564,7 @@
         return t.coef < 0 ? `-${body}` : `+${body}`;
       }).join("");
     }
-    function factorLatex(p){ return p.terms.length === 1 ? p.latex : `\left(${p.latex}\right)`; }
+    function factorLatex(p){ return p.terms.length === 1 ? p.latex : `\\left(${p.latex}\\right)`; }
     function add(a, b){ return poly([...(a.terms || []), ...(b.terms || [])]); }
     function scale(a, k){ return poly((a.terms || []).map(t => term(t.coef * k, t.powers))); }
     function multiply(a, b){
@@ -585,7 +585,7 @@
     function xTrinomial(a, b, c){ return p1(a, b, c); }
     function twoVarBinomial(cx, cy, sign = 1){ return poly([term(cx, { x: 1 }), term(sign * cy, { y: 1 })]); }
     function make(type, mainPoly, factors, answer, distractors, noteKeys){
-      const main = factors.map(factorLatex).join("\cdot ");
+      const main = factors.map(factorLatex).join("\\cdot ");
       const notes = tr().notes;
       const distribution = distributionLine(factors);
       const lines = [
@@ -597,7 +597,7 @@
       return { type, promptKey:"promptExpand", main, plain:main, answer, distractors, lines };
     }
     function distributionLine(factors){
-      if (factors.length !== 2) return factors.map(factorLatex).join("\cdot ");
+      if (factors.length !== 2) return factors.map(factorLatex).join("\\cdot ");
       const [a, b] = factors;
       const pieces = [];
       a.terms.forEach(left => b.terms.forEach(right => pieces.push(polyLatex([term(left.coef * right.coef, mergePowers(left.powers, right.powers))]))));

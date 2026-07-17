@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -449,6 +449,10 @@
     text-wrap: pretty;
   }
 </style>
+  <script src="../assets/js/theme.js?v=20260716.2"></script>
+  <link rel="stylesheet" href="../assets/css/quiz-tool.css">
+  <link rel="stylesheet" href="../assets/css/design-system.css?v=20260717.2">
+  <script defer src="https://cdn.jsdelivr.net/npm/lucide@0.468.0/dist/umd/lucide.min.js"></script>
 </head>
 <body>
   <nav class="mc-site-shell">
@@ -604,11 +608,35 @@
       return pieces.join("+").replace(/\+\-/g, "-");
     }
     function mergePowers(a, b){ const out = { ...(a || {}) }; Object.keys(b || {}).forEach(v => { out[v] = (out[v] || 0) + b[v]; }); return out; }
+    function replaceCoefficient(p, index, coefficient){
+      if (!p.terms.length || index < 0 || index >= p.terms.length) return null;
+      return poly(p.terms.map((t, i) => term(i === index ? coefficient : t.coef, t.powers)));
+    }
+    function omitTerm(p, index){
+      if (p.terms.length < 2 || index < 0 || index >= p.terms.length) return null;
+      return poly(p.terms.filter((_, i) => i !== index));
+    }
     function wrongChoices(factors, answer, extras = []){
       const [a, b] = factors;
-      const choices = [add(a, b), scale(answer, -1), ...extras].filter(Boolean);
-      if (a && b) choices.push(multiply(scale(a, -1), b));
-      return choices.filter(c => c.key !== answer.key).slice(0, 5);
+      const last = Math.max(0, answer.terms.length - 1);
+      const firstCoef = answer.terms[0]?.coef || 1;
+      const lastCoef = answer.terms[last]?.coef || 1;
+      const choices = [
+        ...extras,
+        a && b ? add(a, b) : null,
+        scale(answer, -1),
+        a && b ? multiply(scale(a, -1), b) : null,
+        replaceCoefficient(answer, 0, -firstCoef),
+        replaceCoefficient(answer, last, -lastCoef),
+        omitTerm(answer, last),
+        replaceCoefficient(answer, 0, firstCoef + (firstCoef > 0 ? 1 : -1)),
+        replaceCoefficient(answer, last, lastCoef + (lastCoef > 0 ? 1 : -1))
+      ].filter(Boolean);
+      const unique = new Map();
+      choices.forEach(choice => {
+        if (choice.key !== answer.key && !unique.has(choice.key)) unique.set(choice.key, choice);
+      });
+      return [...unique.values()].slice(0, 5);
     }
     function signedChoice(h){ return h.choice([-1, 1]); }
     const T = {
@@ -623,14 +651,14 @@
         notes:{setup:"given product",distribute:"distribute each term",combine:"combine like terms",final:"final expanded form"}
       },
       zh:{
-        toolBadge:"?? I · ?? II", title:"?????????",
-        subtitle:"?????????????????????????????????",
-        note:"????????????,????????????????????????????????",
-        questionTitle:"???????,?????????",
-        promptExpand:"??????",
-        difficultyOptions:{easy:"??:???????????",medium:"??:???????",hard:"??:?????????????",expert:"??:??????????????",mixed:"??:??????????"},
-        suggestion:"??:???????????????????????,????????",
-        notes:{setup:"??",distribute:"????",combine:"?????",final:"?????"}
+        toolBadge:"代数 I · 代数 II", title:"多项式乘法专项练习",
+        subtitle:"练习单项式、二项式、三项式以及双变量多项式之间的乘法和展开。",
+        note:"答案会完全展开、合并同类项并按标准顺序书写。干扰项对应常见的分配、符号和合并同类项错误。",
+        questionTitle:"展开多项式乘积，并选择等价的表达式。",
+        promptExpand:"展开并化简。",
+        difficultyOptions:{easy:"简单：单项式乘二项式或三项式",medium:"中等：二项式乘二项式",hard:"困难：二项式乘三项式及双变量乘法",expert:"专家：含系数、负号及较长的多项式乘法",mixed:"混合：均衡练习所有难度"},
+        suggestion:"建议：将第一个因式的每一项分别乘以第二个因式的每一项，再合并同类项。",
+        notes:{setup:"原乘积",distribute:"逐项分配",combine:"合并同类项",final:"最终展开式"}
       }
     };
     function tr(){ return T[localStorage.getItem("mathcomplete_lang")==="zh" ? "zh" : "en"]; }
@@ -659,7 +687,11 @@
     window.MCLQuizTool = { gameId:"polynomial-multiplication", course:"algebra-1", text:T, builders:B };
   </script>  <script src="../assets/js/quiz-tool-engine.js"></script>
   <script src="../assets/js/tool-modes.js"></script>
-  <script src="../assets/js/report-export.js"></script>
-  <script src="../assets/js/home-link.js"></script>
+  <script src="../assets/js/report-export.js?v=20260716.2"></script>
+
+  <script src="../assets/js/tool-ux.js?v=20260716.2"></script>
+  <script src="../assets/js/tool-catalog.js?v=20260716.3"></script>
+  <script src="../assets/js/motion.js?v=20260717.3"></script>
+  <script src="../assets/js/site-shell.js?v=20260716.5"></script>
 </body>
 </html>

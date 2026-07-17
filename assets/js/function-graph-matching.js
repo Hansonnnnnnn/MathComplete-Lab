@@ -554,7 +554,7 @@
       return "";
     }).join("");
     return `<svg viewBox="0 0 ${VIEW.width} ${VIEW.height}" aria-hidden="true">
-      <defs><linearGradient id="curveGradient" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#2563eb"/><stop offset="100%" stop-color="#7c3aed"/></linearGradient></defs>
+      <defs><linearGradient id="curveGradient" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" style="stop-color:var(--mcl-accent)"/><stop offset="100%" style="stop-color:var(--mcl-teal)"/></linearGradient></defs>
       ${grid.join("")}
       <line class="graph-axis" x1="${sx(VIEW.xmin)}" y1="${sy(0)}" x2="${sx(VIEW.xmax)}" y2="${sy(0)}"></line>
       <line class="graph-axis" x1="${sx(0)}" y1="${sy(VIEW.ymin)}" x2="${sx(0)}" y2="${sy(VIEW.ymax)}"></line>

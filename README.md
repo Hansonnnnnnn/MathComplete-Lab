@@ -6,7 +6,20 @@ A user-facing static website for randomized math practice tools.
 
 - `index.html`
 - `practice.html`
-- `games/algebra-expression.html`
+- `dashboard.html`
+- `mistakes.html`
+- `login.html`
+- `games/` contains the 33 practice tools
+
+## Shared UI
+
+- `assets/css/design-system.css` owns the site tokens, responsive layout, controls, cards, and light/dark themes.
+- `assets/js/theme.js` exposes `MCLTheme.get()` and `MCLTheme.set()` and dispatches `mcl:themechange`.
+- `assets/js/site-shell.js` renders the shared desktop and mobile navigation.
+- `assets/js/tool-catalog.js` is the single catalog used by the home workspace and Practice Library.
+- `assets/js/tool-ux.js` adds the shared breadcrumbs, compact advanced settings, session summary, and result statistic to tools.
+
+When adding a practice tool, create the page in `games/`, register it once in `assets/js/tool-catalog.js`, and include the shared theme, design-system, shell, and tool-UX assets used by the existing tools.
 
 ## Local use
 

@@ -1,13 +1,22 @@
 :root {
-  --geo-ink: #0f172a;
-  --geo-muted: #64748b;
-  --geo-line: #1f2937;
-  --geo-accent: #2563eb;
+  --geo-ink: var(--mcl-text, #10233f);
+  --geo-muted: var(--mcl-text-soft, #5b6b7f);
+  --geo-line: var(--mcl-text, #10233f);
+  --geo-accent: var(--mcl-accent, #2f67d8);
   --geo-warm: #f59e0b;
-  --geo-good: #16a34a;
-  --geo-bad: #dc2626;
-  --geo-soft: #f8fafc;
-  --geo-border: #e5e7eb;
+  --geo-good: var(--mcl-good, #18794e);
+  --geo-bad: var(--mcl-bad, #bd2c2c);
+  --geo-soft: var(--mcl-surface-muted, #f3f6f9);
+  --geo-border: var(--mcl-border, #d8e1eb);
+  --geo-canvas: #ffffff;
+  --geo-grid: rgba(16, 35, 63, 0.06);
+  --geo-label-stroke: #ffffff;
+}
+
+:root[data-theme="dark"] {
+  --geo-canvas: #0d1727;
+  --geo-grid: rgba(158, 176, 196, 0.1);
+  --geo-label-stroke: #0d1727;
 }
 
 .geo-layout {
@@ -17,10 +26,22 @@
   align-items: start;
 }
 
+.geo-layout > *,
+.proof-workspace,
+.proof-table-wrap {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.proof-workspace > * {
+  min-width: 0;
+  max-width: 100%;
+}
+
 .diagram-panel {
   border: 1px solid var(--geo-border);
-  border-radius: 18px;
-  background: linear-gradient(180deg, #ffffff, #f8fbff);
+  border-radius: 8px;
+  background: var(--mcl-surface, #fff);
   padding: 12px;
 }
 
@@ -28,11 +49,11 @@
   display: block;
   width: 100%;
   min-height: 320px;
-  border-radius: 14px;
+  border-radius: 6px;
   background:
-    linear-gradient(rgba(15, 23, 42, 0.035) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(15, 23, 42, 0.035) 1px, transparent 1px),
-    #ffffff;
+    linear-gradient(var(--geo-grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--geo-grid) 1px, transparent 1px),
+    var(--geo-canvas);
   background-size: 24px 24px;
 }
 
@@ -57,9 +78,9 @@
 .geo-label {
   fill: var(--geo-ink);
   font-size: 18px;
-  font-weight: 900;
+  font-weight: 700;
   paint-order: stroke;
-  stroke: #ffffff;
+  stroke: var(--geo-label-stroke);
   stroke-width: 4px;
   stroke-linejoin: round;
 }
@@ -100,17 +121,17 @@
 .given-item,
 .target-box {
   border: 1px solid var(--geo-border);
-  border-radius: 14px;
-  background: #fff;
+  border-radius: 8px;
+  background: var(--mcl-surface, #fff);
   padding: 12px 14px;
   line-height: 1.55;
-  font-weight: 850;
+  font-weight: 700;
 }
 
 .target-box {
-  background: #eff6ff;
-  border-color: #bfdbfe;
-  color: #1d4ed8;
+  background: var(--mcl-accent-soft, #eaf1ff);
+  border-color: var(--mcl-accent, #2f67d8);
+  color: var(--mcl-accent, #2f67d8);
 }
 
 .proof-workspace {
@@ -127,8 +148,8 @@
 .theorem-option {
   min-height: 48px;
   border: 2px solid var(--geo-border);
-  border-radius: 14px;
-  background: #fff;
+  border-radius: 8px;
+  background: var(--mcl-surface, #fff);
   color: var(--geo-ink);
   box-shadow: none;
   padding: 10px 8px;
@@ -137,11 +158,12 @@
 
 .theorem-option.selected {
   border-color: var(--geo-accent);
-  background: #eff6ff;
-  color: #1d4ed8;
+  background: var(--mcl-accent-soft, #eaf1ff);
+  color: var(--mcl-accent, #2f67d8);
 }
 
 .proof-table-wrap {
+  width: 100%;
   overflow-x: auto;
 }
 
@@ -166,7 +188,7 @@
 .proof-row-number {
   width: 34px;
   color: var(--geo-muted);
-  font-weight: 950;
+  font-weight: 700;
   text-align: center;
 }
 
@@ -179,13 +201,13 @@
 }
 
 .proof-row.correct .proof-select {
-  border-color: rgba(22, 163, 74, 0.55);
-  background: #ecfdf5;
+  border-color: var(--mcl-good, #18794e);
+  background: var(--mcl-good-soft, #eaf7f0);
 }
 
 .proof-row.wrong .proof-select {
-  border-color: rgba(220, 38, 38, 0.55);
-  background: #fef2f2;
+  border-color: var(--mcl-bad, #bd2c2c);
+  background: var(--mcl-bad-soft, #fff0f0);
 }
 
 .hint-strip {
@@ -200,11 +222,11 @@
   align-items: center;
   border: 1px solid var(--geo-border);
   border-radius: 999px;
-  background: #fff;
+  background: var(--mcl-surface, #fff);
   color: var(--geo-muted);
   padding: 7px 10px;
   font-size: 13px;
-  font-weight: 850;
+  font-weight: 700;
 }
 
 .solution-proof {
@@ -218,8 +240,8 @@
   grid-template-columns: minmax(0, 1fr) minmax(140px, 0.55fr);
   gap: 12px;
   border: 1px solid var(--geo-border);
-  border-radius: 14px;
-  background: #fff;
+  border-radius: 8px;
+  background: var(--mcl-surface, #fff);
   padding: 10px 12px;
   line-height: 1.5;
 }
@@ -230,18 +252,18 @@
 
 .solution-step span {
   color: var(--geo-muted);
-  font-weight: 850;
+  font-weight: 700;
 }
 
 .geo-feedback-detail {
   color: var(--geo-muted);
-  font-weight: 800;
+  font-weight: 700;
   line-height: 1.6;
 }
 
 @media (max-width: 880px) {
   .geo-layout {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .theorem-grid {

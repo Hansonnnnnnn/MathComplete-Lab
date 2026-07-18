@@ -80,6 +80,10 @@
     "en": "Quadratics",
     "zh": "二次式与二次函数"
   },
+  "complex-numbers": {
+    "en": "Complex Numbers",
+    "zh": "复数"
+  },
   "geometry": {
     "en": "Geometry & Proof",
     "zh": "几何与证明"
@@ -715,6 +719,30 @@
     "addedAt": "2026-07-16",
     "kind": "standard",
     "search": "polynomial multiplication multiply polynomials monomial binomial trinomial foil distributive property expand algebra i algebra ii polynomial-multiplication 多项式乘法 多项式 相乘 单项式 二项式 三项式 展开 分配律 代数"
+  },
+  {
+    "id": "complex-number-operations",
+    "href": "games/complex-number-operations.html",
+    "title": {
+      "en": "Complex Number Operations Practice",
+      "zh": "复数四则运算专项练习"
+    },
+    "description": {
+      "en": "Practice exact addition, subtraction, multiplication, division, and mixed operations with complex numbers.",
+      "zh": "练习复数的精确加、减、乘、除及混合运算，并将答案化为标准形式。"
+    },
+    "courses": [
+      "algebra-2",
+      "precalculus"
+    ],
+    "primaryCourse": "algebra-2",
+    "topics": {
+      "algebra-2": "complex-numbers",
+      "precalculus": "complex-numbers"
+    },
+    "addedAt": "2026-07-17",
+    "kind": "standard",
+    "search": "complex number operations add subtract multiply divide conjugate imaginary unit exact fractions standard form algebra ii precalculus complex-number-operations 复数 四则运算 加法 减法 乘法 除法 共轭 虚数单位 标准形式 代数二 预备微积分"
   },
   {
     "id": "fraction-percent",

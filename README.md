@@ -1,35 +1,38 @@
 # MathComplete Lab
 
-A user-facing static website for randomized math practice tools.
+A static GitHub Pages site with randomized mathematics practice, bilingual UI, local guest progress, and optional Supabase account sync.
 
-## Pages
+## Main pages
 
-- `index.html`
-- `practice.html`
-- `dashboard.html`
-- `mistakes.html`
-- `login.html`
-- `games/` contains the 33 practice tools
+- `index.html`, `practice.html`, and `games/` provide the student practice experience.
+- `login.html`, `auth-callback.html`, `reset-password.html`, and `consent.html` implement authentication flows.
+- `account.html`, `dashboard.html`, and `mistakes.html` provide account, progress, and review tools.
+- `terms.html` and `privacy.html` contain bilingual draft policies that require owner review before launch.
 
-## Shared UI
+## Shared application code
 
-- `assets/css/design-system.css` owns the site tokens, responsive layout, controls, cards, and light/dark themes.
-- `assets/js/theme.js` exposes `MCLTheme.get()` and `MCLTheme.set()` and dispatches `mcl:themechange`.
-- `assets/js/site-shell.js` renders the shared desktop and mobile navigation.
-- `assets/js/tool-catalog.js` is the single catalog used by the home workspace and Practice Library.
-- `assets/js/tool-ux.js` adds the shared breadcrumbs, compact advanced settings, session summary, and result statistic to tools.
-
-When adding a practice tool, create the page in `games/`, register it once in `assets/js/tool-catalog.js`, and include the shared theme, design-system, shell, and tool-UX assets used by the existing tools.
+- `assets/css/design-system.css` owns global themes, layout, controls, and responsive behavior.
+- `assets/js/site-shell.js` renders the shared navigation and account menu.
+- `assets/js/supabase-client.js` contains public client configuration and session storage policy.
+- `assets/js/auth.js` is the single source of truth for authenticated state.
+- `assets/js/progress.js` isolates guest/account data and uploads attempts idempotently.
+- `assets/js/tool-catalog.js` is the central practice-tool catalog.
 
 ## Local use
 
-Open `index.html` in a browser.
+Serve the folder over HTTP so OAuth and PKCE callbacks have a valid origin:
 
-## Supabase setup
+```powershell
+python -m http.server 8000
+```
 
-1. Open the Supabase SQL Editor.
-2. Run `supabase/schema.sql` to create `profiles`, `attempts`, `mistakes`, indexes, and RLS policies.
-3. Confirm Email auth is enabled in Supabase Authentication.
-4. Keep `assets/js/supabase-client.js` updated with the project URL and publishable key.
+Open `http://localhost:8000/`. Opening HTML directly is fine for visual-only work but cannot exercise the full account flow.
 
-Practice games now call `MCLProgress.recordGameAttempt()` after each answered question. Signed-in users save to Supabase; signed-out users save recent attempts in local storage and can sync them from `dashboard.html` after logging in. Signed-in users can also save favorite practice tools through the `favorite_tools` table.
+## Supabase deployment
+
+1. Apply `supabase/migrations/202607170001_auth_hardening.sql`, or run the matching `supabase/schema.sql` snapshot in the SQL Editor.
+2. Deploy `supabase/functions/account-security` and set `MFA_RECOVERY_PEPPER` to a long random secret.
+3. Follow `supabase/DEPLOYMENT.md` for Email, Google, Resend SMTP, Turnstile, callback URLs, rate limits, and security notifications.
+4. Put only the public Supabase URL, publishable key, and Turnstile site key in `assets/js/supabase-client.js`. Never place a secret or service-role key in this repository.
+
+Guest attempts stay on the current device. The first authenticated session asks whether to merge those records. Account-specific pending uploads are isolated by user ID and automatically retried without creating duplicate cloud attempts.

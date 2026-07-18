@@ -1,83 +1,154 @@
-/*
-  MathComplete Lab - Supabase Client
-  Replace the two values below with your Supabase project URL and anon/publishable key.
-
-  Supabase Dashboard:
-  Project Settings → API → Project URL
-  Project Settings → API → Project API keys → anon/public or publishable key
-*/
-
+/* MathComplete Lab - public application and Supabase configuration. */
 (function () {
+  "use strict";
+
   window.MCL = window.MCL || {};
 
-  const SUPABASE_URL = "https://hcrxxfcvmrjahnjlbjur.supabase.co";
-  const SUPABASE_ANON_KEY = "sb_publishable_NqpfpyfzywQpEq7JiRwxuQ_oVaTjRRU";
-  const SUPABASE_STORAGE_KEY = "sb-hcrxxfcvmrjahnjlbjur-auth-token";
-  const AUTH_PERSISTENCE_KEY = "mcl_auth_persistence";
-
-  function isPlaceholder(value) {
-    return !value || value.includes("PASTE_YOUR_");
-  }
-
-  window.MCL.supabaseConfig = {
-    url: SUPABASE_URL,
-    key: SUPABASE_ANON_KEY,
-    storageKey: SUPABASE_STORAGE_KEY,
-    persistenceKey: AUTH_PERSISTENCE_KEY,
-    isConfigured: !isPlaceholder(SUPABASE_URL) && !isPlaceholder(SUPABASE_ANON_KEY)
+  const config = {
+    supabaseUrl: "https://hcrxxfcvmrjahnjlbjur.supabase.co",
+    supabasePublishableKey: "sb_publishable_NqpfpyfzywQpEq7JiRwxuQ_oVaTjRRU",
+    productionBaseUrl: "https://hansonnnnnnn.github.io/MathComplete-Lab/",
+    turnstileSiteKey: "PASTE_TURNSTILE_SITE_KEY",
+    termsVersion: "2026-07-17",
+    privacyVersion: "2026-07-17",
+    minimumPasswordLength: 12,
+    rememberedSessionDays: 30
   };
 
+  const projectRef = (() => {
+    try {
+      return new URL(config.supabaseUrl).hostname.split(".")[0];
+    } catch {
+      return "mathcomplete-lab";
+    }
+  })();
+  const storageKey = `sb-${projectRef}-auth-token`;
+  const persistenceKey = "mcl_auth_persistence";
+  const absoluteExpiryKey = "mcl_auth_absolute_expiry";
+  const maxRememberedMs = config.rememberedSessionDays * 24 * 60 * 60 * 1000;
+
+  function isPlaceholder(value) {
+    return !value || String(value).includes("PASTE_");
+  }
+
+  function persistenceMode() {
+    return localStorage.getItem(persistenceKey) === "local" ? "local" : "session";
+  }
+
+  function clearAuthStorage() {
+    localStorage.removeItem(storageKey);
+    sessionStorage.removeItem(storageKey);
+    localStorage.removeItem(absoluteExpiryKey);
+  }
+
+  function rememberedSessionExpired() {
+    if (persistenceMode() !== "local") return false;
+    const raw = Number(localStorage.getItem(absoluteExpiryKey));
+    if (!raw && localStorage.getItem(storageKey)) {
+      localStorage.setItem(absoluteExpiryKey, String(Date.now() + maxRememberedMs));
+      return false;
+    }
+    return Boolean(raw && Date.now() >= raw);
+  }
+
+  function preferredStorage() {
+    return persistenceMode() === "local" ? localStorage : sessionStorage;
+  }
+
+  function secondaryStorage() {
+    return persistenceMode() === "local" ? sessionStorage : localStorage;
+  }
+
+  const authStorage = {
+    getItem(key) {
+      if (rememberedSessionExpired()) {
+        clearAuthStorage();
+        return null;
+      }
+      return preferredStorage().getItem(key);
+    },
+    setItem(key, value) {
+      preferredStorage().setItem(key, value);
+      secondaryStorage().removeItem(key);
+    },
+    removeItem(key) {
+      localStorage.removeItem(key);
+      sessionStorage.removeItem(key);
+    }
+  };
+
+  function setAuthPersistence(mode, options = {}) {
+    const next = mode === "local" ? "local" : "session";
+    const existing = localStorage.getItem(storageKey) || sessionStorage.getItem(storageKey);
+    localStorage.setItem(persistenceKey, next);
+
+    if (next === "local") {
+      if (existing) localStorage.setItem(storageKey, existing);
+      sessionStorage.removeItem(storageKey);
+      if (options.resetExpiry !== false || !localStorage.getItem(absoluteExpiryKey)) {
+        localStorage.setItem(absoluteExpiryKey, String(Date.now() + maxRememberedMs));
+      }
+    } else {
+      if (existing) sessionStorage.setItem(storageKey, existing);
+      localStorage.removeItem(storageKey);
+      localStorage.removeItem(absoluteExpiryKey);
+    }
+  }
+
+  function runtimeBaseUrl() {
+    if (location.protocol === "file:") return config.productionBaseUrl;
+    const isLocal = ["localhost", "127.0.0.1", "0.0.0.0"].includes(location.hostname);
+    if (!isLocal) return config.productionBaseUrl;
+
+    const path = location.pathname;
+    const rootPath = path.includes("/games/")
+      ? path.slice(0, path.indexOf("/games/") + 1)
+      : path.slice(0, path.lastIndexOf("/") + 1);
+    return `${location.origin}${rootPath}`;
+  }
+
+  window.MCL.appConfig = Object.freeze({
+    ...config,
+    hasTurnstile: !isPlaceholder(config.turnstileSiteKey)
+  });
+  window.MCL.supabaseConfig = {
+    url: config.supabaseUrl,
+    key: config.supabasePublishableKey,
+    storageKey,
+    persistenceKey,
+    absoluteExpiryKey,
+    isConfigured: !isPlaceholder(config.supabaseUrl) && !isPlaceholder(config.supabasePublishableKey)
+  };
+  window.MCL.publicBaseUrl = runtimeBaseUrl;
+  window.MCL.setAuthPersistence = setAuthPersistence;
+  window.MCL.getAuthPersistence = persistenceMode;
+  window.MCL.clearAuthStorage = clearAuthStorage;
+  window.MCL.isRememberedSessionExpired = rememberedSessionExpired;
+
   if (!window.MCL.supabaseConfig.isConfigured) {
-    console.warn("[MathComplete Lab] Supabase is not configured yet. Update assets/js/supabase-client.js.");
+    console.warn("[MathComplete Lab] Supabase public configuration is incomplete.");
     window.MCL.supabaseClient = null;
     return;
   }
 
   if (!window.supabase || typeof window.supabase.createClient !== "function") {
-    console.error("[MathComplete Lab] Supabase CDN client did not load.");
+    console.error("[MathComplete Lab] Supabase JS did not load.");
     window.MCL.supabaseClient = null;
     return;
   }
 
-  function authPersistenceMode() {
-    return localStorage.getItem(AUTH_PERSISTENCE_KEY) === "local" ? "local" : "session";
-  }
-
-  function authStorage() {
-    const preferred = () => authPersistenceMode() === "local" ? localStorage : sessionStorage;
-    const secondary = () => authPersistenceMode() === "local" ? sessionStorage : localStorage;
-
-    return {
-      getItem(key) {
-        return preferred().getItem(key);
-      },
-      setItem(key, value) {
-        preferred().setItem(key, value);
-        secondary().removeItem(key);
-      },
-      removeItem(key) {
-        localStorage.removeItem(key);
-        sessionStorage.removeItem(key);
+  window.MCL.supabaseClient = window.supabase.createClient(
+    config.supabaseUrl,
+    config.supabasePublishableKey,
+    {
+      auth: {
+        persistSession: true,
+        autoRefreshToken: true,
+        detectSessionInUrl: false,
+        flowType: "pkce",
+        storageKey,
+        storage: authStorage
       }
-    };
-  }
-
-  window.MCL.setAuthPersistence = function (mode) {
-    const next = mode === "local" ? "local" : "session";
-    localStorage.setItem(AUTH_PERSISTENCE_KEY, next);
-    if (next === "session") localStorage.removeItem(SUPABASE_STORAGE_KEY);
-    else sessionStorage.removeItem(SUPABASE_STORAGE_KEY);
-  };
-
-  window.MCL.getAuthPersistence = authPersistenceMode;
-
-  window.MCL.supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
-    auth: {
-      persistSession: true,
-      autoRefreshToken: true,
-      detectSessionInUrl: true,
-      storageKey: SUPABASE_STORAGE_KEY,
-      storage: authStorage()
     }
-  });
+  );
 })();

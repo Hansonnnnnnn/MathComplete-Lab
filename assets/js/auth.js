@@ -1,12 +1,23 @@
-/*
-  MathComplete Lab - Auth Helpers
-  Requires:
-  1. Supabase CDN script
-  2. assets/js/supabase-client.js
-*/
-
+/* MathComplete Lab - centralized authentication state and account API. */
 (function () {
+  "use strict";
+
   window.MCL = window.MCL || {};
+
+  const listeners = new Set();
+  const callbackReturnKey = "mcl_auth_return_to";
+  const recentReauthKey = "mcl_recent_reauth_at";
+  const minimumPasswordLength = Number(window.MCL.appConfig?.minimumPasswordLength || 12);
+  let initialization = null;
+  let recoveryEventSeen = false;
+  let state = Object.freeze({
+    status: "loading",
+    session: null,
+    user: null,
+    profile: null,
+    entitlement: null,
+    error: null
+  });
 
   const client = () => window.MCL.supabaseClient;
 
@@ -14,322 +25,501 @@
     return Boolean(window.MCL.supabaseConfig?.isConfigured && client());
   }
 
-  function withTimeout(promise, ms, message) {
-    return Promise.race([
-      promise,
-      new Promise((_, reject) => {
-        setTimeout(() => reject(new Error(message)), ms);
-      })
-    ]);
-  }
-
-  function storageKey() {
-    return window.MCL.supabaseConfig?.storageKey || "sb-hcrxxfcvmrjahnjlbjur-auth-token";
-  }
-
-  function preferredStorage() {
-    return window.MCL?.getAuthPersistence?.() === "local" ? localStorage : sessionStorage;
-  }
-
-  function secondaryStorage() {
-    return window.MCL?.getAuthPersistence?.() === "local" ? sessionStorage : localStorage;
-  }
-
-  function setAuthPersistence(remember) {
-    window.MCL?.setAuthPersistence?.(remember ? "local" : "session");
-  }
-
-  function normalizeSession(payload) {
-    const expiresIn = Number(payload.expires_in || 3600);
-    return {
-      access_token: payload.access_token,
-      refresh_token: payload.refresh_token,
-      token_type: payload.token_type || "bearer",
-      expires_in: expiresIn,
-      expires_at: payload.expires_at || Math.floor(Date.now() / 1000) + expiresIn,
-      user: payload.user || null
-    };
-  }
-
-  function saveStoredSession(session) {
-    preferredStorage().setItem(storageKey(), JSON.stringify(session));
-    secondaryStorage().removeItem(storageKey());
-  }
-
-  function readStoredSession() {
-    try {
-      const raw = preferredStorage().getItem(storageKey());
-      if (!raw) return null;
-
-      const session = JSON.parse(raw);
-      if (!session?.access_token || !session?.refresh_token) return null;
-
-      return session;
-    } catch {
-      return null;
-    }
-  }
-
-  function clearStoredSession() {
-    localStorage.removeItem(storageKey());
-    sessionStorage.removeItem(storageKey());
+  function currentLanguage() {
+    return localStorage.getItem("mathcomplete_lang") === "zh" ? "zh" : "en";
   }
 
   function publicBaseUrl() {
-    const origin = window.location.origin;
-    const path = window.location.pathname;
+    return typeof window.MCL.publicBaseUrl === "function"
+      ? window.MCL.publicBaseUrl()
+      : `${location.origin}${location.pathname.slice(0, location.pathname.lastIndexOf("/") + 1)}`;
+  }
 
-    if (path.includes("/games/")) {
-      return origin + path.split("/games/")[0] + "/";
+  function pageUrl(page) {
+    return new URL(String(page || ""), publicBaseUrl()).href;
+  }
+
+  function safeReturnTo(value, fallback = "practice.html") {
+    const raw = String(value || "").trim();
+    if (!raw) return fallback;
+
+    try {
+      const base = new URL(publicBaseUrl());
+      const target = new URL(raw, base);
+      if (target.origin !== base.origin || !target.pathname.startsWith(base.pathname)) return fallback;
+      return `${target.pathname.slice(base.pathname.length)}${target.search}${target.hash}` || fallback;
+    } catch {
+      return fallback;
+    }
+  }
+
+  function rememberReturnTo(value) {
+    sessionStorage.setItem(callbackReturnKey, safeReturnTo(value));
+  }
+
+  function consumeReturnTo(fallback = "practice.html") {
+    const value = sessionStorage.getItem(callbackReturnKey);
+    sessionStorage.removeItem(callbackReturnKey);
+    return safeReturnTo(value, fallback);
+  }
+
+  function setState(next) {
+    state = Object.freeze({ ...state, ...next });
+    const snapshot = state;
+    listeners.forEach(listener => {
+      try { listener(snapshot); } catch (error) { console.error(error); }
+    });
+    window.dispatchEvent(new CustomEvent("mcl:authchange", { detail: snapshot }));
+  }
+
+  function getState() {
+    return state;
+  }
+
+  function subscribe(listener, options = {}) {
+    if (typeof listener !== "function") return () => {};
+    listeners.add(listener);
+    if (options.immediate !== false) listener(state);
+    return () => listeners.delete(listener);
+  }
+
+  function withTimeout(promise, ms, code = "network_timeout") {
+    let timer;
+    const timeout = new Promise((_, reject) => {
+      timer = setTimeout(() => reject(Object.assign(new Error(code), { code })), ms);
+    });
+    return Promise.race([promise, timeout]).finally(() => clearTimeout(timer));
+  }
+
+  function errorCode(error) {
+    return String(error?.code || error?.name || "").toLowerCase();
+  }
+
+  function formatError(error, lang = currentLanguage()) {
+    const raw = String(error?.message || error || "").toLowerCase();
+    const code = errorCode(error);
+    const zh = lang === "zh";
+
+    if (code.includes("network") || code.includes("timeout") || raw.includes("fetch") || raw.includes("timed out")) {
+      return zh ? "网络连接超时，请检查网络后重试。" : "The connection timed out. Check your network and try again.";
+    }
+    if (raw.includes("invalid login") || raw.includes("invalid credentials")) {
+      return zh ? "邮箱或密码不正确。" : "The email or password is incorrect.";
+    }
+    if (raw.includes("email not confirmed")) {
+      return zh ? "请先完成邮箱验证，再登录。" : "Verify your email before signing in.";
+    }
+    if (raw.includes("password") && (raw.includes("short") || raw.includes("characters"))) {
+      return zh ? `密码至少需要 ${minimumPasswordLength} 位。` : `Use at least ${minimumPasswordLength} characters for your password.`;
+    }
+    if (raw.includes("already registered") || raw.includes("user already exists")) {
+      return zh ? "无法完成注册，请检查邮箱或尝试登录。" : "We could not complete sign-up. Check the email or try signing in.";
+    }
+    if (raw.includes("rate limit") || raw.includes("too many")) {
+      return zh ? "尝试次数过多，请稍后再试。" : "Too many attempts. Please wait and try again.";
+    }
+    if (raw.includes("captcha")) {
+      return zh ? "安全验证未完成，请重试。" : "The security check was not completed. Try again.";
+    }
+    if (raw.includes("mfa") || raw.includes("factor") || raw.includes("verification code")) {
+      return zh ? "验证码无效或已过期，请重新输入。" : "The verification code is invalid or expired.";
+    }
+    if (raw.includes("same password")) {
+      return zh ? "新密码不能与当前密码相同。" : "Choose a password different from the current password.";
+    }
+    return zh ? "操作未完成，请稍后重试。" : "We could not complete that action. Please try again.";
+  }
+
+  function validatePassword(password) {
+    const value = String(password || "");
+    if (value.length < minimumPasswordLength) {
+      const error = new Error(`Password must be at least ${minimumPasswordLength} characters.`);
+      error.code = "weak_password";
+      throw error;
+    }
+    return value;
+  }
+
+  async function loadAccountData(user) {
+    if (!user?.id) return { profile: null, entitlement: null };
+    const [profileResult, entitlementResult] = await Promise.all([
+      client().from("profiles").select("id,email,display_name,created_at,updated_at").eq("id", user.id).maybeSingle(),
+      client().from("account_entitlements").select("plan,role,updated_at").eq("user_id", user.id).maybeSingle()
+    ]);
+
+    if (profileResult.error) {
+      console.warn("[MathComplete Lab] Profile read failed.", profileResult.error);
+    }
+    if (entitlementResult.error) {
+      console.warn("[MathComplete Lab] Entitlement read failed.", entitlementResult.error);
+    }
+    return {
+      profile: profileResult.data || null,
+      entitlement: entitlementResult.data || { plan: "free", role: "user" }
+    };
+  }
+
+  async function resolveAuthenticatedState(session, event = "") {
+    if (!session?.access_token) {
+      setState({ status: "anonymous", session: null, user: null, profile: null, entitlement: null, error: null });
+      return state;
     }
 
-    const parts = path.split("/");
-    parts.pop();
-    return origin + parts.join("/") + "/";
+    let user;
+    try {
+      const result = await withTimeout(client().auth.getUser(session.access_token), 8000);
+      if (result.error) throw result.error;
+      user = result.data?.user;
+    } catch (error) {
+      setState({ status: "error", session: null, user: null, profile: null, entitlement: null, error });
+      return state;
+    }
+
+    if (!user) {
+      setState({ status: "anonymous", session: null, user: null, profile: null, entitlement: null, error: null });
+      return state;
+    }
+
+    let status = event === "PASSWORD_RECOVERY" || recoveryEventSeen ? "recovery" : "authenticated";
+    try {
+      const [{ data: factors }, { data: assurance }] = await Promise.all([
+        client().auth.mfa.listFactors(),
+        client().auth.mfa.getAuthenticatorAssuranceLevel()
+      ]);
+      const hasVerifiedFactor = (factors?.totp || []).some(factor => factor.status === "verified");
+      if (status !== "recovery" && hasVerifiedFactor && assurance?.currentLevel !== "aal2") status = "mfa-required";
+    } catch (error) {
+      console.warn("[MathComplete Lab] MFA state check failed.", error);
+    }
+
+    const account = await loadAccountData(user).catch(() => ({ profile: null, entitlement: null }));
+    setState({ status, session: { ...session, user }, user, ...account, error: null });
+    return state;
+  }
+
+  async function initialize(force = false) {
+    if (!isConfigured()) {
+      setState({ status: "error", error: new Error("Supabase is not configured.") });
+      return state;
+    }
+    if (initialization && !force) return initialization;
+
+    initialization = (async () => {
+      if (window.MCL.isRememberedSessionExpired?.()) window.MCL.clearAuthStorage?.();
+      try {
+        const { data, error } = await withTimeout(client().auth.getSession(), 8000);
+        if (error) throw error;
+        return await resolveAuthenticatedState(data?.session || null);
+      } catch (error) {
+        setState({ status: "error", session: null, user: null, profile: null, entitlement: null, error });
+        return state;
+      }
+    })().finally(() => { initialization = null; });
+
+    return initialization;
   }
 
   async function getSession() {
-    if (!isConfigured()) return { session: null, error: new Error("Supabase is not configured.") };
-
-    try {
-      const { data, error } = await withTimeout(
-        client().auth.getSession(),
-        3000,
-        "Session read timed out."
-      );
-      return { session: data?.session || readStoredSession(), error };
-    } catch (err) {
-      console.warn("[MathComplete Lab] Falling back to stored session.", err);
-      return { session: readStoredSession(), error: null };
-    }
+    if (state.status === "loading") await initialize();
+    return { session: state.session, error: state.status === "error" ? state.error : null };
   }
 
   async function getUser() {
-    if (!isConfigured()) return { user: null, error: new Error("Supabase is not configured.") };
-
-    try {
-      const { data, error } = await withTimeout(
-        client().auth.getUser(),
-        3000,
-        "User read timed out."
-      );
-      return { user: data?.user || readStoredSession()?.user || null, error };
-    } catch (err) {
-      console.warn("[MathComplete Lab] Falling back to stored user.", err);
-      return { user: readStoredSession()?.user || null, error: null };
-    }
+    if (state.status === "loading") await initialize();
+    return { user: state.user, error: state.status === "error" ? state.error : null };
   }
 
-  async function signIn(email, password, options = {}) {
+  async function signInWithPassword(email, password, options = {}) {
     if (!isConfigured()) throw new Error("Supabase is not configured.");
-    if (Object.prototype.hasOwnProperty.call(options, "remember")) {
-      setAuthPersistence(Boolean(options.remember));
-    }
-    let data;
-    let error;
-
-    try {
-      const result = await withTimeout(
-        client().auth.signInWithPassword({ email, password }),
-        10000,
-        "Sign in timed out."
-      );
-      data = result.data;
-      error = result.error;
-    } catch (err) {
-      if (!/timed out/i.test(err.message || "")) throw err;
-      data = await signInWithPasswordRest(email, password);
-    }
-
+    window.MCL.setAuthPersistence(options.remember ? "local" : "session");
+    const { data, error } = await withTimeout(client().auth.signInWithPassword({
+      email: String(email || "").trim(),
+      password: String(password || ""),
+      options: options.captchaToken ? { captchaToken: options.captchaToken } : undefined
+    }), 12000);
     if (error) throw error;
-
-    if (data?.user) {
-      ensureOwnProfile(data.user).catch(err => {
-        console.warn("[MathComplete Lab] Could not ensure profile after sign in.", err);
-      });
-    }
-
+    await resolveAuthenticatedState(data?.session || null, "SIGNED_IN");
     return data;
   }
 
-  async function signInWithPasswordRest(email, password) {
-    const response = await withTimeout(
-      fetch(`${window.MCL.supabaseConfig.url}/auth/v1/token?grant_type=password`, {
-        method: "POST",
-        headers: {
-          apikey: window.MCL.supabaseConfig.key,
-          Authorization: `Bearer ${window.MCL.supabaseConfig.key}`,
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          email,
-          password,
-          gotrue_meta_security: {}
-        })
-      }),
-      10000,
-      "Sign in timed out. Check your network and Supabase settings."
-    );
-
-    const payload = await response.json().catch(() => ({}));
-
-    if (!response.ok) {
-      throw new Error(payload.msg || payload.message || "Could not sign in.");
-    }
-
-    if (!payload.access_token || !payload.refresh_token) {
-      throw new Error("Sign in succeeded, but Supabase did not return a session.");
-    }
-
-    const session = normalizeSession(payload);
-
-    try {
-      const { data, error } = await withTimeout(
-        client().auth.setSession({
-          access_token: session.access_token,
-          refresh_token: session.refresh_token
-        }),
-        3000,
-        "SDK session store timed out."
-      );
-
-      if (error) throw error;
-      return data;
-    } catch (err) {
-      console.warn("[MathComplete Lab] Supabase SDK could not store session; using local storage fallback.", err);
-      saveStoredSession(session);
-      return { session, user: session.user };
-    }
-  }
-
-  async function signUp(email, password, displayName = "") {
-    if (!isConfigured()) throw new Error("Supabase is not configured.");
-    setAuthPersistence(false);
-    const { data, error } = await withTimeout(
-      client().auth.signUp({
-        email,
-        password,
-        options: {
-          data: {
-            display_name: displayName
-          },
-          emailRedirectTo: publicBaseUrl() + "login.html"
-        }
-      }),
-      10000,
-      "Sign up timed out. Check your network and Supabase settings."
-    );
-    if (error) throw error;
-
-    if (data?.user && data?.session) {
-      await upsertOwnProfile({
-        id: data.user.id,
-        email: data.user.email,
-        display_name: displayName || data.user.email?.split("@")[0] || "",
-        plan: "free"
-      });
-    }
-
-    return data;
-  }
-
-  async function signOut() {
-    if (!isConfigured()) return;
-    clearStoredSession();
-
-    const { error } = await withTimeout(
-      client().auth.signOut({ scope: "local" }),
-      5000,
-      "Sign out timed out."
-    );
-
-    if (error) throw error;
-  }
-
-  async function sendPasswordReset(email) {
-    if (!isConfigured()) throw new Error("Supabase is not configured.");
-    const { data, error } = await client().auth.resetPasswordForEmail(email, {
-      redirectTo: publicBaseUrl() + "login.html"
+  async function signInWithGoogle(options = {}) {
+    window.MCL.setAuthPersistence(options.remember ? "local" : "session");
+    rememberReturnTo(options.returnTo || "practice.html");
+    const redirectTo = `${pageUrl("auth-callback.html")}?mode=oauth`;
+    const { data, error } = await client().auth.signInWithOAuth({
+      provider: "google",
+      options: { redirectTo, queryParams: { prompt: options.prompt || "select_account" } }
     });
     if (error) throw error;
     return data;
   }
 
+  async function signUp(email, password, displayName = "", options = {}) {
+    validatePassword(password);
+    window.MCL.setAuthPersistence("session");
+    const acceptedAt = new Date().toISOString();
+    const metadata = {
+      display_name: String(displayName || "").trim(),
+      age_confirmed: Boolean(options.ageConfirmed),
+      terms_version: window.MCL.appConfig?.termsVersion,
+      privacy_version: window.MCL.appConfig?.privacyVersion,
+      consent_accepted_at: acceptedAt
+    };
+    const { data, error } = await withTimeout(client().auth.signUp({
+      email: String(email || "").trim(),
+      password,
+      options: {
+        data: metadata,
+        emailRedirectTo: `${pageUrl("auth-callback.html")}?mode=verify`,
+        ...(options.captchaToken ? { captchaToken: options.captchaToken } : {})
+      }
+    }), 12000);
+    if (error) throw error;
+    if (data?.session) await resolveAuthenticatedState(data.session, "SIGNED_IN");
+    return data;
+  }
+
+  async function resendConfirmation(email, captchaToken = "") {
+    const { data, error } = await client().auth.resend({
+      type: "signup",
+      email: String(email || "").trim(),
+      options: {
+        emailRedirectTo: `${pageUrl("auth-callback.html")}?mode=verify`,
+        ...(captchaToken ? { captchaToken } : {})
+      }
+    });
+    if (error) throw error;
+    return data;
+  }
+
+  async function requestPasswordReset(email, captchaToken = "") {
+    const { data, error } = await client().auth.resetPasswordForEmail(String(email || "").trim(), {
+      redirectTo: `${pageUrl("auth-callback.html")}?mode=recovery`,
+      ...(captchaToken ? { captchaToken } : {})
+    });
+    if (error) throw error;
+    return data;
+  }
+
+  async function completeAuthCallback(url = location.href) {
+    const callbackUrl = new URL(url);
+    const code = callbackUrl.searchParams.get("code");
+    const mode = callbackUrl.searchParams.get("mode") || "oauth";
+    if (!code) throw Object.assign(new Error("The authentication link is invalid or expired."), { code: "missing_auth_code" });
+    const { data, error } = await client().auth.exchangeCodeForSession(code);
+    if (error) throw error;
+    if (mode === "recovery") recoveryEventSeen = true;
+    await resolveAuthenticatedState(data?.session || null, mode === "recovery" ? "PASSWORD_RECOVERY" : "SIGNED_IN");
+    return { ...data, mode, state };
+  }
+
   async function updatePassword(newPassword) {
-    if (!isConfigured()) throw new Error("Supabase is not configured.");
+    validatePassword(newPassword);
     const { data, error } = await client().auth.updateUser({ password: newPassword });
+    if (error) throw error;
+    recoveryEventSeen = false;
+    await initialize(true);
+    return data;
+  }
+
+  async function updateEmail(email) {
+    const { data, error } = await client().auth.updateUser({ email: String(email || "").trim() });
+    if (error) throw error;
+    return data;
+  }
+
+  async function updateProfile(displayName) {
+    if (!state.user?.id) throw new Error("You must be signed in.");
+    const { data, error } = await client().from("profiles")
+      .update({ display_name: String(displayName || "").trim() })
+      .eq("id", state.user.id)
+      .select("id,email,display_name,created_at,updated_at")
+      .single();
+    if (error) throw error;
+    setState({ profile: data });
+    return data;
+  }
+
+  async function getConsent() {
+    if (!state.user?.id) return null;
+    const { data, error } = await client().from("user_consents")
+      .select("terms_version,privacy_version,age_confirmed,accepted_at")
+      .eq("user_id", state.user.id)
+      .maybeSingle();
+    if (error && !String(error.message || "").includes("user_consents")) throw error;
+    return data || null;
+  }
+
+  async function acceptConsents() {
+    if (!state.user?.id) throw new Error("You must be signed in.");
+    const { data, error } = await client().rpc("accept_current_consents", {
+      p_terms_version: window.MCL.appConfig?.termsVersion,
+      p_privacy_version: window.MCL.appConfig?.privacyVersion,
+      p_age_confirmed: true
+    });
     if (error) throw error;
     return data;
   }
 
   async function getOwnProfile() {
-    if (!isConfigured()) return { profile: null, error: new Error("Supabase is not configured.") };
-
-    const { user, error: userError } = await getUser();
-    if (userError || !user) return { profile: null, error: userError || null };
-
-    const { data, error } = await client()
-      .from("profiles")
-      .select("id,email,display_name,plan,created_at,updated_at")
-      .eq("id", user.id)
-      .maybeSingle();
-
-    return { profile: data || null, error };
+    if (state.status === "loading") await initialize();
+    return { profile: state.profile, entitlement: state.entitlement, error: state.error };
   }
 
-  async function ensureOwnProfile(user) {
-    if (!isConfigured() || !user?.id) return { profile: null, error: null };
+  async function listFactors() {
+    const { data, error } = await client().auth.mfa.listFactors();
+    if (error) throw error;
+    return data;
+  }
 
-    const { data: existing, error: readError } = await client()
-      .from("profiles")
-      .select("id")
-      .eq("id", user.id)
-      .maybeSingle();
+  async function enrollTotp(friendlyName = "MathComplete Lab") {
+    const { data, error } = await client().auth.mfa.enroll({ factorType: "totp", friendlyName, issuer: "MathComplete Lab" });
+    if (error) throw error;
+    return data;
+  }
 
-    if (readError) throw readError;
-    if (existing?.id) return { profile: existing, error: null };
+  async function verifyTotp(factorId, code) {
+    const { data, error } = await client().auth.mfa.challengeAndVerify({ factorId, code: String(code || "").trim() });
+    if (error) throw error;
+    await initialize(true);
+    return data;
+  }
 
-    const displayName = user.user_metadata?.display_name || user.email?.split("@")[0] || "";
-    return upsertOwnProfile({
-      id: user.id,
-      email: user.email,
-      display_name: displayName,
-      plan: "free"
+  async function unenrollFactor(factorId) {
+    const { data, error } = await client().auth.mfa.unenroll({ factorId });
+    if (error) throw error;
+    await initialize(true);
+    return data;
+  }
+
+  async function verifyMfaChallenge(code, factorId = "") {
+    const factors = await listFactors();
+    const factor = factorId
+      ? (factors?.totp || []).find(item => item.id === factorId)
+      : (factors?.totp || []).find(item => item.status === "verified");
+    if (!factor) throw new Error("No verified authenticator was found.");
+    return verifyTotp(factor.id, code);
+  }
+
+  async function linkGoogleIdentity() {
+    rememberReturnTo("account.html?linked=google");
+    const { data, error } = await client().auth.linkIdentity({
+      provider: "google",
+      options: { redirectTo: `${pageUrl("auth-callback.html")}?mode=oauth` }
+    });
+    if (error) throw error;
+    return data;
+  }
+
+  async function unlinkIdentity(identity) {
+    const { data, error } = await client().auth.unlinkIdentity(identity);
+    if (error) throw error;
+    await initialize(true);
+    return data;
+  }
+
+  async function reauthenticateWithPassword(password) {
+    if (!state.user?.email) throw new Error("Email sign-in is not available for this account.");
+    const data = await signInWithPassword(state.user.email, password, {
+      remember: window.MCL.getAuthPersistence?.() === "local"
+    });
+    sessionStorage.setItem(recentReauthKey, String(Date.now()));
+    return data;
+  }
+
+  async function reauthenticateWithGoogle(returnTo = "account.html?action=delete") {
+    sessionStorage.setItem(recentReauthKey, String(Date.now()));
+    return signInWithGoogle({
+      remember: window.MCL.getAuthPersistence?.() === "local",
+      returnTo,
+      prompt: "select_account"
     });
   }
 
-  async function upsertOwnProfile(profile) {
-    if (!isConfigured()) return { profile: null, error: new Error("Supabase is not configured.") };
-    const { data, error } = await client()
-      .from("profiles")
-      .upsert(profile, { onConflict: "id" })
-      .select()
-      .single();
+  function hasRecentReauthentication(maxAgeMs = 10 * 60 * 1000) {
+    return Date.now() - Number(sessionStorage.getItem(recentReauthKey) || 0) <= maxAgeMs;
+  }
 
+  async function invokeAccountSecurity(action, payload = {}) {
+    const { data, error } = await client().functions.invoke("account-security", {
+      body: { action, ...payload }
+    });
     if (error) throw error;
-    return { profile: data, error: null };
+    if (data?.error) throw new Error(data.error);
+    return data;
+  }
+
+  async function signOut(scope = "local") {
+    if (!isConfigured()) return;
+    const safeScope = ["local", "global", "others"].includes(scope) ? scope : "local";
+    const { error } = await withTimeout(client().auth.signOut({ scope: safeScope }), 8000);
+    if (error) throw error;
+    if (safeScope !== "others") {
+      window.MCL.clearAuthStorage?.();
+      setState({ status: "anonymous", session: null, user: null, profile: null, entitlement: null, error: null });
+    }
   }
 
   function onAuthStateChange(callback) {
     if (!isConfigured()) return { data: { subscription: { unsubscribe() {} } } };
-    return client().auth.onAuthStateChange(callback);
+    return client().auth.onAuthStateChange((event, session) => {
+      if (event === "PASSWORD_RECOVERY") recoveryEventSeen = true;
+      window.setTimeout(() => {
+        resolveAuthenticatedState(session, event).catch(error => {
+          setState({ status: "error", error });
+        });
+      }, 0);
+      callback?.(event, session);
+    });
   }
 
   window.MCLAuth = {
     isConfigured,
     publicBaseUrl,
-    getCachedSession: readStoredSession,
-    setAuthPersistence,
+    pageUrl,
+    safeReturnTo,
+    rememberReturnTo,
+    consumeReturnTo,
+    getState,
+    subscribe,
+    initialize,
     getSession,
     getUser,
-    signIn,
+    getCachedSession: () => state.session,
+    signInWithPassword,
+    signIn: signInWithPassword,
+    signInWithGoogle,
     signUp,
-    signOut,
-    sendPasswordReset,
+    resendConfirmation,
+    requestPasswordReset,
+    sendPasswordReset: requestPasswordReset,
+    completeAuthCallback,
     updatePassword,
+    updateEmail,
+    updateProfile,
+    getConsent,
+    acceptConsents,
     getOwnProfile,
-    ensureOwnProfile,
-    upsertOwnProfile,
-    onAuthStateChange
+    ensureOwnProfile: async () => getOwnProfile(),
+    upsertOwnProfile: async profile => updateProfile(profile?.display_name || ""),
+    listFactors,
+    enrollTotp,
+    verifyTotp,
+    verifyMfaChallenge,
+    unenrollFactor,
+    linkGoogleIdentity,
+    unlinkIdentity,
+    reauthenticateWithPassword,
+    reauthenticateWithGoogle,
+    hasRecentReauthentication,
+    invokeAccountSecurity,
+    signOut,
+    onAuthStateChange,
+    formatError,
+    validatePassword,
+    minimumPasswordLength
   };
+
+  onAuthStateChange();
+  initialize();
 })();

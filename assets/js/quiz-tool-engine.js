@@ -257,7 +257,8 @@
       plain: question.plain || question.main,
       answer: normalizeAnswer(question.answer),
       lines: question.lines || [],
-      distractors: question.distractors || []
+      distractors: question.distractors || [],
+      suggestion: question.suggestion || ""
     };
     q.options = makeOptions(q, Number(elements.optionCount.value || 4));
     return q;
@@ -341,10 +342,40 @@
     const candidates = forcedType ? builders.filter(fn => fn.__type === forcedType) : builders;
     const pool = candidates.length ? candidates : builders;
     for (let i = 0; i < 80; i++) {
-      const q = finalizeQuestion(choice(pool)(helpers));
+      const raw = choice(pool)(helpers);
+      raw.difficulty = raw.difficulty || real;
+      const q = finalizeQuestion(raw);
+      const expectedOptions = Number(elements.optionCount.value || 4);
+      if (q.options.length !== expectedOptions) continue;
+      if (typeof config.validateQuestion === "function" && !config.validateQuestion(q, helpers)) continue;
       if (!forcedType || q.type === forcedType) return q;
     }
-    return finalizeQuestion(pool[0](helpers));
+    const fallback = pool[0](helpers);
+    fallback.difficulty = fallback.difficulty || real;
+    return finalizeQuestion(fallback);
+  }
+
+  function buildQuestionSet(count, difficulty) {
+    let difficulties = Array.from({ length: count }, () => difficulty);
+    if (difficulty === "mixed" && config.balancedMixed) {
+      difficulties = Array.from({ length: count }, (_, index) => DIFFICULTIES[index % DIFFICULTIES.length]);
+      for (let start = 0; start < difficulties.length; start += DIFFICULTIES.length) {
+        const block = shuffle(difficulties.slice(start, start + DIFFICULTIES.length));
+        block.forEach((value, offset) => { difficulties[start + offset] = value; });
+      }
+    }
+
+    const questions = [];
+    difficulties.forEach(level => {
+      let question = generateQuestion(level);
+      if (config.avoidConsecutiveTypes && questions.length && question.type === questions.at(-1).type) {
+        for (let attempt = 0; attempt < 20 && question.type === questions.at(-1).type; attempt++) {
+          question = generateQuestion(level);
+        }
+      }
+      questions.push(question);
+    });
+    return questions;
   }
 
   function isTextQuestion(latex) {
@@ -523,6 +554,10 @@
       options: optionPayload(q, selected),
       correctOptionLabel: optionLabelFrom(q, q.answer),
       selectedOptionLabel: selected ? optionLabelFrom(q, selected) : "",
+      questionLatex: q.main,
+      questionText: q.plain,
+      difficulty: q.difficulty,
+      suggestion: q.suggestion,
       isCorrect,
       timeUp
     });
@@ -547,7 +582,7 @@
     } else {
       button.classList.add("wrong");
       renderFeedback(false, correctDisplay, false);
-      wrongAnswers.push({ main: q.plain, answer: correctDisplay, selected: selectedDisplay, type: q.type, difficulty: q.difficulty });
+      wrongAnswers.push({ main: q.plain, answer: correctDisplay, selected: selectedDisplay, type: q.type, difficulty: q.difficulty, suggestion: q.suggestion });
     }
     recordAttempt(q, correctDisplay, selectedDisplay, isCorrect, false, selected);
     renderSolutionBox();
@@ -566,7 +601,7 @@
       if (btn.dataset.answerKey === answerKey(q.answer)) btn.classList.add("correct");
     });
     renderFeedback(false, correctDisplay, true);
-    wrongAnswers.push({ main: q.plain, answer: correctDisplay, selected: null, timeUp: true, type: q.type, difficulty: q.difficulty });
+    wrongAnswers.push({ main: q.plain, answer: correctDisplay, selected: null, timeUp: true, type: q.type, difficulty: q.difficulty, suggestion: q.suggestion });
     recordAttempt(q, correctDisplay, "", false, true, null);
     renderSolutionBox();
     elements.nextBtn.disabled = false;
@@ -605,7 +640,7 @@
     wrongAnswers.forEach((w, index) => {
       const item = document.createElement("div");
       item.className = "wrong-item";
-      item.innerHTML = `<div class="expr">${index + 1}. ${mathSpan(w.main, "wrong-math")}</div><p><span class="tag-bad">${escapeHtml(tr().yourAnswer)}:</span> ${w.timeUp ? escapeHtml(tr().timeUpAnswer) : mathSpan(w.selected, "wrong-math")}</p><p><span class="tag-good">${escapeHtml(tr().correctAnswer)}:</span> ${mathSpan(w.answer, "wrong-math")}</p>`;
+      item.innerHTML = `<div class="expr">${index + 1}. ${mathSpan(w.main, "wrong-math")}</div><p><span class="tag-bad">${escapeHtml(tr().yourAnswer)}:</span> ${w.timeUp ? escapeHtml(tr().timeUpAnswer) : mathSpan(w.selected, "wrong-math")}</p><p><span class="tag-good">${escapeHtml(tr().correctAnswer)}:</span> ${mathSpan(w.answer, "wrong-math")}</p>${w.suggestion ? `<p>${escapeHtml(w.suggestion)}</p>` : ""}`;
       elements.wrongList.appendChild(item);
       renderTaggedMath(item);
     });
@@ -615,7 +650,7 @@
     const count = Math.max(1, Math.min(100, Number(elements.questionCount.value || 10)));
     elements.questionCount.value = count;
     lastDifficulty = elements.difficulty.value || "medium";
-    quiz = Array.from({ length: count }, () => generateQuestion(lastDifficulty));
+    quiz = buildQuestionSet(count, lastDifficulty);
     currentIndex = 0;
     correctCount = 0;
     wrongAnswers = [];

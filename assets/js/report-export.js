@@ -44,6 +44,7 @@
           yourAnswer: "你的答案",
           correctAnswer: "正确答案",
           selectedTag: "你的选择",
+          suggestion: "复习建议",
           correctOptionTag: "正确选项",
           result: "结果",
           correctTag: "正确",
@@ -76,6 +77,7 @@
           yourAnswer: "Your answer",
           correctAnswer: "Correct answer",
           selectedTag: "Your choice",
+          suggestion: "Review suggestion",
           correctOptionTag: "Correct choice",
           result: "Result",
           correctTag: "Correct",
@@ -318,7 +320,8 @@
       answeredAt: payload.answeredAt || new Date().toISOString(),
       timeSpentSeconds: Number.isFinite(Number(payload.timeSpentSeconds ?? payload.time_spent_seconds))
         ? Math.max(0, Math.round(Number(payload.timeSpentSeconds ?? payload.time_spent_seconds)))
-        : null
+        : null,
+      suggestion: safe(payload.suggestion || question.suggestion || "")
     };
   }
 
@@ -509,6 +512,7 @@
         ${optionsHtml(item, t)}
         <div><strong>${escapeHtml(t.yourAnswer)}:</strong> ${renderMath(item.selectedAnswerLatex)}</div>
         <div><strong>${escapeHtml(t.correctAnswer)}:</strong> ${renderMath(item.correctAnswerLatex)}</div>
+        ${item.suggestion ? `<div><strong>${escapeHtml(t.suggestion)}:</strong> ${escapeHtml(item.suggestion)}</div>` : ""}
       </div>
     </article>`;
   }

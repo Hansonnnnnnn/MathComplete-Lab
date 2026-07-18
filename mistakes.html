@@ -3,6 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; font-src 'self' data: https://cdn.jsdelivr.net; img-src 'self' data: blob:; connect-src 'self' https://hcrxxfcvmrjahnjlbjur.supabase.co wss://hcrxxfcvmrjahnjlbjur.supabase.co https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; object-src 'none'; base-uri 'self'; form-action 'self'">
+  <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=()">
   <title>Mistake Book | MathComplete Lab</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
   <link rel="stylesheet" href="assets/css/auth.css" />
@@ -265,9 +267,9 @@
     <p class="lead" data-i18n="lead">Filter your missed questions by tool, course, difficulty, and status. Mark items mastered when you are done reviewing them.</p>
 
     <section id="signedOutCard" class="card mcl-hidden">
-      <h2 data-i18n="signedOutTitle">Sign in to view your mistake book.</h2>
-      <p class="empty" data-i18n="signedOutLead">Mistakes are saved to your MathComplete Lab account.</p>
-      <p style="margin-top:18px;"><a class="button primary" href="login.html" data-i18n="goLogin">Go to Login</a></p>
+      <h2 data-i18n="signedOutTitle">Local guest mistake book</h2>
+      <p class="empty" data-i18n="signedOutLead">These mistakes are stored only in this browser. Sign in to sync and keep them across devices.</p>
+      <p style="margin-top:18px;"><a class="button primary" href="login.html" data-i18n="goLogin">Sign in to sync</a></p>
     </section>
 
     <section id="mistakeCard" class="card mcl-hidden">
@@ -281,7 +283,7 @@
     </section>
   </main>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.106.2"></script>
   <script src="assets/js/supabase-client.js"></script>
   <script src="assets/js/auth.js"></script>
   <script src="assets/js/auth-ui.js"></script>
@@ -298,9 +300,9 @@
         badge: "Mistake book",
         title: "Review active mistakes.",
         lead: "Filter your missed questions by tool, course, difficulty, and status. Mark items mastered when you are done reviewing them.",
-        signedOutTitle: "Sign in to view your mistake book.",
-        signedOutLead: "Mistakes are saved to your MathComplete Lab account.",
-        goLogin: "Go to Login",
+        signedOutTitle: "Local guest mistake book",
+        signedOutLead: "These mistakes are stored only in this browser. Sign in to sync and keep them across devices.",
+        goLogin: "Sign in to sync",
         statusFilter: "Status",
         gameFilter: "Tool",
         courseFilter: "Course",
@@ -326,9 +328,9 @@
         badge: "\u9519\u9898\u5e93",
         title: "\u56de\u987e\u5f53\u524d\u9519\u9898\u3002",
         lead: "\u6309\u5de5\u5177\u3001\u8bfe\u7a0b\u3001\u96be\u5ea6\u548c\u72b6\u6001\u7b5b\u9009\u9519\u9898\u3002\u638c\u63e1\u540e\u53ef\u4ee5\u6807\u8bb0\u4e3a\u5df2\u638c\u63e1\u3002",
-        signedOutTitle: "\u767b\u5f55\u540e\u67e5\u770b\u9519\u9898\u5e93\u3002",
-        signedOutLead: "\u9519\u9898\u4f1a\u4fdd\u5b58\u5230\u4f60\u7684 MathComplete Lab \u8d26\u53f7\u3002",
-        goLogin: "\u524d\u5f80\u767b\u5f55",
+        signedOutTitle: "\u672c\u673a\u8bbf\u5ba2\u9519\u9898\u5e93",
+        signedOutLead: "\u8fd9\u4e9b\u9519\u9898\u4ec5\u4fdd\u5b58\u5728\u5f53\u524d\u6d4f\u89c8\u5668\u4e2d\u3002\u767b\u5f55\u540e\u53ef\u4ee5\u540c\u6b65\u5e76\u8de8\u8bbe\u5907\u4fdd\u7559\u3002",
+        goLogin: "\u767b\u5f55\u5e76\u540c\u6b65",
         statusFilter: "\u72b6\u6001",
         gameFilter: "\u5de5\u5177",
         courseFilter: "\u8bfe\u7a0b",
@@ -480,7 +482,7 @@
       const { session } = await window.MCLAuth.getSession();
       if (!session?.user) {
         signedOutCard.classList.remove("mcl-hidden");
-        mistakeCard.classList.add("mcl-hidden");
+        mistakeCard.classList.toggle("mcl-hidden", localMistakes.length === 0);
         return;
       }
       signedOutCard.classList.add("mcl-hidden");

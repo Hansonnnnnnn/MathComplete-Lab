@@ -3,6 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; font-src 'self' data: https://cdn.jsdelivr.net; img-src 'self' data: blob:; connect-src 'self' https://hcrxxfcvmrjahnjlbjur.supabase.co wss://hcrxxfcvmrjahnjlbjur.supabase.co https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; object-src 'none'; base-uri 'self'; form-action 'self'">
+  <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=()">
   <title>Dashboard | MathComplete Lab</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
   <link rel="stylesheet" href="assets/css/auth.css" />
@@ -274,9 +276,9 @@
     </p>
 
     <section id="signedOutCard" class="card mcl-hidden">
-      <h2 data-i18n="signedOutTitle">Sign in to view your progress.</h2>
-      <p class="empty" data-i18n="signedOutLead">Your dashboard is connected to your MathComplete Lab account.</p>
-      <p style="margin-top:18px;"><a class="button primary" href="login.html" data-i18n="goLogin">Go to Login</a></p>
+      <h2 data-i18n="signedOutTitle">Local guest progress</h2>
+      <p class="empty" data-i18n="signedOutLead">These records are stored only in this browser. Sign in to sync them across devices.</p>
+      <p style="margin-top:18px;"><a class="button primary" href="login.html" data-i18n="goLogin">Sign in to sync</a></p>
     </section>
 
     <section id="dashboardCard" class="card mcl-hidden">
@@ -324,7 +326,7 @@
     </section>
   </main>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.106.2"></script>
   <script src="assets/js/supabase-client.js"></script>
   <script src="assets/js/auth.js"></script>
   <script src="assets/js/auth-ui.js"></script>
@@ -341,9 +343,9 @@
         badge: "Progress dashboard",
         title: "Your practice history.",
         lead: "Review your recent attempts, active mistakes, and overall accuracy.",
-        signedOutTitle: "Sign in to view your progress.",
-        signedOutLead: "Your dashboard is connected to your MathComplete Lab account.",
-        goLogin: "Go to Login",
+        signedOutTitle: "Local guest progress",
+        signedOutLead: "These records are stored only in this browser. Sign in to sync them across devices.",
+        goLogin: "Sign in to sync",
         syncGuest: "Sync local attempts",
         guestSync: n => `${n} local guest attempt${n === 1 ? "" : "s"} can be synced to this account.`,
         totalLabel: "Total attempts",
@@ -373,9 +375,9 @@
         badge: "学习记录",
         title: "你的练习历史。",
         lead: "查看最近答题记录、当前错题和整体正确率。",
-        signedOutTitle: "登录后查看学习记录。",
-        signedOutLead: "你的 dashboard 会连接到 MathComplete Lab 账号。",
-        goLogin: "前往登录",
+        signedOutTitle: "本机访客学习记录",
+        signedOutLead: "这些记录仅保存在当前浏览器中。登录后可以跨设备同步。",
+        goLogin: "登录并同步",
         syncGuest: "同步本地记录",
         guestSync: n => `有 ${n} 条本地游客练习记录可以同步到此账号。`,
         totalLabel: "总答题数",
@@ -517,7 +519,8 @@
       document.getElementById("mistakeNum").textContent = summary.activeMistakes;
 
       const guestCount = summary.guestAttempts.length;
-      guestSyncBox.classList.toggle("mcl-hidden", guestCount === 0);
+      const canSyncGuest = Boolean(window.MCLAuth?.getState?.()?.user);
+      guestSyncBox.classList.toggle("mcl-hidden", guestCount === 0 || !canSyncGuest);
       guestSyncText.textContent = tr("guestSync", guestCount);
 
       document.getElementById("byGameList").innerHTML = summary.byGame.length
@@ -575,7 +578,7 @@
 
       if (!session?.user) {
         signedOutCard.classList.remove("mcl-hidden");
-        dashboardCard.classList.add("mcl-hidden");
+        dashboardCard.classList.toggle("mcl-hidden", !localSummary?.total && !localSummary?.activeMistakes);
         return;
       }
 

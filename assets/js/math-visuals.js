@@ -180,6 +180,15 @@
       <path d="M50 10h36v24H50z" class="mcl-math-visual__secondary mcl-math-visual__soft" />
       <text x="29" y="28">x²</text><text x="60" y="28">3x</text><text x="28" y="50">2x</text><text x="63" y="50">6</text>
       <text x="93" y="38" class="mcl-math-visual__formula">∑</text>`,
+    "complex-number-operations": `
+      <path d="M10 34h100M60 61V7" class="mcl-math-visual__axis" />
+      <path d="M105 30l5 4-5 4M56 12l4-5 4 5" class="mcl-math-visual__axis" />
+      <path d="M60 34L91 17M60 34L91 51" class="mcl-math-visual__dash" />
+      <path d="M91 17V51" class="mcl-math-visual__secondary mcl-math-visual__dash" />
+      <circle cx="91" cy="17" r="4" class="mcl-math-visual__fill" />
+      <circle cx="91" cy="51" r="4" class="mcl-math-visual__secondary mcl-math-visual__fill" />
+      <text x="101" y="47">Re</text><text x="64" y="12">Im</text>
+      <text x="96" y="17" class="mcl-math-visual__label">z</text><text x="96" y="58" class="mcl-math-visual__label mcl-math-visual__secondary">z̄</text>`,
     "fraction-percent": `
       <circle cx="35" cy="34" r="24" />
       <path d="M35 34V10A24 24 0 0 1 59 34z" class="mcl-math-visual__secondary mcl-math-visual__soft" />

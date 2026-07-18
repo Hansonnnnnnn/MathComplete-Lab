@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; font-src 'self' data: https://cdn.jsdelivr.net; img-src 'self' data: blob:; connect-src 'self' https://hcrxxfcvmrjahnjlbjur.supabase.co wss://hcrxxfcvmrjahnjlbjur.supabase.co https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; object-src 'none'; base-uri 'self'; form-action 'self'">
+  <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=()">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <title>Account consent | MathComplete Lab</title>
+  <script src="./assets/js/theme.js?v=20260717.6"></script>
+  <link rel="stylesheet" href="./assets/css/design-system.css?v=20260717.6">
+  <link rel="stylesheet" href="./assets/css/auth.css?v=20260717.6">
+</head>
+<body>
+  <nav class="nav"></nav>
+  <main class="auth-simple-page"><section class="auth-simple-card">
+    <h1 data-copy="title">Before you continue</h1>
+    <p data-copy="lead">Confirm the account requirements for MathComplete Lab.</p>
+    <form id="consentForm">
+      <div class="auth-checks">
+        <label><input id="termsConsent" type="checkbox"><span><span data-copy="acceptTerms">I agree to the</span> <a href="terms.html" target="_blank" rel="noopener" data-copy="terms">Terms of Service</a>.</span></label>
+        <label><input id="privacyConsent" type="checkbox"><span><span data-copy="acceptPrivacy">I have read the</span> <a href="privacy.html" target="_blank" rel="noopener" data-copy="privacy">Privacy Policy</a>.</span></label>
+        <label><input id="ageConsent" type="checkbox"><span data-copy="age">I confirm that I am at least 13 years old.</span></label>
+      </div>
+      <button class="auth-primary-button" id="consentButton" type="submit" data-copy="continue">Continue</button>
+      <div class="auth-message" id="consentMessage" hidden></div>
+    </form>
+  </section></main>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.106.2"></script>
+  <script src="assets/js/supabase-client.js?v=20260717.6"></script>
+  <script src="assets/js/auth.js?v=20260717.6"></script>
+  <script src="assets/js/consent.js?v=20260717.6"></script>
+  <script src="assets/js/site-shell.js?v=20260717.6"></script>
+</body>
+</html>

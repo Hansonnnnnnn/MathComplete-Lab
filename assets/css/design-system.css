@@ -282,6 +282,113 @@ p { color: var(--mcl-text-soft); }
 
 .mcl-mobile-panel { display: none; }
 
+.mcl-account { position: relative; }
+
+.mcl-account__trigger {
+  min-height: 40px;
+  max-width: 190px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 3px 8px 3px 4px;
+  border: 1px solid var(--mcl-border);
+  border-radius: 8px;
+  color: var(--mcl-text);
+  background: var(--mcl-surface);
+  cursor: pointer;
+}
+
+.mcl-account__trigger:hover { background: var(--mcl-surface-muted); }
+.mcl-account__trigger svg { width: 15px; height: 15px; color: var(--mcl-text-faint); }
+
+.mcl-account__avatar {
+  width: 30px;
+  height: 30px;
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  border-radius: 7px;
+  color: var(--mcl-on-accent);
+  background: var(--mcl-accent);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.mcl-account__trigger-name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.mcl-account__popover {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  z-index: 130;
+  width: 260px;
+  padding: 8px;
+  border: 1px solid var(--mcl-border);
+  border-radius: 8px;
+  color: var(--mcl-text);
+  background: var(--mcl-surface-raised);
+  box-shadow: var(--mcl-shadow-md);
+}
+
+.mcl-account__identity { display: grid; gap: 2px; padding: 8px 10px 10px; border-bottom: 1px solid var(--mcl-border); }
+.mcl-account__identity strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 14px; }
+.mcl-account__identity span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--mcl-text-faint); font-size: 12px; }
+.mcl-account__sync { display: flex; align-items: center; gap: 7px; margin: 8px 6px; color: var(--mcl-text-soft); font-size: 12px; }
+.mcl-account__sync-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--mcl-good); }
+
+.mcl-account__popover a,
+.mcl-account__popover button {
+  width: 100%;
+  min-height: 38px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 7px 9px;
+  border: 0;
+  border-radius: 6px;
+  color: var(--mcl-text-soft);
+  background: transparent;
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.mcl-account__popover a:hover,
+.mcl-account__popover button:hover { color: var(--mcl-text); background: var(--mcl-surface-muted); }
+.mcl-account__popover svg { width: 17px; height: 17px; }
+.mcl-mobile-account { display: grid; gap: 4px; padding: 8px 0; border-top: 1px solid var(--mcl-border); border-bottom: 1px solid var(--mcl-border); }
+.mcl-mobile-account__identity { display: flex; align-items: center; gap: 9px; padding: 6px 12px; }
+.mcl-mobile-account__identity > span:last-child { min-width: 0; display: grid; }
+.mcl-mobile-account__identity strong, .mcl-mobile-account__identity small { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mcl-mobile-account__identity small { color: var(--mcl-text-faint); }
+.mcl-mobile-account button { justify-content: flex-start; width: 100%; }
+
+.mcl-merge-dialog {
+  width: min(470px, calc(100% - 28px));
+  padding: 0;
+  border: 1px solid var(--mcl-border);
+  border-radius: 8px;
+  color: var(--mcl-text);
+  background: var(--mcl-surface-raised);
+  box-shadow: var(--mcl-shadow-md);
+}
+.mcl-merge-dialog::backdrop { background: rgba(5, 13, 26, 0.58); }
+.mcl-merge-dialog form { padding: 24px; }
+.mcl-merge-dialog h2 { margin: 0 0 8px; font-size: 22px !important; }
+.mcl-merge-dialog p { margin: 0 0 18px; }
+.mcl-merge-dialog__actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.mcl-merge-dialog__actions .button { min-height: 42px !important; }
+.mcl-merge-dialog__status { margin: 12px 0 0 !important; font-size: 13px; }
+
 /* Shared page layout */
 .container,
 .mcl-page,
@@ -1226,7 +1333,7 @@ body.mcl-tool-page main.container > header::after {
   .mcl-app-header__inner { width: min(100% - 24px, var(--mcl-container)); gap: 10px; }
   .mcl-app-brand__mark { width: 32px; height: 32px; }
   .mcl-app-brand__name { max-width: 170px; overflow: hidden; text-overflow: ellipsis; }
-  .mcl-app-nav, .mcl-app-actions > .mcl-language-switch, .mcl-app-actions > .mcl-account-link { display: none; }
+  .mcl-app-nav, .mcl-app-actions > .mcl-language-switch, .mcl-app-actions > .mcl-account-link, .mcl-app-actions > .mcl-account { display: none; }
   .mcl-app-actions { margin-left: auto; padding-left: 0; border-left: 0; }
   .mcl-menu-button { display: inline-flex; }
   .mcl-mobile-panel {

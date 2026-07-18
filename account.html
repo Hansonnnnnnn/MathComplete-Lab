@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; font-src 'self' data: https://cdn.jsdelivr.net; img-src 'self' data: blob:; connect-src 'self' https://hcrxxfcvmrjahnjlbjur.supabase.co wss://hcrxxfcvmrjahnjlbjur.supabase.co https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; object-src 'none'; base-uri 'self'; form-action 'self'">
+  <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=()">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <meta name="color-scheme" content="light dark">
+  <title>Account settings | MathComplete Lab</title>
+  <script src="./assets/js/theme.js?v=20260717.6"></script>
+  <link rel="stylesheet" href="./assets/css/design-system.css?v=20260717.6">
+  <link rel="stylesheet" href="./assets/css/auth.css?v=20260717.6">
+  <script defer src="https://cdn.jsdelivr.net/npm/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+</head>
+<body>
+  <nav class="nav"></nav>
+  <main class="account-page" id="accountPage" hidden>
+    <header class="account-heading"><h1 data-copy="title">Account settings</h1><p data-copy="lead">Manage your profile, sign-in methods, security, and personal data.</p></header>
+    <div class="account-grid">
+      <nav class="account-nav" aria-label="Account sections">
+        <a href="#profile" data-copy="profile">Profile</a><a href="#security" data-copy="security">Security</a><a href="#sessions" data-copy="sessions">Sessions</a><a href="#data" data-copy="data">Your data</a>
+      </nav>
+      <div class="account-content">
+        <section class="account-section" id="profile">
+          <h2 data-copy="profile">Profile</h2><p data-copy="profileLead">Choose how your name appears and manage your verified email.</p>
+          <form id="profileForm"><div class="auth-field"><label for="displayName" data-copy="displayName">Display name</label><input id="displayName" autocomplete="name" maxlength="80"></div><button class="auth-primary-button" type="submit" data-copy="saveName">Save display name</button><div class="auth-message" id="profileMessage" hidden></div></form>
+          <form id="emailForm" class="account-row"><div class="account-row__copy"><strong data-copy="email">Email address</strong><span id="currentEmail"></span></div><div class="account-inline-actions"><input id="newEmail" class="account-compact-input" type="email" autocomplete="email" aria-label="New email"><button class="auth-secondary-button" type="submit" data-copy="changeEmail">Change email</button></div><div class="auth-message" id="emailMessage" hidden></div></form>
+          <div class="account-row"><div class="account-row__copy"><strong data-copy="plan">Account plan</strong><span data-copy="planLead">Entitlements are managed securely by MathComplete Lab.</span></div><strong id="accountPlan">Free</strong></div>
+        </section>
+
+        <section class="account-section" id="security">
+          <h2 data-copy="security">Security</h2><p data-copy="securityLead">Use a strong password and optionally protect your account with an authenticator app.</p>
+          <form id="passwordForm"><div class="auth-field"><label for="accountPassword" data-copy="newPassword">New password</label><input id="accountPassword" type="password" autocomplete="new-password" minlength="12"></div><div class="auth-field"><label for="accountPasswordConfirm" data-copy="confirmPassword">Confirm new password</label><input id="accountPasswordConfirm" type="password" autocomplete="new-password" minlength="12"></div><button class="auth-secondary-button" type="submit" data-copy="updatePassword">Update password</button><div class="auth-message" id="passwordMessage" hidden></div></form>
+          <div class="account-row"><div class="account-row__copy"><strong data-copy="google">Google sign-in</strong><span id="googleIdentityStatus"></span></div><div class="account-inline-actions"><button class="auth-secondary-button" id="linkGoogleButton" type="button" data-copy="linkGoogle">Link Google</button><button class="auth-secondary-button" id="unlinkGoogleButton" type="button" data-copy="unlinkGoogle" hidden>Unlink Google</button></div></div>
+          <div class="account-row"><div class="account-row__copy"><strong data-copy="mfa">Authenticator app</strong><span id="mfaStatus"></span></div><button class="auth-secondary-button" id="enrollMfaButton" type="button" data-copy="enableMfa">Enable authenticator</button></div>
+          <div id="mfaEnrollPanel" hidden>
+            <p data-copy="mfaInstructions">Scan this QR code with an authenticator app, then enter the six-digit code.</p>
+            <img class="account-qr" id="mfaQr" alt="Authenticator QR code"><p><code id="mfaSecret"></code></p>
+            <div class="auth-field"><label for="mfaEnrollCode" data-copy="verificationCode">Verification code</label><input id="mfaEnrollCode" inputmode="numeric" autocomplete="one-time-code" maxlength="6"></div>
+            <button class="auth-primary-button" id="verifyMfaButton" type="button" data-copy="verifyEnable">Verify and enable</button>
+          </div>
+          <div id="recoveryCodesPanel" hidden><p><strong data-copy="saveCodes">Save these recovery codes now. Each code can be used once.</strong></p><div class="account-recovery-codes" id="recoveryCodes"></div><button class="auth-secondary-button" id="downloadCodesButton" type="button" data-copy="downloadCodes">Download codes</button></div>
+          <div class="auth-message" id="securityMessage" hidden></div>
+        </section>
+
+        <section class="account-section" id="sessions">
+          <h2 data-copy="sessions">Sessions</h2><p data-copy="sessionsLead">Control where your account remains signed in.</p>
+          <div class="account-row"><div class="account-row__copy"><strong data-copy="otherDevices">Other devices</strong><span data-copy="otherDevicesLead">Keep this device signed in and revoke other sessions.</span></div><button class="auth-secondary-button" id="signOutOthersButton" type="button" data-copy="signOutOthers">Sign out other devices</button></div>
+          <div class="account-row"><div class="account-row__copy"><strong data-copy="allDevices">All devices</strong><span data-copy="allDevicesLead">End every session, including this one.</span></div><button class="auth-secondary-button" id="signOutAllButton" type="button" data-copy="signOutAll">Sign out everywhere</button></div>
+          <div class="auth-message" id="sessionMessage" hidden></div>
+        </section>
+
+        <section class="account-section" id="data">
+          <h2 data-copy="data">Your data</h2><p data-copy="dataLead">Download a JSON copy of your profile, attempts, mistakes, favorites, and consent record.</p>
+          <button class="auth-secondary-button" id="exportButton" type="button" data-copy="export">Download my data</button><div class="auth-message" id="dataMessage" hidden></div>
+        </section>
+
+        <section class="account-section account-section--danger" id="delete">
+          <h2 data-copy="deleteTitle">Delete account</h2><p data-copy="deleteLead">This immediately and permanently removes your account and cloud learning records.</p>
+          <div id="reauthPanel"><div class="auth-field" id="reauthPasswordField"><label for="reauthPassword" data-copy="currentPassword">Current password</label><input id="reauthPassword" type="password" autocomplete="current-password"></div><div class="account-inline-actions"><button class="auth-secondary-button" id="reauthPasswordButton" type="button" data-copy="reauthPassword">Verify with password</button><button class="auth-secondary-button" id="reauthGoogleButton" type="button" data-copy="reauthGoogle">Verify with Google</button></div></div>
+          <div class="auth-field"><label for="deleteConfirmation" data-copy="typeDelete">Type DELETE to confirm</label><input id="deleteConfirmation" autocomplete="off"></div>
+          <button class="auth-danger-button" id="deleteAccountButton" type="button" data-copy="deleteButton">Permanently delete account</button>
+          <div class="auth-message" id="deleteMessage" hidden></div>
+        </section>
+      </div>
+    </div>
+  </main>
+  <main class="auth-simple-page" id="accountLoading"><section class="auth-simple-card"><p data-copy="loading">Loading account...</p></section></main>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.106.2"></script>
+  <script src="assets/js/supabase-client.js?v=20260717.6"></script>
+  <script src="assets/js/auth.js?v=20260717.6"></script>
+  <script src="assets/js/auth-ui.js?v=20260717.6"></script>
+  <script src="assets/js/progress.js?v=20260717.6"></script>
+  <script src="assets/js/account-page.js?v=20260717.6"></script>
+  <script src="assets/js/site-shell.js?v=20260717.6"></script>
+</body>
+</html>

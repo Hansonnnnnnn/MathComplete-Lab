@@ -42,6 +42,7 @@
     qTitle: $("questionTitle"),
     qExtra: $("questionExtra"),
     qMain: $("questionMain"),
+    qVisual: $("questionVisual"),
     options: $("options"),
     feedback: $("feedback"),
     solutionBox: $("solutionBox"),
@@ -258,7 +259,9 @@
       answer: normalizeAnswer(question.answer),
       lines: question.lines || [],
       distractors: question.distractors || [],
-      suggestion: question.suggestion || ""
+      suggestion: question.suggestion || "",
+      visual: question.visual || null,
+      audit: question.audit || null
     };
     q.options = makeOptions(q, Number(elements.optionCount.value || 4));
     return q;
@@ -479,6 +482,13 @@
     elements.qMain.classList.toggle("long-question", isLongQuestion(q.main));
     elements.qMain.classList.toggle("text-question", isTextQuestion(q.main));
     renderLatex(elements.qMain, q.main, true);
+    if (elements.qVisual) {
+      elements.qVisual.innerHTML = "";
+      elements.qVisual.classList.toggle("hidden", !q.visual);
+      if (q.visual && typeof config.renderVisual === "function") {
+        config.renderVisual(elements.qVisual, q.visual, { lang, question: q, mode: "question" });
+      }
+    }
     if (resetState) {
       elements.options.innerHTML = "";
       elements.feedback.textContent = "";
@@ -558,6 +568,7 @@
       questionText: q.plain,
       difficulty: q.difficulty,
       suggestion: q.suggestion,
+      visual: q.visual,
       isCorrect,
       timeUp
     });
@@ -582,7 +593,7 @@
     } else {
       button.classList.add("wrong");
       renderFeedback(false, correctDisplay, false);
-      wrongAnswers.push({ main: q.plain, answer: correctDisplay, selected: selectedDisplay, type: q.type, difficulty: q.difficulty, suggestion: q.suggestion });
+      wrongAnswers.push({ main: q.plain, answer: correctDisplay, selected: selectedDisplay, type: q.type, difficulty: q.difficulty, suggestion: q.suggestion, visual: q.visual });
     }
     recordAttempt(q, correctDisplay, selectedDisplay, isCorrect, false, selected);
     renderSolutionBox();
@@ -601,7 +612,7 @@
       if (btn.dataset.answerKey === answerKey(q.answer)) btn.classList.add("correct");
     });
     renderFeedback(false, correctDisplay, true);
-    wrongAnswers.push({ main: q.plain, answer: correctDisplay, selected: null, timeUp: true, type: q.type, difficulty: q.difficulty, suggestion: q.suggestion });
+    wrongAnswers.push({ main: q.plain, answer: correctDisplay, selected: null, timeUp: true, type: q.type, difficulty: q.difficulty, suggestion: q.suggestion, visual: q.visual });
     recordAttempt(q, correctDisplay, "", false, true, null);
     renderSolutionBox();
     elements.nextBtn.disabled = false;
@@ -640,9 +651,12 @@
     wrongAnswers.forEach((w, index) => {
       const item = document.createElement("div");
       item.className = "wrong-item";
-      item.innerHTML = `<div class="expr">${index + 1}. ${mathSpan(w.main, "wrong-math")}</div><p><span class="tag-bad">${escapeHtml(tr().yourAnswer)}:</span> ${w.timeUp ? escapeHtml(tr().timeUpAnswer) : mathSpan(w.selected, "wrong-math")}</p><p><span class="tag-good">${escapeHtml(tr().correctAnswer)}:</span> ${mathSpan(w.answer, "wrong-math")}</p>${w.suggestion ? `<p>${escapeHtml(w.suggestion)}</p>` : ""}`;
+      item.innerHTML = `<div class="expr">${index + 1}. ${mathSpan(w.main, "wrong-math")}</div>${w.visual ? '<div class="wrong-visual"></div>' : ""}<p><span class="tag-bad">${escapeHtml(tr().yourAnswer)}:</span> ${w.timeUp ? escapeHtml(tr().timeUpAnswer) : mathSpan(w.selected, "wrong-math")}</p><p><span class="tag-good">${escapeHtml(tr().correctAnswer)}:</span> ${mathSpan(w.answer, "wrong-math")}</p>${w.suggestion ? `<p>${escapeHtml(w.suggestion)}</p>` : ""}`;
       elements.wrongList.appendChild(item);
       renderTaggedMath(item);
+      if (w.visual && typeof config.renderVisual === "function") {
+        config.renderVisual(item.querySelector(".wrong-visual"), w.visual, { lang, mode: "review" });
+      }
     });
   }
 
@@ -700,8 +714,11 @@
     const q = generateQuestion(elements.difficulty.value || "medium");
     const correct = answerToString(q.answer);
     elements.sampleBox.classList.remove("hidden");
-    elements.sampleBox.innerHTML = `<strong>${tr().sampleTitle}:</strong><br>${tr().sampleQuestion}: ${mathSpan(q.plain, "sample-math")}<br>${q.prompt || tr()[q.promptKey] || ""}<br>${tr().sampleAnswer}: ${mathSpan(correct, "sample-math")}<br>${tr().sampleOptions}: ${q.options.map(item => mathSpan(answerToString(item), "sample-math")).join(" ")}`;
+    elements.sampleBox.innerHTML = `<strong>${tr().sampleTitle}:</strong><br>${tr().sampleQuestion}: ${mathSpan(q.plain, "sample-math")}<br>${q.visual ? '<div class="sample-visual"></div>' : ""}${q.prompt || tr()[q.promptKey] || ""}<br>${tr().sampleAnswer}: ${mathSpan(correct, "sample-math")}<br>${tr().sampleOptions}: ${q.options.map(item => mathSpan(answerToString(item), "sample-math")).join(" ")}`;
     renderTaggedMath(elements.sampleBox);
+    if (q.visual && typeof config.renderVisual === "function") {
+      config.renderVisual(elements.sampleBox.querySelector(".sample-visual"), q.visual, { lang, question: q, mode: "sample" });
+    }
   }
 
   elements.timedMode.addEventListener("change", updateTimerControls);

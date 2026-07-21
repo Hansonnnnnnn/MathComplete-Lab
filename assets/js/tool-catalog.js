@@ -84,13 +84,17 @@
     "en": "Complex Numbers",
     "zh": "复数"
   },
+  "trigonometry": {
+    "en": "Trigonometry",
+    "zh": "三角函数"
+  },
   "geometry": {
     "en": "Geometry & Proof",
     "zh": "几何与证明"
   },
   "calculus": {
-    "en": "Limits & Derivatives",
-    "zh": "极限与导数"
+    "en": "Limits, Derivatives & Integrals",
+    "zh": "极限、导数与积分"
   },
   "linear-algebra": {
     "en": "Vectors & Matrices",
@@ -855,6 +859,50 @@
     "addedAt": "2026-05-08",
     "kind": "standard",
     "search": "limits practice calculus single variable calculus direct substitution factoring rationalize infinity one sided trig continuity removable discontinuity limits-practice 极限 极限运算 一元微积分 直接代入 因式分解 有理化 无穷远 左右极限 三角极限 连续性 可去间断"
+  },
+  {
+    "id": "integration-practice",
+    "href": "games/integration-practice.html",
+    "title": {
+      "en": "Integration Practice",
+      "zh": "一元积分专项练习"
+    },
+    "description": {
+      "en": "Practice antiderivatives, exact definite integrals, the Fundamental Theorem of Calculus, and one-step substitution.",
+      "zh": "练习原函数、精确定积分、微积分基本定理以及一步换元积分。"
+    },
+    "courses": [
+      "single-variable-calculus"
+    ],
+    "primaryCourse": "single-variable-calculus",
+    "topics": {
+      "single-variable-calculus": "calculus"
+    },
+    "addedAt": "2026-07-17",
+    "kind": "standard",
+    "search": "integration practice integral antiderivative definite integral fundamental theorem calculus substitution u substitution exact fractions single variable calculus integration-practice 积分 不定积分 定积分 原函数 微积分基本定理 换元法 一元微积分"
+  },
+  {
+    "id": "unit-circle-trigonometry",
+    "href": "games/unit-circle-trigonometry.html",
+    "title": {
+      "en": "Unit Circle & Trigonometric Values Practice",
+      "zh": "单位圆与三角函数专项练习"
+    },
+    "description": {
+      "en": "Connect angles, unit-circle coordinates, reference angles, and exact sine, cosine, and tangent values.",
+      "zh": "练习角度与弧度、参考角、单位圆坐标以及正弦、余弦和正切的精确值。"
+    },
+    "courses": [
+      "precalculus"
+    ],
+    "primaryCourse": "precalculus",
+    "topics": {
+      "precalculus": "trigonometry"
+    },
+    "addedAt": "2026-07-20",
+    "kind": "standard",
+    "search": "unit circle trigonometry exact values sine cosine tangent radians degrees reference angle quadrants precalculus unit-circle-trigonometry 单位圆 三角函数 精确值 正弦 余弦 正切 弧度 角度 参考角 象限 预备微积分"
   },
   {
     "id": "special-products",

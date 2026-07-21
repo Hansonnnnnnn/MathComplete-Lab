@@ -15,8 +15,8 @@
     "algebra-expression": "algebra-1", "algebra-simplification": "algebra-1", "linear-equation": "algebra-1", "linear-inequalities": "algebra-1",
     "systems-linear-equations": "algebra-1", "slope-from-two-points": "algebra-1", "function-evaluation": "algebra-1", "factoring-practice": "algebra-1", "special-products": "algebra-1", "polynomial-multiplication": "algebra-1",
     "quadratic-functions": "algebra-2", "quadratic-formula": "algebra-2", "function-graph-matching": "algebra-2", "completing-the-square": "algebra-2", "exponential-functions": "algebra-2", "logarithmic-functions": "algebra-2", "radical-functions": "algebra-2", "complex-number-operations": "algebra-2",
-    "advanced-equation-solving": "precalculus", "geometry-formula": "geometry-1", "triangle-congruence": "geometry-1",
-    "derivative-practice": "single-variable-calculus", "limits-practice": "single-variable-calculus",
+    "advanced-equation-solving": "precalculus", "unit-circle-trigonometry": "precalculus", "geometry-formula": "geometry-1", "triangle-congruence": "geometry-1",
+    "derivative-practice": "single-variable-calculus", "limits-practice": "single-variable-calculus", "integration-practice": "single-variable-calculus",
     "vector-operations": "linear-algebra", "matrix-multiplication": "linear-algebra", "determinant-practice": "linear-algebra"
   };
 

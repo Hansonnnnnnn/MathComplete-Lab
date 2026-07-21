@@ -321,7 +321,8 @@
       timeSpentSeconds: Number.isFinite(Number(payload.timeSpentSeconds ?? payload.time_spent_seconds))
         ? Math.max(0, Math.round(Number(payload.timeSpentSeconds ?? payload.time_spent_seconds)))
         : null,
-      suggestion: safe(payload.suggestion || question.suggestion || "")
+      suggestion: safe(payload.suggestion || question.suggestion || ""),
+      visual: payload.visual || question.visual || null
     };
   }
 
@@ -433,6 +434,8 @@
     .choice-badge.selected { color:var(--bad); background:#fee2e2; }
     .blank { color:var(--muted); font-style:italic; }
     .math { overflow-wrap:anywhere; }
+    .question-visual { width:min(320px,100%); margin:10px auto; }
+    .question-visual svg { display:block; width:100%; height:auto; color:var(--ink); }
     footer { color:var(--muted); border-top:1px solid var(--line); margin-top:30px; padding-top:16px; font-weight:600; }
     @media (max-width:720px) { h1 { font-size:32px; } .summary,.meta { grid-template-columns:1fr; } }
     @media print { body { background:#fff; } main { width:100%; padding:18px; } header { padding-top:0; } .item,.stat { box-shadow:none; } }
@@ -499,6 +502,16 @@
     }).join("")}</div></div>`;
   }
 
+  function visualHtml(item) {
+    if (!item.visual || typeof window.MCLQuizTool?.renderReportVisual !== "function") return "";
+    try {
+      const html = window.MCLQuizTool.renderReportVisual(item.visual, { lang: lang(), mode: "report" });
+      return html ? `<div class="question-visual">${html}</div>` : "";
+    } catch {
+      return "";
+    }
+  }
+
   function reportItemHtml(item, t) {
     const resultClass = item.isCorrect ? "ok" : "bad";
     const resultText = item.isCorrect ? t.correctTag : t.wrongTag;
@@ -509,6 +522,7 @@
       </div>
       <div class="qa">
         <div><strong>${escapeHtml(t.question)}:</strong> ${renderMath(item.questionLatex || item.questionText)}</div>
+        ${visualHtml(item)}
         ${optionsHtml(item, t)}
         <div><strong>${escapeHtml(t.yourAnswer)}:</strong> ${renderMath(item.selectedAnswerLatex)}</div>
         <div><strong>${escapeHtml(t.correctAnswer)}:</strong> ${renderMath(item.correctAnswerLatex)}</div>

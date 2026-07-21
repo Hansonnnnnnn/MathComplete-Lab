@@ -209,6 +209,18 @@
       <path d="M13 52C41 51 45 44 61 32S87 13 107 12" />
       <line x1="43" y1="49" x2="94" y2="10" class="mcl-math-visual__secondary" />
       <circle cx="67" cy="30" r="4" class="mcl-math-visual__fill" /><text x="88" y="53">f′(x)</text>`,
+    "integration-practice": `
+      <path d="M10 55h101M25 61V8" class="mcl-math-visual__axis" />
+      <path d="M29 50C39 44 46 24 58 21S78 42 91 28S103 13 110 12" />
+      <path d="M37 55V39C43 29 49 22 58 21S72 34 79 38V55z" class="mcl-math-visual__secondary mcl-math-visual__soft" />
+      <path d="M37 55V39M79 55V38" class="mcl-math-visual__secondary mcl-math-visual__dash" />
+      <text x="5" y="27" class="mcl-math-visual__formula">∫</text><text x="46" y="64">a</text><text x="76" y="64">b</text>`,
+    "unit-circle-trigonometry": `
+      <circle cx="60" cy="34" r="25" />
+      <path d="M28 34h64M60 6v56" class="mcl-math-visual__axis" />
+      <path d="M60 34L78 16M78 16v18M60 16h18" class="mcl-math-visual__secondary mcl-math-visual__dash" />
+      <circle cx="78" cy="16" r="4" class="mcl-math-visual__secondary mcl-math-visual__fill" />
+      <text x="95" y="39">cos</text><text x="63" y="10">sin</text>`,
     "limits-practice": `
       <path d="M10 55h100M28 61V8" class="mcl-math-visual__axis" />
       <path d="M13 50C32 49 45 43 57 31M63 31C76 20 91 15 108 13" />

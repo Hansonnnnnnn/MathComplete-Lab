@@ -96,11 +96,13 @@ for (const angle of api.STANDARD_ANGLES) {
 }
 
 const allowed = {
-  easy: ["trig-degree-radian", "trig-reference-angle", "trig-quadrant", "trig-angle-from-value", "trig-exact-sine"],
-  medium: ["trig-degree-radian", "trig-exact-sine", "trig-exact-cosine", "trig-exact-tangent", "trig-unit-circle-coordinate"],
-  hard: ["trig-reference-angle", "trig-exact-tangent", "trig-unit-circle-coordinate", "trig-angle-set", "trig-angle-from-value"],
-  expert: ["trig-exact-expression", "trig-angle-from-value", "trig-angle-set"]
+  easy: ["trig-degree-radian", "trig-reference-angle", "trig-quadrant", "trig-angle-from-value", "trig-exact-sine", "trig-exact-cosine"],
+  medium: ["trig-degree-radian", "trig-exact-sine", "trig-exact-cosine", "trig-exact-tangent", "trig-unit-circle-coordinate", "trig-coordinate-sine", "trig-coordinate-cosine", "trig-tangent-from-components", "trig-angle-from-coordinate", "trig-reference-angle-degrees", "trig-angle-from-value"],
+  hard: ["trig-reference-angle", "trig-reference-angle-degrees", "trig-exact-sine", "trig-exact-cosine", "trig-exact-tangent", "trig-angle-set", "trig-angle-from-value", "trig-angle-from-coordinate", "trig-coordinate-from-clue"],
+  expert: ["trig-exact-expression", "trig-angle-from-value", "trig-angle-set", "trig-coordinate-from-clue", "trig-tangent-from-components"]
 };
+
+const expectedTemplateCounts = { easy: 25, medium: 30, hard: 25, expert: 25 };
 
 function checkQuestion(question, difficulty, index) {
   const prefix = `${difficulty} #${index + 1} (${question.type})`;
@@ -114,6 +116,7 @@ function checkQuestion(question, difficulty, index) {
     assert(!option.latex.includes("+-") && !option.latex.includes("--"), `${prefix} option ${optionIndex + 1}: malformed signs`);
   });
   assert(question.audit?.kind, `${prefix}: missing audit model`);
+  assert(typeof question.templateId === "string" && question.templateId, `${prefix}: missing template id`);
 
   if (question.visual) {
     assert(question.visual.type === "unit-circle", `${prefix}: invalid visual type`);
@@ -126,12 +129,30 @@ function checkQuestion(question, difficulty, index) {
     assert(audit.angle.degrees * audit.angle.piDenominator === audit.angle.piNumerator * 180, `${prefix}: conversion mismatch`);
   } else if (audit.kind === "reference-angle") {
     assert(audit.reference.degrees === audit.angle.referenceDegrees, `${prefix}: reference angle mismatch`);
+  } else if (audit.kind === "reference-angle-degrees") {
+    assert(audit.referenceDegrees === audit.angle.referenceDegrees, `${prefix}: degree reference angle mismatch`);
   } else if (audit.kind === "quadrant") {
     assert(audit.angle.quadrant === null || audit.location === `q${audit.angle.quadrant}`, `${prefix}: quadrant answer mismatch`);
   } else if (audit.kind === "coordinate") {
     const expected = api.trigValues(audit.angle);
     assert(api.exactKey(expected.cos) === api.exactKey(audit.coordinate.x), `${prefix}: coordinate x mismatch`);
     assert(api.exactKey(expected.sin) === api.exactKey(audit.coordinate.y), `${prefix}: coordinate y mismatch`);
+  } else if (audit.kind === "angle-from-coordinate") {
+    const expected = api.trigValues(audit.angle);
+    assert(api.exactKey(expected.cos) === api.exactKey(audit.coordinate.x), `${prefix}: reverse coordinate x mismatch`);
+    assert(api.exactKey(expected.sin) === api.exactKey(audit.coordinate.y), `${prefix}: reverse coordinate y mismatch`);
+  } else if (audit.kind === "coordinate-component") {
+    assert(api.exactKey(api.trigValues(audit.angle)[audit.fn]) === api.exactKey(audit.value), `${prefix}: coordinate component mismatch`);
+  } else if (audit.kind === "tangent-components") {
+    const expected = api.trigValues(audit.angle);
+    assert(api.exactKey(expected.sin) === api.exactKey(audit.values.sin), `${prefix}: tangent sine mismatch`);
+    assert(api.exactKey(expected.cos) === api.exactKey(audit.values.cos), `${prefix}: tangent cosine mismatch`);
+    assert(api.exactKey(expected.tan) === api.exactKey(audit.values.tan), `${prefix}: tangent result mismatch`);
+  } else if (audit.kind === "coordinate-from-clue") {
+    const expected = api.trigValues(audit.angle);
+    assert(api.exactKey(expected[audit.fn]) === api.exactKey(audit.target), `${prefix}: clue value mismatch`);
+    assert(api.exactKey(expected.cos) === api.exactKey(audit.coordinate.x), `${prefix}: clue coordinate x mismatch`);
+    assert(api.exactKey(expected.sin) === api.exactKey(audit.coordinate.y), `${prefix}: clue coordinate y mismatch`);
   } else if (audit.kind === "exact-trig") {
     assert(api.exactKey(api.trigValues(audit.angle)[audit.fn]) === api.exactKey(audit.value), `${prefix}: exact value mismatch`);
   } else if (audit.kind === "angle-set") {
@@ -143,11 +164,24 @@ function checkQuestion(question, difficulty, index) {
     assert(audit.terms.length >= 2, `${prefix}: expert expression has fewer than two terms`);
   } else if (audit.kind === "condition-angle") {
     assert(audit.angle.quadrant !== null, `${prefix}: condition angle lies on an axis`);
+    if (question.visual) {
+      assert(question.visual.degrees === audit.reference.degrees, `${prefix}: condition visual must show only the reference angle`);
+      assert(audit.angle.degrees !== audit.reference.degrees, `${prefix}: condition visual leaks the final angle`);
+    }
   }
 }
 
 const perDifficulty = Number(process.argv[2] || 2000);
 for (const difficulty of ["easy", "medium", "hard", "expert"]) {
+  assert(builders[difficulty].length === expectedTemplateCounts[difficulty], `${difficulty}: expected ${expectedTemplateCounts[difficulty]} templates, found ${builders[difficulty].length}`);
+  assert(new Set(builders[difficulty].map(builder => builder.__variant)).size === builders[difficulty].length, `${difficulty}: duplicate template ids`);
+  builders[difficulty].forEach((builder, templateIndex) => {
+    for (let sample = 0; sample < 20; sample++) {
+      const question = builder(helpers);
+      checkQuestion(question, difficulty, templateIndex * 20 + sample);
+      assert(question.templateId === builder.__variant, `${difficulty}: template id was not preserved`);
+    }
+  });
   let visualCount = 0;
   const seenTypes = new Set();
   for (let index = 0; index < perDifficulty; index++) {
@@ -160,6 +194,8 @@ for (const difficulty of ["easy", "medium", "hard", "expert"]) {
   assert(visualRatio >= 0.3 && visualRatio <= 0.5, `${difficulty}: visual ratio ${visualRatio.toFixed(3)} is outside 30%-50%`);
   assert(seenTypes.size === new Set(builders[difficulty].map(builder => builder.__type)).size, `${difficulty}: not every builder type was exercised`);
 }
+
+assert(Object.values(builders).reduce((sum, items) => sum + items.length, 0) >= 105, "template library did not reach five-times expansion");
 
 const catalogContext = { window: {}, localStorage: { getItem: () => "en" } };
 vm.createContext(catalogContext);

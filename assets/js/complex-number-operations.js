@@ -269,7 +269,18 @@
         conjugateComplex(correct)
       );
     }
-    return uniqueComplex([...mistakes, ...nearbyDistractors(correct)], correct).slice(0, 12);
+    const candidates = [...mistakes, ...nearbyDistractors(correct)];
+    for (let delta = 2; delta <= 8; delta += 1) {
+      const shift = rational(delta);
+      candidates.push(
+        complex(addRational(correct.real, shift), correct.imaginary),
+        complex(subtractRational(correct.real, shift), correct.imaginary),
+        complex(correct.real, addRational(correct.imaginary, shift)),
+        complex(correct.real, subtractRational(correct.imaginary, shift)),
+        complex(addRational(correct.real, shift), subtractRational(correct.imaginary, shift))
+      );
+    }
+    return uniqueComplex(candidates, correct).slice(0, 12);
   }
 
   function makeQuestion(type, promptKey, main, correct, distractors, lines, suggestion) {

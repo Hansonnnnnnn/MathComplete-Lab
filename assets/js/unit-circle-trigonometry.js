@@ -250,6 +250,17 @@
     return builder;
   }
 
+  function template(type, id, builder) {
+    const wrapped = h => {
+      const question = builder(h);
+      question.templateId = id;
+      return question;
+    };
+    wrapped.__type = type;
+    wrapped.__variant = id;
+    return wrapped;
+  }
+
   const copy = {
     en: {
       toolBadge: "Precalculus",
@@ -265,6 +276,11 @@
       promptExact: "Evaluate the trigonometric function exactly.",
       promptAngleSet: "Find every angle in the stated interval.",
       promptExpression: "Evaluate the expression exactly.",
+      promptCoordinateAngle: "Use the coordinate to identify the angle.",
+      promptCoordinateComponent: "Read the requested component from the unit-circle coordinate.",
+      promptTangentRatio: "Use sine and cosine to find tangent.",
+      promptCoordinateClue: "Use the exact value and quadrant to determine the coordinate.",
+      promptCondition: "Determine the angle from its reference angle and sign conditions.",
       difficultyOptions: {
         easy: "Easy: conversions, axes, quadrants, and reference angles",
         medium: "Medium: first-quadrant coordinates and exact values",
@@ -282,6 +298,9 @@
         tangent: "Compute tan θ = sin θ / cos θ and check whether cos θ is zero.",
         reverse: "Match the exact value to a reference angle, then use its sign to find every valid quadrant.",
         expression: "Evaluate each unit-circle value exactly before combining the terms."
+        ,coordinateAngle: "Remember that a unit-circle point is (cos θ, sin θ), then match both signs and magnitudes.",
+        component: "The x-coordinate is cos θ and the y-coordinate is sin θ.",
+        coordinateClue: "Use the given component for its coordinate and determine the other sign from the quadrant."
       },
       notes: { conversion: "use 180° = π radians", reduce: "reduce", quadrant: "identify the quadrant", reference: "find the reference angle", coordinate: "use (cos θ, sin θ)", sign: "apply the quadrant sign", tangent: "divide sine by cosine", combine: "combine exact values", final: "exact result" },
       visualAlt: degrees => `Unit circle with the radius at ${degrees} degrees highlighted.`
@@ -300,6 +319,11 @@
       promptExact: "精确计算三角函数值。",
       promptAngleSet: "找出给定区间内的所有角。",
       promptExpression: "精确计算表达式。",
+      promptCoordinateAngle: "根据坐标确定对应的角。",
+      promptCoordinateComponent: "从单位圆坐标中读取指定分量。",
+      promptTangentRatio: "利用正弦和余弦求正切。",
+      promptCoordinateClue: "根据精确值与象限确定坐标。",
+      promptCondition: "根据参考角和符号条件确定角。",
       difficultyOptions: {
         easy: "简单：角度换算、坐标轴、象限与参考角",
         medium: "中等：第一象限坐标与精确值",
@@ -317,6 +341,9 @@
         tangent: "计算 tan θ = sin θ / cos θ，并检查 cos θ 是否为零。",
         reverse: "先由精确值确定参考角，再根据符号找出所有符合的象限。",
         expression: "先分别求出每个单位圆精确值，再进行合并。"
+        ,coordinateAngle: "单位圆坐标为 (cos θ, sin θ)，同时比较两个分量的符号与大小。",
+        component: "横坐标是 cos θ，纵坐标是 sin θ。",
+        coordinateClue: "把已知分量放入对应坐标，再根据象限判断另一个分量的符号。"
       },
       notes: { conversion: "使用 180° = π 弧度", reduce: "约分", quadrant: "判断象限", reference: "求参考角", coordinate: "使用 (cos θ, sin θ)", sign: "根据象限确定符号", tangent: "用正弦除以余弦", combine: "合并精确值", final: "精确结果" },
       visualAlt: degrees => `单位圆中高亮了 ${degrees}° 方向的半径。`
@@ -345,10 +372,11 @@
     return { type, promptKey, main, plain: main, answer: correct, distractors: uniqueAnswers(distractors, correct), lines, suggestion, audit, visual };
   }
 
-  function degreeRadianQuestion(h) {
+  function degreeRadianQuestion(h, options = {}) {
     const t = tr();
-    const angle = h.choice(STANDARD_ANGLES.filter(item => item.degrees !== 0));
-    const toRadians = h.choice([true, false]);
+    const anglePool = (options.anglePool || STANDARD_ANGLES).filter(item => item.degrees !== 0);
+    const angle = h.choice(anglePool);
+    const toRadians = options.direction === "to-radians" ? true : options.direction === "to-degrees" ? false : h.choice([true, false]);
     if (toRadians) {
       const correct = angleAnswer(angle);
       const preferred = [angleFromDegrees(180 - angle.degrees), angleFromDegrees(360 - angle.degrees), angleFromDegrees(angle.degrees / 2)];
@@ -364,9 +392,9 @@
     ], t.suggestions.convert, { kind: "conversion", direction: "radian-to-degree", angle });
   }
 
-  function referenceAngleQuestion(h, visual = false) {
+  function referenceAngleQuestion(h, visual = false, anglePool = STANDARD_ANGLES) {
     const t = tr();
-    const angle = h.choice(STANDARD_ANGLES.filter(item => !item.axis));
+    const angle = h.choice(anglePool.filter(item => !item.axis));
     const reference = angleFromDegrees(angle.referenceDegrees);
     const correct = angleAnswer(reference);
     const preferred = [angle, angleFromDegrees(180 - angle.referenceDegrees), angleFromDegrees(360 - angle.referenceDegrees)];
@@ -376,9 +404,9 @@
     ], t.suggestions.reference, { kind: "reference-angle", angle, reference }, visual ? makeVisual(angle, { showReference: true }) : null);
   }
 
-  function quadrantQuestion(h) {
+  function quadrantQuestion(h, anglePool = STANDARD_ANGLES, visual = false) {
     const t = tr();
-    const angle = h.choice(STANDARD_ANGLES);
+    const angle = h.choice(anglePool);
     const key = locationKey(angle);
     const correct = textAnswer(key, t.quadrantLabels[key]);
     const poolKeys = ["q1", "q2", "q3", "q4", "px", "py", "nx", "ny", "axis", "none"];
@@ -386,7 +414,7 @@
     return makeQuestion("trig-quadrant", "promptQuadrant", `\\theta=${angleLatex(angle)}`, correct, fillFromPool(correct, [], pool), [
       { line: `${angle.degrees}^{\\circ}`, note: t.notes.conversion },
       { line: correct.latex, note: t.notes.quadrant }
-    ], t.suggestions.reference, { kind: "quadrant", angle, location: key });
+    ], t.suggestions.reference, { kind: "quadrant", angle, location: key }, visual ? makeVisual(angle) : null);
   }
 
   function visualAngleQuestion(h, pool = AXIS_ANGLES) {
@@ -430,9 +458,76 @@
     ], t.suggestions.coordinate, { kind: "coordinate", angle, coordinate: correct.value }, visual ? makeVisual(angle, { showReference: true }) : null);
   }
 
-  function angleSetQuestion(h, expert = false) {
+  function referenceAngleDegreesQuestion(h, visual = false, anglePool = STANDARD_ANGLES) {
     const t = tr();
-    const fn = h.choice(expert ? ["sin", "cos", "tan"] : ["sin", "cos"]);
+    const angle = h.choice(anglePool.filter(item => !item.axis));
+    const correct = degreeAnswer(angle.referenceDegrees);
+    return makeQuestion("trig-reference-angle-degrees", "promptReference", `\theta=${degreesLatex(angle.degrees)},\quad\theta_{\mathrm{ref}}=?`, correct, degreeDistractors(correct, [angle.degrees, 180 - angle.referenceDegrees, 360 - angle.referenceDegrees]), [
+      { line: `\theta=${degreesLatex(angle.degrees)}\in\mathrm{Q${angle.quadrant}}`, note: t.notes.quadrant },
+      { line: `\theta_{\mathrm{ref}}=${degreesLatex(angle.referenceDegrees)}`, note: t.notes.reference }
+    ], t.suggestions.reference, { kind: "reference-angle-degrees", angle, referenceDegrees: angle.referenceDegrees }, visual ? makeVisual(angle, { showReference: true }) : null);
+  }
+
+  function angleFromCoordinateQuestion(h, anglePool = STANDARD_ANGLES, visual = false) {
+    const t = tr();
+    const angle = h.choice(anglePool);
+    const coordinate = coordinateAnswer(angle, t);
+    const correct = angleAnswer(angle);
+    return makeQuestion("trig-angle-from-coordinate", "promptCoordinateAngle", `P=${coordinate.latex},\quad 0\leq\theta<2\pi`, correct, angleDistractors(correct, [
+      angleFromDegrees(180 - angle.degrees),
+      angleFromDegrees(360 - angle.degrees),
+      angleFromDegrees(90 - angle.degrees)
+    ]), [
+      { line: `P=\left(\cos\theta,\sin\theta\right)=${coordinate.latex}`, note: t.notes.coordinate },
+      { line: `\theta=${angleLatex(angle)}`, note: t.notes.sign }
+    ], t.suggestions.coordinateAngle, { kind: "angle-from-coordinate", angle, coordinate: coordinate.value }, visual ? makeVisual(angle) : null);
+  }
+
+  function componentFromCoordinateQuestion(h, anglePool = STANDARD_ANGLES, visual = false, forcedFunction = null) {
+    const t = tr();
+    const angle = h.choice(anglePool);
+    const fn = forcedFunction || h.choice(["sin", "cos"]);
+    const values = trigValues(angle);
+    const value = values[fn];
+    const coordinate = coordinateAnswer(angle, t);
+    const correct = exactAnswer(value, t);
+    return makeQuestion(`trig-coordinate-${fn === "sin" ? "sine" : "cosine"}`, "promptCoordinateComponent", `P=${coordinate.latex},\quad\${fn}\theta=?`, correct, exactDistractors(value, [values.sin, values.cos, negateExact(value)], t), [
+      { line: `P=\left(\cos\theta,\sin\theta\right)`, note: t.notes.coordinate },
+      { line: `\${fn}\theta=${correct.latex}`, note: t.notes.final }
+    ], t.suggestions.component, { kind: "coordinate-component", angle, fn, value, coordinate: coordinate.value }, visual ? makeVisual(angle) : null);
+  }
+
+  function tangentFromComponentsQuestion(h, anglePool = STANDARD_ANGLES, visual = false) {
+    const t = tr();
+    const angle = h.choice(anglePool);
+    const values = trigValues(angle);
+    const correct = exactAnswer(values.tan, t);
+    const main = `\sin\theta=${exactLatex(values.sin, t.undefined)},\quad\cos\theta=${exactLatex(values.cos, t.undefined)},\quad\tan\theta=?`;
+    return makeQuestion("trig-tangent-from-components", "promptTangentRatio", main, correct, exactDistractors(values.tan, [values.sin, values.cos, values.tan.undefined ? ZERO : negateExact(values.tan)], t), [
+      { line: `\tan\theta=\frac{\sin\theta}{\cos\theta}`, note: t.notes.tangent },
+      { line: `\tan\theta=${correct.latex}`, note: t.notes.final }
+    ], t.suggestions.tangent, { kind: "tangent-components", angle, values }, visual ? makeVisual(angle) : null);
+  }
+
+  function coordinateFromClueQuestion(h, anglePool = STANDARD_ANGLES, visual = false, forcedFunction = null) {
+    const t = tr();
+    const angle = h.choice(anglePool.filter(item => !item.axis));
+    const fn = forcedFunction || h.choice(["sin", "cos"]);
+    const values = trigValues(angle);
+    const target = values[fn];
+    const correct = coordinateAnswer(angle, t);
+    const sameReference = STANDARD_ANGLES.filter(item => !item.axis && item.referenceDegrees === angle.referenceDegrees && item.degrees !== angle.degrees);
+    const main = `\${fn}\theta=${exactLatex(target, t.undefined)},\quad\theta\in\mathrm{Q${angle.quadrant}},\quad P(\theta)=?`;
+    return makeQuestion("trig-coordinate-from-clue", "promptCoordinateClue", main, correct, coordinateDistractors(correct, sameReference, t), [
+      { line: `P(\theta)=\left(\cos\theta,\sin\theta\right)`, note: t.notes.coordinate },
+      { line: `\theta\in\mathrm{Q${angle.quadrant}}`, note: t.notes.sign },
+      { line: correct.latex, note: t.notes.final }
+    ], t.suggestions.coordinateClue, { kind: "coordinate-from-clue", angle, fn, target, coordinate: correct.value }, visual ? makeVisual(angle, { showReference: true }) : null);
+  }
+
+  function angleSetQuestion(h, expert = false, forcedFunction = null) {
+    const t = tr();
+    const fn = forcedFunction || h.choice(expert ? ["sin", "cos", "tan"] : ["sin", "cos"]);
     const sourceAngle = h.choice(STANDARD_ANGLES.filter(angle => !angle.axis || fn !== "tan"));
     const target = trigValues(sourceAngle)[fn];
     const matches = STANDARD_ANGLES.filter(angle => exactKey(trigValues(angle)[fn]) === exactKey(target));
@@ -452,9 +547,9 @@
     ], t.suggestions.reverse, { kind: "angle-set", fn, target, matches });
   }
 
-  function conditionAngleQuestion(h, visual = false) {
+  function conditionAngleQuestion(h, visual = false, anglePool = STANDARD_ANGLES) {
     const t = tr();
-    const angle = h.choice(STANDARD_ANGLES.filter(item => !item.axis));
+    const angle = h.choice(anglePool.filter(item => !item.axis));
     const values = trigValues(angle);
     const sinSign = values.sin.r.n < 0 || values.sin.sqrt2.n < 0 || values.sin.sqrt3.n < 0 ? "<0" : ">0";
     const cosSign = values.cos.r.n < 0 || values.cos.sqrt2.n < 0 || values.cos.sqrt3.n < 0 ? "<0" : ">0";
@@ -462,10 +557,10 @@
     const correct = angleAnswer(angle);
     const preferred = [angleFromDegrees(180 - angle.degrees), angleFromDegrees(360 - angle.degrees), angleFromDegrees(angle.degrees + 180)];
     const main = `\\theta_{\\mathrm{ref}}=${angleLatex(reference)},\\quad\\sin\\theta${sinSign},\\quad\\cos\\theta${cosSign}`;
-    return makeQuestion("trig-angle-from-value", "promptAngleSet", main, correct, angleDistractors(correct, preferred), [
+    return makeQuestion("trig-angle-from-value", "promptCondition", main, correct, angleDistractors(correct, preferred), [
       { line: `\\sin\\theta${sinSign},\\quad\\cos\\theta${cosSign}`, note: t.notes.quadrant },
       { line: `\\theta=${angleLatex(angle)}`, note: t.notes.reference }
-    ], t.suggestions.reverse, { kind: "condition-angle", angle, reference, sinSign, cosSign }, visual ? makeVisual(angle, { showReference: true }) : null);
+    ], t.suggestions.reverse, { kind: "condition-angle", angle, reference, sinSign, cosSign }, visual ? makeVisual(reference, { showReference: true }) : null);
   }
 
   function exactExpressionQuestion(h, visual = false, threeTerms = false) {
@@ -487,6 +582,32 @@
       ...terms.map(item => ({ line: `\\${item.fn}\\left(${angleLatex(angle)}\\right)=${exactLatex(item.value, t.undefined)}`, note: t.notes.coordinate })),
       { line: `${main}=${correct.latex}`, note: t.notes.combine }
     ], t.suggestions.expression, { kind: "exact-expression", angle, terms, result }, visual ? makeVisual(angle, { showReference: true }) : null);
+  }
+
+  function exactExpressionAcrossAnglesQuestion(h, visual = false, threeTerms = false, signed = true) {
+    const t = tr();
+    const termCount = threeTerms ? 3 : 2;
+    const angles = h.shuffle(STANDARD_ANGLES.filter(item => !item.axis)).slice(0, termCount);
+    const functions = h.shuffle(["sin", "cos", "tan"]);
+    const terms = angles.map((angle, index) => {
+      const fn = functions[index % functions.length];
+      const coefficient = signed ? h.choice(index ? [1, -1, 2, -2] : [1, 2, -2]) : h.choice([1, 2]);
+      return { angle, fn, coefficient, value: trigValues(angle)[fn] };
+    });
+    if (terms.some(term => term.value.undefined)) return exactExpressionAcrossAnglesQuestion(h, visual, threeTerms, signed);
+    const result = terms.reduce((sum, item) => addExact(sum, scaleExact(item.value, item.coefficient)), ZERO);
+    const termLatex = item => `${item.coefficient === 1 ? "" : item.coefficient === -1 ? "-" : item.coefficient}\\${item.fn}\\left(${angleLatex(item.angle)}\\right)`;
+    const main = terms.map((item, index) => `${index && item.coefficient > 0 ? "+" : ""}${termLatex(item)}`).join("");
+    const preferred = [
+      terms.reduce((sum, item) => addExact(sum, item.value), ZERO),
+      terms.reduce((sum, item) => addExact(sum, scaleExact(item.value, -item.coefficient)), ZERO),
+      addExact(scaleExact(terms[0].value, terms[0].coefficient), scaleExact(terms[1].value, -terms[1].coefficient))
+    ];
+    const correct = exactAnswer(result, t);
+    return makeQuestion("trig-exact-expression", "promptExpression", main, correct, exactDistractors(result, preferred, t), [
+      ...terms.map(item => ({ line: `\\${item.fn}\\left(${angleLatex(item.angle)}\\right)=${exactLatex(item.value, t.undefined)}`, note: t.notes.coordinate })),
+      { line: `${main}=${correct.latex}`, note: t.notes.combine }
+    ], t.suggestions.expression, { kind: "exact-expression", angles, terms, result }, visual ? makeVisual(terms[0].angle, { showReference: true }) : null);
   }
 
   function unitCircleSvg(visual, report = false) {
@@ -521,35 +642,120 @@
     return visual?.type === "unit-circle" ? unitCircleSvg(visual, true) : "";
   }
 
+  const angles = (...degrees) => degrees.map(value => angleFromDegrees(value));
+  const NON_AXIS_ANGLES = STANDARD_ANGLES.filter(item => !item.axis);
+  const Q1_ANGLES = NON_AXIS_ANGLES.filter(item => item.quadrant === 1);
+  const Q2_ANGLES = NON_AXIS_ANGLES.filter(item => item.quadrant === 2);
+  const Q3_ANGLES = NON_AXIS_ANGLES.filter(item => item.quadrant === 3);
+  const Q4_ANGLES = NON_AXIS_ANGLES.filter(item => item.quadrant === 4);
+  const UPPER_ANGLES = STANDARD_ANGLES.filter(item => item.degrees <= 180);
+  const LOWER_ANGLES = STANDARD_ANGLES.filter(item => item.degrees >= 180);
+
   const builders = {
     easy: [
-      tag("trig-degree-radian", degreeRadianQuestion),
-      tag("trig-reference-angle", h => referenceAngleQuestion(h, false)),
-      tag("trig-quadrant", quadrantQuestion),
-      tag("trig-angle-from-value", h => visualAngleQuestion(h, AXIS_ANGLES)),
-      tag("trig-exact-sine", h => exactTrigQuestion(h, AXIS_ANGLES, true, "sin"))
+      template("trig-degree-radian", "easy-convert-axis-to-radians", h => degreeRadianQuestion(h, { direction: "to-radians", anglePool: AXIS_ANGLES })),
+      template("trig-degree-radian", "easy-convert-first-to-radians", h => degreeRadianQuestion(h, { direction: "to-radians", anglePool: FIRST_QUADRANT })),
+      template("trig-degree-radian", "easy-convert-standard-to-radians", h => degreeRadianQuestion(h, { direction: "to-radians" })),
+      template("trig-degree-radian", "easy-convert-axis-to-degrees", h => degreeRadianQuestion(h, { direction: "to-degrees", anglePool: AXIS_ANGLES })),
+      template("trig-degree-radian", "easy-convert-first-to-degrees", h => degreeRadianQuestion(h, { direction: "to-degrees", anglePool: FIRST_QUADRANT })),
+      template("trig-degree-radian", "easy-convert-standard-to-degrees", h => degreeRadianQuestion(h, { direction: "to-degrees" })),
+      template("trig-reference-angle", "easy-reference-q1", h => referenceAngleQuestion(h, false, Q1_ANGLES)),
+      template("trig-reference-angle", "easy-reference-q2", h => referenceAngleQuestion(h, false, Q2_ANGLES)),
+      template("trig-reference-angle", "easy-reference-q3", h => referenceAngleQuestion(h, false, Q3_ANGLES)),
+      template("trig-reference-angle", "easy-reference-q4", h => referenceAngleQuestion(h, false, Q4_ANGLES)),
+      template("trig-reference-angle", "easy-reference-visual-all", h => referenceAngleQuestion(h, true, NON_AXIS_ANGLES)),
+      template("trig-reference-angle", "easy-reference-visual-upper", h => referenceAngleQuestion(h, true, UPPER_ANGLES)),
+      template("trig-quadrant", "easy-location-axis", h => quadrantQuestion(h, AXIS_ANGLES, false)),
+      template("trig-quadrant", "easy-location-quadrant", h => quadrantQuestion(h, NON_AXIS_ANGLES, false)),
+      template("trig-quadrant", "easy-location-visual-upper", h => quadrantQuestion(h, UPPER_ANGLES, true)),
+      template("trig-quadrant", "easy-location-visual-lower", h => quadrantQuestion(h, LOWER_ANGLES, true)),
+      template("trig-quadrant", "easy-location-visual-all", h => quadrantQuestion(h, STANDARD_ANGLES, true)),
+      template("trig-angle-from-value", "easy-visual-axis-angle", h => visualAngleQuestion(h, AXIS_ANGLES)),
+      template("trig-angle-from-value", "easy-visual-first-angle", h => visualAngleQuestion(h, FIRST_QUADRANT)),
+      template("trig-angle-from-value", "easy-visual-upper-angle", h => visualAngleQuestion(h, UPPER_ANGLES)),
+      template("trig-angle-from-value", "easy-visual-lower-angle", h => visualAngleQuestion(h, LOWER_ANGLES)),
+      template("trig-exact-sine", "easy-axis-sine-visual", h => exactTrigQuestion(h, AXIS_ANGLES, true, "sin")),
+      template("trig-exact-sine", "easy-axis-sine", h => exactTrigQuestion(h, AXIS_ANGLES, false, "sin")),
+      template("trig-exact-cosine", "easy-axis-cosine-visual", h => exactTrigQuestion(h, AXIS_ANGLES, true, "cos")),
+      template("trig-exact-cosine", "easy-axis-cosine", h => exactTrigQuestion(h, AXIS_ANGLES, false, "cos"))
     ],
     medium: [
-      tag("trig-degree-radian", degreeRadianQuestion),
-      tag("trig-exact-sine", h => exactTrigQuestion(h, FIRST_QUADRANT, false, "sin")),
-      tag("trig-exact-cosine", h => exactTrigQuestion(h, FIRST_QUADRANT, false, "cos")),
-      tag("trig-exact-tangent", h => exactTrigQuestion(h, FIRST_QUADRANT, true, "tan")),
-      tag("trig-unit-circle-coordinate", h => coordinateQuestion(h, FIRST_QUADRANT, true)),
-      tag("trig-unit-circle-coordinate", h => coordinateQuestion(h, FIRST_QUADRANT, false))
+      ...["sin", "cos", "tan"].flatMap(fn => [
+        template(`trig-exact-${fn === "sin" ? "sine" : fn === "cos" ? "cosine" : "tangent"}`, `medium-${fn}-first`, h => exactTrigQuestion(h, FIRST_QUADRANT, false, fn)),
+        template(`trig-exact-${fn === "sin" ? "sine" : fn === "cos" ? "cosine" : "tangent"}`, `medium-${fn}-first-visual`, h => exactTrigQuestion(h, FIRST_QUADRANT, true, fn))
+      ]),
+      template("trig-unit-circle-coordinate", "medium-coordinate-first", h => coordinateQuestion(h, FIRST_QUADRANT, false)),
+      template("trig-unit-circle-coordinate", "medium-coordinate-first-visual", h => coordinateQuestion(h, FIRST_QUADRANT, true)),
+      template("trig-unit-circle-coordinate", "medium-coordinate-thirty-sixty", h => coordinateQuestion(h, angles(30, 60), false)),
+      template("trig-unit-circle-coordinate", "medium-coordinate-thirty-sixty-visual", h => coordinateQuestion(h, angles(30, 60), true)),
+      template("trig-unit-circle-coordinate", "medium-coordinate-forty-five", h => coordinateQuestion(h, angles(45), false)),
+      template("trig-unit-circle-coordinate", "medium-coordinate-thirty-forty-five", h => coordinateQuestion(h, angles(30, 45), false)),
+      template("trig-coordinate-sine", "medium-read-sine", h => componentFromCoordinateQuestion(h, FIRST_QUADRANT, false, "sin")),
+      template("trig-coordinate-sine", "medium-read-sine-visual", h => componentFromCoordinateQuestion(h, FIRST_QUADRANT, true, "sin")),
+      template("trig-coordinate-cosine", "medium-read-cosine", h => componentFromCoordinateQuestion(h, FIRST_QUADRANT, false, "cos")),
+      template("trig-coordinate-cosine", "medium-read-cosine-thirty-sixty", h => componentFromCoordinateQuestion(h, angles(30, 60), false, "cos")),
+      template("trig-tangent-from-components", "medium-tangent-components", h => tangentFromComponentsQuestion(h, FIRST_QUADRANT, false)),
+      template("trig-tangent-from-components", "medium-tangent-components-visual", h => tangentFromComponentsQuestion(h, FIRST_QUADRANT, true)),
+      template("trig-tangent-from-components", "medium-tangent-thirty-sixty", h => tangentFromComponentsQuestion(h, angles(30, 60), false)),
+      template("trig-tangent-from-components", "medium-tangent-thirty-sixty-visual", h => tangentFromComponentsQuestion(h, angles(30, 60), true)),
+      template("trig-angle-from-coordinate", "medium-angle-from-coordinate", h => angleFromCoordinateQuestion(h, FIRST_QUADRANT, false)),
+      template("trig-angle-from-coordinate", "medium-angle-from-coordinate-visual", h => angleFromCoordinateQuestion(h, FIRST_QUADRANT, true)),
+      template("trig-angle-from-coordinate", "medium-angle-from-coordinate-thirty-sixty", h => angleFromCoordinateQuestion(h, angles(30, 60), false)),
+      template("trig-angle-from-coordinate", "medium-angle-from-coordinate-forty-five", h => angleFromCoordinateQuestion(h, angles(45), false)),
+      template("trig-degree-radian", "medium-convert-to-radians", h => degreeRadianQuestion(h, { direction: "to-radians" })),
+      template("trig-degree-radian", "medium-convert-to-degrees", h => degreeRadianQuestion(h, { direction: "to-degrees" })),
+      template("trig-reference-angle-degrees", "medium-reference-degrees", h => referenceAngleDegreesQuestion(h, false, [...Q2_ANGLES, ...Q3_ANGLES, ...Q4_ANGLES])),
+      template("trig-reference-angle-degrees", "medium-reference-degrees-visual", h => referenceAngleDegreesQuestion(h, true, [...Q2_ANGLES, ...Q3_ANGLES, ...Q4_ANGLES])),
+      template("trig-angle-from-value", "medium-visual-thirty-sixty", h => visualAngleQuestion(h, angles(30, 60))),
+      template("trig-angle-from-value", "medium-visual-forty-five", h => visualAngleQuestion(h, angles(45)))
     ],
     hard: [
-      tag("trig-reference-angle", h => referenceAngleQuestion(h, false)),
-      tag("trig-exact-tangent", h => exactTrigQuestion(h, STANDARD_ANGLES, false, "tan")),
-      tag("trig-unit-circle-coordinate", h => coordinateQuestion(h, STANDARD_ANGLES, true)),
-      tag("trig-angle-set", h => angleSetQuestion(h, false)),
-      tag("trig-angle-from-value", h => visualAngleQuestion(h, STANDARD_ANGLES))
+      ...["sin", "cos", "tan"].flatMap(fn => [
+        template(`trig-exact-${fn === "sin" ? "sine" : fn === "cos" ? "cosine" : "tangent"}`, `hard-${fn}-all`, h => exactTrigQuestion(h, STANDARD_ANGLES, false, fn)),
+        template(`trig-exact-${fn === "sin" ? "sine" : fn === "cos" ? "cosine" : "tangent"}`, `hard-${fn}-${fn === "sin" ? "q2" : "all-visual"}`, h => exactTrigQuestion(h, fn === "sin" ? Q2_ANGLES : STANDARD_ANGLES, fn !== "sin", fn))
+      ]),
+      ...["sin", "cos", "tan"].map(fn => template("trig-angle-set", `hard-angle-set-${fn}`, h => angleSetQuestion(h, true, fn))),
+      template("trig-coordinate-from-clue", "hard-coordinate-from-sine", h => coordinateFromClueQuestion(h, NON_AXIS_ANGLES, false, "sin")),
+      template("trig-coordinate-from-clue", "hard-coordinate-from-sine-visual", h => coordinateFromClueQuestion(h, NON_AXIS_ANGLES, true, "sin")),
+      template("trig-coordinate-from-clue", "hard-coordinate-from-cosine", h => coordinateFromClueQuestion(h, NON_AXIS_ANGLES, false, "cos")),
+      template("trig-coordinate-from-clue", "hard-coordinate-from-cosine-q2-q4", h => coordinateFromClueQuestion(h, [...Q2_ANGLES, ...Q4_ANGLES], false, "cos")),
+      template("trig-angle-from-coordinate", "hard-angle-from-coordinate", h => angleFromCoordinateQuestion(h, STANDARD_ANGLES, false)),
+      template("trig-angle-from-coordinate", "hard-angle-from-coordinate-visual", h => angleFromCoordinateQuestion(h, STANDARD_ANGLES, true)),
+      template("trig-angle-from-value", "hard-condition-upper", h => conditionAngleQuestion(h, false, UPPER_ANGLES)),
+      template("trig-angle-from-value", "hard-condition-upper-visual", h => conditionAngleQuestion(h, true, Q2_ANGLES)),
+      template("trig-angle-from-value", "hard-condition-lower", h => conditionAngleQuestion(h, false, LOWER_ANGLES)),
+      template("trig-angle-from-value", "hard-condition-lower-visual", h => conditionAngleQuestion(h, true, [...Q3_ANGLES, ...Q4_ANGLES])),
+      template("trig-reference-angle", "hard-reference-visual", h => referenceAngleQuestion(h, true, NON_AXIS_ANGLES)),
+      template("trig-reference-angle-degrees", "hard-reference-degrees", h => referenceAngleDegreesQuestion(h, false, NON_AXIS_ANGLES)),
+      template("trig-reference-angle-degrees", "hard-reference-degrees-lower", h => referenceAngleDegreesQuestion(h, false, LOWER_ANGLES)),
+      template("trig-angle-from-value", "hard-visual-q2", h => visualAngleQuestion(h, Q2_ANGLES)),
+      template("trig-angle-from-value", "hard-visual-q3", h => visualAngleQuestion(h, Q3_ANGLES)),
+      template("trig-angle-from-value", "hard-visual-q4", h => visualAngleQuestion(h, Q4_ANGLES))
     ],
     expert: [
-      tag("trig-exact-expression", h => exactExpressionQuestion(h, false, false)),
-      tag("trig-exact-expression", h => exactExpressionQuestion(h, true, false)),
-      tag("trig-angle-from-value", h => conditionAngleQuestion(h, false)),
-      tag("trig-angle-set", h => angleSetQuestion(h, true)),
-      tag("trig-exact-expression", h => exactExpressionQuestion(h, true, true))
+      template("trig-exact-expression", "expert-expression-two", h => exactExpressionQuestion(h, false, false)),
+      template("trig-exact-expression", "expert-expression-two-visual", h => exactExpressionQuestion(h, true, false)),
+      template("trig-exact-expression", "expert-expression-three", h => exactExpressionQuestion(h, false, true)),
+      template("trig-exact-expression", "expert-expression-three-visual", h => exactExpressionQuestion(h, true, true)),
+      template("trig-exact-expression", "expert-cross-two-positive", h => exactExpressionAcrossAnglesQuestion(h, false, false, false)),
+      template("trig-exact-expression", "expert-cross-two-positive-visual", h => exactExpressionAcrossAnglesQuestion(h, true, false, false)),
+      template("trig-exact-expression", "expert-cross-two-signed", h => exactExpressionAcrossAnglesQuestion(h, false, false, true)),
+      template("trig-exact-expression", "expert-cross-two-signed-visual", h => exactExpressionAcrossAnglesQuestion(h, true, false, true)),
+      template("trig-exact-expression", "expert-cross-three-signed", h => exactExpressionAcrossAnglesQuestion(h, false, true, true)),
+      template("trig-exact-expression", "expert-cross-three-signed-visual", h => exactExpressionAcrossAnglesQuestion(h, true, true, true)),
+      ...["sin", "cos", "tan"].map(fn => template("trig-angle-set", `expert-angle-set-${fn}`, h => angleSetQuestion(h, true, fn))),
+      template("trig-angle-from-value", "expert-condition-opposite-q1-q3", h => conditionAngleQuestion(h, false, [...Q1_ANGLES, ...Q3_ANGLES])),
+      template("trig-angle-from-value", "expert-condition-opposite-q1-q3-visual", h => conditionAngleQuestion(h, true, Q3_ANGLES)),
+      template("trig-angle-from-value", "expert-condition-opposite-q2-q4", h => conditionAngleQuestion(h, false, [...Q2_ANGLES, ...Q4_ANGLES])),
+      template("trig-angle-from-value", "expert-condition-opposite-q2-q4-visual", h => conditionAngleQuestion(h, true, [...Q2_ANGLES, ...Q4_ANGLES])),
+      template("trig-angle-from-value", "expert-condition-all", h => conditionAngleQuestion(h, false, NON_AXIS_ANGLES)),
+      template("trig-angle-from-value", "expert-condition-all-visual", h => conditionAngleQuestion(h, true, [...Q2_ANGLES, ...Q3_ANGLES, ...Q4_ANGLES])),
+      template("trig-coordinate-from-clue", "expert-coordinate-from-sine", h => coordinateFromClueQuestion(h, NON_AXIS_ANGLES, false, "sin")),
+      template("trig-coordinate-from-clue", "expert-coordinate-from-sine-visual", h => coordinateFromClueQuestion(h, NON_AXIS_ANGLES, true, "sin")),
+      template("trig-coordinate-from-clue", "expert-coordinate-from-cosine", h => coordinateFromClueQuestion(h, NON_AXIS_ANGLES, false, "cos")),
+      template("trig-coordinate-from-clue", "expert-coordinate-from-cosine-visual", h => coordinateFromClueQuestion(h, NON_AXIS_ANGLES, true, "cos")),
+      template("trig-exact-expression", "expert-cross-three-positive", h => exactExpressionAcrossAnglesQuestion(h, false, true, false)),
+      template("trig-exact-expression", "expert-cross-three-positive-visual", h => exactExpressionAcrossAnglesQuestion(h, true, true, false))
     ]
   };
 

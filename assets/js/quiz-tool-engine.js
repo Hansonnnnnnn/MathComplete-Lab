@@ -261,7 +261,13 @@
       distractors: question.distractors || [],
       suggestion: question.suggestion || "",
       visual: question.visual || null,
-      audit: question.audit || null
+      audit: question.audit || null,
+      familyId: question.familyId || question.type || "",
+      conceptId: question.conceptId || "",
+      templateId: question.templateId || "",
+      templateVersion: question.templateVersion || "",
+      seed: question.seed ?? null,
+      parameters: question.parameters || null
     };
     q.options = makeOptions(q, Number(elements.optionCount.value || 4));
     return q;
@@ -341,6 +347,29 @@
 
   function generateQuestion(diff, forcedType = null) {
     const real = pickDifficulty(diff);
+    const registry = window.MCLQuestionTemplates;
+    const registeredTool = registry?.getTool?.(config.gameId);
+    if (registeredTool) {
+      const templates = registry.templatesFor(config.gameId, real, forcedType);
+      const pool = templates.length ? templates : registry.templatesFor(config.gameId, real);
+      if (pool.length) {
+        for (let i = 0; i < 80; i++) {
+          const template = choice(pool);
+          const raw = registry.build(config.gameId, template.id, {
+            seed: `${config.gameId}:${Date.now()}:${Math.random()}:${i}`,
+            helpers,
+            lang
+          });
+          raw.difficulty = raw.difficulty || real;
+          const q = finalizeQuestion(raw);
+          const expectedOptions = Number(elements.optionCount.value || 4);
+          if (q.options.length !== expectedOptions) continue;
+          if (typeof config.validateQuestion === "function" && !config.validateQuestion(q, helpers)) continue;
+          if (!forcedType || q.familyId === forcedType || q.type === forcedType) return q;
+        }
+        throw new Error(`Unable to generate a valid ${config.gameId} question for ${real}.`);
+      }
+    }
     const builders = config.builders?.[real] || config.builders?.medium || [];
     const candidates = forcedType ? builders.filter(fn => fn.__type === forcedType) : builders;
     const pool = candidates.length ? candidates : builders;
@@ -556,9 +585,25 @@
   function recordAttempt(q, correctDisplay, selectedDisplay, isCorrect, timeUp = false, selected = null) {
     void window.MCLProgress?.recordGameAttempt?.({
       gameId: config.gameId,
-      question: { plain: q.plain, type: q.type, difficulty: q.difficulty },
+      question: {
+        plain: q.plain,
+        type: q.type,
+        difficulty: q.difficulty,
+        familyId: q.familyId,
+        conceptId: q.conceptId,
+        templateId: q.templateId,
+        templateVersion: q.templateVersion,
+        seed: q.seed,
+        parameters: q.parameters
+      },
       course: config.course,
-      topic: q.type,
+      topic: q.familyId || q.type,
+      familyId: q.familyId,
+      conceptId: q.conceptId,
+      templateId: q.templateId,
+      templateVersion: q.templateVersion,
+      seed: q.seed,
+      parameters: q.parameters,
       correctAnswer: correctDisplay,
       selectedAnswer: selectedDisplay,
       options: optionPayload(q, selected),

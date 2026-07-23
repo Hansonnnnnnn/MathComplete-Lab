@@ -49,6 +49,14 @@ assert(source.includes('signature !== "%PDF"'), "PDF signature validation is mis
 assert(source.includes('canvas.toDataURL("image/jpeg", 0.94)'), "High-quality JPEG rendering is missing");
 assert(source.includes("scale: 2"), "Two-times canvas rendering is missing");
 assert(source.includes("mcl-pdf-page"), "Fixed A4 page DOM is missing");
+assert(source.includes("annotation[encoding='application/x-tex']"), "KaTeX source extraction is missing");
+assert(source.includes("mcl-report-info-table") && source.includes("mcl-report-performance"), "Formal report summary is missing");
+assert(source.includes("mcl-report-review-list"), "Review priorities are missing");
+assert(source.includes("learnerDisplayName") && source.includes("reportIdentifier"), "Learner or report identity is missing");
+assert(source.includes("pdf.setProperties"), "PDF document metadata is missing");
+for (const forbidden of ['class="stat"', 'class="item"', 'class="choice"', 'class="summary"']) {
+  assert(!source.includes(forbidden), `Unscoped report class remains: ${forbidden}`);
+}
 assert(source.includes("PDF_PAGE_WIDTH = 794") && source.includes("PDF_PAGE_HEIGHT = 1123"), "A4 CSS dimensions are not fixed");
 assert(source.includes("pdfTask"), "Concurrent PDF generation guard is missing");
 assert(source.includes("mcl-report-error"), "Visible PDF failure fallback is missing");

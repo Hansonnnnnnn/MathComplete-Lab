@@ -475,12 +475,12 @@
 </style>
   <script src="../assets/js/theme.js?v=20260716.2"></script>
   <link rel="stylesheet" href="../assets/css/quiz-tool.css">
-  <link rel="stylesheet" href="../assets/css/design-system.css?v=20260717.2">
+  <link rel="stylesheet" href="../assets/css/design-system.css?v=20260724.1">
   <script defer src="https://cdn.jsdelivr.net/npm/lucide@0.468.0/dist/umd/lucide.min.js"></script>
 </head>
 <body>
   <nav class="mc-site-shell">
-    <a class="mc-brand" href="../index.html"><span class="mc-brand-mark">∑</span><span>MathComplete Lab</span></a>
+    <a class="mc-brand" href="../index.html"><span class="mc-brand-mark">âˆ‘</span><span>MathComplete Lab</span></a>
     <div class="mc-links">
       <a class="mc-link" href="../practice.html" data-i18n="navPractice">Practice Library</a>
       <a class="mc-link primary" href="../index.html" data-i18n="navHome">Home</a>
@@ -545,9 +545,23 @@
     </section>
   </main>
 
-  <script src="../assets/js/radical-functions.js"></script>
+  <script type="application/json" id="legacy-radical-functions-script" src="../assets/js/radical-functions.js"></script>
+  <script>
+    window.MCLQuizTool = {
+      gameId: "radical-functions", course: "algebra-2", balancedMixed: true, avoidConsecutiveTypes: true,
+      builders: { easy: [], medium: [], hard: [], expert: [] },
+      text: {
+        en: { title: "Radical Functions Practice", toolBadge: "Algebra II", subtitle: "Practice values and domains, transformations, equations and extraneous roots, inverses, and radical models.", note: "Equation answers are checked against the original domain before acceptance." },
+        zh: { title: "\u6839\u5f0f\u51fd\u6570\u4e13\u9879\u7ec3\u4e60", toolBadge: "\u4ee3\u6570 II", subtitle: "\u7ec3\u4e60\u51fd\u6570\u503c\u4e0e\u5b9a\u4e49\u57df\u3001\u56fe\u50cf\u53d8\u6362\u3001\u6839\u5f0f\u65b9\u7a0b\u4e0e\u589e\u6839\u3001\u53cd\u51fd\u6570\u548c\u6839\u5f0f\u6a21\u578b\u3002", note: "\u65b9\u7a0b\u7b54\u6848\u4f1a\u5728\u63a5\u53d7\u524d\u4ee3\u56de\u539f\u5f0f\u5e76\u68c0\u67e5\u5b9a\u4e49\u57df\u3002" }
+      }
+    };
+  </script>
+  <script src="../assets/js/question-template-registry.js?v=20260724.1"></script>
+  <script src="../assets/js/semantic-bank-factory.js?v=20260724.3"></script>
+  <script src="../assets/js/radical-functions-bank.js?v=20260724.1"></script>
+  <script src="../assets/js/quiz-tool-engine.js?v=20260724.2"></script>
   <script src="../assets/js/tool-modes.js"></script>
-  <script src="../assets/js/report-export.js?v=20260722.1"></script>
+  <script src="../assets/js/report-export.js?v=20260725.2"></script>
 
   <script src="../assets/js/tool-ux.js?v=20260716.2"></script>
   <script src="../assets/js/tool-catalog.js?v=20260716.3"></script>

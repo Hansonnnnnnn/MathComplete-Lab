@@ -183,6 +183,26 @@
       .toLowerCase();
   }
 
+  function findLeakedLatexCommand(question) {
+    const fields = [
+      question.main,
+      question.answer,
+      ...(question.distractors || []),
+      ...(question.lines || []).map(item => item?.line)
+    ];
+    const leakedCommand = /(^|[^\\A-Za-z])(quad|qquad|cdot|dfrac|operatorname|mathcal|subseteq|nsubseteq|notin|langle|rangle|mathbf)(?=$|[^A-Za-z])/i;
+    for (const field of fields) {
+      const value = field && typeof field === "object"
+        ? (field.latex || field.text || field.value || "")
+        : String(field ?? "");
+      const control = value.match(/[\u0008\u0009\u000b\u000c]/);
+      if (control) return `control character U+${control[0].charCodeAt(0).toString(16).padStart(4, "0")}`;
+      const match = value.match(leakedCommand);
+      if (match) return `bare LaTeX command ${match[2]}`;
+    }
+    return "";
+  }
+
   function auditGeneration(toolId, options = {}) {
     const tool = getTool(toolId);
     assert(tool, `Unknown tool ${toolId}.`);
@@ -200,6 +220,8 @@
           const second = build(toolId, template.id, { seed, audit: true });
           generated += 1;
           if (!String(first.main ?? first.plain ?? "").trim()) throw new Error("missing question text");
+          const leakedLatex = findLeakedLatexCommand(first);
+          if (leakedLatex) throw new Error(leakedLatex);
           const correctKey = answerKey(first.answer);
           if (!correctKey) throw new Error("missing answer");
           const distractorKeys = (first.distractors || []).map(answerKey).filter(Boolean);

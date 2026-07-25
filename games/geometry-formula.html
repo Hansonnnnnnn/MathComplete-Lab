@@ -809,7 +809,7 @@
 </style>
   <script src="../assets/js/theme.js?v=20260716.2"></script>
   <link rel="stylesheet" href="../assets/css/quiz-tool.css">
-  <link rel="stylesheet" href="../assets/css/design-system.css?v=20260717.2">
+  <link rel="stylesheet" href="../assets/css/design-system.css?v=20260724.1">
   <script defer src="https://cdn.jsdelivr.net/npm/lucide@0.468.0/dist/umd/lucide.min.js"></script>
 </head>
 <body>
@@ -870,6 +870,10 @@
       <div class="actions" style="margin-top:22px;"><button id="restartBtn"></button><button id="reviewWrongBtn" class="secondary"></button></div>
     </section>
   </main>
+  <script src="../assets/js/question-bank-specs.js"></script>
+  <script src="../assets/js/question-template-registry.js"></script>
+  <script src="../assets/js/semantic-bank-factory.js"></script>
+  <script src="../assets/js/geometry-formula-bank.js?v=20260724.1"></script>
   <script>
 
     const GAME_TEXT = {
@@ -956,6 +960,31 @@
     const GAME={
       answerToString(a){return a.value;},
       generateQuestion(difficulty, forcedType=null){
+        const registry = window.MCLQuestionTemplates;
+        if (registry?.getTool?.("geometry-formula")) {
+          const available = registry.templatesFor("geometry-formula", difficulty, forcedType);
+          if (available.length) {
+            const template = choose(available);
+            const raw = registry.build("geometry-formula", template.id, {
+              seed: `geometry-formula:${Date.now()}:${Math.random()}`,
+              lang
+            });
+            const q = {
+              ...raw,
+              difficulty: template.difficulty,
+              type: raw.familyId,
+              extra: raw.prompt,
+              answer: ans(raw.answer),
+              data: raw.parameters || {},
+              lines: raw.lines || []
+            };
+            const count = Number(optionCountEl.value || 4);
+            const choices = [q.answer, ...(raw.distractors || []).map(ans)];
+            const unique = [...new Map(choices.map(item => [answerKey(item), item])).values()];
+            q.options = shuffle(unique.slice(0, count));
+            return q;
+          }
+        }
         let type;if(difficulty==="easy")type=choose(["rect_area","rect_perim","tri_area"]);else if(difficulty==="medium")type=choose(["circle_area","circle_circ"]);else if(difficulty==="hard")type=choose(["box_volume","cube_volume","cylinder_volume"]);else if(difficulty==="expert")type=choose(["circle_area_diameter","circle_circ_diameter","mixed_rect"]);else type=choose(["missing_rect_perim","discount_area","circle_combo","cylinder_volume"]);
         if(forcedType)type=forcedType;let q;
         if(type==="rect_area"){const l=randInt(3,15),w=randInt(2,12);q={difficulty,type,main:geometryPrompt("area","rectangle"),extra:geometryGiven("Rectangle",`l = ${l}, w = ${w}`),plain:`Find the area of the rectangle. Rectangle l=${l}, w=${w}`,answer:ans(l*w),data:{l,w}};}
@@ -1021,7 +1050,8 @@
       solutionLines(q){const t=tr().notes,d=q.data;switch(q.type){case"rect_area":return[{line:"A = lw",note:t.formula},{line:`A = ${d.l}(${d.w})`,note:t.substitute},{line:`A = ${q.answer.value}`,note:t.simplify}];case"rect_perim":return[{line:"P = 2(l + w)",note:t.formula},{line:`P = 2(${d.l} + ${d.w})`,note:t.substitute},{line:`P = ${q.answer.value}`,note:t.simplify}];case"tri_area":return[{line:"A = 1/2 bh",note:t.formula},{line:`A = 1/2(${d.b})(${d.h})`,note:t.substitute},{line:`A = ${q.answer.value}`,note:t.simplify}];case"circle_area":return[{line:"A = πr²",note:t.formula},{line:`A = π(${d.r})²`,note:t.substitute},{line:`A = ${q.answer.value}`,note:t.simplify}];case"circle_circ":return[{line:"C = 2πr",note:t.formula},{line:`C = 2π(${d.r})`,note:t.substitute},{line:`C = ${q.answer.value}`,note:t.simplify}];case"circle_area_diameter":return[{line:`r = ${d.d}/2 = ${d.r}`,note:t.radius},{line:"A = πr²",note:t.formula},{line:`A = π(${d.r})²`,note:t.substitute},{line:`A = ${q.answer.value}`,note:t.simplify}];case"circle_circ_diameter":return[{line:"C = πd",note:t.formula},{line:`C = π(${d.d})`,note:t.substitute},{line:`C = ${q.answer.value}`,note:t.simplify}];case"box_volume":return[{line:"V = lwh",note:t.formula},{line:`V = ${d.l}(${d.w})(${d.h})`,note:t.substitute},{line:`V = ${q.answer.value}`,note:t.simplify}];case"cube_volume":return[{line:"V = s³",note:t.formula},{line:`V = ${d.s}³`,note:t.substitute},{line:`V = ${q.answer.value}`,note:t.simplify}];case"cylinder_volume":return[{line:"V = πr²h",note:t.formula},{line:`V = π(${d.r})²(${d.h})`,note:t.substitute},{line:`V = ${q.answer.value}`,note:t.simplify}];case"mixed_rect":case"missing_rect_perim":return[{line:`l = ${d.area}/${d.w} = ${d.l}`,note:t.missing},{line:"P = 2(l + w)",note:t.formula},{line:`P = 2(${d.l} + ${d.w})`,note:t.substitute},{line:`P = ${q.answer.value}`,note:t.simplify}];case"discount_area":return[{line:"A = lw",note:t.formula},{line:`A = ${d.l}(${d.w}) = ${d.l*d.w}`,note:t.substitute},{line:`half = ${d.l*d.w}/2 = ${q.answer.value}`,note:t.simplify}];default:return[{line:"A = πr²",note:t.formula},{line:`A = π(${d.r})²`,note:t.substitute},{line:`A = ${q.answer.value}`,note:t.simplify}];}}
     };
 
-
+    const legacyGeometrySolutionLines = GAME.solutionLines.bind(GAME);
+    GAME.solutionLines = q => q.lines?.length ? q.lines : legacyGeometrySolutionLines(q);
 
     function readGlobalLanguage(){return localStorage.getItem("mathcomplete_lang")==="zh"?"zh":"en";}
     let lang=readGlobalLanguage();
@@ -1259,7 +1289,7 @@
     function buildQuiz(){const selectedDifficulty=difficultyEl.value,count=clamp(Number(questionCountEl.value||10),1,100);lastDifficulty=selectedDifficulty;quiz=[];const difficultyPlan=buildDifficultyPlan(count,selectedDifficulty);for(let i=0;i<count;i++)quiz.push(GAME.generateQuestion(difficultyPlan[i]));currentIndex=0;correctCount=0;wrongAnswers=[];answered=false;lastFeedback=null;showQuiz();renderQuestion(true);}
     function buildWrongTypeQuiz(){if(wrongAnswers.length===0){alert(tr().noWrongAlert);return;}const count=Math.max(wrongAnswers.length*2,5);quiz=[];for(let i=0;i<count;i++){const source=choose(wrongAnswers);const difficulty=lastDifficulty==="mixed"?source.difficulty:lastDifficulty;quiz.push(GAME.generateQuestion(difficulty,source.type));}currentIndex=0;correctCount=0;wrongAnswers=[];answered=false;lastFeedback=null;showQuiz();renderQuestion(true);}
     function showQuiz(){setupCard.classList.add("hidden");resultCard.classList.add("hidden");quizCard.classList.remove("hidden");}
-    function renderQuestion(resetOptions){const q=quiz[currentIndex];if(!q)return;if(resetOptions){answered=false;lastFeedback=null;feedbackEl.textContent="";feedbackEl.className="feedback";solutionBox.classList.add("hidden");solutionBox.innerHTML="";nextBtn.disabled=true;}progressText.textContent=tr().progress(currentIndex+1,quiz.length);difficultyText.textContent=lastDifficulty==="mixed"?`${tr().difficulties.mixed} · ${tr().difficulties[q.difficulty]}`:tr().difficulties[q.difficulty];progressBar.style.width=`${(currentIndex/quiz.length)*100}%`;renderMaybeMath(qMain,q.main,true);if(q.extra){renderMaybeMath(qExtra,q.extra,false);}else{qExtra.textContent="";}qExtra.classList.toggle("hidden",!q.extra);if(resetOptions){optionsEl.innerHTML="";q.options.forEach(opt=>{const btn=document.createElement("button");btn.className="option";btn.dataset.answerKey=answerKey(opt);btn.setAttribute("aria-label",answerToString(opt));renderMaybeMath(btn,answerToString(opt));btn.addEventListener("click",()=>chooseOption(btn,opt));optionsEl.appendChild(btn);});}nextBtn.textContent=currentIndex===quiz.length-1?tr().resultBtn:tr().nextBtn;if(resetOptions)startTimerForQuestion();else updateTimerDisplay();}
+    function renderQuestion(resetOptions){const q=quiz[currentIndex];if(!q)return;if(resetOptions){answered=false;lastFeedback=null;feedbackEl.textContent="";feedbackEl.className="feedback";solutionBox.classList.add("hidden");solutionBox.innerHTML="";nextBtn.disabled=true;}progressText.textContent=tr().progress(currentIndex+1,quiz.length);difficultyText.textContent=lastDifficulty==="mixed"?`${tr().difficulties.mixed} · ${tr().difficulties[q.difficulty]}`:tr().difficulties[q.difficulty];progressBar.style.width=`${(currentIndex/quiz.length)*100}%`;qTitle.textContent=tr().questionTitle;renderMaybeMath(qMain,q.main,true);qExtra.textContent="";qExtra.classList.add("hidden");if(resetOptions){optionsEl.innerHTML="";q.options.forEach(opt=>{const btn=document.createElement("button");btn.className="option";btn.dataset.answerKey=answerKey(opt);btn.setAttribute("aria-label",answerToString(opt));renderMaybeMath(btn,answerToString(opt));btn.addEventListener("click",()=>chooseOption(btn,opt));optionsEl.appendChild(btn);});}nextBtn.textContent=currentIndex===quiz.length-1?tr().resultBtn:tr().nextBtn;if(resetOptions)startTimerForQuestion();else updateTimerDisplay();}
     function renderFeedback(correct,answer,timeUp=false){feedbackEl.className="feedback";if(correct){feedbackEl.textContent=tr().correctFeedback;feedbackEl.classList.add("good");}else{const prefix=timeUp?(lang==="zh"?"时间到。正确答案是":"Time is up. The correct answer is"):(lang==="zh"?"错误。正确答案是":"Incorrect. The correct answer is");feedbackEl.innerHTML=`${prefix} ${mathSpan(answer,"feedback-math")}.`;renderTaggedMath(feedbackEl);feedbackEl.classList.add("bad");}}
     function renderSolutionBox(){const q=quiz[currentIndex];if(!q||!answered){solutionBox.classList.add("hidden");solutionBox.innerHTML="";return;}const lines=GAME.solutionLines(q);const correct=answerToString(correctAnswer(q));solutionBox.classList.remove("hidden");solutionBox.innerHTML=`<h4>${tr().solutionTitle}</h4><div class="solution-chain">${lines.map(s=>`<div class="chain-line">${mathSpan(s.line,"chain-math")}<span class="chain-note">${escapeHtml(s.note||"")}</span></div>`).join("")}</div><div class="solution-answer">${tr().solutionFinal} ${mathSpan(correct,"answer-math")}</div>`;renderTaggedMath(solutionBox);}
     function chooseOption(button,selected){if(answered)return;answered=true;clearTimer();const q=quiz[currentIndex],correct=correctAnswer(q),correctDisplay=answerToString(correct),buttons=[...optionsEl.querySelectorAll(".option")];buttons.forEach(btn=>{btn.disabled=true;if(btn.dataset.answerKey===answerKey(correct))btn.classList.add("correct");});if(isSameAnswer(selected,correct)){correctCount++;lastFeedback={correct:true,answer:correctDisplay,timeUp:false};renderFeedback(true,correctDisplay,false);}else{button.classList.add("wrong");lastFeedback={correct:false,answer:correctDisplay,timeUp:false};renderFeedback(false,correctDisplay,false);wrongAnswers.push({main:q.plain||q.main.replace(/<[^>]+>/g,""),answer:correctDisplay,selected:answerToString(selected),type:q.type,difficulty:q.difficulty});}void window.MCLProgress?.recordGameAttempt?.({question:q,correctAnswer:correctDisplay,selectedAnswer:answerToString(selected),isCorrect:isSameAnswer(selected,correct)});renderSolutionBox();nextBtn.disabled=false;progressBar.style.width=`${((currentIndex+1)/quiz.length)*100}%`;}
@@ -1274,7 +1304,7 @@
 
   </script>
   <script src="../assets/js/tool-modes.js"></script>
-  <script src="../assets/js/report-export.js?v=20260722.1"></script>
+  <script src="../assets/js/report-export.js?v=20260725.2"></script>
 
   <script src="../assets/js/tool-ux.js?v=20260716.2"></script>
   <script src="../assets/js/tool-catalog.js?v=20260716.3"></script>

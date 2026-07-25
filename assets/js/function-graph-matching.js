@@ -1,7 +1,7 @@
 (function () {
   const GAME_ID = "function-graph-matching";
   const COURSE = "algebra-2";
-  const DIFFICULTIES = ["easy", "medium", "hard", "mixed"];
+  const DIFFICULTIES = ["easy", "medium", "hard", "expert", "mixed"];
   const TIMER_SECONDS = { relaxed: 240, standard: 150, challenge: 90 };
   const VIEW = { xmin: -6, xmax: 6, ymin: -6, ymax: 6, width: 520, height: 400, pad: 34 };
   const $ = id => document.getElementById(id);
@@ -109,11 +109,12 @@
       correctGraph: "Correct graph",
       yourMatch: "Your match",
       sampleTitle: "Sample Set",
-      difficulties: { easy: "Easy", medium: "Medium", hard: "Hard", mixed: "Mixed" },
+      difficulties: { easy: "Easy", medium: "Medium", hard: "Hard", expert: "Expert", mixed: "Mixed" },
       difficultyOptions: {
         easy: "Easy: linear, quadratic, absolute value, square root",
         medium: "Medium: transformations, reciprocal, exponential, sine and cosine",
-        hard: "Hard: 5-6 graphs with trig, tangent, asymptotes, and subtle shifts",
+        hard: "Hard: 5 graphs with trig, asymptotes, logarithms, and subtle shifts",
+        expert: "Expert: 6 closely related graphs, piecewise rules, and multi-feature comparisons",
         mixed: "Mixed: balanced graph recognition"
       },
       timerOptions: {
@@ -165,11 +166,12 @@
       correctGraph: "\u6b63\u786e\u56fe\u50cf",
       yourMatch: "\u4f60\u7684\u5339\u914d",
       sampleTitle: "\u6837\u9898",
-      difficulties: { easy: "\u7b80\u5355", medium: "\u4e2d\u7b49", hard: "\u56f0\u96be", mixed: "\u6df7\u5408" },
+      difficulties: { easy: "\u7b80\u5355", medium: "\u4e2d\u7b49", hard: "\u56f0\u96be", expert: "\u4e13\u5bb6", mixed: "\u6df7\u5408" },
       difficultyOptions: {
         easy: "\u7b80\u5355\uff1a\u4e00\u6b21\u3001\u4e8c\u6b21\u3001\u7edd\u5bf9\u503c\u3001\u5e73\u65b9\u6839",
         medium: "\u4e2d\u7b49\uff1a\u56fe\u50cf\u53d8\u6362\u3001\u53cd\u6bd4\u4f8b\u3001\u6307\u6570\u3001\u6b63\u5f26\u548c\u4f59\u5f26",
-        hard: "\u56f0\u96be\uff1a5-6 \u5f20\u56fe\uff0c\u542b\u4e09\u89d2\u51fd\u6570\u3001\u6b63\u5207\u3001\u6e10\u8fd1\u7ebf\u548c\u7ec6\u5fae\u5e73\u79fb",
+        hard: "\u56f0\u96be\uff1a5 \u5f20\u56fe\uff0c\u542b\u4e09\u89d2\u51fd\u6570\u3001\u6e10\u8fd1\u7ebf\u3001\u5bf9\u6570\u548c\u7ec6\u5fae\u5e73\u79fb",
+        expert: "\u4e13\u5bb6\uff1a6 \u5f20\u9ad8\u76f8\u4f3c\u56fe\u50cf\uff0c\u542b\u5206\u6bb5\u89c4\u5219\u4e0e\u591a\u7279\u5f81\u6bd4\u8f83",
         mixed: "\u6df7\u5408\uff1a\u7efc\u5408\u51fd\u6570\u56fe\u50cf\u8bc6\u522b"
       },
       timerOptions: {
@@ -386,6 +388,18 @@
   }
 
   function buildSet(difficulty) {
+    const registry = window.MCLQuestionTemplates;
+    if (registry?.getTool?.(GAME_ID)) {
+      const templates = registry.templatesFor(GAME_ID, difficulty);
+      if (templates.length) {
+        const selected = choice(templates);
+        const question = registry.build(GAME_ID, selected.id, {
+          seed: `${GAME_ID}:${Date.now()}:${Math.random()}`,
+          lang
+        });
+        if (question.audit?.matchingSet) return question.audit.matchingSet;
+      }
+    }
     const level = difficulty === "mixed" ? choice(["easy", "medium", "hard"]) : difficulty;
     const count = countFor(level);
     const kinds = shuffle(kindsFor(level));

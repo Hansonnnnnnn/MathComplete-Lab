@@ -17,7 +17,7 @@
   <script src="../assets/js/auth-ui.js"></script>
   <script src="../assets/js/progress.js"></script>
   <script src="../assets/js/theme.js?v=20260716.2"></script>
-  <link rel="stylesheet" href="../assets/css/design-system.css?v=20260717.2">
+  <link rel="stylesheet" href="../assets/css/design-system.css?v=20260724.1">
   <script defer src="https://cdn.jsdelivr.net/npm/lucide@0.468.0/dist/umd/lucide.min.js"></script>
 </head>
 <body>
@@ -57,7 +57,7 @@
         const out = [term(a, 1, true), term(b, 0, a === 0)].join("");
         return out || "0";
       }
-      function dne(h) { return h.textAnswer("DNE", "不存在", "dne"); }
+      function dne(h) { return h.textAnswer("DNE", "ä¸å­˜åœ¨", "dne"); }
       function inf(pos = true) { return pos ? "\\infty" : "-\\infty"; }
       function t(h, en, zh, key) { return h.textAnswer(en, zh, key); }
 
@@ -260,7 +260,7 @@
                 lines: [
                   { line: `\\lim_{x\\to ${a}^-}f(x)=${left}`, note: h.tr().notes.oneSided },
                   { line: `\\lim_{x\\to ${a}^+}f(x)=${right}`, note: h.tr().notes.oneSided },
-                  { line: h.lang === "zh" ? "\\text{不存在}" : "\\text{DNE}", note: h.tr().notes.final }
+                  { line: h.lang === "zh" ? "\\text{ä¸å­˜åœ¨}" : "\\text{DNE}", note: h.tr().notes.final }
                 ],
                 distractors: [`${left}`, `${right}`, frac(left + right, 2), t(h, "continuous", "\u8fde\u7eed", "continuous")]
               };
@@ -352,10 +352,13 @@
       };
     })();
   </script>
-  <script src="../assets/js/question-template-registry.js?v=20260720.1"></script>
-  <script src="../assets/js/quiz-tool-engine.js"></script>
+  <script src="../assets/js/question-bank-specs.js"></script>
+  <script src="../assets/js/question-template-registry.js?v=20260724.1"></script>
+  <script src="../assets/js/semantic-bank-factory.js"></script>
+  <script src="../assets/js/limits-practice-bank.js?v=20260724.1"></script>
+  <script src="../assets/js/quiz-tool-engine.js?v=20260724.2"></script>
   <script src="../assets/js/tool-modes.js"></script>
-  <script src="../assets/js/report-export.js?v=20260722.1"></script>
+  <script src="../assets/js/report-export.js?v=20260725.2"></script>
 
   <script src="../assets/js/tool-ux.js?v=20260716.2"></script>
   <script src="../assets/js/tool-catalog.js?v=20260716.3"></script>

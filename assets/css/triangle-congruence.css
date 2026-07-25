@@ -210,6 +210,27 @@
   background: var(--mcl-bad-soft, #fff0f0);
 }
 
+.proof-builder { display: grid; gap: 16px; width: 100%; min-width: 0; }
+.proof-step-tabs { display: flex; flex-wrap: wrap; gap: 8px; }
+.proof-step-tab { width: 42px; height: 42px; padding: 0; border: 1px solid var(--geo-border); border-radius: 50%; background: var(--mcl-surface, #fff); color: var(--mcl-text, #14233d); }
+.proof-step-tab.complete { border-color: var(--geo-accent); }
+.proof-step-tab.active { outline: 3px solid color-mix(in srgb, var(--geo-accent) 28%, transparent); }
+.proof-step-tab.correct { border-color: var(--mcl-good, #18794e); color: var(--mcl-good, #18794e); }
+.proof-step-tab.wrong { border-color: var(--mcl-bad, #bd2c2c); color: var(--mcl-bad, #bd2c2c); }
+.proof-dependency-hint { margin: 0; color: var(--geo-muted); font-size: 14px; }
+.proof-current-step { display: grid; gap: 10px; padding: 16px; border: 1px solid var(--geo-border); border-left: 4px solid var(--geo-accent); border-radius: 8px; background: var(--mcl-surface, #fff); }
+.proof-current-step.correct { border-left-color: var(--mcl-good, #18794e); }
+.proof-current-step.wrong { border-left-color: var(--mcl-bad, #bd2c2c); }
+.proof-current-heading, .proof-current-answer { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.proof-current-answer span { color: var(--geo-muted); }
+.proof-given-badge { color: var(--mcl-good, #18794e); font-size: 13px; }
+.proof-palette-group h4 { margin: 0 0 8px; font-size: 14px; color: var(--geo-muted); }
+.proof-palette { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.proof-choice-card { min-height: 48px; padding: 10px 12px; border: 1px solid var(--geo-border); border-radius: 8px; background: var(--mcl-surface, #fff); color: var(--mcl-text, #14233d); text-align: left; line-height: 1.35; }
+.proof-choice-card:hover:not(:disabled) { border-color: var(--geo-accent); }
+.proof-choice-card.selected { border-color: var(--geo-accent); background: var(--mcl-accent-soft, #eaf1ff); }
+.proof-choice-card:disabled { opacity: 0.75; cursor: default; }
+
 .hint-strip {
   display: flex;
   flex-wrap: wrap;
@@ -283,6 +304,9 @@
   .proof-select {
     min-width: 180px;
   }
+
+  .proof-palette { grid-template-columns: 1fr; }
+  .proof-current-answer { align-items: flex-start; flex-direction: column; }
 
   .solution-step {
     grid-template-columns: 1fr;

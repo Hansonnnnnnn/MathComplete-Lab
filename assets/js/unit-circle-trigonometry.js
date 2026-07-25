@@ -462,9 +462,9 @@
     const t = tr();
     const angle = h.choice(anglePool.filter(item => !item.axis));
     const correct = degreeAnswer(angle.referenceDegrees);
-    return makeQuestion("trig-reference-angle-degrees", "promptReference", `\theta=${degreesLatex(angle.degrees)},\quad\theta_{\mathrm{ref}}=?`, correct, degreeDistractors(correct, [angle.degrees, 180 - angle.referenceDegrees, 360 - angle.referenceDegrees]), [
-      { line: `\theta=${degreesLatex(angle.degrees)}\in\mathrm{Q${angle.quadrant}}`, note: t.notes.quadrant },
-      { line: `\theta_{\mathrm{ref}}=${degreesLatex(angle.referenceDegrees)}`, note: t.notes.reference }
+    return makeQuestion("trig-reference-angle-degrees", "promptReference", `\\theta=${degreesLatex(angle.degrees)},\\quad\\theta_{\\mathrm{ref}}=?`, correct, degreeDistractors(correct, [angle.degrees, 180 - angle.referenceDegrees, 360 - angle.referenceDegrees]), [
+      { line: `\\theta=${degreesLatex(angle.degrees)}\\in\\mathrm{Q${angle.quadrant}}`, note: t.notes.quadrant },
+      { line: `\\theta_{\\mathrm{ref}}=${degreesLatex(angle.referenceDegrees)}`, note: t.notes.reference }
     ], t.suggestions.reference, { kind: "reference-angle-degrees", angle, referenceDegrees: angle.referenceDegrees }, visual ? makeVisual(angle, { showReference: true }) : null);
   }
 
@@ -473,13 +473,13 @@
     const angle = h.choice(anglePool);
     const coordinate = coordinateAnswer(angle, t);
     const correct = angleAnswer(angle);
-    return makeQuestion("trig-angle-from-coordinate", "promptCoordinateAngle", `P=${coordinate.latex},\quad 0\leq\theta<2\pi`, correct, angleDistractors(correct, [
+    return makeQuestion("trig-angle-from-coordinate", "promptCoordinateAngle", `P=${coordinate.latex},\\quad 0\\leq\\theta<2\\pi`, correct, angleDistractors(correct, [
       angleFromDegrees(180 - angle.degrees),
       angleFromDegrees(360 - angle.degrees),
       angleFromDegrees(90 - angle.degrees)
     ]), [
-      { line: `P=\left(\cos\theta,\sin\theta\right)=${coordinate.latex}`, note: t.notes.coordinate },
-      { line: `\theta=${angleLatex(angle)}`, note: t.notes.sign }
+      { line: `P=\\left(\\cos\\theta,\\sin\\theta\\right)=${coordinate.latex}`, note: t.notes.coordinate },
+      { line: `\\theta=${angleLatex(angle)}`, note: t.notes.sign }
     ], t.suggestions.coordinateAngle, { kind: "angle-from-coordinate", angle, coordinate: coordinate.value }, visual ? makeVisual(angle) : null);
   }
 
@@ -491,9 +491,9 @@
     const value = values[fn];
     const coordinate = coordinateAnswer(angle, t);
     const correct = exactAnswer(value, t);
-    return makeQuestion(`trig-coordinate-${fn === "sin" ? "sine" : "cosine"}`, "promptCoordinateComponent", `P=${coordinate.latex},\quad\${fn}\theta=?`, correct, exactDistractors(value, [values.sin, values.cos, negateExact(value)], t), [
-      { line: `P=\left(\cos\theta,\sin\theta\right)`, note: t.notes.coordinate },
-      { line: `\${fn}\theta=${correct.latex}`, note: t.notes.final }
+    return makeQuestion(`trig-coordinate-${fn === "sin" ? "sine" : "cosine"}`, "promptCoordinateComponent", `P=${coordinate.latex},\\quad\\${fn}\\theta=?`, correct, exactDistractors(value, [values.sin, values.cos, negateExact(value)], t), [
+      { line: `P=\\left(\\cos\\theta,\\sin\\theta\\right)`, note: t.notes.coordinate },
+      { line: `\\${fn}\\theta=${correct.latex}`, note: t.notes.final }
     ], t.suggestions.component, { kind: "coordinate-component", angle, fn, value, coordinate: coordinate.value }, visual ? makeVisual(angle) : null);
   }
 
@@ -502,10 +502,10 @@
     const angle = h.choice(anglePool);
     const values = trigValues(angle);
     const correct = exactAnswer(values.tan, t);
-    const main = `\sin\theta=${exactLatex(values.sin, t.undefined)},\quad\cos\theta=${exactLatex(values.cos, t.undefined)},\quad\tan\theta=?`;
+    const main = `\\sin\\theta=${exactLatex(values.sin, t.undefined)},\\quad\\cos\\theta=${exactLatex(values.cos, t.undefined)},\\quad\\tan\\theta=?`;
     return makeQuestion("trig-tangent-from-components", "promptTangentRatio", main, correct, exactDistractors(values.tan, [values.sin, values.cos, values.tan.undefined ? ZERO : negateExact(values.tan)], t), [
-      { line: `\tan\theta=\frac{\sin\theta}{\cos\theta}`, note: t.notes.tangent },
-      { line: `\tan\theta=${correct.latex}`, note: t.notes.final }
+      { line: `\\tan\\theta=\\frac{\\sin\\theta}{\\cos\\theta}`, note: t.notes.tangent },
+      { line: `\\tan\\theta=${correct.latex}`, note: t.notes.final }
     ], t.suggestions.tangent, { kind: "tangent-components", angle, values }, visual ? makeVisual(angle) : null);
   }
 
@@ -517,10 +517,10 @@
     const target = values[fn];
     const correct = coordinateAnswer(angle, t);
     const sameReference = STANDARD_ANGLES.filter(item => !item.axis && item.referenceDegrees === angle.referenceDegrees && item.degrees !== angle.degrees);
-    const main = `\${fn}\theta=${exactLatex(target, t.undefined)},\quad\theta\in\mathrm{Q${angle.quadrant}},\quad P(\theta)=?`;
+    const main = `\\${fn}\\theta=${exactLatex(target, t.undefined)},\\quad\\theta\\in\\mathrm{Q${angle.quadrant}},\\quad P(\\theta)=?`;
     return makeQuestion("trig-coordinate-from-clue", "promptCoordinateClue", main, correct, coordinateDistractors(correct, sameReference, t), [
-      { line: `P(\theta)=\left(\cos\theta,\sin\theta\right)`, note: t.notes.coordinate },
-      { line: `\theta\in\mathrm{Q${angle.quadrant}}`, note: t.notes.sign },
+      { line: `P(\\theta)=\\left(\\cos\\theta,\\sin\\theta\\right)`, note: t.notes.coordinate },
+      { line: `\\theta\\in\\mathrm{Q${angle.quadrant}}`, note: t.notes.sign },
       { line: correct.latex, note: t.notes.final }
     ], t.suggestions.coordinateClue, { kind: "coordinate-from-clue", angle, fn, target, coordinate: correct.value }, visual ? makeVisual(angle, { showReference: true }) : null);
   }

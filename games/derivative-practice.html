@@ -608,7 +608,7 @@
 </style>
   <script src="../assets/js/theme.js?v=20260716.2"></script>
   <link rel="stylesheet" href="../assets/css/quiz-tool.css">
-  <link rel="stylesheet" href="../assets/css/design-system.css?v=20260717.2">
+  <link rel="stylesheet" href="../assets/css/design-system.css?v=20260724.1">
   <script defer src="https://cdn.jsdelivr.net/npm/lucide@0.468.0/dist/umd/lucide.min.js"></script>
 </head>
 <body>
@@ -675,6 +675,10 @@
     </section>
   </main>
 
+  <script src="../assets/js/question-bank-specs.js"></script>
+  <script src="../assets/js/question-template-registry.js?v=20260724.1"></script>
+  <script src="../assets/js/semantic-bank-factory.js"></script>
+  <script src="../assets/js/derivative-practice-bank.js?v=20260724.4"></script>
   <script>
     const GAME_TEXT = {
       en: {
@@ -1336,10 +1340,28 @@
       ]
     };
 
+    window.MCLDerivativeBuilders = BUILDERS;
+
     const GAME = {
       answerToString(a){ return a.value; },
 
       generateQuestion(difficulty, forcedType=null){
+        const registry = window.MCLQuestionTemplates;
+        if(registry?.getTool?.("derivative-practice")){
+          const templates = registry.templatesFor("derivative-practice", difficulty, forcedType);
+          const pool = templates.length ? templates : registry.templatesFor("derivative-practice", difficulty);
+          if(pool.length){
+            const template = choose(pool);
+            const q = registry.build("derivative-practice", template.id, {
+              seed: `derivative-practice:${Date.now()}:${Math.random()}`,
+              lang
+            });
+            q.difficulty = template.difficulty;
+            if(typeof q.answer !== "object") q.answer = ans(q.answer);
+            q.options = this.options(q, Number(optionCountEl.value || 4));
+            return q;
+          }
+        }
         let builders = BUILDERS[difficulty] || BUILDERS.medium;
 
         if(forcedType){
@@ -1644,6 +1666,7 @@
       progressText.textContent = tr().progress(currentIndex + 1, quiz.length);
       difficultyText.textContent = lastDifficulty === "mixed" ? `${tr().difficulties.mixed} · ${tr().difficulties[q.difficulty]}` : tr().difficulties[q.difficulty];
       progressBar.style.width = `${(currentIndex / quiz.length) * 100}%`;
+      qTitle.textContent = q.prompt || tr().questionTitle;
       renderMath(qMain, q.main, true);
       qExtra.textContent = q.extra || "";
       qExtra.classList.toggle("hidden", !q.extra);
@@ -1879,7 +1902,7 @@
     applyLanguage();
   </script>
   <script src="../assets/js/tool-modes.js"></script>
-  <script src="../assets/js/report-export.js?v=20260722.1"></script>
+  <script src="../assets/js/report-export.js?v=20260725.2"></script>
 
   <script src="../assets/js/tool-ux.js?v=20260716.2"></script>
   <script src="../assets/js/tool-catalog.js?v=20260716.3"></script>

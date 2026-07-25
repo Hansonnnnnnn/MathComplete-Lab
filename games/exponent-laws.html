@@ -453,12 +453,12 @@
 </style>
   <script src="../assets/js/theme.js?v=20260716.2"></script>
   <link rel="stylesheet" href="../assets/css/quiz-tool.css">
-  <link rel="stylesheet" href="../assets/css/design-system.css?v=20260717.2">
+  <link rel="stylesheet" href="../assets/css/design-system.css?v=20260724.1">
   <script defer src="https://cdn.jsdelivr.net/npm/lucide@0.468.0/dist/umd/lucide.min.js"></script>
 </head>
 <body>
   <nav class="mc-site-shell">
-    <a class="mc-brand" href="../index.html"><span class="mc-brand-mark">∑</span><span>MathComplete Lab</span></a>
+    <a class="mc-brand" href="../index.html"><span class="mc-brand-mark">âˆ‘</span><span>MathComplete Lab</span></a>
     <div class="mc-links">
       <a class="mc-link" href="../practice.html" data-i18n="navPractice">Practice Library</a>
       <a class="mc-link primary" href="../index.html" data-i18n="navHome">Home</a>
@@ -551,7 +551,7 @@
     }
     const T = {
       en:{
-        toolBadge:"Algebra I · Algebra II", title:"Exponent Laws Practice",
+        toolBadge:"Algebra I Â· Algebra II", title:"Exponent Laws Practice",
         subtitle:"Simplify exponent expressions using product, quotient, power, zero, and negative exponent rules.",
         note:"Every answer is written with positive exponents. Distractors are built from common exponent-law mistakes.",
         questionTitle:"Choose the correct simplification.",
@@ -561,14 +561,14 @@
         notes:{product:"add exponents",quotient:"subtract exponents",power:"multiply exponents",productPower:"distribute the outside power",negative:"rewrite with positive exponents",final:"positive exponents"}
       },
       zh:{
-        toolBadge:"Algebra I · Algebra II", title:"指数运算法则练习",
-        subtitle:"专项练习同底数乘除、幂的幂、积的幂、零指数和负指数化简。",
-        note:"所有答案统一写成正指数形式。干扰项来自常见指数法则错误。",
-        questionTitle:"选择正确的化简结果。",
-        promptSimplify:"化简，并用正指数形式表示答案。",
-        difficultyOptions:{easy:"简单：每题一个指数法则",medium:"中等：系数和两个变量",hard:"困难：负指数和分式",expert:"专家：多步混合指数法则",mixed:"混合：从所有难度中均衡出题"},
-        suggestion:"建议：先确认底数是否相同，幂的幂要乘指数，负指数要移到分式另一侧。",
-        notes:{product:"指数相加",quotient:"指数相减",power:"指数相乘",productPower:"把外层指数分配进去",negative:"改写成正指数",final:"正指数形式"}
+        toolBadge:"Algebra I Â· Algebra II", title:"æŒ‡æ•°è¿ç®—æ³•åˆ™ç»ƒä¹ ",
+        subtitle:"ä¸“é¡¹ç»ƒä¹ åŒåº•æ•°ä¹˜é™¤ã€å¹‚çš„å¹‚ã€ç§¯çš„å¹‚ã€é›¶æŒ‡æ•°å’Œè´ŸæŒ‡æ•°åŒ–ç®€ã€‚",
+        note:"æ‰€æœ‰ç­”æ¡ˆç»Ÿä¸€å†™æˆæ­£æŒ‡æ•°å½¢å¼ã€‚å¹²æ‰°é¡¹æ¥è‡ªå¸¸è§æŒ‡æ•°æ³•åˆ™é”™è¯¯ã€‚",
+        questionTitle:"é€‰æ‹©æ­£ç¡®çš„åŒ–ç®€ç»“æžœã€‚",
+        promptSimplify:"åŒ–ç®€ï¼Œå¹¶ç”¨æ­£æŒ‡æ•°å½¢å¼è¡¨ç¤ºç­”æ¡ˆã€‚",
+        difficultyOptions:{easy:"ç®€å•ï¼šæ¯é¢˜ä¸€ä¸ªæŒ‡æ•°æ³•åˆ™",medium:"ä¸­ç­‰ï¼šç³»æ•°å’Œä¸¤ä¸ªå˜é‡",hard:"å›°éš¾ï¼šè´ŸæŒ‡æ•°å’Œåˆ†å¼",expert:"ä¸“å®¶ï¼šå¤šæ­¥æ··åˆæŒ‡æ•°æ³•åˆ™",mixed:"æ··åˆï¼šä»Žæ‰€æœ‰éš¾åº¦ä¸­å‡è¡¡å‡ºé¢˜"},
+        suggestion:"å»ºè®®ï¼šå…ˆç¡®è®¤åº•æ•°æ˜¯å¦ç›¸åŒï¼Œå¹‚çš„å¹‚è¦ä¹˜æŒ‡æ•°ï¼Œè´ŸæŒ‡æ•°è¦ç§»åˆ°åˆ†å¼å¦ä¸€ä¾§ã€‚",
+        notes:{product:"æŒ‡æ•°ç›¸åŠ ",quotient:"æŒ‡æ•°ç›¸å‡",power:"æŒ‡æ•°ç›¸ä¹˜",productPower:"æŠŠå¤–å±‚æŒ‡æ•°åˆ†é…è¿›åŽ»",negative:"æ”¹å†™æˆæ­£æŒ‡æ•°",final:"æ­£æŒ‡æ•°å½¢å¼"}
       }
     };
     function tr(){ return T[localStorage.getItem("mathcomplete_lang")==="zh" ? "zh" : "en"]; }
@@ -603,9 +603,10 @@
     window.MCLQuizTool = { text:T, builders:B };
   </script>
   <script src="../assets/js/question-template-registry.js?v=20260720.1"></script>
-  <script src="../assets/js/quiz-tool-engine.js"></script>
+  <script src="../assets/js/exponent-laws-bank.js?v=20260724.2"></script>
+  <script src="../assets/js/quiz-tool-engine.js?v=20260724.2"></script>
   <script src="../assets/js/tool-modes.js"></script>
-  <script src="../assets/js/report-export.js?v=20260722.1"></script>
+  <script src="../assets/js/report-export.js?v=20260725.2"></script>
 
   <script src="../assets/js/tool-ux.js?v=20260716.2"></script>
   <script src="../assets/js/tool-catalog.js?v=20260716.3"></script>

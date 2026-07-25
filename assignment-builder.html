@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; font-src 'self' data: https://cdn.jsdelivr.net; img-src 'self' data: blob:; connect-src 'self' https://hcrxxfcvmrjahnjlbjur.supabase.co wss://hcrxxfcvmrjahnjlbjur.supabase.co https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; object-src 'none'; base-uri 'self'; form-action 'self'">
+  <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=()">
+  <title>Assignment Builder | MathComplete Lab</title>
+  <link rel="stylesheet" href="assets/css/design-system.css?v=20260725.1" />
+  <link rel="stylesheet" href="assets/css/assignment-builder.css?v=20260725.4" />
+  <script src="assets/js/theme.js?v=20260716.2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.106.2"></script>
+  <script src="assets/js/supabase-client.js"></script>
+  <script src="assets/js/auth.js"></script>
+  <script src="assets/js/auth-ui.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+</head>
+<body>
+  <main class="mcl-page mcl-assignment-page">
+    <header class="mcl-assignment-heading">
+      <div class="mcl-eyebrow" data-copy="eyebrow">Teacher workspace</div>
+      <h1 data-copy="title">Assignment Builder</h1>
+      <p data-copy="lead">Create a clear, student-ready practice assignment and download it as a PDF.</p>
+    </header>
+
+    <div id="assignmentLoading" class="mcl-assignment-loading" role="status" data-copy="checkingAccount">Preparing the assignment builder...</div>
+
+    <form id="assignmentForm" class="mcl-assignment-workspace" hidden novalidate>
+      <section class="mcl-assignment-section" aria-labelledby="assignmentInfoTitle">
+        <div class="mcl-section-heading">
+          <div>
+            <span class="mcl-section-index">1</span>
+            <h2 id="assignmentInfoTitle" data-copy="detailsTitle">Assignment details</h2>
+          </div>
+          <p data-copy="detailsLead">Identify the student and set the schedule shown on the handout.</p>
+        </div>
+
+        <div class="mcl-assignment-fields">
+          <label class="mcl-field">
+            <span data-copy="studentName">Student name</span>
+            <input id="studentName" name="studentName" type="text" maxlength="80" autocomplete="off" required />
+          </label>
+          <label class="mcl-field">
+            <span data-copy="assignmentTitle">Assignment title</span>
+            <input id="assignmentTitle" name="assignmentTitle" type="text" maxlength="120" required />
+          </label>
+          <label class="mcl-field">
+            <span data-copy="teacherName">Teacher name</span>
+            <input id="teacherName" name="teacherName" type="text" maxlength="80" />
+          </label>
+          <label class="mcl-field">
+            <span data-copy="releaseDate">Release date</span>
+            <input id="releaseDate" name="releaseDate" type="date" />
+          </label>
+          <div class="mcl-due-field">
+            <label class="mcl-field">
+              <span data-copy="dueDate">Due date</span>
+              <input id="dueDate" name="dueDate" type="date" />
+            </label>
+            <label class="mcl-check mcl-check--due">
+              <input id="dueNextClass" name="dueNextClass" type="checkbox" />
+              <span data-copy="dueNextClass">Due next class</span>
+            </label>
+          </div>
+          <label class="mcl-field mcl-field--wide">
+            <span data-copy="generalNotes">General notes</span>
+            <textarea id="generalNotes" name="generalNotes" maxlength="1000" rows="3"></textarea>
+          </label>
+        </div>
+      </section>
+
+      <section class="mcl-assignment-section" aria-labelledby="assignmentTasksTitle">
+        <div class="mcl-section-heading">
+          <div>
+            <span class="mcl-section-index">2</span>
+            <h2 id="assignmentTasksTitle" data-copy="tasksTitle">Practice tasks</h2>
+          </div>
+          <p><span id="taskCount">0</span> / 20 <span data-copy="tasksAdded">tasks added</span></p>
+        </div>
+
+        <div class="mcl-tool-picker">
+          <label class="mcl-field">
+            <span data-copy="courseFilter">Course</span>
+            <select id="courseFilter"></select>
+          </label>
+          <label class="mcl-field mcl-tool-picker__search">
+            <span data-copy="searchTools">Search tools</span>
+            <input id="toolSearch" type="search" maxlength="80" />
+          </label>
+          <label class="mcl-field mcl-tool-picker__tool">
+            <span data-copy="practiceTool">Practice tool</span>
+            <select id="toolPicker"></select>
+          </label>
+          <button id="addTaskButton" class="mcl-button mcl-button--primary" type="button">
+            <i data-lucide="plus" aria-hidden="true"></i><span data-copy="addTask">Add task</span>
+          </button>
+        </div>
+
+        <div id="taskEmpty" class="mcl-task-empty">
+          <i data-lucide="clipboard-list" aria-hidden="true"></i>
+          <strong data-copy="emptyTitle">No tasks added yet</strong>
+          <span data-copy="emptyLead">Choose a tool above to build the student's assignment.</span>
+        </div>
+        <div id="taskList" class="mcl-task-list" aria-live="polite"></div>
+      </section>
+
+      <section class="mcl-assignment-actions" aria-label="PDF actions">
+        <div>
+          <strong data-copy="privacyTitle">Generated on this device</strong>
+          <span data-copy="privacyLead">Student and assignment details are not uploaded or saved.</span>
+        </div>
+        <button id="downloadAssignmentButton" class="mcl-button mcl-button--primary mcl-button--download" type="submit">
+          <i data-lucide="file-down" aria-hidden="true"></i><span data-copy="downloadPdf">Download assignment PDF</span>
+        </button>
+      </section>
+      <div id="assignmentMessage" class="mcl-assignment-message" role="alert" hidden></div>
+    </form>
+  </main>
+
+  <script src="assets/js/tool-catalog.js?v=20260725.3"></script>
+  <script src="assets/js/assignment-builder.js?v=20260725.6"></script>
+  <script src="assets/js/motion.js?v=20260717.3"></script>
+  <script src="assets/js/site-shell.js?v=20260716.5"></script>
+</body>
+</html>

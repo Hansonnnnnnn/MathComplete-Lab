@@ -453,12 +453,12 @@
 </style>
   <script src="../assets/js/theme.js?v=20260716.2"></script>
   <link rel="stylesheet" href="../assets/css/quiz-tool.css">
-  <link rel="stylesheet" href="../assets/css/design-system.css?v=20260717.2">
+  <link rel="stylesheet" href="../assets/css/design-system.css?v=20260724.1">
   <script defer src="https://cdn.jsdelivr.net/npm/lucide@0.468.0/dist/umd/lucide.min.js"></script>
 </head>
 <body>
   <nav class="mc-site-shell">
-    <a class="mc-brand" href="../index.html"><span class="mc-brand-mark">∑</span><span>MathComplete Lab</span></a>
+    <a class="mc-brand" href="../index.html"><span class="mc-brand-mark">âˆ‘</span><span>MathComplete Lab</span></a>
     <div class="mc-links">
       <a class="mc-link" href="../practice.html" data-i18n="navPractice">Practice Library</a>
       <a class="mc-link primary" href="../index.html" data-i18n="navHome">Home</a>
@@ -523,7 +523,7 @@
     </section>
   </main>
 
-  <script>
+  <script type="application/json" id="legacy-logarithmic-functions-script">
     const GAME_TEXT = {
       en: {
         toolBadge: "Algebra II",
@@ -577,52 +577,52 @@
       },
       zh: {
         toolBadge: "Algebra II",
-        title: "对数函数专项练习",
-        subtitle: "练习对数形式、对数性质、对数方程、函数变换、反函数和对数模型。",
-        note: "这个工具使用随机题型模板，并按答案类型生成选项：数字、方程、说法和比较类选项不会混在一起。",
-        questionTitle: "请阅读题干，并选择正确答案。",
-        promptConvertExp: "转换成指数形式。",
-        promptConvertLog: "转换成对数形式。",
-        promptEvaluate: "计算对数的值。",
-        promptIdentifyBase: "指出 base。",
-        promptIdentifyArgument: "指出 argument。",
-        promptIdentifyValue: "指出 value。",
-        promptDefined: "选择正确的定义域判断。",
-        promptSimplify: "化简表达式。",
-        promptExpand: "展开对数表达式。",
-        promptCondense: "合并成一个对数。",
-        promptGraphFeature: "选择正确的图像特征。",
-        promptEquation: "解对数方程。",
-        promptTransform: "选择正确的函数变换说法。",
-        promptChooseFunction: "选择符合描述的对数函数。",
-        promptChangeBase: "选择正确的换底公式形式。",
-        promptInverse: "求反函数。",
-        promptModel: "使用对数模型。",
-        promptCompare: "比较两个对数值。",
-        promptStatement: "选择正确说法。",
+        title: "å¯¹æ•°å‡½æ•°ä¸“é¡¹ç»ƒä¹ ",
+        subtitle: "ç»ƒä¹ å¯¹æ•°å½¢å¼ã€å¯¹æ•°æ€§è´¨ã€å¯¹æ•°æ–¹ç¨‹ã€å‡½æ•°å˜æ¢ã€åå‡½æ•°å’Œå¯¹æ•°æ¨¡åž‹ã€‚",
+        note: "è¿™ä¸ªå·¥å…·ä½¿ç”¨éšæœºé¢˜åž‹æ¨¡æ¿ï¼Œå¹¶æŒ‰ç­”æ¡ˆç±»åž‹ç”Ÿæˆé€‰é¡¹ï¼šæ•°å­—ã€æ–¹ç¨‹ã€è¯´æ³•å’Œæ¯”è¾ƒç±»é€‰é¡¹ä¸ä¼šæ··åœ¨ä¸€èµ·ã€‚",
+        questionTitle: "è¯·é˜…è¯»é¢˜å¹²ï¼Œå¹¶é€‰æ‹©æ­£ç¡®ç­”æ¡ˆã€‚",
+        promptConvertExp: "è½¬æ¢æˆæŒ‡æ•°å½¢å¼ã€‚",
+        promptConvertLog: "è½¬æ¢æˆå¯¹æ•°å½¢å¼ã€‚",
+        promptEvaluate: "è®¡ç®—å¯¹æ•°çš„å€¼ã€‚",
+        promptIdentifyBase: "æŒ‡å‡º baseã€‚",
+        promptIdentifyArgument: "æŒ‡å‡º argumentã€‚",
+        promptIdentifyValue: "æŒ‡å‡º valueã€‚",
+        promptDefined: "é€‰æ‹©æ­£ç¡®çš„å®šä¹‰åŸŸåˆ¤æ–­ã€‚",
+        promptSimplify: "åŒ–ç®€è¡¨è¾¾å¼ã€‚",
+        promptExpand: "å±•å¼€å¯¹æ•°è¡¨è¾¾å¼ã€‚",
+        promptCondense: "åˆå¹¶æˆä¸€ä¸ªå¯¹æ•°ã€‚",
+        promptGraphFeature: "é€‰æ‹©æ­£ç¡®çš„å›¾åƒç‰¹å¾ã€‚",
+        promptEquation: "è§£å¯¹æ•°æ–¹ç¨‹ã€‚",
+        promptTransform: "é€‰æ‹©æ­£ç¡®çš„å‡½æ•°å˜æ¢è¯´æ³•ã€‚",
+        promptChooseFunction: "é€‰æ‹©ç¬¦åˆæè¿°çš„å¯¹æ•°å‡½æ•°ã€‚",
+        promptChangeBase: "é€‰æ‹©æ­£ç¡®çš„æ¢åº•å…¬å¼å½¢å¼ã€‚",
+        promptInverse: "æ±‚åå‡½æ•°ã€‚",
+        promptModel: "ä½¿ç”¨å¯¹æ•°æ¨¡åž‹ã€‚",
+        promptCompare: "æ¯”è¾ƒä¸¤ä¸ªå¯¹æ•°å€¼ã€‚",
+        promptStatement: "é€‰æ‹©æ­£ç¡®è¯´æ³•ã€‚",
         difficultyOptions: {
-          easy: "简单：log 的含义、基础求值、组成部分和定义条件",
-          medium: "中等：对数性质、展开合并、基础图像特征和简单方程",
-          hard: "困难：带平移的方程、性质方程、图像变换和换底公式",
-          expert: "专家：增根检查、反函数、模型、大小比较和综合判断",
-          mixed: "混合：从所有难度中均衡出题"
+          easy: "ç®€å•ï¼šlog çš„å«ä¹‰ã€åŸºç¡€æ±‚å€¼ã€ç»„æˆéƒ¨åˆ†å’Œå®šä¹‰æ¡ä»¶",
+          medium: "ä¸­ç­‰ï¼šå¯¹æ•°æ€§è´¨ã€å±•å¼€åˆå¹¶ã€åŸºç¡€å›¾åƒç‰¹å¾å’Œç®€å•æ–¹ç¨‹",
+          hard: "å›°éš¾ï¼šå¸¦å¹³ç§»çš„æ–¹ç¨‹ã€æ€§è´¨æ–¹ç¨‹ã€å›¾åƒå˜æ¢å’Œæ¢åº•å…¬å¼",
+          expert: "ä¸“å®¶ï¼šå¢žæ ¹æ£€æŸ¥ã€åå‡½æ•°ã€æ¨¡åž‹ã€å¤§å°æ¯”è¾ƒå’Œç»¼åˆåˆ¤æ–­",
+          mixed: "æ··åˆï¼šä»Žæ‰€æœ‰éš¾åº¦ä¸­å‡è¡¡å‡ºé¢˜"
         },
-        suggestion: "建议：把对数转成指数形式，检查 argument 是否为正，并保持选项类型一致。",
+        suggestion: "å»ºè®®ï¼šæŠŠå¯¹æ•°è½¬æˆæŒ‡æ•°å½¢å¼ï¼Œæ£€æŸ¥ argument æ˜¯å¦ä¸ºæ­£ï¼Œå¹¶ä¿æŒé€‰é¡¹ç±»åž‹ä¸€è‡´ã€‚",
         notes: {
-          logMeaning: "使用 log_b(A)=c 等价于 b^c=A",
-          evaluate: "把 argument 写成 base 的幂",
-          components: "从对数式中读出 base、argument 和 value",
-          defined: "base 必须为正且不等于 1，argument 必须为正",
-          product: "使用乘法法则",
-          quotient: "使用除法法则",
-          power: "使用幂法则",
-          condense: "反向使用对数性质来合并",
-          graph: "从括号内部读 domain 和 vertical asymptote",
-          equation: "先转成指数形式，再解方程",
-          domainCheck: "检查每一个 log 的 argument 都必须为正",
-          transform: "x-h 表示右移 h，+k 表示上移 k",
-          inverse: "交换 x 和 y，然后解出 y",
-          compare: "用单调性或化成精确值比较"
+          logMeaning: "ä½¿ç”¨ log_b(A)=c ç­‰ä»·äºŽ b^c=A",
+          evaluate: "æŠŠ argument å†™æˆ base çš„å¹‚",
+          components: "ä»Žå¯¹æ•°å¼ä¸­è¯»å‡º baseã€argument å’Œ value",
+          defined: "base å¿…é¡»ä¸ºæ­£ä¸”ä¸ç­‰äºŽ 1ï¼Œargument å¿…é¡»ä¸ºæ­£",
+          product: "ä½¿ç”¨ä¹˜æ³•æ³•åˆ™",
+          quotient: "ä½¿ç”¨é™¤æ³•æ³•åˆ™",
+          power: "ä½¿ç”¨å¹‚æ³•åˆ™",
+          condense: "åå‘ä½¿ç”¨å¯¹æ•°æ€§è´¨æ¥åˆå¹¶",
+          graph: "ä»Žæ‹¬å·å†…éƒ¨è¯» domain å’Œ vertical asymptote",
+          equation: "å…ˆè½¬æˆæŒ‡æ•°å½¢å¼ï¼Œå†è§£æ–¹ç¨‹",
+          domainCheck: "æ£€æŸ¥æ¯ä¸€ä¸ª log çš„ argument éƒ½å¿…é¡»ä¸ºæ­£",
+          transform: "x-h è¡¨ç¤ºå³ç§» hï¼Œ+k è¡¨ç¤ºä¸Šç§» k",
+          inverse: "äº¤æ¢ x å’Œ yï¼Œç„¶åŽè§£å‡º y",
+          compare: "ç”¨å•è°ƒæ€§æˆ–åŒ–æˆç²¾ç¡®å€¼æ¯”è¾ƒ"
         }
       }
     };
@@ -678,50 +678,50 @@
       },
       zh: {
         htmlLang: "zh-CN",
-        navPractice: "练习库",
-        navHome: "主页",
-        setupTitle: "开始练习",
-        difficultyLabel: "难度",
-        questionCountLabel: "题目数量",
-        optionCountLabel: "选项数量",
-        timedModeText: "开启计时模式",
-        timedModeHint: "关闭时没有倒计时；开启后每题都有独立计时。",
-        timerLevelLabel: "计时等级",
-        startBtn: "开始",
-        sampleBtn: "生成样题",
-        quitBtn: "结束本轮",
-        nextBtn: "下一题",
-        resultBtn: "查看结果",
-        correctFeedback: "正确！",
-        solutionTitle: "正确解法",
-        solutionFinal: "答案：",
-        resultTitle: "练习结果",
-        scoreLabel: "答对题数",
-        accuracyLabel: "正确率",
-        wrongLabel: "错题数",
-        wrongReviewTitle: "错题回顾",
-        restartBtn: "再练一轮",
-        reviewWrongBtn: "练习相似错题",
-        noWrong: "本轮没有错题。",
-        noWrongTip: "很好，可以挑战更高难度。",
-        yourAnswer: "你的答案",
-        correctAnswer: "正确答案",
-        timeUpAnswer: "未作答：时间到",
-        sampleTitle: "样题",
-        sampleQuestion: "题目",
-        sampleAnswer: "正确答案",
-        sampleOptions: "样例选项",
-        incorrectPrefix: "不正确。正确答案是",
-        timeUpPrefix: "时间到。正确答案是",
-        progress: (a, b) => `第 ${a} / ${b} 题`,
-        optionCount: n => `${n} 个选项`,
-        timerDisplay: s => `剩余时间：${formatTime(s)}`,
-        difficulties: { easy: "简单", medium: "中等", hard: "困难", expert: "专家", mixed: "混合" },
+        navPractice: "ç»ƒä¹ åº“",
+        navHome: "ä¸»é¡µ",
+        setupTitle: "å¼€å§‹ç»ƒä¹ ",
+        difficultyLabel: "éš¾åº¦",
+        questionCountLabel: "é¢˜ç›®æ•°é‡",
+        optionCountLabel: "é€‰é¡¹æ•°é‡",
+        timedModeText: "å¼€å¯è®¡æ—¶æ¨¡å¼",
+        timedModeHint: "å…³é—­æ—¶æ²¡æœ‰å€’è®¡æ—¶ï¼›å¼€å¯åŽæ¯é¢˜éƒ½æœ‰ç‹¬ç«‹è®¡æ—¶ã€‚",
+        timerLevelLabel: "è®¡æ—¶ç­‰çº§",
+        startBtn: "å¼€å§‹",
+        sampleBtn: "ç”Ÿæˆæ ·é¢˜",
+        quitBtn: "ç»“æŸæœ¬è½®",
+        nextBtn: "ä¸‹ä¸€é¢˜",
+        resultBtn: "æŸ¥çœ‹ç»“æžœ",
+        correctFeedback: "æ­£ç¡®ï¼",
+        solutionTitle: "æ­£ç¡®è§£æ³•",
+        solutionFinal: "ç­”æ¡ˆï¼š",
+        resultTitle: "ç»ƒä¹ ç»“æžœ",
+        scoreLabel: "ç­”å¯¹é¢˜æ•°",
+        accuracyLabel: "æ­£ç¡®çŽ‡",
+        wrongLabel: "é”™é¢˜æ•°",
+        wrongReviewTitle: "é”™é¢˜å›žé¡¾",
+        restartBtn: "å†ç»ƒä¸€è½®",
+        reviewWrongBtn: "ç»ƒä¹ ç›¸ä¼¼é”™é¢˜",
+        noWrong: "æœ¬è½®æ²¡æœ‰é”™é¢˜ã€‚",
+        noWrongTip: "å¾ˆå¥½ï¼Œå¯ä»¥æŒ‘æˆ˜æ›´é«˜éš¾åº¦ã€‚",
+        yourAnswer: "ä½ çš„ç­”æ¡ˆ",
+        correctAnswer: "æ­£ç¡®ç­”æ¡ˆ",
+        timeUpAnswer: "æœªä½œç­”ï¼šæ—¶é—´åˆ°",
+        sampleTitle: "æ ·é¢˜",
+        sampleQuestion: "é¢˜ç›®",
+        sampleAnswer: "æ­£ç¡®ç­”æ¡ˆ",
+        sampleOptions: "æ ·ä¾‹é€‰é¡¹",
+        incorrectPrefix: "ä¸æ­£ç¡®ã€‚æ­£ç¡®ç­”æ¡ˆæ˜¯",
+        timeUpPrefix: "æ—¶é—´åˆ°ã€‚æ­£ç¡®ç­”æ¡ˆæ˜¯",
+        progress: (a, b) => `ç¬¬ ${a} / ${b} é¢˜`,
+        optionCount: n => `${n} ä¸ªé€‰é¡¹`,
+        timerDisplay: s => `å‰©ä½™æ—¶é—´ï¼š${formatTime(s)}`,
+        difficulties: { easy: "ç®€å•", medium: "ä¸­ç­‰", hard: "å›°éš¾", expert: "ä¸“å®¶", mixed: "æ··åˆ" },
         timerOptions: {
-          timer_easy: "简单：每题 2 分钟",
-          timer_medium: "中等：每题 1 分钟",
-          timer_hard: "困难：每题 30 秒",
-          timer_expert: "专家：每题 15 秒"
+          timer_easy: "ç®€å•ï¼šæ¯é¢˜ 2 åˆ†é’Ÿ",
+          timer_medium: "ä¸­ç­‰ï¼šæ¯é¢˜ 1 åˆ†é’Ÿ",
+          timer_hard: "å›°éš¾ï¼šæ¯é¢˜ 30 ç§’",
+          timer_expert: "ä¸“å®¶ï¼šæ¯é¢˜ 15 ç§’"
         }
       }
     };
@@ -792,47 +792,47 @@
       let s = String(value);
       if (getLang() !== "zh") return s;
       const exact = [
-        ["\\text{Undefined: argument must be positive}", "\\text{无定义：argument 必须为正}"],
-        ["\\text{Undefined: base must be positive}", "\\text{无定义：base 必须为正}"],
-        ["\\text{Undefined: base cannot be 1}", "\\text{无定义：base 不能等于 1}"],
-        ["\\text{Undefined: base must be greater than 1}", "\\text{无定义：base 必须大于 1}"],
-        ["\\text{Undefined: argument may be zero}", "\\text{无定义：argument 不能为 0}"],
-        ["\\text{Undefined: value must be positive}", "\\text{错误说法：value 不需要为正}"],
-        ["\\text{Undefined: base and argument are both invalid}", "\\text{无定义：base 和 argument 都不合法}"],
-        ["\\text{Range: all real numbers}", "\\text{值域：全体实数}"],
-        ["\\text{Domain: all real numbers}", "\\text{定义域：全体实数}"],
-        ["\\text{No horizontal shift}", "\\text{无水平平移}"],
-        ["\\text{No vertical shift}", "\\text{无竖直平移}"],
-        ["\\text{Defined}", "\\text{已定义}"],
-        ["\\text{Increasing}", "\\text{递增}"],
-        ["\\text{Decreasing}", "\\text{递减}"],
-        ["\\text{increasing}", "\\text{递增}"],
-        ["\\text{decreasing}", "\\text{递减}"],
-        ["\\text{no solution}", "\\text{无解}"],
-        ["\\text{none of these}", "\\text{以上都不是}"],
-        ["\\text{cannot be determined}", "\\text{无法判断}"],
+        ["\\text{Undefined: argument must be positive}", "\\text{æ— å®šä¹‰ï¼šargument å¿…é¡»ä¸ºæ­£}"],
+        ["\\text{Undefined: base must be positive}", "\\text{æ— å®šä¹‰ï¼šbase å¿…é¡»ä¸ºæ­£}"],
+        ["\\text{Undefined: base cannot be 1}", "\\text{æ— å®šä¹‰ï¼šbase ä¸èƒ½ç­‰äºŽ 1}"],
+        ["\\text{Undefined: base must be greater than 1}", "\\text{æ— å®šä¹‰ï¼šbase å¿…é¡»å¤§äºŽ 1}"],
+        ["\\text{Undefined: argument may be zero}", "\\text{æ— å®šä¹‰ï¼šargument ä¸èƒ½ä¸º 0}"],
+        ["\\text{Undefined: value must be positive}", "\\text{é”™è¯¯è¯´æ³•ï¼švalue ä¸éœ€è¦ä¸ºæ­£}"],
+        ["\\text{Undefined: base and argument are both invalid}", "\\text{æ— å®šä¹‰ï¼šbase å’Œ argument éƒ½ä¸åˆæ³•}"],
+        ["\\text{Range: all real numbers}", "\\text{å€¼åŸŸï¼šå…¨ä½“å®žæ•°}"],
+        ["\\text{Domain: all real numbers}", "\\text{å®šä¹‰åŸŸï¼šå…¨ä½“å®žæ•°}"],
+        ["\\text{No horizontal shift}", "\\text{æ— æ°´å¹³å¹³ç§»}"],
+        ["\\text{No vertical shift}", "\\text{æ— ç«–ç›´å¹³ç§»}"],
+        ["\\text{Defined}", "\\text{å·²å®šä¹‰}"],
+        ["\\text{Increasing}", "\\text{é€’å¢ž}"],
+        ["\\text{Decreasing}", "\\text{é€’å‡}"],
+        ["\\text{increasing}", "\\text{é€’å¢ž}"],
+        ["\\text{decreasing}", "\\text{é€’å‡}"],
+        ["\\text{no solution}", "\\text{æ— è§£}"],
+        ["\\text{none of these}", "\\text{ä»¥ä¸Šéƒ½ä¸æ˜¯}"],
+        ["\\text{cannot be determined}", "\\text{æ— æ³•åˆ¤æ–­}"],
         ["\\text{base}", "\\text{base}"],
         ["\\text{argument}", "\\text{argument}"],
         ["\\text{value}", "\\text{value}"],
-        ["\\text{valid}", "\\text{合法}"],
-        ["\\text{invalid}", "\\text{不合法}"]
+        ["\\text{valid}", "\\text{åˆæ³•}"],
+        ["\\text{invalid}", "\\text{ä¸åˆæ³•}"]
       ];
       exact.forEach(([from, to]) => { s = s.split(from).join(to); });
       s = s
-        .replace(/\\text\{Domain: \}/g, "\\text{定义域：}")
-        .replace(/\\text\{Range: \}/g, "\\text{值域：}")
-        .replace(/\\text\{Vertical asymptote: \}/g, "\\text{垂直渐近线：}")
-        .replace(/\\text\{Horizontal asymptote: \}/g, "\\text{水平渐近线：}")
-        .replace(/\\text\{x-intercept: \}/g, "\\text{x 截距：}")
-        .replace(/\\text\{Shift right \}/g, "\\text{向右平移 }")
-        .replace(/\\text\{Shift left \}/g, "\\text{向左平移 }")
-        .replace(/\\text\{Shift up \}/g, "\\text{向上平移 }")
-        .replace(/\\text\{Shift down \}/g, "\\text{向下平移 }")
-        .replace(/\\text\{Passes through \}/g, "\\text{经过 }")
-        .replace(/\\text\{Richter difference if amplitude ratio is \}/g, "\\text{当振幅比为 }")
-        .replace(/\\text\{same argument greater than \}/g, "\\text{同底时 argument 更大：}")
-        .replace(/\\text\{smaller base gives larger log value here\}/g, "\\text{此处 base 越小 log 值越大}")
-        .replace(/\\text\{choice \}/g, "\\text{选项 }");
+        .replace(/\\text\{Domain: \}/g, "\\text{å®šä¹‰åŸŸï¼š}")
+        .replace(/\\text\{Range: \}/g, "\\text{å€¼åŸŸï¼š}")
+        .replace(/\\text\{Vertical asymptote: \}/g, "\\text{åž‚ç›´æ¸è¿‘çº¿ï¼š}")
+        .replace(/\\text\{Horizontal asymptote: \}/g, "\\text{æ°´å¹³æ¸è¿‘çº¿ï¼š}")
+        .replace(/\\text\{x-intercept: \}/g, "\\text{x æˆªè·ï¼š}")
+        .replace(/\\text\{Shift right \}/g, "\\text{å‘å³å¹³ç§» }")
+        .replace(/\\text\{Shift left \}/g, "\\text{å‘å·¦å¹³ç§» }")
+        .replace(/\\text\{Shift up \}/g, "\\text{å‘ä¸Šå¹³ç§» }")
+        .replace(/\\text\{Shift down \}/g, "\\text{å‘ä¸‹å¹³ç§» }")
+        .replace(/\\text\{Passes through \}/g, "\\text{ç»è¿‡ }")
+        .replace(/\\text\{Richter difference if amplitude ratio is \}/g, "\\text{å½“æŒ¯å¹…æ¯”ä¸º }")
+        .replace(/\\text\{same argument greater than \}/g, "\\text{åŒåº•æ—¶ argument æ›´å¤§ï¼š}")
+        .replace(/\\text\{smaller base gives larger log value here\}/g, "\\text{æ­¤å¤„ base è¶Šå° log å€¼è¶Šå¤§}")
+        .replace(/\\text\{choice \}/g, "\\text{é€‰é¡¹ }");
       return s;
     }
 
@@ -1575,8 +1575,22 @@
     window.addEventListener("storage", event => { if (event.key === "mathcomplete_lang") applyLanguage(); });
     applyLanguage();
   </script>
+  <script>
+    window.MCLQuizTool = {
+      gameId: "logarithmic-functions", course: "algebra-2", balancedMixed: true, avoidConsecutiveTypes: true,
+      builders: { easy: [], medium: [], hard: [], expert: [] },
+      text: {
+        en: { title: "Logarithmic Functions Practice", toolBadge: "Algebra II", subtitle: "Practice definitions, properties, equations, inverse graphs, domains, models, and change of base.", note: "Generated bases and arguments always satisfy logarithm domain restrictions." },
+        zh: { title: "\u5bf9\u6570\u51fd\u6570\u4e13\u9879\u7ec3\u4e60", toolBadge: "\u4ee3\u6570 II", subtitle: "\u7ec3\u4e60\u5b9a\u4e49\u3001\u6027\u8d28\u3001\u65b9\u7a0b\u3001\u53cd\u51fd\u6570\u56fe\u50cf\u3001\u5b9a\u4e49\u57df\u3001\u6a21\u578b\u548c\u6362\u5e95\u516c\u5f0f\u3002", note: "\u751f\u6210\u7684\u5e95\u6570\u548c\u771f\u6570\u59cb\u7ec8\u6ee1\u8db3\u5bf9\u6570\u5b9a\u4e49\u57df\u3002" }
+      }
+    };
+  </script>
+  <script src="../assets/js/question-template-registry.js?v=20260724.1"></script>
+  <script src="../assets/js/semantic-bank-factory.js?v=20260724.3"></script>
+  <script src="../assets/js/logarithmic-functions-bank.js?v=20260724.1"></script>
+  <script src="../assets/js/quiz-tool-engine.js?v=20260724.2"></script>
   <script src="../assets/js/tool-modes.js"></script>
-  <script src="../assets/js/report-export.js?v=20260722.1"></script>
+  <script src="../assets/js/report-export.js?v=20260725.2"></script>
 
   <script src="../assets/js/tool-ux.js?v=20260716.2"></script>
   <script src="../assets/js/tool-catalog.js?v=20260716.3"></script>

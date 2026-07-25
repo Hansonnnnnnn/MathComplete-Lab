@@ -1,0 +1,34 @@
+.mcl-geometry-scene{display:block;width:100%;aspect-ratio:12/7;max-height:460px;border:1px solid var(--mcl-border);border-radius:8px;background:var(--mcl-surface);touch-action:manipulation}
+.mcl-geo-segment,.mcl-geo-ray{stroke:var(--mcl-text);stroke-width:3;stroke-linecap:round}
+.mcl-geo-polygon,.mcl-geo-circle{fill:color-mix(in srgb,var(--mcl-accent) 3%,transparent);stroke:var(--mcl-text-soft);stroke-width:2.25;stroke-linejoin:round}
+.mcl-geo-polygon.is-helper,.mcl-geo-circle.is-helper{fill:none;stroke:var(--mcl-text-soft);stroke-dasharray:7 6}
+.mcl-geo-segment.is-helper{stroke:var(--mcl-text-soft);stroke-width:2;stroke-dasharray:7 6}
+.mcl-geo-point{fill:var(--mcl-text)}
+.mcl-geo-label,.mcl-geo-annotation{fill:var(--mcl-text);font-family:var(--mcl-font);font-size:18px;font-weight:700;paint-order:stroke;stroke:var(--mcl-surface);stroke-width:4px;stroke-linejoin:round}
+.mcl-geo-annotation{font-size:16px;stroke-width:3px}
+.mcl-geo-facts{pointer-events:none}
+.mcl-geo-facts rect{fill:color-mix(in srgb,var(--mcl-surface) 94%,var(--mcl-accent) 6%);stroke:var(--mcl-border);stroke-width:1}
+.mcl-geo-fact{fill:var(--mcl-text);font-family:var(--mcl-font);font-size:15px;font-weight:700}
+.mcl-geo-mark,.mcl-geo-angle-arc{fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.mcl-geo-mark{stroke-linecap:square;stroke-linejoin:miter}
+.mcl-geo-group-1{stroke:#2563eb}
+.mcl-geo-group-2{stroke:#d97706}
+.mcl-geo-group-3{stroke:#15803d}
+.mcl-geo-group-4{stroke:#be123c}
+.mcl-geo-angle-region{fill:color-mix(in srgb,var(--mcl-accent) 8%,transparent);stroke:transparent;cursor:default}
+.mcl-geo-angle-region.is-interactive,.mcl-geo-segment.is-interactive,.mcl-geo-ray.is-interactive,.mcl-geo-point.is-interactive{cursor:pointer}
+.mcl-geometry-scene [data-geometry-target]:focus{outline:none;filter:drop-shadow(0 0 4px var(--mcl-accent))}
+.mcl-geometry-scene .is-selected{stroke:var(--mcl-accent)!important;stroke-width:7!important;fill:color-mix(in srgb,var(--mcl-accent) 24%,transparent)}
+.mcl-geometry-scene .is-correct{stroke:var(--mcl-good)!important;stroke-width:7!important;fill:color-mix(in srgb,var(--mcl-good) 22%,transparent)}
+.mcl-interaction-options{display:block}
+.mcl-geometry-response{display:grid;gap:12px}
+.mcl-geometry-instruction,.mcl-geometry-required{margin:0;color:var(--mcl-text-soft);font-weight:700}
+.mcl-geometry-required{color:var(--mcl-bad)}
+.mcl-geometry-controls{display:flex;flex-wrap:wrap;gap:10px}
+.mcl-geometry-target-button,.mcl-geometry-submit{min-height:44px;border:1px solid var(--mcl-border);border-radius:8px;background:var(--mcl-surface);color:var(--mcl-text);padding:10px 14px;font-weight:700}
+.mcl-geometry-target-button.is-selected{border-color:var(--mcl-accent);background:var(--mcl-accent-soft)}
+.mcl-geometry-target-button.is-correct{border-color:var(--mcl-good);background:var(--mcl-good-soft)}
+.mcl-geometry-submit{background:var(--mcl-accent);border-color:var(--mcl-accent);color:#fff}
+.mcl-geometry-input-label{display:grid;gap:6px;color:var(--mcl-text-soft);font-weight:700}
+.mcl-geometry-input{min-height:44px;min-width:180px;border:1px solid var(--mcl-border);border-radius:8px;background:var(--mcl-surface);color:var(--mcl-text);padding:8px 12px;font:inherit}
+@media(max-width:560px){.mcl-geometry-scene{aspect-ratio:1/1}.mcl-geometry-controls{display:grid;grid-template-columns:1fr}.mcl-geometry-target-button,.mcl-geometry-submit,.mcl-geometry-input{width:100%}}

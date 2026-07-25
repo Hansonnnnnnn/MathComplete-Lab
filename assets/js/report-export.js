@@ -48,6 +48,7 @@
           duration: "\u7ec3\u4e60\u65f6\u957f",
           reviewPriorities: "\u590d\u4e60\u91cd\u70b9",
           noReviewPriorities: "\u672c\u8f6e\u6ca1\u6709\u4f18\u5148\u590d\u4e60\u9879\u76ee\u3002",
+          reviewQuestion: number => `\u7b2c ${number} \u9898`,
           reviewIncorrectQuestions: numbers => `\u91cd\u70b9\u590d\u76d8\u9519\u9898\uff1a${numbers.join("\u3001")}\u3002`,
           details: "\u9010\u9898\u8bb0\u5f55",
           continued: "\u7eed",
@@ -100,6 +101,7 @@
           duration: "Session duration",
           reviewPriorities: "Review Priorities",
           noReviewPriorities: "No priority review items were identified for this round.",
+          reviewQuestion: number => `Question ${number}`,
           reviewIncorrectQuestions: numbers => `${numbers.length === 1 ? "Review Question" : "Review Questions"} ${numbers.join(", ")} and compare your selected answer with the correct solution.`,
           details: "Question Review",
           continued: "continued",
@@ -301,6 +303,12 @@
     return answerText(value).replace(/\s+/g, "");
   }
 
+  function booleanFlag(value) {
+    if (value === true || value === 1) return true;
+    if (value === false || value === 0 || value === null || value === undefined) return false;
+    return ["true", "1", "yes"].includes(String(value).trim().toLowerCase());
+  }
+
   function domOptions(selected = "", correct = "") {
     const optionsRoot = document.getElementById("options");
     if (!optionsRoot) return [];
@@ -321,11 +329,12 @@
 
   function normalizeOptions(payload = {}, selected = "", correct = "") {
     const question = payload.question || payload.questionSnapshot || {};
+    const hasExplicitOptions = Array.isArray(payload.options) || Array.isArray(payload.answerOptions) || Array.isArray(question.options) || Array.isArray(question.choices);
     const raw = Array.isArray(payload.options) ? payload.options
       : Array.isArray(payload.answerOptions) ? payload.answerOptions
         : Array.isArray(question.options) ? question.options
           : Array.isArray(question.choices) ? question.choices : [];
-    if (!raw.length) return domOptions(selected, correct);
+    if (!raw.length) return hasExplicitOptions ? [] : domOptions(selected, correct);
     const selectedKey = comparableAnswer(selected);
     const correctKey = comparableAnswer(correct);
     return raw.map((option, index) => {
@@ -335,8 +344,8 @@
         return {
           label: safe(option.label || option.id || String.fromCharCode(65 + index)),
           latex,
-          isCorrect: Boolean(option.isCorrect || option.correct || (correctKey && (optionKey === correctKey || comparableAnswer(latex) === correctKey))),
-          isSelected: Boolean(option.isSelected || option.selected || (selectedKey && (optionKey === selectedKey || comparableAnswer(latex) === selectedKey)))
+          isCorrect: booleanFlag(option.isCorrect) || booleanFlag(option.correct) || Boolean(correctKey && (optionKey === correctKey || comparableAnswer(latex) === correctKey)),
+          isSelected: booleanFlag(option.isSelected) || booleanFlag(option.selected) || Boolean(selectedKey && (optionKey === selectedKey || comparableAnswer(latex) === selectedKey))
         };
       }
       const latex = answerText(option);
@@ -356,8 +365,8 @@
       : (payload.selectedAnswer ?? payload.selectedAnswerLatex ?? payload.selected_answer_latex ?? payload.selected_answer ?? "");
     const correct = payload.correctAnswer ?? payload.correctAnswerLatex ?? payload.correct_answer_latex ?? payload.correct_answer ?? "";
     const options = normalizeOptions(payload, selected, correct);
-    const selectedOptionLabel = safe(payload.selectedOptionLabel || payload.selected_option_label || options.find(option => option.isSelected)?.label || "");
-    const correctOptionLabel = safe(payload.correctOptionLabel || payload.correct_option_label || options.find(option => option.isCorrect)?.label || "");
+    const selectedOptionLabel = safe(options.find(option => option.isSelected)?.label || payload.selectedOptionLabel || payload.selected_option_label || "");
+    const correctOptionLabel = safe(options.find(option => option.isCorrect)?.label || payload.correctOptionLabel || payload.correct_option_label || "");
 
     return {
       index: attempts.length + 1,
@@ -424,6 +433,12 @@
     return { total, correct, wrong: total - correct, accuracy: total ? Math.round((correct / total) * 100) : 0 };
   }
 
+  function reviewRecommendationsFor(items, t) {
+    return items
+      .filter(item => !item.isCorrect)
+      .map(item => t.reviewQuestion(item.index));
+  }
+
   function buildReportModel() {
     loadRound();
     const t = copy();
@@ -431,9 +446,7 @@
     const items = attempts.map(item => ({ ...item, options: Array.isArray(item.options) ? item.options.map(option => ({ ...option })) : [] }));
     const startedAt = roundStartedAt;
     const durationSeconds = Math.max(0, Math.round((new Date(finishedAt).getTime() - new Date(startedAt).getTime()) / 1000));
-    const wrongItems = items.filter(item => !item.isCorrect);
-    const reviewRecommendations = [...new Set(wrongItems.map(item => safe(item.suggestion).trim()).filter(Boolean))].slice(0, 3);
-    if (!reviewRecommendations.length && wrongItems.length) reviewRecommendations.push(t.reviewIncorrectQuestions(wrongItems.map(item => item.index)));
+    const reviewRecommendations = reviewRecommendationsFor(items, t);
     return {
       language: lang(),
       t,
@@ -1042,6 +1055,12 @@
     renderPdfPages,
     resetRound,
     getAttempts: () => [...attempts],
-    addButton
+    addButton,
+    __test: Object.freeze({
+      booleanFlag,
+      normalizeOptions,
+      normalizeAttempt,
+      reviewRecommendationsFor
+    })
   };
 })();

@@ -453,12 +453,12 @@
 </style>
   <script src="../assets/js/theme.js?v=20260716.2"></script>
   <link rel="stylesheet" href="../assets/css/quiz-tool.css">
-  <link rel="stylesheet" href="../assets/css/design-system.css?v=20260717.2">
+  <link rel="stylesheet" href="../assets/css/design-system.css?v=20260724.1">
   <script defer src="https://cdn.jsdelivr.net/npm/lucide@0.468.0/dist/umd/lucide.min.js"></script>
 </head>
 <body>
   <nav class="mc-site-shell">
-    <a class="mc-brand" href="../index.html"><span class="mc-brand-mark">∑</span><span>MathComplete Lab</span></a>
+    <a class="mc-brand" href="../index.html"><span class="mc-brand-mark">âˆ‘</span><span>MathComplete Lab</span></a>
     <div class="mc-links">
       <a class="mc-link" href="../practice.html" data-i18n="navPractice">Practice Library</a>
       <a class="mc-link primary" href="../index.html" data-i18n="navHome">Home</a>
@@ -523,7 +523,7 @@
     </section>
   </main>
 
-  <script>
+  <script type="application/json" id="legacy-completing-the-square-script">
     const GAME_TEXT = {
       en: {
         toolBadge: "Algebra II",
@@ -540,7 +540,7 @@
         difficultyOptions: {
           easy: "Easy: clean b even cases and basic vertex ideas",
           medium: "Medium: fractions, next steps, and monic equations",
-          hard: "Hard: ax² + bx + c, including negative leading coefficients",
+          hard: "Hard: axÂ² + bx + c, including negative leading coefficients",
           expert: "Expert: radicals, fractional vertices, and mixed statements",
           mixed: "Mixed: balanced practice from all difficulty levels"
         },
@@ -558,33 +558,33 @@
       },
       zh: {
         toolBadge: "Algebra II",
-        title: "配方法练习",
-        subtitle: "练习把二次式改写成顶点式、补完全平方项，并用配方法解二次方程。",
-        note: "这个工具使用随机模板：题型结构固定，但每次数字都会变化。",
-        questionTitle: "请阅读题干，并选择正确答案。",
-        promptVertex: "改写成顶点式。",
-        promptMissing: "选择能补成完全平方的数。",
-        promptVertexPoint: "选择顶点坐标。",
-        promptNextStep: "选择配方后正确的常数项。",
+        title: "é…æ–¹æ³•ç»ƒä¹ ",
+        subtitle: "ç»ƒä¹ æŠŠäºŒæ¬¡å¼æ”¹å†™æˆé¡¶ç‚¹å¼ã€è¡¥å®Œå…¨å¹³æ–¹é¡¹ï¼Œå¹¶ç”¨é…æ–¹æ³•è§£äºŒæ¬¡æ–¹ç¨‹ã€‚",
+        note: "è¿™ä¸ªå·¥å…·ä½¿ç”¨éšæœºæ¨¡æ¿ï¼šé¢˜åž‹ç»“æž„å›ºå®šï¼Œä½†æ¯æ¬¡æ•°å­—éƒ½ä¼šå˜åŒ–ã€‚",
+        questionTitle: "è¯·é˜…è¯»é¢˜å¹²ï¼Œå¹¶é€‰æ‹©æ­£ç¡®ç­”æ¡ˆã€‚",
+        promptVertex: "æ”¹å†™æˆé¡¶ç‚¹å¼ã€‚",
+        promptMissing: "é€‰æ‹©èƒ½è¡¥æˆå®Œå…¨å¹³æ–¹çš„æ•°ã€‚",
+        promptVertexPoint: "é€‰æ‹©é¡¶ç‚¹åæ ‡ã€‚",
+        promptNextStep: "é€‰æ‹©é…æ–¹åŽæ­£ç¡®çš„å¸¸æ•°é¡¹ã€‚",
         promptSolve: "\u8bf7\u7528\u914d\u65b9\u6cd5\u89e3\u8fd9\u4e2a\u4e8c\u6b21\u65b9\u7a0b\u3002",
-        promptStatement: "选择正确说法。",
+        promptStatement: "é€‰æ‹©æ­£ç¡®è¯´æ³•ã€‚",
         difficultyOptions: {
-          easy: "简单：b 为偶数的干净题和基础顶点概念",
-          medium: "中等：分数、下一步判断、一元首项系数为 1 的方程",
-          hard: "困难：ax² + bx + c，包含负首项系数",
-          expert: "专家：根式、分数顶点和综合判断",
-          mixed: "混合：从所有难度中均衡出题"
+          easy: "ç®€å•ï¼šb ä¸ºå¶æ•°çš„å¹²å‡€é¢˜å’ŒåŸºç¡€é¡¶ç‚¹æ¦‚å¿µ",
+          medium: "ä¸­ç­‰ï¼šåˆ†æ•°ã€ä¸‹ä¸€æ­¥åˆ¤æ–­ã€ä¸€å…ƒé¦–é¡¹ç³»æ•°ä¸º 1 çš„æ–¹ç¨‹",
+          hard: "å›°éš¾ï¼šaxÂ² + bx + cï¼ŒåŒ…å«è´Ÿé¦–é¡¹ç³»æ•°",
+          expert: "ä¸“å®¶ï¼šæ ¹å¼ã€åˆ†æ•°é¡¶ç‚¹å’Œç»¼åˆåˆ¤æ–­",
+          mixed: "æ··åˆï¼šä»Žæ‰€æœ‰éš¾åº¦ä¸­å‡è¡¡å‡ºé¢˜"
         },
-        suggestion: "建议：检查 b 的一半、补上的平方项，以及常数项如何调整。",
+        suggestion: "å»ºè®®ï¼šæ£€æŸ¥ b çš„ä¸€åŠã€è¡¥ä¸Šçš„å¹³æ–¹é¡¹ï¼Œä»¥åŠå¸¸æ•°é¡¹å¦‚ä½•è°ƒæ•´ã€‚",
         notes: {
-          half: "取 x 系数的一半",
-          square: "把这一半平方",
-          addSubtract: "加上再减去这个平方",
-          factor: "写成完全平方",
-          adjust: "合并常数项",
-          factorA: "先提出首项系数",
-          vertex: "从顶点式读取顶点",
-          solve: "隔离平方项并开方"
+          half: "å– x ç³»æ•°çš„ä¸€åŠ",
+          square: "æŠŠè¿™ä¸€åŠå¹³æ–¹",
+          addSubtract: "åŠ ä¸Šå†å‡åŽ»è¿™ä¸ªå¹³æ–¹",
+          factor: "å†™æˆå®Œå…¨å¹³æ–¹",
+          adjust: "åˆå¹¶å¸¸æ•°é¡¹",
+          factorA: "å…ˆæå‡ºé¦–é¡¹ç³»æ•°",
+          vertex: "ä»Žé¡¶ç‚¹å¼è¯»å–é¡¶ç‚¹",
+          solve: "éš”ç¦»å¹³æ–¹é¡¹å¹¶å¼€æ–¹"
         }
       }
     };
@@ -642,52 +642,52 @@
       },
       zh: {
         htmlLang: "zh-CN",
-        navPractice: "练习库",
-        navHome: "主页",
-        setupTitle: "开始练习",
-        difficultyLabel: "难度",
-        questionCountLabel: "题目数量",
-        optionCountLabel: "选项数量",
-        timedModeText: "开启计时模式",
-        timedModeHint: "关闭后不会倒计时；开启后每题单独计时。",
-        timerLevelLabel: "计时难度",
-        startBtn: "开始",
-        sampleBtn: "生成一道样题",
-        quitBtn: "结束本轮",
-        nextBtn: "下一题",
-        resultBtn: "查看结果",
-        correctFeedback: "正确！",
-        solutionTitle: "正确解法",
-        solutionFinal: "答案：",
-        resultTitle: "练习结果",
-        scoreLabel: "正确题数",
-        accuracyLabel: "正确率",
-        wrongLabel: "错题数量",
-        wrongReviewTitle: "错题整理",
-        restartBtn: "再练一轮",
-        reviewWrongBtn: "只练错题同类型",
-        noWrong: "本轮没有错题。",
-        noWrongTip: "非常好，可以尝试更高难度。",
-        yourAnswer: "你的答案",
-        correctAnswer: "正确答案",
-        timeUpAnswer: "未作答（时间到）",
-        sampleTitle: "样题",
-        sampleQuestion: "题目",
-        sampleAnswer: "正确答案",
-        sampleOptions: "选项示例",
-        incorrectPrefix: "错误。正确答案是",
-        timeUpPrefix: "时间到。正确答案是",
-        progress: (a, b) => `第 ${a} / ${b} 题`,
-        optionCount: n => `${n} 个选项`,
-        timerDisplay: s => `剩余时间：${formatTime(s)}`,
-        difficulties: { easy: "简单", medium: "中等", hard: "困难", expert: "专家", mixed: "混合" },
+        navPractice: "ç»ƒä¹ åº“",
+        navHome: "ä¸»é¡µ",
+        setupTitle: "å¼€å§‹ç»ƒä¹ ",
+        difficultyLabel: "éš¾åº¦",
+        questionCountLabel: "é¢˜ç›®æ•°é‡",
+        optionCountLabel: "é€‰é¡¹æ•°é‡",
+        timedModeText: "å¼€å¯è®¡æ—¶æ¨¡å¼",
+        timedModeHint: "å…³é—­åŽä¸ä¼šå€’è®¡æ—¶ï¼›å¼€å¯åŽæ¯é¢˜å•ç‹¬è®¡æ—¶ã€‚",
+        timerLevelLabel: "è®¡æ—¶éš¾åº¦",
+        startBtn: "å¼€å§‹",
+        sampleBtn: "ç”Ÿæˆä¸€é“æ ·é¢˜",
+        quitBtn: "ç»“æŸæœ¬è½®",
+        nextBtn: "ä¸‹ä¸€é¢˜",
+        resultBtn: "æŸ¥çœ‹ç»“æžœ",
+        correctFeedback: "æ­£ç¡®ï¼",
+        solutionTitle: "æ­£ç¡®è§£æ³•",
+        solutionFinal: "ç­”æ¡ˆï¼š",
+        resultTitle: "ç»ƒä¹ ç»“æžœ",
+        scoreLabel: "æ­£ç¡®é¢˜æ•°",
+        accuracyLabel: "æ­£ç¡®çŽ‡",
+        wrongLabel: "é”™é¢˜æ•°é‡",
+        wrongReviewTitle: "é”™é¢˜æ•´ç†",
+        restartBtn: "å†ç»ƒä¸€è½®",
+        reviewWrongBtn: "åªç»ƒé”™é¢˜åŒç±»åž‹",
+        noWrong: "æœ¬è½®æ²¡æœ‰é”™é¢˜ã€‚",
+        noWrongTip: "éžå¸¸å¥½ï¼Œå¯ä»¥å°è¯•æ›´é«˜éš¾åº¦ã€‚",
+        yourAnswer: "ä½ çš„ç­”æ¡ˆ",
+        correctAnswer: "æ­£ç¡®ç­”æ¡ˆ",
+        timeUpAnswer: "æœªä½œç­”ï¼ˆæ—¶é—´åˆ°ï¼‰",
+        sampleTitle: "æ ·é¢˜",
+        sampleQuestion: "é¢˜ç›®",
+        sampleAnswer: "æ­£ç¡®ç­”æ¡ˆ",
+        sampleOptions: "é€‰é¡¹ç¤ºä¾‹",
+        incorrectPrefix: "é”™è¯¯ã€‚æ­£ç¡®ç­”æ¡ˆæ˜¯",
+        timeUpPrefix: "æ—¶é—´åˆ°ã€‚æ­£ç¡®ç­”æ¡ˆæ˜¯",
+        progress: (a, b) => `ç¬¬ ${a} / ${b} é¢˜`,
+        optionCount: n => `${n} ä¸ªé€‰é¡¹`,
+        timerDisplay: s => `å‰©ä½™æ—¶é—´ï¼š${formatTime(s)}`,
+        difficulties: { easy: "ç®€å•", medium: "ä¸­ç­‰", hard: "å›°éš¾", expert: "ä¸“å®¶", mixed: "æ··åˆ" },
         timerOptions: {
-          timer_easy: "简单：每题 2 分钟",
-          timer_medium: "中等：每题 1 分钟",
-          timer_hard: "困难：每题 30 秒",
-          timer_expert: "专家：每题 15 秒"
+          timer_easy: "ç®€å•ï¼šæ¯é¢˜ 2 åˆ†é’Ÿ",
+          timer_medium: "ä¸­ç­‰ï¼šæ¯é¢˜ 1 åˆ†é’Ÿ",
+          timer_hard: "å›°éš¾ï¼šæ¯é¢˜ 30 ç§’",
+          timer_expert: "ä¸“å®¶ï¼šæ¯é¢˜ 15 ç§’"
         },
-        noWrongAlert: "本轮没有错题，不能生成错题同类型练习。",
+        noWrongAlert: "æœ¬è½®æ²¡æœ‰é”™é¢˜ï¼Œä¸èƒ½ç”Ÿæˆé”™é¢˜åŒç±»åž‹ç»ƒä¹ ã€‚",
         ...GAME_TEXT.zh
       }
     };
@@ -1254,7 +1254,7 @@
         nextBtn.disabled = true;
       }
       progressText.textContent = tr().progress(currentIndex + 1, quiz.length);
-      difficultyText.textContent = lastDifficulty === "mixed" ? `${tr().difficulties.mixed} · ${tr().difficulties[q.difficulty]}` : tr().difficulties[q.difficulty];
+      difficultyText.textContent = lastDifficulty === "mixed" ? `${tr().difficulties.mixed} Â· ${tr().difficulties[q.difficulty]}` : tr().difficulties[q.difficulty];
       progressBar.style.width = `${(currentIndex / quiz.length) * 100}%`;
       qExtra.textContent = tr()[q.promptKey];
       renderLatex(qMain, q.main, true);
@@ -1422,8 +1422,21 @@
     window.addEventListener("storage", event => { if (event.key === "mathcomplete_lang") applyLanguage(); });
     applyLanguage();
   </script>
+  <script>
+    window.MCLQuizTool = {
+      gameId: "completing-the-square", course: "algebra-2", balancedMixed: true, avoidConsecutiveTypes: true,
+      builders: { easy: [], medium: [], hard: [], expert: [] },
+      text: {
+        en: { title: "Completing the Square Practice", toolBadge: "Algebra II", subtitle: "Convert quadratics, solve equations, read graph features, recover parameters, and interpret optimization models by completing the square.", note: "Every answer choice uses the same mathematical form requested by the question." },
+        zh: { title: "\u914d\u65b9\u6cd5\u4e13\u9879\u7ec3\u4e60", toolBadge: "\u4ee3\u6570 II", subtitle: "\u7528\u914d\u65b9\u6cd5\u8f6c\u6362\u4e8c\u6b21\u5f0f\u3001\u89e3\u65b9\u7a0b\u3001\u8bc6\u522b\u56fe\u50cf\u7279\u5f81\u3001\u6c42\u53c2\u6570\u5e76\u89e3\u8bfb\u6700\u503c\u6a21\u578b\u3002", note: "\u6bcf\u9053\u9898\u7684\u6240\u6709\u9009\u9879\u90fd\u4e0e\u9898\u76ee\u8981\u6c42\u4fdd\u6301\u540c\u4e00\u6570\u5b66\u7c7b\u578b\u3002" }
+      }
+    };
+  </script>
+  <script src="../assets/js/question-template-registry.js?v=20260724.1"></script>
+  <script src="../assets/js/completing-the-square-bank.js?v=20260724.2"></script>
+  <script src="../assets/js/quiz-tool-engine.js?v=20260724.2"></script>
   <script src="../assets/js/tool-modes.js"></script>
-  <script src="../assets/js/report-export.js?v=20260722.1"></script>
+  <script src="../assets/js/report-export.js?v=20260725.2"></script>
 
   <script src="../assets/js/tool-ux.js?v=20260716.2"></script>
   <script src="../assets/js/tool-catalog.js?v=20260716.3"></script>

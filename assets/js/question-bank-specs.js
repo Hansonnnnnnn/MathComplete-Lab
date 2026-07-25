@@ -31,6 +31,7 @@
     "function-graph-matching": ["linear-quadratic-absolute", "radical-rational", "exponential-logarithmic", "trigonometric", "piecewise-transformations-comparison"],
     "unit-circle-trigonometry": ["angle-measure-reference", "unit-circle-coordinates", "exact-trig-values", "inverse-angle-sets", "expressions-conditions"],
     "geometry-formula": ["perimeter-area", "circles-arcs", "surface-area-volume", "composite-units", "missing-measure-applications"],
+    "midpoints-bisectors-trisectors": ["midpoints-coordinate", "segment-bisectors", "segment-trisection", "angle-bisectors", "angle-trisection"],
     "triangle-congruence": ["criteria-correspondence", "direct-givens", "angle-facts", "hypotenuse-leg", "proof-validation-completion"],
     "limits-practice": ["direct-algebraic-limits", "one-sided-piecewise", "infinite-asymptotic", "trigonometric-special", "continuity-parameters"],
     "derivative-practice": ["basic-rules", "product-quotient", "chain-rule", "trig-exponential-log", "tangent-rate-applications"],

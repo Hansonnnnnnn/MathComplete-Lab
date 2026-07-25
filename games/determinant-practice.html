@@ -475,7 +475,7 @@
 </style>
   <script src="../assets/js/theme.js?v=20260716.2"></script>
   <link rel="stylesheet" href="../assets/css/quiz-tool.css">
-  <link rel="stylesheet" href="../assets/css/design-system.css?v=20260717.2">
+  <link rel="stylesheet" href="../assets/css/design-system.css?v=20260724.1">
   <script defer src="https://cdn.jsdelivr.net/npm/lucide@0.468.0/dist/umd/lucide.min.js"></script>
 </head>
 <body>
@@ -546,6 +546,9 @@
   </main>
 
 
+  <script src="../assets/js/question-bank-specs.js"></script>
+  <script src="../assets/js/question-template-registry.js?v=20260724.1"></script>
+  <script src="../assets/js/linear-algebra-question-banks.js?v=20260724.7"></script>
   <script>
     const TOOL_CONFIG = {
       gameId: "determinant-practice",
@@ -1055,10 +1058,23 @@
       hard: [qDet3Negative, qUnknown2x2, qDependentRows, qRowSwap, qRowScale],
       expert: [qMultiStepProperty, qScalarMultiple, qProductProperty, qTransposeProperty, qFalseStatement]
     };
+    window.MCLDeterminantBuilders = BUILDERS;
     const BUILDER_TYPES = new Map();
     Object.values(BUILDERS).flat().forEach(fn => { const q = fn(); BUILDER_TYPES.set(q.type, fn); });
 
     function buildQuestion(difficulty, forcedType = null) {
+      const registry = window.MCLQuestionTemplates;
+      if (registry?.getTool?.("determinant-practice")) {
+        const templates = registry.templatesFor("determinant-practice", difficulty, forcedType);
+        const pool = templates.length ? templates : registry.templatesFor("determinant-practice", difficulty);
+        if (pool.length) {
+          const template = choose(pool);
+          const q = registry.build("determinant-practice", template.id, { seed:`determinant-practice:${Date.now()}:${Math.random()}`, lang });
+          q.difficulty = template.difficulty;
+          q.options = generateOptions(q, Number(optionCountEl.value || 4));
+          return q;
+        }
+      }
       let builders = BUILDERS[difficulty] || BUILDERS.medium;
       if (forcedType && BUILDER_TYPES.has(forcedType)) builders = [BUILDER_TYPES.get(forcedType)];
       for (let i = 0; i < 50; i++) {
@@ -1113,8 +1129,9 @@
     }
     function renderQuestion(resetTimer = true) {
       const q = quiz[currentIndex]; answered = false;
-      qTitle.textContent = tr().questionTitle;
-      qExtra.textContent = tr()[q.promptKey] || tr().promptCompute;
+      qTitle.textContent = tr()[q.promptKey] || tr().promptCompute || tr().questionTitle;
+      qExtra.textContent = "";
+      qExtra.classList.add("hidden");
       qMain.innerHTML = ""; qMain.classList.remove("math-render"); renderLatex(qMain, q.main, false);
       optionsEl.innerHTML = ""; feedbackEl.textContent = ""; feedbackEl.className = "feedback"; solutionBox.classList.add("hidden"); solutionBox.innerHTML = "";
       q.options.forEach(option => { const btn = document.createElement("button"); btn.type = "button"; btn.className = "option"; btn.dataset.answerKey = optKey(option); renderOptionElement(btn, option); btn.addEventListener("click", () => chooseOption(btn, option)); optionsEl.appendChild(btn); });
@@ -1183,7 +1200,7 @@
     applyLanguage();
   </script>
   <script src="../assets/js/tool-modes.js"></script>
-  <script src="../assets/js/report-export.js?v=20260722.1"></script>
+  <script src="../assets/js/report-export.js?v=20260725.2"></script>
 
   <script src="../assets/js/tool-ux.js?v=20260716.2"></script>
   <script src="../assets/js/tool-catalog.js?v=20260716.3"></script>

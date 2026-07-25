@@ -17,7 +17,7 @@
   <script src="../assets/js/auth-ui.js"></script>
   <script src="../assets/js/progress.js"></script>
   <script src="../assets/js/theme.js?v=20260716.2"></script>
-  <link rel="stylesheet" href="../assets/css/design-system.css?v=20260717.2">
+  <link rel="stylesheet" href="../assets/css/design-system.css?v=20260724.1">
   <script defer src="https://cdn.jsdelivr.net/npm/lucide@0.468.0/dist/umd/lucide.min.js"></script>
 </head>
 <body>
@@ -93,25 +93,25 @@
               expert: "Expert: irrational and complex roots",
               mixed: "Mixed: balanced practice from all difficulty levels"
             },
-            notes: { discriminant: "D=b^2-4ac", classify: "classify by the sign of D", formula: "use x=(-b±sqrt(D))/(2a)", simplify: "simplify", final: "final result" }
+            notes: { discriminant: "D=b^2-4ac", classify: "classify by the sign of D", formula: "use x=(-bÂ±sqrt(D))/(2a)", simplify: "simplify", final: "final result" }
           },
           zh: {
-            toolBadge: "代数 II",
-            title: "二次公式与判别式专项练习",
-            subtitle: "练习判别式、解的个数、实数根、无理根和简单复数根。",
-            note: "先用 D=b^2-4ac 判断解的类型，需要求根时再使用二次公式。",
-            promptDiscriminant: "求判别式。",
-            promptCount: "根据判别式选择解的个数。",
-            promptSolve: "用二次公式求解。",
-            promptComplex: "求复数解。",
+            toolBadge: "ä»£æ•° II",
+            title: "äºŒæ¬¡å…¬å¼ä¸Žåˆ¤åˆ«å¼ä¸“é¡¹ç»ƒä¹ ",
+            subtitle: "ç»ƒä¹ åˆ¤åˆ«å¼ã€è§£çš„ä¸ªæ•°ã€å®žæ•°æ ¹ã€æ— ç†æ ¹å’Œç®€å•å¤æ•°æ ¹ã€‚",
+            note: "å…ˆç”¨ D=b^2-4ac åˆ¤æ–­è§£çš„ç±»åž‹ï¼Œéœ€è¦æ±‚æ ¹æ—¶å†ä½¿ç”¨äºŒæ¬¡å…¬å¼ã€‚",
+            promptDiscriminant: "æ±‚åˆ¤åˆ«å¼ã€‚",
+            promptCount: "æ ¹æ®åˆ¤åˆ«å¼é€‰æ‹©è§£çš„ä¸ªæ•°ã€‚",
+            promptSolve: "ç”¨äºŒæ¬¡å…¬å¼æ±‚è§£ã€‚",
+            promptComplex: "æ±‚å¤æ•°è§£ã€‚",
             difficultyOptions: {
-              easy: "简单：判别式",
-              medium: "中等：实数解个数",
-              hard: "困难：实数根",
-              expert: "专家：无理根和复数根",
-              mixed: "混合：从所有难度中均衡出题"
+              easy: "ç®€å•ï¼šåˆ¤åˆ«å¼",
+              medium: "ä¸­ç­‰ï¼šå®žæ•°è§£ä¸ªæ•°",
+              hard: "å›°éš¾ï¼šå®žæ•°æ ¹",
+              expert: "ä¸“å®¶ï¼šæ— ç†æ ¹å’Œå¤æ•°æ ¹",
+              mixed: "æ··åˆï¼šä»Žæ‰€æœ‰éš¾åº¦ä¸­å‡è¡¡å‡ºé¢˜"
             },
-            notes: { discriminant: "D=b^2-4ac", classify: "根据 D 的符号分类", formula: "使用 x=(-b±sqrt(D))/(2a)", simplify: "化简", final: "最终结果" }
+            notes: { discriminant: "D=b^2-4ac", classify: "æ ¹æ® D çš„ç¬¦å·åˆ†ç±»", formula: "ä½¿ç”¨ x=(-bÂ±sqrt(D))/(2a)", simplify: "åŒ–ç®€", final: "æœ€ç»ˆç»“æžœ" }
           }
         },
         builders: {
@@ -151,7 +151,7 @@
               } else {
                 b = h.choice([-6, -4, -2, 2, 4, 6]); c = h.randInt(Math.floor((b * b) / 4) + 1, Math.floor((b * b) / 4) + 8); d = b * b - 4 * c;
               }
-              const answer = mode === "two" ? h.textAnswer("two real solutions", "两个实数解", "two-real") : mode === "one" ? h.textAnswer("one real solution", "一个实数解", "one-real") : h.textAnswer("no real solutions", "没有实数解", "no-real");
+              const answer = mode === "two" ? h.textAnswer("two real solutions", "ä¸¤ä¸ªå®žæ•°è§£", "two-real") : mode === "one" ? h.textAnswer("one real solution", "ä¸€ä¸ªå®žæ•°è§£", "one-real") : h.textAnswer("no real solutions", "æ²¡æœ‰å®žæ•°è§£", "no-real");
               return {
                 difficulty: "medium",
                 type: "solution-count",
@@ -163,7 +163,7 @@
                   { line: `D=${b}^2-4(${a})(${c})=${d}`, note: h.tr().notes.discriminant },
                   { line: answer.latex, note: h.tr().notes.classify }
                 ],
-                distractors: [h.textAnswer("two real solutions", "两个实数解", "two-real"), h.textAnswer("one real solution", "一个实数解", "one-real"), h.textAnswer("no real solutions", "没有实数解", "no-real"), h.textAnswer("infinitely many solutions", "无穷多解", "infinitely-many")]
+                distractors: [h.textAnswer("two real solutions", "ä¸¤ä¸ªå®žæ•°è§£", "two-real"), h.textAnswer("one real solution", "ä¸€ä¸ªå®žæ•°è§£", "one-real"), h.textAnswer("no real solutions", "æ²¡æœ‰å®žæ•°è§£", "no-real"), h.textAnswer("infinitely many solutions", "æ— ç©·å¤šè§£", "infinitely-many")]
               };
             })
           ],
@@ -230,7 +230,7 @@
                   { line: `D=${negD}`, note: h.tr().notes.discriminant },
                   { line: answer, note: h.tr().notes.formula }
                 ],
-                distractors: [rootPair(a, b, Math.abs(negD)), `x=\\frac{${-b}\\pm\\sqrt{${Math.abs(negD)}}}{2}`, h.textAnswer("no solution", "无解", "no-solution"), `D=${negD}`]
+                distractors: [rootPair(a, b, Math.abs(negD)), `x=\\frac{${-b}\\pm\\sqrt{${Math.abs(negD)}}}{2}`, h.textAnswer("no solution", "æ— è§£", "no-solution"), `D=${negD}`]
               };
             })
           ]
@@ -239,9 +239,11 @@
     })();
   </script>
   <script src="../assets/js/question-template-registry.js?v=20260720.1"></script>
-  <script src="../assets/js/quiz-tool-engine.js"></script>
+  <script src="../assets/js/semantic-bank-factory.js?v=20260724.3"></script>
+  <script src="../assets/js/quadratic-formula-bank.js?v=20260724.1"></script>
+  <script src="../assets/js/quiz-tool-engine.js?v=20260724.2"></script>
   <script src="../assets/js/tool-modes.js"></script>
-  <script src="../assets/js/report-export.js?v=20260722.1"></script>
+  <script src="../assets/js/report-export.js?v=20260725.2"></script>
 
   <script src="../assets/js/tool-ux.js?v=20260716.2"></script>
   <script src="../assets/js/tool-catalog.js?v=20260716.3"></script>

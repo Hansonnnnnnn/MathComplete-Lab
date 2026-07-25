@@ -15,6 +15,7 @@
     if (path.includes("dashboard.html")) return "progress";
     if (path.includes("mistakes.html")) return "mistakes";
     if (path.includes("account.html")) return "account";
+    if (path.includes("assignment-builder.html")) return "assignment";
     if (path.includes("login.html") || path.includes("auth-callback.html") || path.includes("reset-password.html")) return "account";
     if (path.includes("/games/")) return "tool";
     return "home";

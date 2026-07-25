@@ -17,7 +17,7 @@
   <script src="../assets/js/auth-ui.js"></script>
   <script src="../assets/js/progress.js"></script>
   <script src="../assets/js/theme.js?v=20260716.2"></script>
-  <link rel="stylesheet" href="../assets/css/design-system.css?v=20260717.2">
+  <link rel="stylesheet" href="../assets/css/design-system.css?v=20260724.1">
   <script defer src="https://cdn.jsdelivr.net/npm/lucide@0.468.0/dist/umd/lucide.min.js"></script>
 </head>
 <body>
@@ -42,10 +42,10 @@
       }
       window.MCLQuizTool = {
         gameId: "quadratic-functions",
-        course: "algebra-2",
+        course: "algebra-1",
         text: {
           en: {
-            toolBadge: "Algebra II",
+            toolBadge: "Algebra I",
             title: "Quadratic Functions Practice",
             subtitle: "Practice vertices, axes of symmetry, opening direction, extrema, intercepts, and equivalent quadratic forms.",
             note: "This tool focuses on reading features of a parabola from vertex, standard, and factored forms.",
@@ -65,24 +65,24 @@
             notes: { vertex: "vertex form is a(x-h)^2+k", axis: "axis passes through the vertex", open: "sign of a gives direction", range: "range depends on vertex and opening", standard: "use h=-b/(2a)", zeros: "set each factor equal to zero", final: "final result" }
           },
           zh: {
-            toolBadge: "代数 II",
-            title: "二次函数专项练习",
-            subtitle: "练习顶点、对称轴、开口方向、最值、截距和不同二次函数形式。",
-            note: "这个工具专注于从顶点式、标准式和因式分解式读取抛物线特征。",
-            promptVertex: "求顶点。",
-            promptAxis: "求对称轴。",
-            promptOpen: "判断开口方向。",
-            promptRange: "求值域。",
-            promptStandard: "根据标准式求顶点。",
-            promptZeros: "求零点。",
+            toolBadge: "ä»£æ•° I",
+            title: "äºŒæ¬¡å‡½æ•°ä¸“é¡¹ç»ƒä¹ ",
+            subtitle: "ç»ƒä¹ é¡¶ç‚¹ã€å¯¹ç§°è½´ã€å¼€å£æ–¹å‘ã€æœ€å€¼ã€æˆªè·å’Œä¸åŒäºŒæ¬¡å‡½æ•°å½¢å¼ã€‚",
+            note: "è¿™ä¸ªå·¥å…·ä¸“æ³¨äºŽä»Žé¡¶ç‚¹å¼ã€æ ‡å‡†å¼å’Œå› å¼åˆ†è§£å¼è¯»å–æŠ›ç‰©çº¿ç‰¹å¾ã€‚",
+            promptVertex: "æ±‚é¡¶ç‚¹ã€‚",
+            promptAxis: "æ±‚å¯¹ç§°è½´ã€‚",
+            promptOpen: "åˆ¤æ–­å¼€å£æ–¹å‘ã€‚",
+            promptRange: "æ±‚å€¼åŸŸã€‚",
+            promptStandard: "æ ¹æ®æ ‡å‡†å¼æ±‚é¡¶ç‚¹ã€‚",
+            promptZeros: "æ±‚é›¶ç‚¹ã€‚",
             difficultyOptions: {
-              easy: "简单：顶点式特征",
-              medium: "中等：值域和最值",
-              hard: "困难：标准式求顶点信息",
-              expert: "专家：零点和等价形式",
-              mixed: "混合：从所有难度中均衡出题"
+              easy: "ç®€å•ï¼šé¡¶ç‚¹å¼ç‰¹å¾",
+              medium: "ä¸­ç­‰ï¼šå€¼åŸŸå’Œæœ€å€¼",
+              hard: "å›°éš¾ï¼šæ ‡å‡†å¼æ±‚é¡¶ç‚¹ä¿¡æ¯",
+              expert: "ä¸“å®¶ï¼šé›¶ç‚¹å’Œç­‰ä»·å½¢å¼",
+              mixed: "æ··åˆï¼šä»Žæ‰€æœ‰éš¾åº¦ä¸­å‡è¡¡å‡ºé¢˜"
             },
-            notes: { vertex: "顶点式是 a(x-h)^2+k", axis: "对称轴经过顶点", open: "a 的符号决定开口方向", range: "值域取决于顶点和开口方向", standard: "使用 h=-b/(2a)", zeros: "令每个因式等于 0", final: "最终结果" }
+            notes: { vertex: "é¡¶ç‚¹å¼æ˜¯ a(x-h)^2+k", axis: "å¯¹ç§°è½´ç»è¿‡é¡¶ç‚¹", open: "a çš„ç¬¦å·å†³å®šå¼€å£æ–¹å‘", range: "å€¼åŸŸå–å†³äºŽé¡¶ç‚¹å’Œå¼€å£æ–¹å‘", standard: "ä½¿ç”¨ h=-b/(2a)", zeros: "ä»¤æ¯ä¸ªå› å¼ç­‰äºŽ 0", final: "æœ€ç»ˆç»“æžœ" }
           }
         },
         builders: {
@@ -129,7 +129,7 @@
               const a = h.choice([-4, -3, -2, -1, 1, 2, 3, 4]);
               const vx = h.randInt(-5, 5);
               const vy = h.randInt(-5, 5);
-              const answer = a > 0 ? h.textAnswer("opens upward", "开口向上", "up") : h.textAnswer("opens downward", "开口向下", "down");
+              const answer = a > 0 ? h.textAnswer("opens upward", "å¼€å£å‘ä¸Š", "up") : h.textAnswer("opens downward", "å¼€å£å‘ä¸‹", "down");
               return {
                 difficulty: "medium",
                 type: "opening-direction",
@@ -141,7 +141,7 @@
                   { line: `a=${a}`, note: h.tr().notes.open },
                   { line: answer.latex, note: h.tr().notes.final }
                 ],
-                distractors: [a > 0 ? h.textAnswer("opens downward", "开口向下", "down") : h.textAnswer("opens upward", "开口向上", "up"), h.textAnswer("has no vertex", "没有顶点", "no-vertex"), h.textAnswer("is a line", "是一条直线", "line")]
+                distractors: [a > 0 ? h.textAnswer("opens downward", "å¼€å£å‘ä¸‹", "down") : h.textAnswer("opens upward", "å¼€å£å‘ä¸Š", "up"), h.textAnswer("has no vertex", "æ²¡æœ‰é¡¶ç‚¹", "no-vertex"), h.textAnswer("is a line", "æ˜¯ä¸€æ¡ç›´çº¿", "line")]
               };
             }),
             builder("range", h => {
@@ -233,9 +233,11 @@
     })();
   </script>
   <script src="../assets/js/question-template-registry.js?v=20260720.1"></script>
-  <script src="../assets/js/quiz-tool-engine.js"></script>
+  <script src="../assets/js/semantic-bank-factory.js?v=20260724.3"></script>
+  <script src="../assets/js/quadratic-functions-bank.js?v=20260724.1"></script>
+  <script src="../assets/js/quiz-tool-engine.js?v=20260724.2"></script>
   <script src="../assets/js/tool-modes.js"></script>
-  <script src="../assets/js/report-export.js?v=20260722.1"></script>
+  <script src="../assets/js/report-export.js?v=20260725.2"></script>
 
   <script src="../assets/js/tool-ux.js?v=20260716.2"></script>
   <script src="../assets/js/tool-catalog.js?v=20260716.3"></script>

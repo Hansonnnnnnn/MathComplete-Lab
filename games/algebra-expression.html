@@ -801,14 +801,14 @@
 </style>
   <script src="../assets/js/theme.js?v=20260716.2"></script>
   <link rel="stylesheet" href="../assets/css/quiz-tool.css">
-  <link rel="stylesheet" href="../assets/css/design-system.css?v=20260717.2">
+  <link rel="stylesheet" href="../assets/css/design-system.css?v=20260724.1">
   <script defer src="https://cdn.jsdelivr.net/npm/lucide@0.468.0/dist/umd/lucide.min.js"></script>
 </head>
 <body>
 
   <nav class="mc-site-shell">
     <a class="mc-brand" href="../index.html">
-      <span class="mc-brand-mark">∑</span>
+      <span class="mc-brand-mark">âˆ‘</span>
       <span>MathComplete Lab</span>
     </a>
     <div class="mc-links">
@@ -822,7 +822,7 @@
       document.documentElement.lang = lang === "zh" ? "zh-CN" : "en";
       const navText = {
         en: { navPractice: "Practice Library", navHome: "Home" },
-        zh: { navPractice: "练习库", navHome: "主页" }
+        zh: { navPractice: "ç»ƒä¹ åº“", navHome: "ä¸»é¡µ" }
       };
       document.querySelectorAll("[data-i18n]").forEach(el => {
         const key = el.getAttribute("data-i18n");
@@ -833,6 +833,7 @@
 
   <main class="container">
     <header>
+      <div id="toolBadge" class="pill"></div>
       <div class="header-main">
         <h1 id="pageTitle"></h1>
         <p id="pageSubtitle" class="subtitle"></p>
@@ -882,7 +883,7 @@
       </div>
 
       <div id="sampleBox" class="explain-box hidden"></div>
-      <div id="distractorNote" class="explain-box"></div>
+      <div id="noteBox" class="explain-box"></div>
     </section>
 
     <section id="quizCard" class="card hidden">
@@ -900,8 +901,8 @@
       </div>
 
       <div id="questionTitle" class="question-title"></div>
-      <div id="expression" class="expression"></div>
-      <div id="values" class="values"></div>
+      <div id="questionMain" class="expression"></div>
+      <div id="questionExtra" class="values"></div>
 
       <div id="options" class="options"></div>
       <div id="feedback" class="feedback"></div>
@@ -939,88 +940,88 @@
     </section>
   </main>
 
-  <script>
+  <script type="application/json" id="legacy-algebra-expression-script">
     const T = {
       zh: {
         htmlLang: "zh-CN",
-        title: "代数表达式选择题练习",
-        subtitle: "随机生成表达式，给出变量数值，选择表达式的值。系统会自动生成误导选项，并在最后整理正确率和错题。",
-        languageLabel: "语言 / Language",
-        setupTitle: "开始练习",
-        difficultyLabel: "难度",
-        questionCountLabel: "题目数量",
-        optionCountLabel: "选项数量",
-        timedModeText: "开启计时模式",
-        timedModeHint: "关闭后不会倒计时；开启后每题单独计时。",
-        timerLevelLabel: "计时难度",
-        timerDisplay: seconds => `剩余时间：${formatTime(seconds)}`,
-        timeUpFeedback: answer => `时间到。正确答案是 ${answer}。`,
-        timeUpAnswer: "未作答（时间到）",
-        solutionTitle: "正确解法",
-        solutionGiven: "已知",
-        solutionOriginal: "原式",
-        solutionSubstitute: "代入变量值",
-        solutionSimplify: "化简",
-        solutionFinal: "所以答案是",
-        startBtn: "开始",
-        sampleBtn: "生成一道样题",
-        distractorNote: "误导选项会模拟常见错误，例如：符号看错、括号漏算、平方算错、乘法和加法顺序混淆、最后一步差一个小数值等。",
-        questionTitle: "计算下面表达式的值：",
-        quitBtn: "结束本轮",
-        nextBtn: "下一题",
-        resultBtn: "查看结果",
-        resultTitle: "练习结果",
-        scoreLabel: "正确题数",
-        accuracyLabel: "正确率",
-        wrongLabel: "错题数量",
-        wrongReviewTitle: "错题整理",
-        restartBtn: "再练一轮",
-        reviewWrongBtn: "只练错题同类型",
-        correctFeedback: "正确！",
-        wrongFeedback: answer => `错误。正确答案是 ${answer}。`,
-        noWrong: "本轮没有错题。",
-        noWrongTip: "非常好，可以尝试更高难度。",
-        wrongValues: "变量值",
-        yourAnswer: "你的答案",
-        correctAnswer: "正确答案",
-        suggestion: "建议检查：符号、括号、平方、乘法顺序。",
-        sampleTitle: "样题",
-        sampleExpression: "表达式",
-        sampleValues: "变量值",
-        sampleAnswer: "正确答案",
-        sampleOptions: "选项示例",
-        progress: (a, b) => `第 ${a} / ${b} 题`,
-        optionCount: n => `${n} 个选项`,
+        title: "ä»£æ•°è¡¨è¾¾å¼é€‰æ‹©é¢˜ç»ƒä¹ ",
+        subtitle: "éšæœºç”Ÿæˆè¡¨è¾¾å¼ï¼Œç»™å‡ºå˜é‡æ•°å€¼ï¼Œé€‰æ‹©è¡¨è¾¾å¼çš„å€¼ã€‚ç³»ç»Ÿä¼šè‡ªåŠ¨ç”Ÿæˆè¯¯å¯¼é€‰é¡¹ï¼Œå¹¶åœ¨æœ€åŽæ•´ç†æ­£ç¡®çŽ‡å’Œé”™é¢˜ã€‚",
+        languageLabel: "è¯­è¨€ / Language",
+        setupTitle: "å¼€å§‹ç»ƒä¹ ",
+        difficultyLabel: "éš¾åº¦",
+        questionCountLabel: "é¢˜ç›®æ•°é‡",
+        optionCountLabel: "é€‰é¡¹æ•°é‡",
+        timedModeText: "å¼€å¯è®¡æ—¶æ¨¡å¼",
+        timedModeHint: "å…³é—­åŽä¸ä¼šå€’è®¡æ—¶ï¼›å¼€å¯åŽæ¯é¢˜å•ç‹¬è®¡æ—¶ã€‚",
+        timerLevelLabel: "è®¡æ—¶éš¾åº¦",
+        timerDisplay: seconds => `å‰©ä½™æ—¶é—´ï¼š${formatTime(seconds)}`,
+        timeUpFeedback: answer => `æ—¶é—´åˆ°ã€‚æ­£ç¡®ç­”æ¡ˆæ˜¯ ${answer}ã€‚`,
+        timeUpAnswer: "æœªä½œç­”ï¼ˆæ—¶é—´åˆ°ï¼‰",
+        solutionTitle: "æ­£ç¡®è§£æ³•",
+        solutionGiven: "å·²çŸ¥",
+        solutionOriginal: "åŽŸå¼",
+        solutionSubstitute: "ä»£å…¥å˜é‡å€¼",
+        solutionSimplify: "åŒ–ç®€",
+        solutionFinal: "æ‰€ä»¥ç­”æ¡ˆæ˜¯",
+        startBtn: "å¼€å§‹",
+        sampleBtn: "ç”Ÿæˆä¸€é“æ ·é¢˜",
+        distractorNote: "è¯¯å¯¼é€‰é¡¹ä¼šæ¨¡æ‹Ÿå¸¸è§é”™è¯¯ï¼Œä¾‹å¦‚ï¼šç¬¦å·çœ‹é”™ã€æ‹¬å·æ¼ç®—ã€å¹³æ–¹ç®—é”™ã€ä¹˜æ³•å’ŒåŠ æ³•é¡ºåºæ··æ·†ã€æœ€åŽä¸€æ­¥å·®ä¸€ä¸ªå°æ•°å€¼ç­‰ã€‚",
+        questionTitle: "è®¡ç®—ä¸‹é¢è¡¨è¾¾å¼çš„å€¼ï¼š",
+        quitBtn: "ç»“æŸæœ¬è½®",
+        nextBtn: "ä¸‹ä¸€é¢˜",
+        resultBtn: "æŸ¥çœ‹ç»“æžœ",
+        resultTitle: "ç»ƒä¹ ç»“æžœ",
+        scoreLabel: "æ­£ç¡®é¢˜æ•°",
+        accuracyLabel: "æ­£ç¡®çŽ‡",
+        wrongLabel: "é”™é¢˜æ•°é‡",
+        wrongReviewTitle: "é”™é¢˜æ•´ç†",
+        restartBtn: "å†ç»ƒä¸€è½®",
+        reviewWrongBtn: "åªç»ƒé”™é¢˜åŒç±»åž‹",
+        correctFeedback: "æ­£ç¡®ï¼",
+        wrongFeedback: answer => `é”™è¯¯ã€‚æ­£ç¡®ç­”æ¡ˆæ˜¯ ${answer}ã€‚`,
+        noWrong: "æœ¬è½®æ²¡æœ‰é”™é¢˜ã€‚",
+        noWrongTip: "éžå¸¸å¥½ï¼Œå¯ä»¥å°è¯•æ›´é«˜éš¾åº¦ã€‚",
+        wrongValues: "å˜é‡å€¼",
+        yourAnswer: "ä½ çš„ç­”æ¡ˆ",
+        correctAnswer: "æ­£ç¡®ç­”æ¡ˆ",
+        suggestion: "å»ºè®®æ£€æŸ¥ï¼šç¬¦å·ã€æ‹¬å·ã€å¹³æ–¹ã€ä¹˜æ³•é¡ºåºã€‚",
+        sampleTitle: "æ ·é¢˜",
+        sampleExpression: "è¡¨è¾¾å¼",
+        sampleValues: "å˜é‡å€¼",
+        sampleAnswer: "æ­£ç¡®ç­”æ¡ˆ",
+        sampleOptions: "é€‰é¡¹ç¤ºä¾‹",
+        progress: (a, b) => `ç¬¬ ${a} / ${b} é¢˜`,
+        optionCount: n => `${n} ä¸ªé€‰é¡¹`,
         difficulties: {
-          easy: "简单",
-          medium: "中等",
-          hard: "困难",
-          expert: "专家",
-          hell: "地狱",
-          mixed: "混合"
+          easy: "ç®€å•",
+          medium: "ä¸­ç­‰",
+          hard: "å›°éš¾",
+          expert: "ä¸“å®¶",
+          hell: "åœ°ç‹±",
+          mixed: "æ··åˆ"
         },
         difficultyOptions: {
-          easy: "简单：一到两个变量，主要是加减乘",
-          medium: "中等：括号、平方、平方差和多步表达式",
-          hard: "困难：嵌套括号、负数、平方与乘法混合",
-          expert: "专家：变量系数、多层嵌套、平方和对称结构",
-          hell: "地狱：高密度负号、多层嵌套、平方与乘积混合",
-          mixed: "混合：从所有难度中均衡出题"
+          easy: "ç®€å•ï¼šä¸€åˆ°ä¸¤ä¸ªå˜é‡ï¼Œä¸»è¦æ˜¯åŠ å‡ä¹˜",
+          medium: "ä¸­ç­‰ï¼šæ‹¬å·ã€å¹³æ–¹ã€å¹³æ–¹å·®å’Œå¤šæ­¥è¡¨è¾¾å¼",
+          hard: "å›°éš¾ï¼šåµŒå¥—æ‹¬å·ã€è´Ÿæ•°ã€å¹³æ–¹ä¸Žä¹˜æ³•æ··åˆ",
+          expert: "ä¸“å®¶ï¼šå˜é‡ç³»æ•°ã€å¤šå±‚åµŒå¥—ã€å¹³æ–¹å’Œå¯¹ç§°ç»“æž„",
+          hell: "åœ°ç‹±ï¼šé«˜å¯†åº¦è´Ÿå·ã€å¤šå±‚åµŒå¥—ã€å¹³æ–¹ä¸Žä¹˜ç§¯æ··åˆ",
+          mixed: "æ··åˆï¼šä»Žæ‰€æœ‰éš¾åº¦ä¸­å‡è¡¡å‡ºé¢˜"
         },
         timerOptions: {
-          timer_easy: "简单：每题 2 分钟",
-          timer_medium: "中等：每题 1 分钟",
-          timer_hard: "困难：每题 30 秒",
-          timer_extreme: "极难：每题 15 秒",
-          timer_hell: "地狱：每题 10 秒"
+          timer_easy: "ç®€å•ï¼šæ¯é¢˜ 2 åˆ†é’Ÿ",
+          timer_medium: "ä¸­ç­‰ï¼šæ¯é¢˜ 1 åˆ†é’Ÿ",
+          timer_hard: "å›°éš¾ï¼šæ¯é¢˜ 30 ç§’",
+          timer_extreme: "æžéš¾ï¼šæ¯é¢˜ 15 ç§’",
+          timer_hell: "åœ°ç‹±ï¼šæ¯é¢˜ 10 ç§’"
         },
-        noWrongAlert: "本轮没有错题，不能生成错题同类型练习。"
+        noWrongAlert: "æœ¬è½®æ²¡æœ‰é”™é¢˜ï¼Œä¸èƒ½ç”Ÿæˆé”™é¢˜åŒç±»åž‹ç»ƒä¹ ã€‚"
       },
       en: {
         htmlLang: "en",
         title: "Algebra Expression Multiple Choice Practice",
         subtitle: "Generate random algebra expressions, plug in the given variable values, and choose the value of the expression. Distractor choices and a wrong-answer review are included.",
-        languageLabel: "Language / 语言",
+        languageLabel: "Language / è¯­è¨€",
         setupTitle: "Start Practice",
         difficultyLabel: "Difficulty",
         questionCountLabel: "Number of Questions",
@@ -1381,7 +1382,7 @@ document.getElementById("setupTitle").textContent = t.setupTitle;
     function prettyVarValues(values) {
       return Object.entries(values)
         .map(([k, v]) => `${k} = ${v}`)
-        .join(lang === "zh" ? "，" : ", ");
+        .join(lang === "zh" ? "ï¼Œ" : ", ");
     }
 
     function evaluateExpression(raw, values) {
@@ -1603,8 +1604,8 @@ document.getElementById("setupTitle").textContent = t.setupTitle;
     function toDisplayExpression(expr) {
       return expr
         .replace(/\*/g, "")
-        .replace(/\^2/g, "²")
-        .replace(/\^3/g, "³");
+        .replace(/\^2/g, "Â²")
+        .replace(/\^3/g, "Â³");
     }
 
     function wrongEvaluationCandidates(q) {
@@ -1732,7 +1733,7 @@ document.getElementById("setupTitle").textContent = t.setupTitle;
       }
 
       progressText.textContent = tr().progress(currentIndex + 1, quiz.length);
-      difficultyText.textContent = lastDifficulty === "mixed" ? `${tr().difficulties.mixed} · ${tr().difficulties[q.difficulty]}` : tr().difficulties[q.difficulty];
+      difficultyText.textContent = lastDifficulty === "mixed" ? `${tr().difficulties.mixed} Â· ${tr().difficulties[q.difficulty]}` : tr().difficulties[q.difficulty];
       progressBar.style.width = `${(currentIndex / quiz.length) * 100}%`;
       renderMaybeMath(expressionEl, q.displayExpression, true);
 
@@ -1827,18 +1828,18 @@ document.getElementById("setupTitle").textContent = t.setupTitle;
       if(!s) return "";
 
       s = s
-        .replace(/−/g, "-")
-        .replace(/×/g, "\\times ")
-        .replace(/·/g, "\\cdot ")
+        .replace(/âˆ’/g, "-")
+        .replace(/Ã—/g, "\\times ")
+        .replace(/Â·/g, "\\cdot ")
         .replace(/\u00a0/g, " ");
 
       const pureText = {
         "No solution": "\\text{No solution}",
         "Infinitely many solutions": "\\text{Infinitely many solutions}",
         "No answer: time is up": "\\text{No answer: time is up}",
-        "无解": "\\text{无解}",
-        "无穷多个解": "\\text{无穷多个解}",
-        "未作答（时间到）": "\\text{未作答（时间到）}"
+        "æ— è§£": "\\text{æ— è§£}",
+        "æ— ç©·å¤šä¸ªè§£": "\\text{æ— ç©·å¤šä¸ªè§£}",
+        "æœªä½œç­”ï¼ˆæ—¶é—´åˆ°ï¼‰": "\\text{æœªä½œç­”ï¼ˆæ—¶é—´åˆ°ï¼‰}"
       };
       if(pureText[s]) return pureText[s];
 
@@ -1867,7 +1868,7 @@ document.getElementById("setupTitle").textContent = t.setupTitle;
       s = s.replace(/\*/g, "\\cdot ");
       s = s.replace(/\bof\b/g, "\\text{ of }");
       s = s.replace(/%/g, "\\%");
-      s = s.replace(/π/g, "\\text{π}");
+      s = s.replace(/Ï€/g, "\\text{Ï€}");
       s = s.replace(/\?/g, "?");
 
       s = s.replace(/sqrt\(([^()]*)\)/g, (_, inner) => `\\sqrt{${mathToLatex(inner)}}`);
@@ -1883,13 +1884,13 @@ document.getElementById("setupTitle").textContent = t.setupTitle;
       s = s.replace(/\^\(([^)]+)\)/g, (_, exponent) => `^{${mathToLatex(exponent)}}`);
       s = s.replace(/\^(-?\d+)/g, "^{$1}");
       s = s.replace(/\^([a-zA-Z]+)/g, "^{$1}");
-      s = s.replace(/([a-zA-Z])²/g, "$1^{2}");
-      s = s.replace(/([a-zA-Z])³/g, "$1^{3}");
+      s = s.replace(/([a-zA-Z])Â²/g, "$1^{2}");
+      s = s.replace(/([a-zA-Z])Â³/g, "$1^{3}");
 
       s = s.replace(/x\^\{1\}/g, "x");
       s = s.replace(/x\^\{0\}/g, "1");
       s = s.replace(/\bln\b/g, "\\ln");
-      s = s.replace(/(^|[^A-Za-z])pi(?![A-Za-z])/g, "$1\\text{π}");
+      s = s.replace(/(^|[^A-Za-z])pi(?![A-Za-z])/g, "$1\\text{Ï€}");
 
       return s;
     }
@@ -1897,8 +1898,8 @@ document.getElementById("setupTitle").textContent = t.setupTitle;
     function shouldRenderMath(expr){
       const s = String(expr ?? "").trim();
       if(!s) return false;
-      if(["No solution","Infinitely many solutions","无解","无穷多个解"].includes(s)) return true;
-      if(/[=^/*+\-()π%²³]/.test(s)) return true;
+      if(["No solution","Infinitely many solutions","æ— è§£","æ— ç©·å¤šä¸ªè§£"].includes(s)) return true;
+      if(/[=^/*+\-()Ï€%Â²Â³]/.test(s)) return true;
       if(/^\s*-?\d+(\.\d+)?\s*$/.test(s)) return true;
       if(isSimpleMonomial(s)) return true;
       if(/^[A-Za-z]\s*\(/.test(s)) return true;
@@ -1999,8 +2000,8 @@ document.getElementById("setupTitle").textContent = t.setupTitle;
       return expr
         .replace(/(^|[\s+\-(])1\*([a-z])/g, "$1$2")
         .replace(/\*/g, "")
-        .replace(/\^2/g, "²")
-        .replace(/\^3/g, "³")
+        .replace(/\^2/g, "Â²")
+        .replace(/\^3/g, "Â³")
         .replace(/\s+/g, " ")
         .trim();
     }
@@ -2019,10 +2020,10 @@ document.getElementById("setupTitle").textContent = t.setupTitle;
           return `${a}${right}`;
         });
       } else {
-        s = s.replace(/\*/g, "×");
+        s = s.replace(/\*/g, "Ã—");
       }
 
-      s = s.replace(/\^2/g, "²").replace(/\^3/g, "³");
+      s = s.replace(/\^2/g, "Â²").replace(/\^3/g, "Â³");
       return cleanSignsForDisplay(s);
     }
 
@@ -2199,8 +2200,8 @@ document.getElementById("setupTitle").textContent = t.setupTitle;
         feedbackEl.classList.add("good");
       } else {
         const prefix = timeUp
-          ? (lang === "zh" ? "时间到。正确答案是" : "Time is up. The correct answer is")
-          : (lang === "zh" ? "错误。正确答案是" : "Incorrect. The correct answer is");
+          ? (lang === "zh" ? "æ—¶é—´åˆ°ã€‚æ­£ç¡®ç­”æ¡ˆæ˜¯" : "Time is up. The correct answer is")
+          : (lang === "zh" ? "é”™è¯¯ã€‚æ­£ç¡®ç­”æ¡ˆæ˜¯" : "Incorrect. The correct answer is");
         feedbackEl.innerHTML = `${prefix} ${mathSpan(String(answer), "feedback-math")}.`;
         renderTaggedMath(feedbackEl);
         feedbackEl.classList.add("bad");
@@ -2350,8 +2351,21 @@ document.getElementById("setupTitle").textContent = t.setupTitle;
 
     applyLanguage();
   </script>
+  <script>
+    window.MCLQuizTool = {
+      gameId: "algebra-expression", course: "algebra-1", balancedMixed: true, avoidConsecutiveTypes: true,
+      builders: { easy: [], medium: [], hard: [], expert: [] },
+      text: {
+        en: { title: "Algebraic Expression Evaluation", toolBadge: "Algebra I", subtitle: "Evaluate, interpret, translate, and verify expressions through substitution, formulas, and mathematical models.", note: "Twenty-five reasoning families distinguish calculation from inverse reasoning, interpretation, modeling, and error analysis." },
+        zh: { title: "\u4ee3\u6570\u5f0f\u6c42\u503c\u4e13\u9879\u7ec3\u4e60", toolBadge: "\u4ee3\u6570 I", subtitle: "\u901a\u8fc7\u4ee3\u5165\u3001\u516c\u5f0f\u548c\u6570\u5b66\u5efa\u6a21\u7ec3\u4e60\u6c42\u503c\u3001\u89e3\u91ca\u3001\u7ffb\u8bd1\u4e0e\u9a8c\u8bc1\u3002", note: "25 \u4e2a\u63a8\u7406\u5bb6\u65cf\u660e\u786e\u533a\u5206\u8ba1\u7b97\u3001\u9006\u5411\u63a8\u7406\u3001\u89e3\u91ca\u3001\u5efa\u6a21\u548c\u9519\u8bef\u5206\u6790\u3002" }
+      }
+    };
+  </script>
+  <script src="../assets/js/question-template-registry.js?v=20260724.1"></script>
+  <script src="../assets/js/algebra-expression-bank.js?v=20260724.1"></script>
+  <script src="../assets/js/quiz-tool-engine.js?v=20260724.2"></script>
   <script src="../assets/js/tool-modes.js"></script>
-  <script src="../assets/js/report-export.js?v=20260722.1"></script>
+  <script src="../assets/js/report-export.js?v=20260725.2"></script>
 
   <script src="../assets/js/tool-ux.js?v=20260716.2"></script>
   <script src="../assets/js/tool-catalog.js?v=20260716.3"></script>

@@ -633,7 +633,9 @@ body.mcl-tool-page main.container > header h1 { max-width: 900px; }
 }
 
 .option {
+  min-width: 0 !important;
   min-height: 64px !important;
+  overflow-x: auto;
   border: 1px solid var(--mcl-border-strong) !important;
   border-radius: 8px !important;
   color: var(--mcl-text) !important;
@@ -1361,7 +1363,7 @@ body.mcl-tool-page main.container > header::after {
   h2 { font-size: 1.4rem !important; }
   .subtitle, .lead { font-size: 15px !important; }
   #setupCard, #quizCard, #resultCard { padding: 16px !important; }
-  .setup-grid, .mcl-more-grid, .options, .result-grid { grid-template-columns: 1fr !important; }
+  .setup-grid, .mcl-more-grid, .options, .result-grid { grid-template-columns: minmax(0, 1fr) !important; }
   .question-main { font-size: 32px !important; }
   .question-main.long-question { font-size: 26px !important; }
   .question-main.text-question { font-size: 21px !important; }

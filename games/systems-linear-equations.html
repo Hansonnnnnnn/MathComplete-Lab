@@ -17,7 +17,7 @@
   <script src="../assets/js/auth-ui.js"></script>
   <script src="../assets/js/progress.js"></script>
   <script src="../assets/js/theme.js?v=20260716.2"></script>
-  <link rel="stylesheet" href="../assets/css/design-system.css?v=20260717.2">
+  <link rel="stylesheet" href="../assets/css/design-system.css?v=20260724.1">
   <script defer src="https://cdn.jsdelivr.net/npm/lucide@0.468.0/dist/umd/lucide.min.js"></script>
 </head>
 <body>
@@ -58,22 +58,22 @@
             notes: { substitute: "substitute into the second equation", eliminate: "add or subtract to eliminate a variable", classify: "compare the two equations", model: "define variables and solve", final: "final result" }
           },
           zh: {
-            toolBadge: "代数 I",
-            title: "二元一次方程组专项练习",
-            subtitle: "练习代入法、消元法、特殊情况和简短应用题建模。",
-            note: "方程组的解是同时满足两个方程的有序数对。注意无解和无穷多解。",
-            promptSubstitution: "用代入法解方程组。",
-            promptElimination: "用消元法解方程组。",
-            promptSpecial: "判断方程组的解的情况。",
-            promptWord: "建立并解出方程组。",
+            toolBadge: "ä»£æ•° I",
+            title: "äºŒå…ƒä¸€æ¬¡æ–¹ç¨‹ç»„ä¸“é¡¹ç»ƒä¹ ",
+            subtitle: "ç»ƒä¹ ä»£å…¥æ³•ã€æ¶ˆå…ƒæ³•ã€ç‰¹æ®Šæƒ…å†µå’Œç®€çŸ­åº”ç”¨é¢˜å»ºæ¨¡ã€‚",
+            note: "æ–¹ç¨‹ç»„çš„è§£æ˜¯åŒæ—¶æ»¡è¶³ä¸¤ä¸ªæ–¹ç¨‹çš„æœ‰åºæ•°å¯¹ã€‚æ³¨æ„æ— è§£å’Œæ— ç©·å¤šè§£ã€‚",
+            promptSubstitution: "ç”¨ä»£å…¥æ³•è§£æ–¹ç¨‹ç»„ã€‚",
+            promptElimination: "ç”¨æ¶ˆå…ƒæ³•è§£æ–¹ç¨‹ç»„ã€‚",
+            promptSpecial: "åˆ¤æ–­æ–¹ç¨‹ç»„çš„è§£çš„æƒ…å†µã€‚",
+            promptWord: "å»ºç«‹å¹¶è§£å‡ºæ–¹ç¨‹ç»„ã€‚",
             difficultyOptions: {
-              easy: "简单：y 已经单独表示的代入法",
-              medium: "中等：消元法",
-              hard: "困难：无解和无穷多解",
-              expert: "专家：应用题",
-              mixed: "混合：从所有难度中均衡出题"
+              easy: "ç®€å•ï¼šy å·²ç»å•ç‹¬è¡¨ç¤ºçš„ä»£å…¥æ³•",
+              medium: "ä¸­ç­‰ï¼šæ¶ˆå…ƒæ³•",
+              hard: "å›°éš¾ï¼šæ— è§£å’Œæ— ç©·å¤šè§£",
+              expert: "ä¸“å®¶ï¼šåº”ç”¨é¢˜",
+              mixed: "æ··åˆï¼šä»Žæ‰€æœ‰éš¾åº¦ä¸­å‡è¡¡å‡ºé¢˜"
             },
-            notes: { substitute: "代入另一个方程", eliminate: "相加或相减消去一个变量", classify: "比较两个方程", model: "设变量并求解", final: "最终结果" }
+            notes: { substitute: "ä»£å…¥å¦ä¸€ä¸ªæ–¹ç¨‹", eliminate: "ç›¸åŠ æˆ–ç›¸å‡æ¶ˆåŽ»ä¸€ä¸ªå˜é‡", classify: "æ¯”è¾ƒä¸¤ä¸ªæ–¹ç¨‹", model: "è®¾å˜é‡å¹¶æ±‚è§£", final: "æœ€ç»ˆç»“æžœ" }
           }
         },
         builders: {
@@ -143,12 +143,12 @@
                 promptKey: "promptSpecial",
                 main: cases(lineEq(a, b, c), lineEq(k * a, k * b, c2)),
                 plain: cases(lineEq(a, b, c), lineEq(k * a, k * b, c2)),
-                answer: h.textAnswer("no solution", "无解", "no-solution"),
+                answer: h.textAnswer("no solution", "æ— è§£", "no-solution"),
                 lines: [
                   { line: `${k}(${lineEq(a, b, c)})\\Rightarrow ${lineEq(k * a, k * b, k * c)}`, note: h.tr().notes.classify },
-                  { line: h.textLatex(h.lang === "zh" ? "左边成比例，但常数项不同。" : "The left sides are proportional, but the constants differ."), note: h.tr().notes.final }
+                  { line: h.textLatex(h.lang === "zh" ? "å·¦è¾¹æˆæ¯”ä¾‹ï¼Œä½†å¸¸æ•°é¡¹ä¸åŒã€‚" : "The left sides are proportional, but the constants differ."), note: h.tr().notes.final }
                 ],
-                distractors: [h.textAnswer("infinitely many solutions", "无穷多解", "infinitely-many"), answerPoint(0, c), answerPoint(c, 0), h.textAnswer("one solution", "一个解", "one-solution")]
+                distractors: [h.textAnswer("infinitely many solutions", "æ— ç©·å¤šè§£", "infinitely-many"), answerPoint(0, c), answerPoint(c, 0), h.textAnswer("one solution", "ä¸€ä¸ªè§£", "one-solution")]
               };
             }),
             builder("infinite-solutions", h => {
@@ -162,12 +162,12 @@
                 promptKey: "promptSpecial",
                 main: cases(lineEq(a, b, c), lineEq(k * a, k * b, k * c)),
                 plain: cases(lineEq(a, b, c), lineEq(k * a, k * b, k * c)),
-                answer: h.textAnswer("infinitely many solutions", "无穷多解", "infinitely-many"),
+                answer: h.textAnswer("infinitely many solutions", "æ— ç©·å¤šè§£", "infinitely-many"),
                 lines: [
                   { line: `${k}(${lineEq(a, b, c)})=${lineEq(k * a, k * b, k * c)}`, note: h.tr().notes.classify },
-                  { line: h.textLatex(h.lang === "zh" ? "两个方程表示同一条直线。" : "The equations describe the same line."), note: h.tr().notes.final }
+                  { line: h.textLatex(h.lang === "zh" ? "ä¸¤ä¸ªæ–¹ç¨‹è¡¨ç¤ºåŒä¸€æ¡ç›´çº¿ã€‚" : "The equations describe the same line."), note: h.tr().notes.final }
                 ],
-                distractors: [h.textAnswer("no solution", "无解", "no-solution"), answerPoint(0, c), answerPoint(c, 0), h.textAnswer("one solution", "一个解", "one-solution")]
+                distractors: [h.textAnswer("no solution", "æ— è§£", "no-solution"), answerPoint(0, c), answerPoint(c, 0), h.textAnswer("one solution", "ä¸€ä¸ªè§£", "one-solution")]
               };
             })
           ],
@@ -188,10 +188,10 @@
                     secondCoeff: student,
                     firstEn: "adult tickets",
                     secondEn: "student tickets",
-                    firstZh: "成人票",
-                    secondZh: "学生票",
+                    firstZh: "æˆäººç¥¨",
+                    secondZh: "å­¦ç”Ÿç¥¨",
                     textEn: `Adult tickets cost $${adult}, student tickets cost $${student}. A total of ${total} tickets were sold for $${weighted}. How many adult and student tickets were sold?`,
-                    textZh: `成人票 ${adult} 美元，学生票 ${student} 美元。一共卖出 ${total} 张票，总收入 ${weighted} 美元。成人票和学生票各卖出多少张？`,
+                    textZh: `æˆäººç¥¨ ${adult} ç¾Žå…ƒï¼Œå­¦ç”Ÿç¥¨ ${student} ç¾Žå…ƒã€‚ä¸€å…±å–å‡º ${total} å¼ ç¥¨ï¼Œæ€»æ”¶å…¥ ${weighted} ç¾Žå…ƒã€‚æˆäººç¥¨å’Œå­¦ç”Ÿç¥¨å„å–å‡ºå¤šå°‘å¼ ï¼Ÿ`,
                     total,
                     weighted
                   };
@@ -210,10 +210,10 @@
                     secondCoeff: pen,
                     firstEn: "notebooks",
                     secondEn: "pens",
-                    firstZh: "笔记本",
-                    secondZh: "钢笔",
+                    firstZh: "ç¬”è®°æœ¬",
+                    secondZh: "é’¢ç¬”",
                     textEn: `A student bought notebooks for $${notebook} each and pens for $${pen} each. They bought ${total} items for $${weighted}. How many notebooks and pens did they buy?`,
-                    textZh: `一名学生买了每本 ${notebook} 美元的笔记本和每支 ${pen} 美元的钢笔。一共买了 ${total} 件物品，花了 ${weighted} 美元。笔记本和钢笔各买了多少？`,
+                    textZh: `ä¸€åå­¦ç”Ÿä¹°äº†æ¯æœ¬ ${notebook} ç¾Žå…ƒçš„ç¬”è®°æœ¬å’Œæ¯æ”¯ ${pen} ç¾Žå…ƒçš„é’¢ç¬”ã€‚ä¸€å…±ä¹°äº† ${total} ä»¶ç‰©å“ï¼ŒèŠ±äº† ${weighted} ç¾Žå…ƒã€‚ç¬”è®°æœ¬å’Œé’¢ç¬”å„ä¹°äº†å¤šå°‘ï¼Ÿ`,
                     total,
                     weighted
                   };
@@ -232,10 +232,10 @@
                     secondCoeff: motorcycle,
                     firstEn: "cars",
                     secondEn: "motorcycles",
-                    firstZh: "汽车",
-                    secondZh: "摩托车",
+                    firstZh: "æ±½è½¦",
+                    secondZh: "æ‘©æ‰˜è½¦",
                     textEn: `A parking lot has ${total} vehicles. Cars have 4 wheels and motorcycles have 2 wheels. There are ${weighted} wheels in all. How many cars and motorcycles are there?`,
-                    textZh: `停车场里共有 ${total} 辆车。汽车有 4 个轮子，摩托车有 2 个轮子，一共有 ${weighted} 个轮子。汽车和摩托车各有多少辆？`,
+                    textZh: `åœè½¦åœºé‡Œå…±æœ‰ ${total} è¾†è½¦ã€‚æ±½è½¦æœ‰ 4 ä¸ªè½®å­ï¼Œæ‘©æ‰˜è½¦æœ‰ 2 ä¸ªè½®å­ï¼Œä¸€å…±æœ‰ ${weighted} ä¸ªè½®å­ã€‚æ±½è½¦å’Œæ‘©æ‰˜è½¦å„æœ‰å¤šå°‘è¾†ï¼Ÿ`,
                     total,
                     weighted
                   };
@@ -254,10 +254,10 @@
                     secondCoeff: small,
                     firstEn: "large boxes",
                     secondEn: "small boxes",
-                    firstZh: "大盒",
-                    secondZh: "小盒",
+                    firstZh: "å¤§ç›’",
+                    secondZh: "å°ç›’",
                     textEn: `A shelf has ${total} boxes. Each large box holds ${large} markers and each small box holds ${small} markers. The boxes hold ${weighted} markers altogether. How many large and small boxes are there?`,
-                    textZh: `架子上共有 ${total} 个盒子。每个大盒装 ${large} 支马克笔，每个小盒装 ${small} 支马克笔，一共装了 ${weighted} 支。大盒和小盒各有多少个？`,
+                    textZh: `æž¶å­ä¸Šå…±æœ‰ ${total} ä¸ªç›’å­ã€‚æ¯ä¸ªå¤§ç›’è£… ${large} æ”¯é©¬å…‹ç¬”ï¼Œæ¯ä¸ªå°ç›’è£… ${small} æ”¯é©¬å…‹ç¬”ï¼Œä¸€å…±è£…äº† ${weighted} æ”¯ã€‚å¤§ç›’å’Œå°ç›’å„æœ‰å¤šå°‘ä¸ªï¼Ÿ`,
                     total,
                     weighted
                   };
@@ -269,17 +269,17 @@
                 promptKey: "promptWord",
                 main: h.textLatex(h.lang === "zh" ? scenario.textZh : scenario.textEn),
                 plain: h.textLatex(h.lang === "zh" ? scenario.textZh : scenario.textEn),
-                answer: { latex: h.lang === "zh" ? `\\text{${scenario.firstZh} }${scenario.first}\\text{，${scenario.secondZh} }${scenario.second}` : `\\text{${scenario.firstEn} }${scenario.first}\\text{, ${scenario.secondEn} }${scenario.second}`, key: `${scenario.first},${scenario.second}` },
+                answer: { latex: h.lang === "zh" ? `\\text{${scenario.firstZh} }${scenario.first}\\text{ï¼Œ${scenario.secondZh} }${scenario.second}` : `\\text{${scenario.firstEn} }${scenario.first}\\text{, ${scenario.secondEn} }${scenario.second}`, key: `${scenario.first},${scenario.second}` },
                 lines: [
                   { line: `a+s=${scenario.total}`, note: h.tr().notes.model },
                   { line: `${scenario.firstCoeff}a+${scenario.secondCoeff}s=${scenario.weighted}`, note: h.tr().notes.model },
                   { line: `a=${scenario.first},\\quad s=${scenario.second}`, note: h.tr().notes.final }
                 ],
                 distractors: [
-                  { latex: h.lang === "zh" ? `\\text{${scenario.firstZh} }${scenario.second}\\text{，${scenario.secondZh} }${scenario.first}` : `\\text{${scenario.firstEn} }${scenario.second}\\text{, ${scenario.secondEn} }${scenario.first}`, key: `${scenario.second},${scenario.first}` },
-                  { latex: h.lang === "zh" ? `\\text{${scenario.firstZh} }${scenario.first + 1}\\text{，${scenario.secondZh} }${scenario.second - 1}` : `\\text{${scenario.firstEn} }${scenario.first + 1}\\text{, ${scenario.secondEn} }${scenario.second - 1}`, key: `${scenario.first + 1},${scenario.second - 1}` },
+                  { latex: h.lang === "zh" ? `\\text{${scenario.firstZh} }${scenario.second}\\text{ï¼Œ${scenario.secondZh} }${scenario.first}` : `\\text{${scenario.firstEn} }${scenario.second}\\text{, ${scenario.secondEn} }${scenario.first}`, key: `${scenario.second},${scenario.first}` },
+                  { latex: h.lang === "zh" ? `\\text{${scenario.firstZh} }${scenario.first + 1}\\text{ï¼Œ${scenario.secondZh} }${scenario.second - 1}` : `\\text{${scenario.firstEn} }${scenario.first + 1}\\text{, ${scenario.secondEn} }${scenario.second - 1}`, key: `${scenario.first + 1},${scenario.second - 1}` },
                   answerPoint(scenario.first, scenario.second),
-                  h.textAnswer("no solution", "无解", "no-solution")
+                  h.textAnswer("no solution", "æ— è§£", "no-solution")
                 ]
               };
             })
@@ -289,9 +289,10 @@
     })();
   </script>
   <script src="../assets/js/question-template-registry.js?v=20260720.1"></script>
-  <script src="../assets/js/quiz-tool-engine.js"></script>
+  <script src="../assets/js/systems-linear-equations-bank.js?v=20260724.1"></script>
+  <script src="../assets/js/quiz-tool-engine.js?v=20260724.2"></script>
   <script src="../assets/js/tool-modes.js"></script>
-  <script src="../assets/js/report-export.js?v=20260722.1"></script>
+  <script src="../assets/js/report-export.js?v=20260725.2"></script>
 
   <script src="../assets/js/tool-ux.js?v=20260716.2"></script>
   <script src="../assets/js/tool-catalog.js?v=20260716.3"></script>

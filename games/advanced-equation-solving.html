@@ -475,12 +475,12 @@
 </style>
   <script src="../assets/js/theme.js?v=20260716.2"></script>
   <link rel="stylesheet" href="../assets/css/quiz-tool.css">
-  <link rel="stylesheet" href="../assets/css/design-system.css?v=20260717.2">
+  <link rel="stylesheet" href="../assets/css/design-system.css?v=20260724.1">
   <script defer src="https://cdn.jsdelivr.net/npm/lucide@0.468.0/dist/umd/lucide.min.js"></script>
 </head>
 <body>
   <nav class="mc-site-shell">
-    <a class="mc-brand" href="../index.html"><span class="mc-brand-mark">∑</span><span>MathComplete Lab</span></a>
+    <a class="mc-brand" href="../index.html"><span class="mc-brand-mark">âˆ‘</span><span>MathComplete Lab</span></a>
     <div class="mc-links">
       <a class="mc-link" href="../practice.html" data-i18n="navPractice">Practice Library</a>
       <a class="mc-link primary" href="../index.html" data-i18n="navHome">Home</a>
@@ -546,7 +546,7 @@
     </section>
   </main>
 
-  <script>
+  <script type="application/json" id="legacy-advanced-equation-solving-script">
 (() => {
   const GAME_ID = "advanced-equation-solving";
   const $ = (id) => document.getElementById(id);
@@ -621,7 +621,7 @@
   ];
 
   const OPTION_COUNTS = [["4", "4 choices"], ["5", "5 choices"], ["6", "6 choices"]];
-  const TIMER_LEVELS = [["relaxed", "Relaxed · 90s"], ["standard", "Standard · 60s"], ["challenge", "Challenge · 35s"]];
+  const TIMER_LEVELS = [["relaxed", "Relaxed Â· 90s"], ["standard", "Standard Â· 60s"], ["challenge", "Challenge Â· 35s"]];
   const TIMER_SECONDS = { relaxed: 90, standard: 60, challenge: 35 };
 
   const state = {
@@ -654,7 +654,7 @@
   }
 
   function setStaticText() {
-    els.toolBadge.textContent = "Algebra II · Precalculus";
+    els.toolBadge.textContent = "Algebra II Â· Precalculus";
     els.pageTitle.textContent = "Advanced Equation Solving";
     els.pageSubtitle.textContent = "Randomly generated equation-solving practice with clean constraints, domain checks, realistic distractors, and step-by-step solutions.";
     els.setupTitle.textContent = "Build a practice set";
@@ -871,7 +871,7 @@
     els.solutionBox.innerHTML = "";
     els.nextBtn.disabled = true;
     els.progressText.textContent = `Question ${state.current + 1} / ${state.questions.length}`;
-    els.difficultyText.textContent = `${labelFor(TOPICS, q.topic)} · ${capitalize(q.difficulty)}`;
+    els.difficultyText.textContent = `${labelFor(TOPICS, q.topic)} Â· ${capitalize(q.difficulty)}`;
     els.progressBar.style.width = `${(state.current / state.questions.length) * 100}%`;
     els.questionTitle.textContent = q.title;
     els.questionExtra.textContent = q.extra;
@@ -1219,7 +1219,7 @@
     const sol = h + m;
     return {
       title: "Solve a rational equation with a domain restriction.",
-      extra: `Solve for real x. Domain restriction: x ≠ ${h}.`,
+      extra: `Solve for real x. Domain restriction: x â‰  ${h}.`,
       equationLatex: `\\frac{${a}}{x${signed(-h)}}=${k}`,
       answerLatex: answerSet([numRoot(sol)]),
       distractors: [answerSet([numRoot(h)]), answerSet([numRoot(h - m)]), answerSet([numRoot(m)]), "\\varnothing"],
@@ -1260,7 +1260,7 @@
     const k = makeFrac(a, sol - h);
     return {
       title: "Solve a rational equation and check the excluded value.",
-      extra: `Solve for real x. Domain restriction: x ≠ ${h}.`,
+      extra: `Solve for real x. Domain restriction: x â‰  ${h}.`,
       equationLatex: `\\frac{${a}}{x${signed(-h)}}=${fracLatex(k)}`,
       answerLatex: answerSet([numRoot(sol)]),
       distractors: [answerSet([numRoot(h)]), answerSet([numRoot(-sol)]), answerSet([numRoot(sol + h)]), "\\varnothing"],
@@ -1282,7 +1282,7 @@
     const answer = noSolution ? "\\varnothing" : answerSet([numRoot(candidate)]);
     return {
       title: "Solve a rational equation with a removable restriction.",
-      extra: `Solve for real x. Remember: x ≠ ${r}.`,
+      extra: `Solve for real x. Remember: x â‰  ${r}.`,
       equationLatex: `\\frac{x^2-${r * r}}{x${signed(-r)}}=${t}`,
       answerLatex: answer,
       distractors: [answerSet([numRoot(r)]), answerSet([numRoot(candidate)]), answerSet([numRoot(-r)]), answerSet([numRoot(t + r)])],
@@ -1887,8 +1887,22 @@
 })();
 
   </script>
+  <script>
+    window.MCLQuizTool = {
+      gameId: "advanced-equation-solving", course: "algebra-2", balancedMixed: true, avoidConsecutiveTypes: true,
+      builders: { easy: [], medium: [], hard: [], expert: [] },
+      text: {
+        en: { title: "Advanced Equation Solving", toolBadge: "Algebra II", subtitle: "Solve polynomial, rational, radical, absolute-value, exponential, logarithmic, and trigonometric equations.", note: "Every candidate is checked against domain and interval restrictions." },
+        zh: { title: "\u9ad8\u7ea7\u65b9\u7a0b\u6c42\u89e3", toolBadge: "\u4ee3\u6570 II", subtitle: "\u6c42\u89e3\u591a\u9879\u5f0f\u3001\u6709\u7406\u5f0f\u3001\u6839\u5f0f\u3001\u7edd\u5bf9\u503c\u3001\u6307\u6570\u3001\u5bf9\u6570\u548c\u4e09\u89d2\u65b9\u7a0b\u3002", note: "\u6bcf\u4e2a\u5019\u9009\u89e3\u90fd\u4f1a\u6839\u636e\u5b9a\u4e49\u57df\u548c\u533a\u95f4\u9650\u5236\u8fdb\u884c\u68c0\u67e5\u3002" }
+      }
+    };
+  </script>
+  <script src="../assets/js/question-template-registry.js?v=20260724.1"></script>
+  <script src="../assets/js/semantic-bank-factory.js?v=20260724.3"></script>
+  <script src="../assets/js/advanced-equation-solving-bank.js?v=20260724.1"></script>
+  <script src="../assets/js/quiz-tool-engine.js?v=20260724.2"></script>
   <script src="../assets/js/tool-modes.js"></script>
-  <script src="../assets/js/report-export.js?v=20260722.1"></script>
+  <script src="../assets/js/report-export.js?v=20260725.2"></script>
 
   <script src="../assets/js/tool-ux.js?v=20260716.2"></script>
   <script src="../assets/js/tool-catalog.js?v=20260716.3"></script>

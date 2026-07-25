@@ -474,12 +474,12 @@
 </style>
   <script src="../assets/js/theme.js?v=20260716.2"></script>
   <link rel="stylesheet" href="../assets/css/quiz-tool.css">
-  <link rel="stylesheet" href="../assets/css/design-system.css?v=20260717.2">
+  <link rel="stylesheet" href="../assets/css/design-system.css?v=20260724.1">
   <script defer src="https://cdn.jsdelivr.net/npm/lucide@0.468.0/dist/umd/lucide.min.js"></script>
 </head>
 <body>
   <nav class="mc-site-shell">
-    <a class="mc-brand" href="../index.html"><span class="mc-brand-mark">∑</span><span>MathComplete Lab</span></a>
+    <a class="mc-brand" href="../index.html"><span class="mc-brand-mark">âˆ‘</span><span>MathComplete Lab</span></a>
     <div class="mc-links">
       <a class="mc-link" href="../practice.html" data-i18n="navPractice">Practice Library</a>
       <a class="mc-link primary" href="../index.html" data-i18n="navHome">Home</a>
@@ -544,9 +544,9 @@
     </section>
   </main>
 
-  <script>
+  <script type="application/json" id="legacy-arithmetic-within-10-script">
 
-    const TOOL_CONFIG = {"max": 10, "gameId": "arithmetic-within-10", "file": "arithmetic-within-10.html", "title": {"en": "Arithmetic Within 10", "zh": "10以内四则运算"}, "subtitle": {"en": "Practice addition, subtraction, multiplication, and division using numbers within 10.", "zh": "练习参与运算数字在 10 以内的加、减、乘、除。"}};
+    const TOOL_CONFIG = {"max": 10, "gameId": "arithmetic-within-10", "file": "arithmetic-within-10.html", "title": {"en": "Arithmetic Within 10", "zh": "10ä»¥å†…å››åˆ™è¿ç®—"}, "subtitle": {"en": "Practice addition, subtraction, multiplication, and division using numbers within 10.", "zh": "ç»ƒä¹ å‚ä¸Žè¿ç®—æ•°å­—åœ¨ 10 ä»¥å†…çš„åŠ ã€å‡ã€ä¹˜ã€é™¤ã€‚"}};
 
     const T = {
       en: {
@@ -626,77 +626,77 @@
       },
       zh: {
         htmlLang: "zh-CN",
-        navPractice: "练习库",
-        navHome: "首页",
-        toolBadge: "预备代数",
+        navPractice: "ç»ƒä¹ åº“",
+        navHome: "é¦–é¡µ",
+        toolBadge: "é¢„å¤‡ä»£æ•°",
         title: TOOL_CONFIG.title.zh,
         subtitle: TOOL_CONFIG.subtitle.zh,
-        note: `这个工具会随机生成四则运算题，参与运算的数字都控制在 ${TOOL_CONFIG.max} 以内。难题可能出现负数答案和不能整除的除法。`,
-        setupTitle: "开始练习",
-        difficultyLabel: "难度",
-        questionCountLabel: "题目数量",
-        optionCountLabel: "选项数量",
-        timedModeText: "开启计时模式",
-        timedModeHint: "关闭时没有倒计时；开启后每题单独计时。",
-        timerLevelLabel: "计时等级",
-        startBtn: "开始",
-        sampleBtn: "生成示例题",
-        quitBtn: "结束本轮",
-        nextBtn: "下一题",
-        resultBtn: "查看结果",
-        questionTitle: "计算：",
-        promptBasic: "选择这个式子的值。",
-        promptDivision: "选择精确值；需要时答案会用最简分数表示。",
+        note: `è¿™ä¸ªå·¥å…·ä¼šéšæœºç”Ÿæˆå››åˆ™è¿ç®—é¢˜ï¼Œå‚ä¸Žè¿ç®—çš„æ•°å­—éƒ½æŽ§åˆ¶åœ¨ ${TOOL_CONFIG.max} ä»¥å†…ã€‚éš¾é¢˜å¯èƒ½å‡ºçŽ°è´Ÿæ•°ç­”æ¡ˆå’Œä¸èƒ½æ•´é™¤çš„é™¤æ³•ã€‚`,
+        setupTitle: "å¼€å§‹ç»ƒä¹ ",
+        difficultyLabel: "éš¾åº¦",
+        questionCountLabel: "é¢˜ç›®æ•°é‡",
+        optionCountLabel: "é€‰é¡¹æ•°é‡",
+        timedModeText: "å¼€å¯è®¡æ—¶æ¨¡å¼",
+        timedModeHint: "å…³é—­æ—¶æ²¡æœ‰å€’è®¡æ—¶ï¼›å¼€å¯åŽæ¯é¢˜å•ç‹¬è®¡æ—¶ã€‚",
+        timerLevelLabel: "è®¡æ—¶ç­‰çº§",
+        startBtn: "å¼€å§‹",
+        sampleBtn: "ç”Ÿæˆç¤ºä¾‹é¢˜",
+        quitBtn: "ç»“æŸæœ¬è½®",
+        nextBtn: "ä¸‹ä¸€é¢˜",
+        resultBtn: "æŸ¥çœ‹ç»“æžœ",
+        questionTitle: "è®¡ç®—ï¼š",
+        promptBasic: "é€‰æ‹©è¿™ä¸ªå¼å­çš„å€¼ã€‚",
+        promptDivision: "é€‰æ‹©ç²¾ç¡®å€¼ï¼›éœ€è¦æ—¶ç­”æ¡ˆä¼šç”¨æœ€ç®€åˆ†æ•°è¡¨ç¤ºã€‚",
         promptTwoStep: "\u8bf7\u6ce8\u610f\u8fd0\u7b97\u987a\u5e8f\uff0c\u7136\u540e\u9009\u62e9\u6b63\u786e\u7ed3\u679c\u3002",
         promptNegative: "\u8bf7\u6ce8\u610f\u6b63\u8d1f\u53f7\uff0c\u7136\u540e\u9009\u62e9\u6b63\u786e\u7ed3\u679c\u3002",
-        correctFeedback: "正确！",
-        solutionTitle: "正确解法",
-        solutionFinal: "答案：",
-        resultTitle: "练习结果",
-        scoreLabel: "答对题数",
-        accuracyLabel: "正确率",
-        wrongLabel: "错题数",
-        wrongReviewTitle: "错题回顾",
-        restartBtn: "再练一轮",
-        reviewWrongBtn: "练习同类错题",
-        noWrong: "本轮没有错题。",
-        noWrongTip: "很棒。可以尝试更高难度。",
-        yourAnswer: "你的答案",
-        correctAnswer: "正确答案",
-        timeUpAnswer: "未作答：时间到",
-        sampleTitle: "示例题",
-        sampleQuestion: "题目",
-        sampleAnswer: "正确答案",
-        sampleOptions: "示例选项",
-        incorrectPrefix: "不正确。正确答案是",
-        timeUpPrefix: "时间到。正确答案是",
-        progress: (a, b) => `第 ${a} / ${b} 题`,
-        optionCount: n => `${n} 个选项`,
-        timerDisplay: s => `剩余时间：${formatTime(s)}`,
-        difficulties: { easy: "简单", medium: "中等", hard: "困难", expert: "专家", mixed: "混合" },
+        correctFeedback: "æ­£ç¡®ï¼",
+        solutionTitle: "æ­£ç¡®è§£æ³•",
+        solutionFinal: "ç­”æ¡ˆï¼š",
+        resultTitle: "ç»ƒä¹ ç»“æžœ",
+        scoreLabel: "ç­”å¯¹é¢˜æ•°",
+        accuracyLabel: "æ­£ç¡®çŽ‡",
+        wrongLabel: "é”™é¢˜æ•°",
+        wrongReviewTitle: "é”™é¢˜å›žé¡¾",
+        restartBtn: "å†ç»ƒä¸€è½®",
+        reviewWrongBtn: "ç»ƒä¹ åŒç±»é”™é¢˜",
+        noWrong: "æœ¬è½®æ²¡æœ‰é”™é¢˜ã€‚",
+        noWrongTip: "å¾ˆæ£’ã€‚å¯ä»¥å°è¯•æ›´é«˜éš¾åº¦ã€‚",
+        yourAnswer: "ä½ çš„ç­”æ¡ˆ",
+        correctAnswer: "æ­£ç¡®ç­”æ¡ˆ",
+        timeUpAnswer: "æœªä½œç­”ï¼šæ—¶é—´åˆ°",
+        sampleTitle: "ç¤ºä¾‹é¢˜",
+        sampleQuestion: "é¢˜ç›®",
+        sampleAnswer: "æ­£ç¡®ç­”æ¡ˆ",
+        sampleOptions: "ç¤ºä¾‹é€‰é¡¹",
+        incorrectPrefix: "ä¸æ­£ç¡®ã€‚æ­£ç¡®ç­”æ¡ˆæ˜¯",
+        timeUpPrefix: "æ—¶é—´åˆ°ã€‚æ­£ç¡®ç­”æ¡ˆæ˜¯",
+        progress: (a, b) => `ç¬¬ ${a} / ${b} é¢˜`,
+        optionCount: n => `${n} ä¸ªé€‰é¡¹`,
+        timerDisplay: s => `å‰©ä½™æ—¶é—´ï¼š${formatTime(s)}`,
+        difficulties: { easy: "ç®€å•", medium: "ä¸­ç­‰", hard: "å›°éš¾", expert: "ä¸“å®¶", mixed: "æ··åˆ" },
         difficultyOptions: {
-          easy: "简单：加减法熟练度",
-          medium: "中等：加入乘法和整除除法",
-          hard: "困难：四则运算、正负号、非整除除法",
-          expert: "专家：两步表达式和运算顺序",
-          mixed: "混合：从四个难度中均衡出题"
+          easy: "ç®€å•ï¼šåŠ å‡æ³•ç†Ÿç»ƒåº¦",
+          medium: "ä¸­ç­‰ï¼šåŠ å…¥ä¹˜æ³•å’Œæ•´é™¤é™¤æ³•",
+          hard: "å›°éš¾ï¼šå››åˆ™è¿ç®—ã€æ­£è´Ÿå·ã€éžæ•´é™¤é™¤æ³•",
+          expert: "ä¸“å®¶ï¼šä¸¤æ­¥è¡¨è¾¾å¼å’Œè¿ç®—é¡ºåº",
+          mixed: "æ··åˆï¼šä»Žå››ä¸ªéš¾åº¦ä¸­å‡è¡¡å‡ºé¢˜"
         },
         timerOptions: {
-          timer_easy: "简单：每题 2 分钟",
-          timer_medium: "中等：每题 1 分钟",
-          timer_hard: "困难：每题 30 秒",
-          timer_expert: "专家：每题 15 秒"
+          timer_easy: "ç®€å•ï¼šæ¯é¢˜ 2 åˆ†é’Ÿ",
+          timer_medium: "ä¸­ç­‰ï¼šæ¯é¢˜ 1 åˆ†é’Ÿ",
+          timer_hard: "å›°éš¾ï¼šæ¯é¢˜ 30 ç§’",
+          timer_expert: "ä¸“å®¶ï¼šæ¯é¢˜ 15 ç§’"
         },
         notes: {
-          add: "把两个数相加",
-          subtract: "用第一个数减去第二个数",
-          multiply: "把两个因数相乘",
-          divide: "先把除法写成分数",
-          simplify: "需要时化成最简分数",
-          signs: "仔细处理正负号",
-          parentheses: "先算括号里面",
-          multiplyFirst: "先乘除，后加减",
-          final: "化简得到最终结果"
+          add: "æŠŠä¸¤ä¸ªæ•°ç›¸åŠ ",
+          subtract: "ç”¨ç¬¬ä¸€ä¸ªæ•°å‡åŽ»ç¬¬äºŒä¸ªæ•°",
+          multiply: "æŠŠä¸¤ä¸ªå› æ•°ç›¸ä¹˜",
+          divide: "å…ˆæŠŠé™¤æ³•å†™æˆåˆ†æ•°",
+          simplify: "éœ€è¦æ—¶åŒ–æˆæœ€ç®€åˆ†æ•°",
+          signs: "ä»”ç»†å¤„ç†æ­£è´Ÿå·",
+          parentheses: "å…ˆç®—æ‹¬å·é‡Œé¢",
+          multiplyFirst: "å…ˆä¹˜é™¤ï¼ŒåŽåŠ å‡",
+          final: "åŒ–ç®€å¾—åˆ°æœ€ç»ˆç»“æžœ"
         }
       }
     };
@@ -1266,8 +1266,21 @@
     applyLanguage();
 
   </script>
+  <script>
+    window.MCLQuizTool = {
+      gameId: "arithmetic-within-10", course: "pre-algebra", balancedMixed: true, avoidConsecutiveTypes: true,
+      builders: { easy: [], medium: [], hard: [], expert: [] },
+      text: {
+        en: { title: "Arithmetic Within 10", toolBadge: "Pre-Algebra", subtitle: "Build number sense through addition, subtraction, multiplication, division, and equality within 10.", note: "Twenty-five reasoning families cover calculation, missing values, models, translation, and error checking." },
+        zh: { title: "10 \u4ee5\u5185\u8fd0\u7b97\u4e13\u9879\u7ec3\u4e60", toolBadge: "\u9884\u5907\u4ee3\u6570", subtitle: "\u901a\u8fc7 10 \u4ee5\u5185\u7684\u52a0\u51cf\u4e58\u9664\u3001\u7b49\u91cf\u5173\u7cfb\u548c\u60c5\u5883\u5efa\u6a21\u5efa\u7acb\u6570\u611f\u3002", note: "25 \u4e2a\u63a8\u7406\u5bb6\u65cf\u8986\u76d6\u8ba1\u7b97\u3001\u7f3a\u5931\u503c\u3001\u60c5\u5883\u3001\u7ffb\u8bd1\u548c\u9519\u8bef\u8bca\u65ad\u3002" }
+      }
+    };
+  </script>
+  <script src="../assets/js/question-template-registry.js?v=20260724.1"></script>
+  <script src="../assets/js/arithmetic-banks.js?v=20260724.3"></script>
+  <script src="../assets/js/quiz-tool-engine.js?v=20260724.2"></script>
   <script src="../assets/js/tool-modes.js"></script>
-  <script src="../assets/js/report-export.js?v=20260722.1"></script>
+  <script src="../assets/js/report-export.js?v=20260725.2"></script>
 
   <script src="../assets/js/tool-ux.js?v=20260716.2"></script>
   <script src="../assets/js/tool-catalog.js?v=20260716.3"></script>

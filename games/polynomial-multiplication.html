@@ -453,7 +453,7 @@
 </style>
   <script src="../assets/js/theme.js?v=20260716.2"></script>
   <link rel="stylesheet" href="../assets/css/quiz-tool.css">
-  <link rel="stylesheet" href="../assets/css/design-system.css?v=20260717.2">
+  <link rel="stylesheet" href="../assets/css/design-system.css?v=20260724.1">
   <script defer src="https://cdn.jsdelivr.net/npm/lucide@0.468.0/dist/umd/lucide.min.js"></script>
 </head>
 <body>
@@ -643,7 +643,7 @@
     function signedChoice(h){ return h.choice([-1, 1]); }
     const T = {
       en:{
-        toolBadge:"Algebra I · Algebra II", title:"Polynomial Multiplication Practice",
+        toolBadge:"Algebra I Â· Algebra II", title:"Polynomial Multiplication Practice",
         subtitle:"Practice multiplying monomials, binomials, trinomials, and two-variable polynomial expressions.",
         note:"Answers are expanded, combined, and written in standard order. Distractors target common distribution, sign, and like-term mistakes.",
         questionTitle:"Expand the polynomial product and choose the equivalent expression.",
@@ -653,14 +653,14 @@
         notes:{setup:"given product",distribute:"distribute each term",combine:"combine like terms",final:"final expanded form"}
       },
       zh:{
-        toolBadge:"代数 I · 代数 II", title:"多项式乘法专项练习",
-        subtitle:"练习单项式、二项式、三项式以及双变量多项式之间的乘法和展开。",
-        note:"答案会完全展开、合并同类项并按标准顺序书写。干扰项对应常见的分配、符号和合并同类项错误。",
-        questionTitle:"展开多项式乘积，并选择等价的表达式。",
-        promptExpand:"展开并化简。",
-        difficultyOptions:{easy:"简单：单项式乘二项式或三项式",medium:"中等：二项式乘二项式",hard:"困难：二项式乘三项式及双变量乘法",expert:"专家：含系数、负号及较长的多项式乘法",mixed:"混合：均衡练习所有难度"},
-        suggestion:"建议：将第一个因式的每一项分别乘以第二个因式的每一项，再合并同类项。",
-        notes:{setup:"原乘积",distribute:"逐项分配",combine:"合并同类项",final:"最终展开式"}
+        toolBadge:"ä»£æ•° I Â· ä»£æ•° II", title:"å¤šé¡¹å¼ä¹˜æ³•ä¸“é¡¹ç»ƒä¹ ",
+        subtitle:"ç»ƒä¹ å•é¡¹å¼ã€äºŒé¡¹å¼ã€ä¸‰é¡¹å¼ä»¥åŠåŒå˜é‡å¤šé¡¹å¼ä¹‹é—´çš„ä¹˜æ³•å’Œå±•å¼€ã€‚",
+        note:"ç­”æ¡ˆä¼šå®Œå…¨å±•å¼€ã€åˆå¹¶åŒç±»é¡¹å¹¶æŒ‰æ ‡å‡†é¡ºåºä¹¦å†™ã€‚å¹²æ‰°é¡¹å¯¹åº”å¸¸è§çš„åˆ†é…ã€ç¬¦å·å’Œåˆå¹¶åŒç±»é¡¹é”™è¯¯ã€‚",
+        questionTitle:"å±•å¼€å¤šé¡¹å¼ä¹˜ç§¯ï¼Œå¹¶é€‰æ‹©ç­‰ä»·çš„è¡¨è¾¾å¼ã€‚",
+        promptExpand:"å±•å¼€å¹¶åŒ–ç®€ã€‚",
+        difficultyOptions:{easy:"ç®€å•ï¼šå•é¡¹å¼ä¹˜äºŒé¡¹å¼æˆ–ä¸‰é¡¹å¼",medium:"ä¸­ç­‰ï¼šäºŒé¡¹å¼ä¹˜äºŒé¡¹å¼",hard:"å›°éš¾ï¼šäºŒé¡¹å¼ä¹˜ä¸‰é¡¹å¼åŠåŒå˜é‡ä¹˜æ³•",expert:"ä¸“å®¶ï¼šå«ç³»æ•°ã€è´Ÿå·åŠè¾ƒé•¿çš„å¤šé¡¹å¼ä¹˜æ³•",mixed:"æ··åˆï¼šå‡è¡¡ç»ƒä¹ æ‰€æœ‰éš¾åº¦"},
+        suggestion:"å»ºè®®ï¼šå°†ç¬¬ä¸€ä¸ªå› å¼çš„æ¯ä¸€é¡¹åˆ†åˆ«ä¹˜ä»¥ç¬¬äºŒä¸ªå› å¼çš„æ¯ä¸€é¡¹ï¼Œå†åˆå¹¶åŒç±»é¡¹ã€‚",
+        notes:{setup:"åŽŸä¹˜ç§¯",distribute:"é€é¡¹åˆ†é…",combine:"åˆå¹¶åŒç±»é¡¹",final:"æœ€ç»ˆå±•å¼€å¼"}
       }
     };
     function tr(){ return T[localStorage.getItem("mathcomplete_lang")==="zh" ? "zh" : "en"]; }
@@ -688,9 +688,10 @@
     };
     window.MCLQuizTool = { gameId:"polynomial-multiplication", course:"algebra-1", text:T, builders:B };
   </script>  <script src="../assets/js/question-template-registry.js?v=20260720.1"></script>
-  <script src="../assets/js/quiz-tool-engine.js"></script>
+  <script src="../assets/js/polynomial-multiplication-bank.js?v=20260724.2"></script>
+  <script src="../assets/js/quiz-tool-engine.js?v=20260724.2"></script>
   <script src="../assets/js/tool-modes.js"></script>
-  <script src="../assets/js/report-export.js?v=20260722.1"></script>
+  <script src="../assets/js/report-export.js?v=20260725.2"></script>
 
   <script src="../assets/js/tool-ux.js?v=20260716.2"></script>
   <script src="../assets/js/tool-catalog.js?v=20260716.3"></script>

@@ -17,6 +17,7 @@
   let lastDifficulty = "medium";
   let timerId = null;
   let timeLeft = 0;
+  let interactionController = null;
 
   const elements = {
     setupCard: $("setupCard"),
@@ -261,6 +262,7 @@
       distractors: question.distractors || [],
       suggestion: question.suggestion || "",
       visual: question.visual || null,
+      interaction: question.interaction || null,
       audit: question.audit || null,
       familyId: question.familyId || question.type || "",
       conceptId: question.conceptId || "",
@@ -269,6 +271,16 @@
       seed: question.seed ?? null,
       parameters: question.parameters || null
     };
+    if (q.interaction?.kind === "numeric" && Array.isArray(q.visual?.annotations)) {
+      const answerToken = String(q.interaction.correctKey ?? q.answer).trim();
+      q.visual = {
+        ...q.visual,
+        annotations: q.visual.annotations.filter(annotation => {
+          const numericTokens = String(annotation?.text || "").match(/-?\d+(?:\.\d+)?/g) || [];
+          return !numericTokens.includes(answerToken);
+        })
+      };
+    }
     q.options = makeOptions(q, Number(elements.optionCount.value || 4));
     return q;
   }
@@ -506,8 +518,10 @@
   function renderQuestion(resetState = true) {
     const q = quiz[currentIndex];
     if (resetState) answered = false;
-    elements.qTitle.textContent = tr().questionTitle;
-    elements.qExtra.textContent = q.prompt || tr()[q.promptKey] || "";
+    const specificPrompt = q.prompt || tr()[q.promptKey] || "";
+    elements.qTitle.textContent = specificPrompt || tr().questionTitle;
+    elements.qExtra.textContent = "";
+    elements.qExtra.classList.add("hidden");
     elements.qMain.classList.toggle("long-question", isLongQuestion(q.main));
     elements.qMain.classList.toggle("text-question", isTextQuestion(q.main));
     renderLatex(elements.qMain, q.main, true);
@@ -524,15 +538,26 @@
       elements.feedback.className = "feedback";
       elements.solutionBox.classList.add("hidden");
       elements.solutionBox.innerHTML = "";
-      q.options.forEach(option => {
-        const btn = document.createElement("button");
-        btn.type = "button";
-        btn.className = "option";
-        btn.dataset.answerKey = answerKey(option);
-        renderLatex(btn, answerToString(option));
-        btn.addEventListener("click", () => chooseOption(btn, option));
-        elements.options.appendChild(btn);
-      });
+      interactionController = null;
+      if (q.interaction && config.interactionAdapter?.mount) {
+        elements.options.classList.add("mcl-interaction-options");
+        interactionController = config.interactionAdapter.mount(elements.options, q, {
+          lang,
+          visualContainer: elements.qVisual,
+          submit: () => chooseInteractiveResponse()
+        });
+      } else {
+        elements.options.classList.remove("mcl-interaction-options");
+        q.options.forEach(option => {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "option";
+          btn.dataset.answerKey = answerKey(option);
+          renderLatex(btn, answerToString(option));
+          btn.addEventListener("click", () => chooseOption(btn, option));
+          elements.options.appendChild(btn);
+        });
+      }
       elements.nextBtn.disabled = true;
     }
     elements.progressText.textContent = tr().progress(currentIndex + 1, quiz.length);
@@ -562,6 +587,9 @@
   }
 
   function optionPayload(q, selected = null) {
+    if (q.interaction && config.interactionAdapter?.reportOptions) {
+      return config.interactionAdapter.reportOptions(q, selected, interactionController) || [];
+    }
     const correctKey = answerKey(q.answer);
     const selectedKey = selected ? answerKey(selected) : "";
     return q.options.map((option, index) => {
@@ -583,6 +611,9 @@
   }
 
   function recordAttempt(q, correctDisplay, selectedDisplay, isCorrect, timeUp = false, selected = null) {
+    const reportedOptions = optionPayload(q, selected);
+    const reportedCorrectLabel = reportedOptions.find(option => option.isCorrect)?.label || "";
+    const reportedSelectedLabel = reportedOptions.find(option => option.isSelected)?.label || "";
     void window.MCLProgress?.recordGameAttempt?.({
       gameId: config.gameId,
       question: {
@@ -606,9 +637,9 @@
       parameters: q.parameters,
       correctAnswer: correctDisplay,
       selectedAnswer: selectedDisplay,
-      options: optionPayload(q, selected),
-      correctOptionLabel: optionLabelFrom(q, q.answer),
-      selectedOptionLabel: selected ? optionLabelFrom(q, selected) : "",
+      options: reportedOptions,
+      correctOptionLabel: reportedCorrectLabel || optionLabelFrom(q, q.answer),
+      selectedOptionLabel: reportedSelectedLabel || (selected ? optionLabelFrom(q, selected) : ""),
       questionLatex: q.main,
       questionText: q.plain,
       difficulty: q.difficulty,
@@ -646,16 +677,51 @@
     elements.progressBar.style.width = `${((currentIndex + 1) / quiz.length) * 100}%`;
   }
 
+  function chooseInteractiveResponse() {
+    if (answered || !interactionController || !config.interactionAdapter) return;
+    const response = interactionController.readResponse?.();
+    if (!response || response.key === undefined || response.key === null || response.key === "") {
+      interactionController.showRequired?.();
+      return;
+    }
+    answered = true;
+    clearTimer();
+    const q = quiz[currentIndex];
+    const correctDisplay = answerToString(q.answer);
+    const selectedDisplay = String(response.display ?? response.key);
+    const isCorrect = config.interactionAdapter.isCorrect
+      ? config.interactionAdapter.isCorrect(response, q)
+      : answerKey(response.key) === answerKey(q.interaction?.correctKey ?? q.answer);
+    interactionController.lock?.();
+    interactionController.reveal?.(q.interaction?.correctKey, isCorrect);
+    if (isCorrect) {
+      correctCount += 1;
+      renderFeedback(true, correctDisplay, false);
+    } else {
+      renderFeedback(false, correctDisplay, false);
+      wrongAnswers.push({ main: q.plain, answer: correctDisplay, selected: selectedDisplay, type: q.type, difficulty: q.difficulty, suggestion: q.suggestion, visual: q.visual });
+    }
+    recordAttempt(q, correctDisplay, selectedDisplay, isCorrect, false, response);
+    renderSolutionBox();
+    elements.nextBtn.disabled = false;
+    elements.progressBar.style.width = `${((currentIndex + 1) / quiz.length) * 100}%`;
+  }
+
   function handleTimeUp() {
     if (answered) return;
     clearTimer();
     answered = true;
     const q = quiz[currentIndex];
     const correctDisplay = answerToString(q.answer);
-    [...elements.options.querySelectorAll(".option")].forEach(btn => {
-      btn.disabled = true;
-      if (btn.dataset.answerKey === answerKey(q.answer)) btn.classList.add("correct");
-    });
+    if (q.interaction && interactionController) {
+      interactionController.lock?.();
+      interactionController.reveal?.(q.interaction?.correctKey, false);
+    } else {
+      [...elements.options.querySelectorAll(".option")].forEach(btn => {
+        btn.disabled = true;
+        if (btn.dataset.answerKey === answerKey(q.answer)) btn.classList.add("correct");
+      });
+    }
     renderFeedback(false, correctDisplay, true);
     wrongAnswers.push({ main: q.plain, answer: correctDisplay, selected: null, timeUp: true, type: q.type, difficulty: q.difficulty, suggestion: q.suggestion, visual: q.visual });
     recordAttempt(q, correctDisplay, "", false, true, null);

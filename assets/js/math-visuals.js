@@ -200,6 +200,9 @@
       <path d="M9 58h48M9 55v6M57 55v6" class="mcl-math-visual__secondary" />
       <text x="28" y="66">w</text>
       <circle cx="88" cy="34" r="22" /><line x1="88" y1="34" x2="109" y2="34" class="mcl-math-visual__secondary" /><text x="97" y="30">r</text>`,
+    "midpoints-bisectors-trisectors": `
+      <path d="M8 49h54M35 15v48" /><path d="M29 44v10M41 44v10" class="mcl-math-visual__secondary" />
+      <path d="M72 56L91 13l24 43M91 13L95 56" /><path d="M83 31A15 15 0 0 1 93 29M93 29A15 15 0 0 1 102 34" class="mcl-math-visual__secondary" />`,
     "triangle-congruence": `
       <path d="M8 54L32 13l24 41zM65 54l23-41 24 41z" />
       <path d="M18 37l7 4M96 40l7-4M38 31h7M76 31h7" class="mcl-math-visual__secondary" />

@@ -369,7 +369,7 @@
   </style>
   <script src="../assets/js/theme.js?v=20260716.2"></script>
   <link rel="stylesheet" href="../assets/css/quiz-tool.css">
-  <link rel="stylesheet" href="../assets/css/design-system.css?v=20260717.2">
+  <link rel="stylesheet" href="../assets/css/design-system.css?v=20260724.1">
   <script defer src="https://cdn.jsdelivr.net/npm/lucide@0.468.0/dist/umd/lucide.min.js"></script>
 </head>
 <body>
@@ -439,7 +439,8 @@
     </section>
   </main>
 
-  <script>
+  <!-- Legacy inline generator retained temporarily for migration reference.
+  <script type="application/json" id="legacy-gcd-lcm-script">
     const TOOL_CONFIG = {
       gameId: "gcd-lcm",
       course: "pre-algebra",
@@ -1208,8 +1209,39 @@
     window.addEventListener("storage", event => { if (event.key === "mathcomplete_lang") applyLanguage(); });
     applyLanguage();
   </script>
+  -->
+  <script>
+    window.MCLQuizTool = {
+      gameId: "gcd-lcm",
+      course: "pre-algebra",
+      balancedMixed: true,
+      avoidConsecutiveTypes: true,
+      builders: { easy: [], medium: [], hard: [], expert: [] },
+      text: {
+        en: {
+          title: "GCD & LCM Practice",
+          toolBadge: "Pre-Algebra",
+          subtitle: "Build number sense with factors, prime factorization, greatest common factors, least common multiples, and precise applications.",
+          note: "Questions are organized into 25 distinct reasoning families. Application questions state exactly what quantity to find.",
+          promptGcd: "Find the greatest common factor.",
+          promptLcm: "Find the least common multiple."
+        },
+        zh: {
+          title: "æœ€å¤§å…¬å› æ•°ä¸Žæœ€å°å…¬å€æ•°ç»ƒä¹ ",
+          toolBadge: "é¢„å¤‡ä»£æ•°",
+          subtitle: "ç³»ç»Ÿç»ƒä¹ å› æ•°ã€å€æ•°ã€è´¨å› æ•°åˆ†è§£ã€æœ€å¤§å…¬å› æ•°ã€æœ€å°å…¬å€æ•°ä¸Žæ¡ä»¶æ˜Žç¡®çš„åº”ç”¨é¢˜ã€‚",
+          note: "é¢˜åº“åŒ…å« 25 ä¸ªæœ¬è´¨ä¸åŒçš„æŽ¨ç†å®¶æ—ï¼›æ¯é“åº”ç”¨é¢˜éƒ½ä¼šæ˜Žç¡®è¦æ±‚è®¡ç®—çš„å…·ä½“æ•°é‡ã€‚",
+          promptGcd: "æ±‚æœ€å¤§å…¬å› æ•°ã€‚",
+          promptLcm: "æ±‚æœ€å°å…¬å€æ•°ã€‚"
+        }
+      }
+    };
+  </script>
+  <script src="../assets/js/question-template-registry.js?v=20260724.1"></script>
+  <script src="../assets/js/gcd-lcm-bank.js?v=20260724.3"></script>
+  <script src="../assets/js/quiz-tool-engine.js?v=20260724.2"></script>
   <script src="../assets/js/tool-modes.js"></script>
-  <script src="../assets/js/report-export.js?v=20260722.1"></script>
+  <script src="../assets/js/report-export.js?v=20260725.2"></script>
 
   <script src="../assets/js/tool-ux.js?v=20260716.2"></script>
   <script src="../assets/js/tool-catalog.js?v=20260716.3"></script>

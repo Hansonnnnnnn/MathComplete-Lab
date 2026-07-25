@@ -1,0 +1,151 @@
+.mcl-assignment-page {
+  padding-top: 42px;
+  padding-bottom: 72px;
+}
+
+.mcl-assignment-heading { max-width: 760px; margin-bottom: 34px; }
+.mcl-assignment-heading h1 { margin: 10px 0 12px; font-size: clamp(2.25rem, 5vw, 4.25rem); }
+.mcl-assignment-heading p { margin: 0; color: var(--mcl-text-muted); font-size: 18px; line-height: 1.7; }
+.mcl-eyebrow { color: var(--mcl-accent); font-size: 13px; font-weight: 800; text-transform: uppercase; }
+
+.mcl-assignment-loading,
+.mcl-assignment-section,
+.mcl-assignment-actions {
+  border-top: 1px solid var(--mcl-border);
+}
+
+.mcl-assignment-loading { padding: 28px 0; color: var(--mcl-text-muted); }
+.mcl-assignment-workspace { display: grid; gap: 42px; }
+.mcl-assignment-section { padding-top: 24px; }
+
+.mcl-section-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; margin-bottom: 20px; }
+.mcl-section-heading > div { display: flex; align-items: center; gap: 12px; }
+.mcl-section-heading h2 { margin: 0; font-size: 22px; }
+.mcl-section-heading p { max-width: 470px; margin: 2px 0 0; color: var(--mcl-text-muted); text-align: right; }
+.mcl-section-index { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: var(--mcl-accent-soft); color: var(--mcl-accent); font-weight: 800; }
+
+.mcl-assignment-fields { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.mcl-field { display: grid; gap: 7px; min-width: 0; }
+.mcl-field > span { color: var(--mcl-text-muted); font-size: 13px; font-weight: 750; }
+.mcl-field--wide { grid-column: 1 / -1; }
+.mcl-field input,
+.mcl-field select,
+.mcl-field textarea {
+  width: 100%;
+  min-height: 44px;
+  border: 1px solid var(--mcl-border-strong);
+  border-radius: 8px;
+  background: var(--mcl-surface);
+  color: var(--mcl-text);
+  font: inherit;
+  padding: 10px 12px;
+}
+.mcl-field textarea { resize: vertical; line-height: 1.55; }
+.mcl-due-field { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end; gap: 12px; min-width: 0; }
+.mcl-check--due { padding-bottom: 1px; white-space: nowrap; }
+.mcl-due-field[data-next-class="true"] .mcl-field { opacity: .55; }
+.mcl-field input:focus,
+.mcl-field select:focus,
+.mcl-field textarea:focus { outline: 3px solid var(--mcl-focus); outline-offset: 1px; border-color: var(--mcl-accent); }
+
+.mcl-tool-picker { display: grid; grid-template-columns: 190px minmax(180px, .8fr) minmax(260px, 1.4fr) auto; align-items: end; gap: 12px; padding: 16px; border: 1px solid var(--mcl-border); border-radius: 8px; background: var(--mcl-bg-soft, var(--mcl-surface)); }
+.mcl-button { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; border: 1px solid var(--mcl-border-strong); border-radius: 8px; padding: 10px 16px; background: var(--mcl-surface); color: var(--mcl-text); font: inherit; font-weight: 750; cursor: pointer; }
+.mcl-button svg { width: 18px; height: 18px; }
+.mcl-button:hover:not(:disabled) { border-color: var(--mcl-accent); color: var(--mcl-accent); }
+.mcl-button:focus-visible { outline: 3px solid var(--mcl-focus); outline-offset: 2px; }
+.mcl-button:disabled { opacity: .5; cursor: not-allowed; }
+.mcl-button--primary { border-color: var(--mcl-accent); background: var(--mcl-accent); color: #fff; }
+.mcl-button--primary:hover:not(:disabled) { background: var(--mcl-accent-strong); color: #fff; }
+
+.mcl-task-empty { display: grid; justify-items: center; gap: 6px; padding: 42px 18px; color: var(--mcl-text-muted); text-align: center; border-bottom: 1px solid var(--mcl-border); }
+.mcl-task-empty svg { width: 28px; height: 28px; color: var(--mcl-accent); }
+.mcl-task-empty strong { color: var(--mcl-text); }
+.mcl-task-list { display: grid; gap: 12px; margin-top: 16px; }
+.mcl-task-card { border: 1px solid var(--mcl-border); border-radius: 8px; background: var(--mcl-surface); overflow: hidden; }
+.mcl-task-card__header { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 14px 16px; border-bottom: 1px solid var(--mcl-border); }
+.mcl-task-card__identity { display: flex; align-items: center; min-width: 0; gap: 12px; }
+.mcl-task-number { flex: 0 0 auto; color: var(--mcl-accent); font-weight: 850; }
+.mcl-task-card__identity strong { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mcl-task-card__identity small { color: var(--mcl-text-muted); }
+.mcl-task-card__tools { display: flex; gap: 4px; }
+.mcl-icon-action { display: inline-grid; place-items: center; width: 38px; height: 38px; border: 0; border-radius: 6px; background: transparent; color: var(--mcl-text-muted); cursor: pointer; }
+.mcl-icon-action:hover:not(:disabled) { background: var(--mcl-bg-soft, var(--mcl-surface)); color: var(--mcl-text); }
+.mcl-icon-action:focus-visible { outline: 3px solid var(--mcl-focus); }
+.mcl-icon-action:disabled { opacity: .35; cursor: not-allowed; }
+.mcl-icon-action svg { width: 18px; height: 18px; }
+.mcl-assignment-icon-fallback { font-size: 10px; font-weight: 850; letter-spacing: 0; }
+.mcl-icon-action--danger:hover { color: var(--mcl-danger, #b42318); }
+.mcl-task-card__body { display: grid; grid-template-columns: 1fr 1fr 130px 1.1fr; gap: 14px; padding: 16px; }
+.mcl-task-note { grid-column: 1 / -1; }
+.mcl-timer-control { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: end; gap: 10px; }
+.mcl-check { display: inline-flex; align-items: center; gap: 7px; min-height: 44px; color: var(--mcl-text); font-weight: 700; }
+.mcl-check input { width: 18px; height: 18px; accent-color: var(--mcl-accent); }
+
+.mcl-assignment-actions { display: flex; align-items: center; justify-content: space-between; gap: 22px; padding-top: 24px; }
+.mcl-assignment-actions > div { display: grid; gap: 4px; }
+.mcl-assignment-actions span { color: var(--mcl-text-muted); font-size: 14px; }
+.mcl-button--download { min-width: 250px; }
+.mcl-assignment-message { padding: 12px 14px; border: 1px solid var(--mcl-danger, #b42318); border-radius: 8px; color: var(--mcl-danger, #b42318); background: #fff1f0; }
+
+.mcl-assignment-pdf-host { position: absolute; left: -12000px; top: 0; width: 794px; background: #fff; pointer-events: none; z-index: -1; }
+.mcl-assignment-pdf-page { position: relative; width: 794px; height: 1123px; overflow: hidden; padding: 44px 52px 56px; background: #fff; color: #14233d; font-family: "Segoe UI", "Microsoft YaHei", Arial, sans-serif; }
+.mcl-assignment-pdf-page * { box-sizing: border-box; letter-spacing: 0; }
+.mcl-assignment-pdf-page h1,
+.mcl-assignment-pdf-page h2,
+.mcl-assignment-pdf-page h3,
+.mcl-assignment-pdf-page h1 *,
+.mcl-assignment-pdf-page h2 *,
+.mcl-assignment-pdf-page h3 * {
+  opacity: 1 !important;
+  color: #14233d !important;
+  background: none !important;
+  -webkit-text-fill-color: currentColor !important;
+  text-shadow: none !important;
+  filter: none !important;
+}
+.mcl-assignment-pdf-brand { color: #1e4b7a; font-size: 15px; font-weight: 800; }
+.mcl-assignment-pdf-document-id { position: absolute; top: 44px; right: 52px; color: #52647a; font-size: 11px; text-align: right; }
+.mcl-assignment-pdf-title { margin: 34px 0 5px; color: #14233d; font-size: 34px; line-height: 1.15; }
+.mcl-assignment-pdf-subtitle { margin: 0 0 28px; color: #45566c; font-size: 19px; font-weight: 650; }
+.mcl-assignment-pdf-info { display: grid; grid-template-columns: 1fr 1fr; border-top: 2px solid #1e4b7a; border-left: 1px solid #cbd5e1; }
+.mcl-assignment-pdf-info > div { min-height: 62px; padding: 11px 13px; border-right: 1px solid #cbd5e1; border-bottom: 1px solid #cbd5e1; }
+.mcl-assignment-pdf-info--no-teacher > div:first-child { grid-column: 1 / -1; }
+.mcl-assignment-pdf-label { display: block; margin-bottom: 5px; color: #52647a; font-size: 10px; font-weight: 800; text-transform: uppercase; }
+.mcl-assignment-pdf-value { color: #14233d; font-size: 15px; font-weight: 700; overflow-wrap: anywhere; }
+.mcl-assignment-pdf-notes { margin-top: 18px; padding: 12px 14px; border-left: 3px solid #148a7a; background: #eef8f6; color: #20364e; font-size: 13px; line-height: 1.55; white-space: pre-wrap; }
+.mcl-assignment-pdf-section-title { margin: 24px 0 12px; padding-bottom: 8px; border-bottom: 2px solid #14233d; color: #14233d; font-size: 22px; }
+.mcl-assignment-pdf-reminder { margin: 0 0 14px; color: #45566c; font-size: 13px; line-height: 1.5; }
+.mcl-assignment-pdf-task { margin-bottom: 13px; padding: 14px 16px; border: 1px solid #cbd5e1; border-radius: 6px; break-inside: avoid; }
+.mcl-assignment-pdf-task-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+.mcl-assignment-pdf-task h3 { margin: 0; color: #14233d; font-size: 17px; line-height: 1.35; }
+.mcl-assignment-pdf-task h3 .mcl-assignment-pdf-task-number { color: #1e4b7a !important; }
+.mcl-assignment-pdf-url { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 7px; margin-top: 7px; color: #45566c; font-size: 11px; line-height: 1.35; }
+.mcl-assignment-pdf-url > span { font-weight: 800; }
+.mcl-assignment-pdf-link { color: #0b5cad; font-size: 11px; font-weight: 700; text-decoration: underline; overflow-wrap: anywhere; word-break: break-all; }
+.mcl-assignment-pdf-settings { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; margin: 11px 0; background: #cbd5e1; border: 1px solid #cbd5e1; }
+.mcl-assignment-pdf-settings > div { padding: 8px 9px; background: #f8fafc; }
+.mcl-assignment-pdf-settings strong { display: block; margin-top: 3px; color: #14233d; font-size: 12px; }
+.mcl-assignment-pdf-task-note { margin: 8px 0; padding: 8px 10px; background: #f1f5f9; color: #334155; font-size: 12px; line-height: 1.45; white-space: pre-wrap; }
+.mcl-assignment-pdf-steps { margin: 8px 0 0 19px; padding: 0; color: #334155; font-size: 11.5px; line-height: 1.45; }
+.mcl-assignment-pdf-footer { position: absolute; right: 52px; bottom: 24px; left: 52px; display: flex; justify-content: space-between; padding-top: 8px; border-top: 1px solid #cbd5e1; color: #64748b; font-size: 10px; }
+
+@media (max-width: 980px) {
+  .mcl-assignment-fields { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .mcl-tool-picker { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .mcl-tool-picker__tool { grid-column: 1 / -1; }
+  .mcl-task-card__body { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 640px) {
+  .mcl-assignment-page { padding-top: 26px !important; }
+  .mcl-section-heading, .mcl-assignment-actions { align-items: flex-start; flex-direction: column; }
+  .mcl-section-heading p { text-align: left; }
+  .mcl-assignment-fields, .mcl-tool-picker, .mcl-task-card__body { grid-template-columns: 1fr; }
+  .mcl-tool-picker__tool, .mcl-field--wide, .mcl-task-note { grid-column: auto; }
+  .mcl-task-card__header { align-items: flex-start; }
+  .mcl-task-card__identity strong { white-space: normal; }
+  .mcl-task-card__tools { flex-wrap: wrap; justify-content: flex-end; }
+  .mcl-timer-control { grid-template-columns: 1fr; }
+  .mcl-due-field { grid-template-columns: 1fr; gap: 3px; }
+  .mcl-button--download { width: 100%; min-width: 0; }
+}

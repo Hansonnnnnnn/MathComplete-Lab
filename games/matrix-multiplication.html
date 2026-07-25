@@ -475,7 +475,7 @@
 </style>
   <script src="../assets/js/theme.js?v=20260716.2"></script>
   <link rel="stylesheet" href="../assets/css/quiz-tool.css">
-  <link rel="stylesheet" href="../assets/css/design-system.css?v=20260717.2">
+  <link rel="stylesheet" href="../assets/css/design-system.css?v=20260724.1">
   <script defer src="https://cdn.jsdelivr.net/npm/lucide@0.468.0/dist/umd/lucide.min.js"></script>
 </head>
 <body>
@@ -546,6 +546,9 @@
   </main>
 
 
+  <script src="../assets/js/question-bank-specs.js"></script>
+  <script src="../assets/js/question-template-registry.js?v=20260724.1"></script>
+  <script src="../assets/js/linear-algebra-question-banks.js?v=20260724.7"></script>
   <script>
     const TOOL_CONFIG = {
       gameId: "matrix-multiplication",
@@ -998,8 +1001,21 @@
       hard: [qRect2x3Times3x2, qRect3x2Times2x3, qVariableEntry, qMatrixEquationVector, qPropertyFalse],
       expert: [qChainDimension, qChainCompute, qNonCommutativity, qCompositeTransform, qUnknownEntryFromProduct]
     };
+    window.MCLMatrixBuilders = BUILDERS;
 
     function buildQuestion(difficulty, forcedType = null) {
+      const registry = window.MCLQuestionTemplates;
+      if (registry?.getTool?.("matrix-multiplication")) {
+        const templates = registry.templatesFor("matrix-multiplication", difficulty, forcedType);
+        const pool = templates.length ? templates : registry.templatesFor("matrix-multiplication", difficulty);
+        if (pool.length) {
+          const template = choose(pool);
+          const q = registry.build("matrix-multiplication", template.id, { seed:`matrix-multiplication:${Date.now()}:${Math.random()}`, lang });
+          q.difficulty = template.difficulty;
+          q.options = generateOptions(q, Number(optionCountEl.value || 4));
+          return q;
+        }
+      }
       let builders = BUILDERS[difficulty] || BUILDERS.medium;
       if (forcedType) builders = builders.filter(fn => fn().type === forcedType);
       if (!builders.length) builders = BUILDERS[difficulty] || BUILDERS.medium;
@@ -1056,8 +1072,9 @@
     }
     function renderQuestion(resetTimer = true) {
       const q = quiz[currentIndex]; answered = false;
-      qTitle.textContent = tr().questionTitle;
-      qExtra.textContent = tr()[q.promptKey] || tr().promptMatrix;
+      qTitle.textContent = tr()[q.promptKey] || tr().promptMatrix || tr().questionTitle;
+      qExtra.textContent = "";
+      qExtra.classList.add("hidden");
       qMain.innerHTML = ""; qMain.classList.remove("math-render");
       if (q.mainTextKey) qMain.textContent = tr()[q.mainTextKey] || q.mainTextKey; else renderLatex(qMain, q.main, false);
       optionsEl.innerHTML = ""; feedbackEl.textContent = ""; feedbackEl.className = "feedback"; solutionBox.classList.add("hidden"); solutionBox.innerHTML = "";
@@ -1128,7 +1145,7 @@
     applyLanguage();
   </script>
   <script src="../assets/js/tool-modes.js"></script>
-  <script src="../assets/js/report-export.js?v=20260722.1"></script>
+  <script src="../assets/js/report-export.js?v=20260725.2"></script>
 
   <script src="../assets/js/tool-ux.js?v=20260716.2"></script>
   <script src="../assets/js/tool-catalog.js?v=20260716.3"></script>

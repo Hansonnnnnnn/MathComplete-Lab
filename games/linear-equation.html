@@ -801,13 +801,13 @@
 </style>
   <script src="../assets/js/theme.js?v=20260716.2"></script>
   <link rel="stylesheet" href="../assets/css/quiz-tool.css">
-  <link rel="stylesheet" href="../assets/css/design-system.css?v=20260717.2">
+  <link rel="stylesheet" href="../assets/css/design-system.css?v=20260724.1">
   <script defer src="https://cdn.jsdelivr.net/npm/lucide@0.468.0/dist/umd/lucide.min.js"></script>
 </head>
 <body>
   <nav class="mc-site-shell">
     <a class="mc-brand" href="../index.html">
-      <span class="mc-brand-mark">∑</span>
+      <span class="mc-brand-mark">âˆ‘</span>
       <span>MathComplete Lab</span>
     </a>
     <div class="mc-links">
@@ -886,7 +886,8 @@
       </div>
 
       <div id="questionTitle" class="question-title"></div>
-      <div id="equation" class="equation"></div>
+      <div id="questionExtra" class="question-extra"></div>
+      <div id="questionMain" class="equation"></div>
 
       <div id="options" class="options"></div>
       <div id="feedback" class="feedback"></div>
@@ -924,7 +925,7 @@
     </section>
   </main>
 
-  <script>
+  <script type="application/json" id="legacy-linear-equation-script">
     const T = {
       en: {
         htmlLang: "en",
@@ -1012,87 +1013,87 @@
       },
       zh: {
         htmlLang: "zh-CN",
-        navPractice: "练习库",
-        navHome: "主页",
-        toolBadge: "解方程练习",
-        title: "一元一次方程练习",
-        subtitle: "随机生成一元一次方程，练习移项、分配律、负号处理，以及特殊解情况。",
-        authorRole: "数学练习工具",
-        setupTitle: "开始练习",
-        difficultyLabel: "难度",
-        questionCountLabel: "题目数量",
-        optionCountLabel: "选项数量",
-        timedModeText: "开启计时模式",
-        timedModeHint: "关闭后不会倒计时；开启后每题单独计时。",
-        timerLevelLabel: "计时难度",
-        startBtn: "开始",
-        sampleBtn: "生成一道样题",
-        note: "特殊解只会出现在专家和地狱难度：无解或无穷多个解。",
-        questionTitle: "解出 x：",
-        quitBtn: "结束本轮",
-        nextBtn: "下一题",
-        resultBtn: "查看结果",
-        correctFeedback: "正确！",
-        wrongFeedback: answer => `错误。正确答案是 ${answer}。`,
-        timeUpFeedback: answer => `时间到。正确答案是 ${answer}。`,
-        solutionTitle: "正确解法",
-        solutionFinal: "答案：",
-        resultTitle: "练习结果",
-        scoreLabel: "正确题数",
-        accuracyLabel: "正确率",
-        wrongLabel: "错题数量",
-        wrongReviewTitle: "错题整理",
-        restartBtn: "再练一轮",
-        reviewWrongBtn: "只练错题同类型",
-        noWrong: "本轮没有错题。",
-        noWrongTip: "非常好，可以尝试更高难度。",
-        wrongEquation: "方程",
-        yourAnswer: "你的答案",
-        correctAnswer: "正确答案",
-        timeUpAnswer: "未作答（时间到）",
-        suggestion: "建议检查：分配律、正负号、移项、以及最后是否除以 x 的系数。",
-        sampleTitle: "样题",
-        sampleEquation: "方程",
-        sampleAnswer: "正确答案",
-        sampleOptions: "选项示例",
-        progress: (a, b) => `第 ${a} / ${b} 题`,
-        optionCount: n => `${n} 个选项`,
-        timerDisplay: seconds => `剩余时间：${formatTime(seconds)}`,
+        navPractice: "ç»ƒä¹ åº“",
+        navHome: "ä¸»é¡µ",
+        toolBadge: "è§£æ–¹ç¨‹ç»ƒä¹ ",
+        title: "ä¸€å…ƒä¸€æ¬¡æ–¹ç¨‹ç»ƒä¹ ",
+        subtitle: "éšæœºç”Ÿæˆä¸€å…ƒä¸€æ¬¡æ–¹ç¨‹ï¼Œç»ƒä¹ ç§»é¡¹ã€åˆ†é…å¾‹ã€è´Ÿå·å¤„ç†ï¼Œä»¥åŠç‰¹æ®Šè§£æƒ…å†µã€‚",
+        authorRole: "æ•°å­¦ç»ƒä¹ å·¥å…·",
+        setupTitle: "å¼€å§‹ç»ƒä¹ ",
+        difficultyLabel: "éš¾åº¦",
+        questionCountLabel: "é¢˜ç›®æ•°é‡",
+        optionCountLabel: "é€‰é¡¹æ•°é‡",
+        timedModeText: "å¼€å¯è®¡æ—¶æ¨¡å¼",
+        timedModeHint: "å…³é—­åŽä¸ä¼šå€’è®¡æ—¶ï¼›å¼€å¯åŽæ¯é¢˜å•ç‹¬è®¡æ—¶ã€‚",
+        timerLevelLabel: "è®¡æ—¶éš¾åº¦",
+        startBtn: "å¼€å§‹",
+        sampleBtn: "ç”Ÿæˆä¸€é“æ ·é¢˜",
+        note: "ç‰¹æ®Šè§£åªä¼šå‡ºçŽ°åœ¨ä¸“å®¶å’Œåœ°ç‹±éš¾åº¦ï¼šæ— è§£æˆ–æ— ç©·å¤šä¸ªè§£ã€‚",
+        questionTitle: "è§£å‡º xï¼š",
+        quitBtn: "ç»“æŸæœ¬è½®",
+        nextBtn: "ä¸‹ä¸€é¢˜",
+        resultBtn: "æŸ¥çœ‹ç»“æžœ",
+        correctFeedback: "æ­£ç¡®ï¼",
+        wrongFeedback: answer => `é”™è¯¯ã€‚æ­£ç¡®ç­”æ¡ˆæ˜¯ ${answer}ã€‚`,
+        timeUpFeedback: answer => `æ—¶é—´åˆ°ã€‚æ­£ç¡®ç­”æ¡ˆæ˜¯ ${answer}ã€‚`,
+        solutionTitle: "æ­£ç¡®è§£æ³•",
+        solutionFinal: "ç­”æ¡ˆï¼š",
+        resultTitle: "ç»ƒä¹ ç»“æžœ",
+        scoreLabel: "æ­£ç¡®é¢˜æ•°",
+        accuracyLabel: "æ­£ç¡®çŽ‡",
+        wrongLabel: "é”™é¢˜æ•°é‡",
+        wrongReviewTitle: "é”™é¢˜æ•´ç†",
+        restartBtn: "å†ç»ƒä¸€è½®",
+        reviewWrongBtn: "åªç»ƒé”™é¢˜åŒç±»åž‹",
+        noWrong: "æœ¬è½®æ²¡æœ‰é”™é¢˜ã€‚",
+        noWrongTip: "éžå¸¸å¥½ï¼Œå¯ä»¥å°è¯•æ›´é«˜éš¾åº¦ã€‚",
+        wrongEquation: "æ–¹ç¨‹",
+        yourAnswer: "ä½ çš„ç­”æ¡ˆ",
+        correctAnswer: "æ­£ç¡®ç­”æ¡ˆ",
+        timeUpAnswer: "æœªä½œç­”ï¼ˆæ—¶é—´åˆ°ï¼‰",
+        suggestion: "å»ºè®®æ£€æŸ¥ï¼šåˆ†é…å¾‹ã€æ­£è´Ÿå·ã€ç§»é¡¹ã€ä»¥åŠæœ€åŽæ˜¯å¦é™¤ä»¥ x çš„ç³»æ•°ã€‚",
+        sampleTitle: "æ ·é¢˜",
+        sampleEquation: "æ–¹ç¨‹",
+        sampleAnswer: "æ­£ç¡®ç­”æ¡ˆ",
+        sampleOptions: "é€‰é¡¹ç¤ºä¾‹",
+        progress: (a, b) => `ç¬¬ ${a} / ${b} é¢˜`,
+        optionCount: n => `${n} ä¸ªé€‰é¡¹`,
+        timerDisplay: seconds => `å‰©ä½™æ—¶é—´ï¼š${formatTime(seconds)}`,
         difficulties: {
-          easy: "简单",
-          medium: "中等",
-          hard: "困难",
-          expert: "专家",
-          hell: "地狱"
+          easy: "ç®€å•",
+          medium: "ä¸­ç­‰",
+          hard: "å›°éš¾",
+          expert: "ä¸“å®¶",
+          hell: "åœ°ç‹±"
         },
         difficultyOptions: {
-          easy: "简单：一步和两步方程",
-          medium: "中等：括号和合并同类项",
-          hard: "困难：两边都有变量",
-          expert: "专家：负号、复杂结构、特殊解",
-          hell: "地狱：快速、易错、特殊解比例更高"
+          easy: "ç®€å•ï¼šä¸€æ­¥å’Œä¸¤æ­¥æ–¹ç¨‹",
+          medium: "ä¸­ç­‰ï¼šæ‹¬å·å’Œåˆå¹¶åŒç±»é¡¹",
+          hard: "å›°éš¾ï¼šä¸¤è¾¹éƒ½æœ‰å˜é‡",
+          expert: "ä¸“å®¶ï¼šè´Ÿå·ã€å¤æ‚ç»“æž„ã€ç‰¹æ®Šè§£",
+          hell: "åœ°ç‹±ï¼šå¿«é€Ÿã€æ˜“é”™ã€ç‰¹æ®Šè§£æ¯”ä¾‹æ›´é«˜"
         },
         timerOptions: {
-          timer_easy: "简单：每题 2 分钟",
-          timer_medium: "中等：每题 1 分钟",
-          timer_hard: "困难：每题 30 秒",
-          timer_expert: "专家：每题 15 秒",
-          timer_hell: "地狱：每题 10 秒"
+          timer_easy: "ç®€å•ï¼šæ¯é¢˜ 2 åˆ†é’Ÿ",
+          timer_medium: "ä¸­ç­‰ï¼šæ¯é¢˜ 1 åˆ†é’Ÿ",
+          timer_hard: "å›°éš¾ï¼šæ¯é¢˜ 30 ç§’",
+          timer_expert: "ä¸“å®¶ï¼šæ¯é¢˜ 15 ç§’",
+          timer_hell: "åœ°ç‹±ï¼šæ¯é¢˜ 10 ç§’"
         },
         notes: {
           original: "",
-          distribute: "分配 / 化简",
-          moveX: "把 x 项移到一边",
-          moveConst: "把常数移到另一边",
-          divide: "两边除以 x 的系数",
-          contradiction: "矛盾",
-          identity: "恒等式"
+          distribute: "åˆ†é… / åŒ–ç®€",
+          moveX: "æŠŠ x é¡¹ç§»åˆ°ä¸€è¾¹",
+          moveConst: "æŠŠå¸¸æ•°ç§»åˆ°å¦ä¸€è¾¹",
+          divide: "ä¸¤è¾¹é™¤ä»¥ x çš„ç³»æ•°",
+          contradiction: "çŸ›ç›¾",
+          identity: "æ’ç­‰å¼"
         },
-        noSolution: "无解",
-        infiniteSolutions: "无穷多个解",
-        falseStatement: "这是矛盾，所以无解。",
-        trueStatement: "这是恒等式，所以有无穷多个解。",
-        noWrongAlert: "本轮没有错题，不能生成错题同类型练习。"
+        noSolution: "æ— è§£",
+        infiniteSolutions: "æ— ç©·å¤šä¸ªè§£",
+        falseStatement: "è¿™æ˜¯çŸ›ç›¾ï¼Œæ‰€ä»¥æ— è§£ã€‚",
+        trueStatement: "è¿™æ˜¯æ’ç­‰å¼ï¼Œæ‰€ä»¥æœ‰æ— ç©·å¤šä¸ªè§£ã€‚",
+        noWrongAlert: "æœ¬è½®æ²¡æœ‰é”™é¢˜ï¼Œä¸èƒ½ç”Ÿæˆé”™é¢˜åŒç±»åž‹ç»ƒä¹ ã€‚"
       }
     };
 
@@ -1840,18 +1841,18 @@
       if(!s) return "";
 
       s = s
-        .replace(/−/g, "-")
-        .replace(/×/g, "\\times ")
-        .replace(/·/g, "\\cdot ")
+        .replace(/âˆ’/g, "-")
+        .replace(/Ã—/g, "\\times ")
+        .replace(/Â·/g, "\\cdot ")
         .replace(/\u00a0/g, " ");
 
       const pureText = {
         "No solution": "\\text{No solution}",
         "Infinitely many solutions": "\\text{Infinitely many solutions}",
         "No answer: time is up": "\\text{No answer: time is up}",
-        "无解": "\\text{无解}",
-        "无穷多个解": "\\text{无穷多个解}",
-        "未作答（时间到）": "\\text{未作答（时间到）}"
+        "æ— è§£": "\\text{æ— è§£}",
+        "æ— ç©·å¤šä¸ªè§£": "\\text{æ— ç©·å¤šä¸ªè§£}",
+        "æœªä½œç­”ï¼ˆæ—¶é—´åˆ°ï¼‰": "\\text{æœªä½œç­”ï¼ˆæ—¶é—´åˆ°ï¼‰}"
       };
       if(pureText[s]) return pureText[s];
 
@@ -1880,7 +1881,7 @@
       s = s.replace(/\*/g, "\\cdot ");
       s = s.replace(/\bof\b/g, "\\text{ of }");
       s = s.replace(/%/g, "\\%");
-      s = s.replace(/π/g, "\\text{π}");
+      s = s.replace(/Ï€/g, "\\text{Ï€}");
       s = s.replace(/\?/g, "?");
 
       s = s.replace(/sqrt\(([^()]*)\)/g, (_, inner) => `\\sqrt{${mathToLatex(inner)}}`);
@@ -1896,13 +1897,13 @@
       s = s.replace(/\^\(([^)]+)\)/g, (_, exponent) => `^{${mathToLatex(exponent)}}`);
       s = s.replace(/\^(-?\d+)/g, "^{$1}");
       s = s.replace(/\^([a-zA-Z]+)/g, "^{$1}");
-      s = s.replace(/([a-zA-Z])²/g, "$1^{2}");
-      s = s.replace(/([a-zA-Z])³/g, "$1^{3}");
+      s = s.replace(/([a-zA-Z])Â²/g, "$1^{2}");
+      s = s.replace(/([a-zA-Z])Â³/g, "$1^{3}");
 
       s = s.replace(/x\^\{1\}/g, "x");
       s = s.replace(/x\^\{0\}/g, "1");
       s = s.replace(/\bln\b/g, "\\ln");
-      s = s.replace(/(^|[^A-Za-z])pi(?![A-Za-z])/g, "$1\\text{π}");
+      s = s.replace(/(^|[^A-Za-z])pi(?![A-Za-z])/g, "$1\\text{Ï€}");
 
       return s;
     }
@@ -1910,8 +1911,8 @@
     function shouldRenderMath(expr){
       const s = String(expr ?? "").trim();
       if(!s) return false;
-      if(["No solution","Infinitely many solutions","无解","无穷多个解"].includes(s)) return true;
-      if(/[=^/*+\-()π%²³]/.test(s)) return true;
+      if(["No solution","Infinitely many solutions","æ— è§£","æ— ç©·å¤šä¸ªè§£"].includes(s)) return true;
+      if(/[=^/*+\-()Ï€%Â²Â³]/.test(s)) return true;
       if(/^\s*-?\d+(\.\d+)?\s*$/.test(s)) return true;
       if(isSimpleMonomial(s)) return true;
       if(/^[A-Za-z]\s*\(/.test(s)) return true;
@@ -2060,8 +2061,8 @@
         feedbackEl.classList.add("good");
       } else {
         const prefix = timeUp
-          ? (lang === "zh" ? "时间到。正确答案是" : "Time is up. The correct answer is")
-          : (lang === "zh" ? "错误。正确答案是" : "Incorrect. The correct answer is");
+          ? (lang === "zh" ? "æ—¶é—´åˆ°ã€‚æ­£ç¡®ç­”æ¡ˆæ˜¯" : "Time is up. The correct answer is")
+          : (lang === "zh" ? "é”™è¯¯ã€‚æ­£ç¡®ç­”æ¡ˆæ˜¯" : "Incorrect. The correct answer is");
         feedbackEl.innerHTML = `${prefix} ${mathSpan(answer, "feedback-math")}.`;
         renderTaggedMath(feedbackEl);
         feedbackEl.classList.add("bad");
@@ -2245,8 +2246,21 @@
 
     applyLanguage();
   </script>
+  <script>
+    window.MCLQuizTool = {
+      gameId: "linear-equation", course: "algebra-1", balancedMixed: true, avoidConsecutiveTypes: true,
+      builders: { easy: [], medium: [], hard: [], expert: [] },
+      text: {
+        en: { title: "Linear Equation Solving Practice", toolBadge: "Algebra I", subtitle: "Solve and analyze one-variable equations with inverse operations, variables on both sides, grouping, fractions, special cases, and models.", note: "Unique solutions, identities, and no-solution equations are generated and checked separately." },
+        zh: { title: "\u4e00\u5143\u4e00\u6b21\u65b9\u7a0b\u4e13\u9879\u7ec3\u4e60", toolBadge: "\u4ee3\u6570 I", subtitle: "\u7ec3\u4e60\u9006\u8fd0\u7b97\u3001\u53d8\u91cf\u5206\u5e03\u5728\u7b49\u5f0f\u4e24\u8fb9\u3001\u62ec\u53f7\u3001\u5206\u5f0f\u3001\u7279\u6b8a\u89e3\u96c6\u548c\u60c5\u5883\u5efa\u6a21\u3002", note: "\u552f\u4e00\u89e3\u3001\u6052\u7b49\u5f0f\u548c\u65e0\u89e3\u65b9\u7a0b\u5206\u522b\u751f\u6210\u4e0e\u9a8c\u8bc1\u3002" }
+      }
+    };
+  </script>
+  <script src="../assets/js/question-template-registry.js?v=20260724.1"></script>
+  <script src="../assets/js/linear-equation-bank.js?v=20260724.1"></script>
+  <script src="../assets/js/quiz-tool-engine.js?v=20260724.2"></script>
   <script src="../assets/js/tool-modes.js"></script>
-  <script src="../assets/js/report-export.js?v=20260722.1"></script>
+  <script src="../assets/js/report-export.js?v=20260725.2"></script>
 
   <script src="../assets/js/tool-ux.js?v=20260716.2"></script>
   <script src="../assets/js/tool-catalog.js?v=20260716.3"></script>

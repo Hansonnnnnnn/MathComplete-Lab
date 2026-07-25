@@ -475,7 +475,7 @@
 </style>
   <script src="../assets/js/theme.js?v=20260716.2"></script>
   <link rel="stylesheet" href="../assets/css/quiz-tool.css">
-  <link rel="stylesheet" href="../assets/css/design-system.css?v=20260717.2">
+  <link rel="stylesheet" href="../assets/css/design-system.css?v=20260724.1">
   <script defer src="https://cdn.jsdelivr.net/npm/lucide@0.468.0/dist/umd/lucide.min.js"></script>
 </head>
 <body>
@@ -546,6 +546,9 @@
   </main>
 
 
+  <script src="../assets/js/question-bank-specs.js"></script>
+  <script src="../assets/js/question-template-registry.js?v=20260724.1"></script>
+  <script src="../assets/js/linear-algebra-question-banks.js?v=20260724.7"></script>
   <script>
     const TOOL_CONFIG = {
       gameId: "vector-operations",
@@ -565,7 +568,7 @@
         toolBadge: "Linear Algebra",
         title: TOOL_CONFIG.title.en,
         subtitle: TOOL_CONFIG.subtitle.en,
-        note: "This tool focuses on component-wise vector operations. Dot products, cross products, projections, and span are intentionally left for later tools.",
+        note: "Practice component operations, dot products, projections, vector equations, span, geometry, and applied vector models.",
         setupTitle: "Start Practice",
         difficultyLabel: "Difficulty",
         questionCountLabel: "Number of Questions",
@@ -661,7 +664,7 @@
         toolBadge: "线性代数",
         title: TOOL_CONFIG.title.zh,
         subtitle: TOOL_CONFIG.subtitle.zh,
-        note: "这个工具专注训练按分量进行的向量运算。点积、叉积、投影和 span 会留给后续更高阶工具。",
+        note: "练习分量运算、点积、投影、向量方程、张成空间、向量几何与应用模型。",
         setupTitle: "开始练习",
         difficultyLabel: "难度",
         questionCountLabel: "题目数量",
@@ -1100,8 +1103,21 @@
       hard: [qNegativeCombo2, qCombo3, qSolveVectorEquation, qDefinedDimensions, qPointVector],
       expert: [qComplexCombo, qExpressionEqualsTarget, qParameterScalar, qAdvancedVectorEquation3, qPointCombo]
     };
+    window.MCLVectorBuilders = BUILDERS;
 
     function buildQuestion(difficulty, forcedType = null) {
+      const registry = window.MCLQuestionTemplates;
+      if (registry?.getTool?.("vector-operations")) {
+        const templates = registry.templatesFor("vector-operations", difficulty, forcedType);
+        const pool = templates.length ? templates : registry.templatesFor("vector-operations", difficulty);
+        if (pool.length) {
+          const template = choose(pool);
+          const q = registry.build("vector-operations", template.id, { seed:`vector-operations:${Date.now()}:${Math.random()}`, lang });
+          q.difficulty = template.difficulty;
+          q.options = generateOptions(q, Number(optionCountEl.value || 4));
+          return q;
+        }
+      }
       let builders = BUILDERS[difficulty] || BUILDERS.medium;
       if (forcedType) builders = builders.filter(fn => {
         const temp = fn();
@@ -1182,8 +1198,9 @@
     function renderQuestion(resetTimer = true) {
       const q = quiz[currentIndex];
       answered = false;
-      qTitle.textContent = tr().questionTitle;
-      qExtra.textContent = tr()[q.promptKey] || tr().promptVector;
+      qTitle.textContent = tr()[q.promptKey] || tr().promptVector || tr().questionTitle;
+      qExtra.textContent = "";
+      qExtra.classList.add("hidden");
       qMain.innerHTML = "";
       qMain.classList.remove("math-render");
       if (q.mainTextKey) {
@@ -1304,7 +1321,7 @@
     applyLanguage();
   </script>
   <script src="../assets/js/tool-modes.js"></script>
-  <script src="../assets/js/report-export.js?v=20260722.1"></script>
+  <script src="../assets/js/report-export.js?v=20260725.2"></script>
 
   <script src="../assets/js/tool-ux.js?v=20260716.2"></script>
   <script src="../assets/js/tool-catalog.js?v=20260716.3"></script>

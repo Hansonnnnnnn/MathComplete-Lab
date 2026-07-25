@@ -847,12 +847,12 @@
 </style>
   <script src="../assets/js/theme.js?v=20260716.2"></script>
   <link rel="stylesheet" href="../assets/css/quiz-tool.css">
-  <link rel="stylesheet" href="../assets/css/design-system.css?v=20260717.2">
+  <link rel="stylesheet" href="../assets/css/design-system.css?v=20260724.1">
   <script defer src="https://cdn.jsdelivr.net/npm/lucide@0.468.0/dist/umd/lucide.min.js"></script>
 </head>
 <body>
   <nav class="mc-site-shell">
-    <a class="mc-brand" href="../index.html"><span class="mc-brand-mark">∑</span><span>MathComplete Lab</span></a>
+    <a class="mc-brand" href="../index.html"><span class="mc-brand-mark">âˆ‘</span><span>MathComplete Lab</span></a>
     <div class="mc-links">
       <a class="mc-link" href="../practice.html" data-i18n="navPractice">Practice Library</a>
       <a class="mc-link primary" href="../index.html" data-i18n="navHome">Home</a>
@@ -914,7 +914,7 @@
     </section>
   </main>
 
-  <script>
+  <script type="application/json" id="legacy-algebra-simplification-script">
 
     const GAME_TEXT = {
       en:{
@@ -931,25 +931,25 @@
           hell:"Hell: nested expressions and sign traps",
           mixed:"Mixed: balanced practice from all difficulty levels"
         },
-        suggestion:"Suggestion: check like terms, distribution, signs, and whether x² terms are separate from x terms.",
+        suggestion:"Suggestion: check like terms, distribution, signs, and whether xÂ² terms are separate from x terms.",
         notes:{original:"original",distribute:"distribute",combine:"combine like terms",standard:"standard form"}
       },
       zh:{
-        toolBadge:"代数化简练习",
-        title:"代数化简",
-        subtitle:"把杂乱的代数表达式整理成标准形式，练习合并同类项、分配律、正负号和多项式项。",
-        note:"混合模式会均衡抽取五个难度。专家和地狱难度会包含平方项和高密度负号。",
-        questionTitle:"化简：",
+        toolBadge:"ä»£æ•°åŒ–ç®€ç»ƒä¹ ",
+        title:"ä»£æ•°åŒ–ç®€",
+        subtitle:"æŠŠæ‚ä¹±çš„ä»£æ•°è¡¨è¾¾å¼æ•´ç†æˆæ ‡å‡†å½¢å¼ï¼Œç»ƒä¹ åˆå¹¶åŒç±»é¡¹ã€åˆ†é…å¾‹ã€æ­£è´Ÿå·å’Œå¤šé¡¹å¼é¡¹ã€‚",
+        note:"æ··åˆæ¨¡å¼ä¼šå‡è¡¡æŠ½å–äº”ä¸ªéš¾åº¦ã€‚ä¸“å®¶å’Œåœ°ç‹±éš¾åº¦ä¼šåŒ…å«å¹³æ–¹é¡¹å’Œé«˜å¯†åº¦è´Ÿå·ã€‚",
+        questionTitle:"åŒ–ç®€ï¼š",
         difficultyOptions:{
-          easy:"简单：合并一元一次同类项",
-          medium:"中等：合并两个变量的表达式",
-          hard:"困难：分配律和括号",
-          expert:"专家：负号、平方项和多变量括号",
-          hell:"地狱：嵌套表达式和符号陷阱",
-          mixed:"混合：从所有难度中均衡出题"
+          easy:"ç®€å•ï¼šåˆå¹¶ä¸€å…ƒä¸€æ¬¡åŒç±»é¡¹",
+          medium:"ä¸­ç­‰ï¼šåˆå¹¶ä¸¤ä¸ªå˜é‡çš„è¡¨è¾¾å¼",
+          hard:"å›°éš¾ï¼šåˆ†é…å¾‹å’Œæ‹¬å·",
+          expert:"ä¸“å®¶ï¼šè´Ÿå·ã€å¹³æ–¹é¡¹å’Œå¤šå˜é‡æ‹¬å·",
+          hell:"åœ°ç‹±ï¼šåµŒå¥—è¡¨è¾¾å¼å’Œç¬¦å·é™·é˜±",
+          mixed:"æ··åˆï¼šä»Žæ‰€æœ‰éš¾åº¦ä¸­å‡è¡¡å‡ºé¢˜"
         },
-        suggestion:"建议检查：同类项、分配律、正负号，以及 x² 项不能和 x 项合并。",
-        notes:{original:"原式",distribute:"分配律",combine:"合并同类项",standard:"标准形式"}
+        suggestion:"å»ºè®®æ£€æŸ¥ï¼šåŒç±»é¡¹ã€åˆ†é…å¾‹ã€æ­£è´Ÿå·ï¼Œä»¥åŠ xÂ² é¡¹ä¸èƒ½å’Œ x é¡¹åˆå¹¶ã€‚",
+        notes:{original:"åŽŸå¼",distribute:"åˆ†é…å¾‹",combine:"åˆå¹¶åŒç±»é¡¹",standard:"æ ‡å‡†å½¢å¼"}
       }
     };
 
@@ -1004,50 +1004,50 @@
       },
       zh: {
         htmlLang:"zh-CN",
-        navPractice:"练习库",
-        navHome:"主页",
-        setupTitle:"开始练习",
-        difficultyLabel:"难度",
-        questionCountLabel:"题目数量",
-        optionCountLabel:"选项数量",
-        timedModeText:"开启计时模式",
-        timedModeHint:"关闭后不会倒计时；开启后每题单独计时。",
-        timerLevelLabel:"计时难度",
-        startBtn:"开始",
-        sampleBtn:"生成一道样题",
-        quitBtn:"结束本轮",
-        nextBtn:"下一题",
-        resultBtn:"查看结果",
-        correctFeedback:"正确！",
-        wrongFeedback:a=>`错误。正确答案是 ${a}。`,
-        timeUpFeedback:a=>`时间到。正确答案是 ${a}。`,
-        solutionTitle:"正确解法",
-        solutionFinal:"答案：",
-        resultTitle:"练习结果",
-        scoreLabel:"正确题数",
-        accuracyLabel:"正确率",
-        wrongLabel:"错题数量",
-        wrongReviewTitle:"错题整理",
-        restartBtn:"再练一轮",
-        reviewWrongBtn:"只练错题同类型",
-        noWrong:"本轮没有错题。",
-        noWrongTip:"非常好，可以尝试更高难度。",
-        yourAnswer:"你的答案",
-        correctAnswer:"正确答案",
-        choices:"选项",
-        yourChoice:"你的选择",
-        correctChoice:"正确选项",
-        timeUpAnswer:"未作答（时间到）",
-        sampleTitle:"样题",
-        sampleQuestion:"题目",
-        sampleAnswer:"正确答案",
-        sampleOptions:"选项示例",
-        progress:(a,b)=>`第 ${a} / ${b} 题`,
-        optionCount:n=>`${n} 个选项`,
-        timerDisplay:s=>`剩余时间：${formatTime(s)}`,
-        difficulties:{easy:"简单",medium:"中等",hard:"困难",expert:"专家",hell:"地狱",mixed:"混合"},
-        timerOptions:{timer_easy:"简单：每题 2 分钟",timer_medium:"中等：每题 1 分钟",timer_hard:"困难：每题 30 秒",timer_expert:"专家：每题 15 秒",timer_hell:"地狱：每题 10 秒"},
-        noWrongAlert:"本轮没有错题，不能生成错题同类型练习。",
+        navPractice:"ç»ƒä¹ åº“",
+        navHome:"ä¸»é¡µ",
+        setupTitle:"å¼€å§‹ç»ƒä¹ ",
+        difficultyLabel:"éš¾åº¦",
+        questionCountLabel:"é¢˜ç›®æ•°é‡",
+        optionCountLabel:"é€‰é¡¹æ•°é‡",
+        timedModeText:"å¼€å¯è®¡æ—¶æ¨¡å¼",
+        timedModeHint:"å…³é—­åŽä¸ä¼šå€’è®¡æ—¶ï¼›å¼€å¯åŽæ¯é¢˜å•ç‹¬è®¡æ—¶ã€‚",
+        timerLevelLabel:"è®¡æ—¶éš¾åº¦",
+        startBtn:"å¼€å§‹",
+        sampleBtn:"ç”Ÿæˆä¸€é“æ ·é¢˜",
+        quitBtn:"ç»“æŸæœ¬è½®",
+        nextBtn:"ä¸‹ä¸€é¢˜",
+        resultBtn:"æŸ¥çœ‹ç»“æžœ",
+        correctFeedback:"æ­£ç¡®ï¼",
+        wrongFeedback:a=>`é”™è¯¯ã€‚æ­£ç¡®ç­”æ¡ˆæ˜¯ ${a}ã€‚`,
+        timeUpFeedback:a=>`æ—¶é—´åˆ°ã€‚æ­£ç¡®ç­”æ¡ˆæ˜¯ ${a}ã€‚`,
+        solutionTitle:"æ­£ç¡®è§£æ³•",
+        solutionFinal:"ç­”æ¡ˆï¼š",
+        resultTitle:"ç»ƒä¹ ç»“æžœ",
+        scoreLabel:"æ­£ç¡®é¢˜æ•°",
+        accuracyLabel:"æ­£ç¡®çŽ‡",
+        wrongLabel:"é”™é¢˜æ•°é‡",
+        wrongReviewTitle:"é”™é¢˜æ•´ç†",
+        restartBtn:"å†ç»ƒä¸€è½®",
+        reviewWrongBtn:"åªç»ƒé”™é¢˜åŒç±»åž‹",
+        noWrong:"æœ¬è½®æ²¡æœ‰é”™é¢˜ã€‚",
+        noWrongTip:"éžå¸¸å¥½ï¼Œå¯ä»¥å°è¯•æ›´é«˜éš¾åº¦ã€‚",
+        yourAnswer:"ä½ çš„ç­”æ¡ˆ",
+        correctAnswer:"æ­£ç¡®ç­”æ¡ˆ",
+        choices:"é€‰é¡¹",
+        yourChoice:"ä½ çš„é€‰æ‹©",
+        correctChoice:"æ­£ç¡®é€‰é¡¹",
+        timeUpAnswer:"æœªä½œç­”ï¼ˆæ—¶é—´åˆ°ï¼‰",
+        sampleTitle:"æ ·é¢˜",
+        sampleQuestion:"é¢˜ç›®",
+        sampleAnswer:"æ­£ç¡®ç­”æ¡ˆ",
+        sampleOptions:"é€‰é¡¹ç¤ºä¾‹",
+        progress:(a,b)=>`ç¬¬ ${a} / ${b} é¢˜`,
+        optionCount:n=>`${n} ä¸ªé€‰é¡¹`,
+        timerDisplay:s=>`å‰©ä½™æ—¶é—´ï¼š${formatTime(s)}`,
+        difficulties:{easy:"ç®€å•",medium:"ä¸­ç­‰",hard:"å›°éš¾",expert:"ä¸“å®¶",hell:"åœ°ç‹±",mixed:"æ··åˆ"},
+        timerOptions:{timer_easy:"ç®€å•ï¼šæ¯é¢˜ 2 åˆ†é’Ÿ",timer_medium:"ä¸­ç­‰ï¼šæ¯é¢˜ 1 åˆ†é’Ÿ",timer_hard:"å›°éš¾ï¼šæ¯é¢˜ 30 ç§’",timer_expert:"ä¸“å®¶ï¼šæ¯é¢˜ 15 ç§’",timer_hell:"åœ°ç‹±ï¼šæ¯é¢˜ 10 ç§’"},
+        noWrongAlert:"æœ¬è½®æ²¡æœ‰é”™é¢˜ï¼Œä¸èƒ½ç”Ÿæˆé”™é¢˜åŒç±»åž‹ç»ƒä¹ ã€‚",
         ...GAME_TEXT.zh
       }
     };
@@ -1066,7 +1066,7 @@
     }
 
     function polyToString(terms){
-      const order = ["x²","y²","xy","x","y",""];
+      const order = ["xÂ²","yÂ²","xy","x","y",""];
       let parts = [];
       order.forEach(v => {
         const coef = terms[v] || 0;
@@ -1187,16 +1187,16 @@
       expert: [
         () => {
           const a=randInt(2,6), b=randInt(2,6), c=randInt(1,6), d=randInt(1,6);
-          const expr = `${a}x² + ${b}x - ${c}x² + ${d}x`;
-          const terms = {"x²":a-c,"x":b+d};
-          return makeQ("expert","expert-quadratic-combine",expr,null,terms,[polyToString({"x²":a+c,"x":b+d}),polyToString({"x²":a-c,"x":b-d}),polyToString({"x":a-c+b+d})]);
+          const expr = `${a}xÂ² + ${b}x - ${c}xÂ² + ${d}x`;
+          const terms = {"xÂ²":a-c,"x":b+d};
+          return makeQ("expert","expert-quadratic-combine",expr,null,terms,[polyToString({"xÂ²":a+c,"x":b+d}),polyToString({"xÂ²":a-c,"x":b-d}),polyToString({"x":a-c+b+d})]);
         },
         () => {
           const a=randInt(2,5), b=randInt(2,5);
-          const expr = `${a}(x² + ${b}x) - ${b}(x² - x)`;
-          const expanded = `${a}x² + ${a*b}x - ${b}x² + ${b}x`;
-          const terms = {"x²":a-b,"x":a*b+b};
-          return makeQ("expert","expert-distribute-quadratic",expr,expanded,terms,[polyToString({"x²":a+b,"x":a*b+b}),polyToString({"x²":a-b,"x":a*b-b}),polyToString({"x²":a-b,"x":a+b})]);
+          const expr = `${a}(xÂ² + ${b}x) - ${b}(xÂ² - x)`;
+          const expanded = `${a}xÂ² + ${a*b}x - ${b}xÂ² + ${b}x`;
+          const terms = {"xÂ²":a-b,"x":a*b+b};
+          return makeQ("expert","expert-distribute-quadratic",expr,expanded,terms,[polyToString({"xÂ²":a+b,"x":a*b+b}),polyToString({"xÂ²":a-b,"x":a*b-b}),polyToString({"xÂ²":a-b,"x":a+b})]);
         },
         () => {
           const a=randInt(2,6), b=randInt(2,6), c=randInt(1,8);
@@ -1208,10 +1208,10 @@
         },
         () => {
           const a=randInt(2,5), b=randInt(2,5), c=randInt(1,5);
-          const expr = `${a}(x² - y) + ${b}(y + ${c}x)`;
-          const expanded = `${a}x² - ${a}y + ${b}y + ${b*c}x`;
-          const terms = {"x²":a,"x":b*c,"y":b-a};
-          return makeQ("expert","expert-mixed-vars",expr,expanded,terms,[polyToString({"x²":a,"x":b*c,"y":a+b}),polyToString({"x²":a,"x":b+c,"y":b-a}),polyToString({"x²":a+b,"x":b*c,"y":b-a})]);
+          const expr = `${a}(xÂ² - y) + ${b}(y + ${c}x)`;
+          const expanded = `${a}xÂ² - ${a}y + ${b}y + ${b*c}x`;
+          const terms = {"xÂ²":a,"x":b*c,"y":b-a};
+          return makeQ("expert","expert-mixed-vars",expr,expanded,terms,[polyToString({"xÂ²":a,"x":b*c,"y":a+b}),polyToString({"xÂ²":a,"x":b+c,"y":b-a}),polyToString({"xÂ²":a+b,"x":b*c,"y":b-a})]);
         }
       ],
       hell: [
@@ -1225,10 +1225,10 @@
         },
         () => {
           const a=randInt(2,5), b=randInt(2,5);
-          const expr = `${a}(x² - ${b}x + 1) - ${b}(x² + x - 4)`;
-          const expanded = `${a}x² - ${a*b}x + ${a} - ${b}x² - ${b}x + ${4*b}`;
-          const terms = {"x²":a-b,"x":-(a*b+b),"":a+4*b};
-          return makeQ("hell","hell-quadratic-long",expr,expanded,terms,[polyToString({"x²":a+b,"x":-(a*b+b),"":a+4*b}),polyToString({"x²":a-b,"x":-(a*b-b),"":a+4*b}),polyToString({"x²":a-b,"x":-(a*b+b),"":a-4*b})]);
+          const expr = `${a}(xÂ² - ${b}x + 1) - ${b}(xÂ² + x - 4)`;
+          const expanded = `${a}xÂ² - ${a*b}x + ${a} - ${b}xÂ² - ${b}x + ${4*b}`;
+          const terms = {"xÂ²":a-b,"x":-(a*b+b),"":a+4*b};
+          return makeQ("hell","hell-quadratic-long",expr,expanded,terms,[polyToString({"xÂ²":a+b,"x":-(a*b+b),"":a+4*b}),polyToString({"xÂ²":a-b,"x":-(a*b-b),"":a+4*b}),polyToString({"xÂ²":a-b,"x":-(a*b+b),"":a-4*b})]);
         },
         () => {
           const a=randInt(2,5), b=randInt(2,5), c=randInt(1,6);
@@ -1240,10 +1240,10 @@
         },
         () => {
           const a=randInt(2,4), b=randInt(2,4);
-          const expr = `${a}(x² - 2x + 1) - ${b}(x² + x - 4) + x`;
-          const expanded = `${a}x² - ${2*a}x + ${a} - ${b}x² - ${b}x + ${4*b} + x`;
-          const terms = {"x²":a-b,"x":-2*a-b+1,"":a+4*b};
-          return makeQ("hell","hell-poly-standard",expr,expanded,terms,[polyToString({"x²":a+b,"x":-2*a-b+1,"":a+4*b}),polyToString({"x²":a-b,"x":-2*a+b+1,"":a+4*b}),polyToString({"x²":a-b,"x":-2*a-b+1,"":a-4*b})]);
+          const expr = `${a}(xÂ² - 2x + 1) - ${b}(xÂ² + x - 4) + x`;
+          const expanded = `${a}xÂ² - ${2*a}x + ${a} - ${b}xÂ² - ${b}x + ${4*b} + x`;
+          const terms = {"xÂ²":a-b,"x":-2*a-b+1,"":a+4*b};
+          return makeQ("hell","hell-poly-standard",expr,expanded,terms,[polyToString({"xÂ²":a+b,"x":-2*a-b+1,"":a+4*b}),polyToString({"xÂ²":a-b,"x":-2*a+b+1,"":a+4*b}),polyToString({"xÂ²":a-b,"x":-2*a-b+1,"":a-4*b})]);
         }
       ]
     };
@@ -1292,7 +1292,7 @@
         q.distractors.forEach(addDistractor);
 
         while(distractors.size < count - 1){
-          const random = choose(["x","2x","x + 1","x - 1","2x + 1","x² + x","0"]);
+          const random = choose(["x","2x","x + 1","x - 1","2x + 1","xÂ² + x","0"]);
           addDistractor(random);
         }
 
@@ -1415,18 +1415,18 @@
       if(!s) return "";
 
       s = s
-        .replace(/−/g, "-")
-        .replace(/×/g, "\\times ")
-        .replace(/·/g, "\\cdot ")
+        .replace(/âˆ’/g, "-")
+        .replace(/Ã—/g, "\\times ")
+        .replace(/Â·/g, "\\cdot ")
         .replace(/\u00a0/g, " ");
 
       const pureText = {
         "No solution": "\\text{No solution}",
         "Infinitely many solutions": "\\text{Infinitely many solutions}",
         "No answer: time is up": "\\text{No answer: time is up}",
-        "无解": "\\text{无解}",
-        "无穷多个解": "\\text{无穷多个解}",
-        "未作答（时间到）": "\\text{未作答（时间到）}"
+        "æ— è§£": "\\text{æ— è§£}",
+        "æ— ç©·å¤šä¸ªè§£": "\\text{æ— ç©·å¤šä¸ªè§£}",
+        "æœªä½œç­”ï¼ˆæ—¶é—´åˆ°ï¼‰": "\\text{æœªä½œç­”ï¼ˆæ—¶é—´åˆ°ï¼‰}"
       };
       if(pureText[s]) return pureText[s];
 
@@ -1455,7 +1455,7 @@
       s = s.replace(/\*/g, "\\cdot ");
       s = s.replace(/\bof\b/g, "\\text{ of }");
       s = s.replace(/%/g, "\\%");
-      s = s.replace(/π/g, "\\text{π}");
+      s = s.replace(/Ï€/g, "\\text{Ï€}");
       s = s.replace(/\?/g, "?");
 
       s = s.replace(/sqrt\(([^()]*)\)/g, (_, inner) => `\\sqrt{${mathToLatex(inner)}}`);
@@ -1471,13 +1471,13 @@
       s = s.replace(/\^\(([^)]+)\)/g, (_, exponent) => `^{${mathToLatex(exponent)}}`);
       s = s.replace(/\^(-?\d+)/g, "^{$1}");
       s = s.replace(/\^([a-zA-Z]+)/g, "^{$1}");
-      s = s.replace(/([a-zA-Z])²/g, "$1^{2}");
-      s = s.replace(/([a-zA-Z])³/g, "$1^{3}");
+      s = s.replace(/([a-zA-Z])Â²/g, "$1^{2}");
+      s = s.replace(/([a-zA-Z])Â³/g, "$1^{3}");
 
       s = s.replace(/x\^\{1\}/g, "x");
       s = s.replace(/x\^\{0\}/g, "1");
       s = s.replace(/\bln\b/g, "\\ln");
-      s = s.replace(/(^|[^A-Za-z])pi(?![A-Za-z])/g, "$1\\text{π}");
+      s = s.replace(/(^|[^A-Za-z])pi(?![A-Za-z])/g, "$1\\text{Ï€}");
 
       return s;
     }
@@ -1485,8 +1485,8 @@
     function shouldRenderMath(expr){
       const s = String(expr ?? "").trim();
       if(!s) return false;
-      if(["No solution","Infinitely many solutions","无解","无穷多个解"].includes(s)) return true;
-      if(/[=^/*+\-()π%²³]/.test(s)) return true;
+      if(["No solution","Infinitely many solutions","æ— è§£","æ— ç©·å¤šä¸ªè§£"].includes(s)) return true;
+      if(/[=^/*+\-()Ï€%Â²Â³]/.test(s)) return true;
       if(/^\s*-?\d+(\.\d+)?\s*$/.test(s)) return true;
       if(isSimpleMonomial(s)) return true;
       if(/^[A-Za-z]\s*\(/.test(s)) return true;
@@ -1759,7 +1759,7 @@
       }
 
       progressText.textContent = tr().progress(currentIndex + 1, quiz.length);
-      difficultyText.textContent = lastDifficulty === "mixed" ? `${tr().difficulties.mixed} · ${tr().difficulties[q.difficulty]}` : tr().difficulties[q.difficulty];
+      difficultyText.textContent = lastDifficulty === "mixed" ? `${tr().difficulties.mixed} Â· ${tr().difficulties[q.difficulty]}` : tr().difficulties[q.difficulty];
       progressBar.style.width = `${(currentIndex / quiz.length) * 100}%`;
       renderMaybeMath(qMain, q.main, true);
       if(q.extra){ renderMaybeMath(qExtra, q.extra, false); } else { qExtra.textContent = ""; }
@@ -1791,8 +1791,8 @@
         feedbackEl.classList.add("good");
       } else {
         const prefix = timeUp
-          ? (lang === "zh" ? "时间到。正确答案是" : "Time is up. The correct answer is")
-          : (lang === "zh" ? "错误。正确答案是" : "Incorrect. The correct answer is");
+          ? (lang === "zh" ? "æ—¶é—´åˆ°ã€‚æ­£ç¡®ç­”æ¡ˆæ˜¯" : "Time is up. The correct answer is")
+          : (lang === "zh" ? "é”™è¯¯ã€‚æ­£ç¡®ç­”æ¡ˆæ˜¯" : "Incorrect. The correct answer is");
         feedbackEl.innerHTML = `${prefix} ${mathSpan(answer, "feedback-math")}.`;
         renderTaggedMath(feedbackEl);
         feedbackEl.classList.add("bad");
@@ -1947,7 +1947,7 @@
             return `
               <div class="wrong-choice ${option.isCorrect ? "correct" : ""} ${option.isSelected ? "selected" : ""}">
                 <span><strong>${escapeHtml(option.label)}.</strong> ${mathSpan(option.latex, "wrong-math")}</span>
-                ${badges.length ? `<span class="wrong-choice-badge">${escapeHtml(badges.join(" · "))}</span>` : ""}
+                ${badges.length ? `<span class="wrong-choice-badge">${escapeHtml(badges.join(" Â· "))}</span>` : ""}
               </div>
             `;
           }).join("")}
@@ -2028,8 +2028,21 @@
     applyLanguage();
 
   </script>
+  <script>
+    window.MCLQuizTool = {
+      gameId: "algebra-simplification", course: "algebra-1", balancedMixed: true, avoidConsecutiveTypes: true,
+      builders: { easy: [], medium: [], hard: [], expert: [] },
+      text: {
+        en: { title: "Algebraic Simplification Practice", toolBadge: "Algebra I", subtitle: "Simplify expressions through like terms, distribution, nested groups, standard form, and error analysis.", note: "All expressions and choices use the same mathematical font and canonical form." },
+        zh: { title: "\u4ee3\u6570\u5316\u7b80\u4e13\u9879\u7ec3\u4e60", toolBadge: "\u4ee3\u6570 I", subtitle: "\u7ec3\u4e60\u5408\u5e76\u540c\u7c7b\u9879\u3001\u5206\u914d\u5f8b\u3001\u5d4c\u5957\u62ec\u53f7\u3001\u6807\u51c6\u5f62\u5f0f\u548c\u9519\u8bef\u5206\u6790\u3002", note: "\u6240\u6709\u8868\u8fbe\u5f0f\u548c\u9009\u9879\u7edf\u4e00\u4f7f\u7528\u6570\u5b66\u5b57\u4f53\u4e0e\u89c4\u8303\u5f62\u5f0f\u3002" }
+      }
+    };
+  </script>
+  <script src="../assets/js/question-template-registry.js?v=20260724.1"></script>
+  <script src="../assets/js/algebra-simplification-bank.js?v=20260724.1"></script>
+  <script src="../assets/js/quiz-tool-engine.js?v=20260724.2"></script>
   <script src="../assets/js/tool-modes.js"></script>
-  <script src="../assets/js/report-export.js?v=20260722.1"></script>
+  <script src="../assets/js/report-export.js?v=20260725.2"></script>
 
   <script src="../assets/js/tool-ux.js?v=20260716.2"></script>
   <script src="../assets/js/tool-catalog.js?v=20260716.3"></script>

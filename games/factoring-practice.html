@@ -634,12 +634,12 @@
 </style>
   <script src="../assets/js/theme.js?v=20260716.2"></script>
   <link rel="stylesheet" href="../assets/css/quiz-tool.css">
-  <link rel="stylesheet" href="../assets/css/design-system.css?v=20260717.2">
+  <link rel="stylesheet" href="../assets/css/design-system.css?v=20260724.1">
   <script defer src="https://cdn.jsdelivr.net/npm/lucide@0.468.0/dist/umd/lucide.min.js"></script>
 </head>
 <body>
   <nav class="mc-site-shell">
-    <a class="mc-brand" href="../index.html"><span class="mc-brand-mark">∑</span><span>MathComplete Lab</span></a>
+    <a class="mc-brand" href="../index.html"><span class="mc-brand-mark">âˆ‘</span><span>MathComplete Lab</span></a>
     <div class="mc-links">
       <a class="mc-link" href="../practice.html" data-i18n="navPractice">Practice Library</a>
       <a class="mc-link primary" href="../index.html" data-i18n="navHome">Home</a>
@@ -701,7 +701,7 @@
     </section>
   </main>
 
-  <script>
+  <script type="application/json" id="legacy-factoring-practice-script">
 
     const GAME_TEXT = {
       en:{
@@ -722,21 +722,21 @@
         notes:{gcf:"greatest common factor",pair:"find pair",ac:"AC method",split:"split middle term",group:"factor by grouping",formula:"special product",final:"factored form"}
       },
       zh:{
-        toolBadge:"因式分解练习",
-        title:"因式分解",
-        subtitle:"从多项式中识别结构，练习提公因式、二次三项式、AC 方法、特殊公式和分组分解。",
-        note:"混合模式会均衡抽取五个难度。地狱难度包含多步因式分解和分组。",
-        questionTitle:"因式分解：",
+        toolBadge:"å› å¼åˆ†è§£ç»ƒä¹ ",
+        title:"å› å¼åˆ†è§£",
+        subtitle:"ä»Žå¤šé¡¹å¼ä¸­è¯†åˆ«ç»“æž„ï¼Œç»ƒä¹ æå…¬å› å¼ã€äºŒæ¬¡ä¸‰é¡¹å¼ã€AC æ–¹æ³•ã€ç‰¹æ®Šå…¬å¼å’Œåˆ†ç»„åˆ†è§£ã€‚",
+        note:"æ··åˆæ¨¡å¼ä¼šå‡è¡¡æŠ½å–äº”ä¸ªéš¾åº¦ã€‚åœ°ç‹±éš¾åº¦åŒ…å«å¤šæ­¥å› å¼åˆ†è§£å’Œåˆ†ç»„ã€‚",
+        questionTitle:"å› å¼åˆ†è§£ï¼š",
         difficultyOptions:{
-          easy:"简单：提最大公因式",
-          medium:"中等：首项系数为 1 的二次三项式",
-          hard:"困难：首项系数不为 1 的二次三项式",
-          expert:"专家：特殊公式",
-          hell:"地狱：多步分解和分组",
-          mixed:"混合：从所有难度中均衡出题"
+          easy:"ç®€å•ï¼šææœ€å¤§å…¬å› å¼",
+          medium:"ä¸­ç­‰ï¼šé¦–é¡¹ç³»æ•°ä¸º 1 çš„äºŒæ¬¡ä¸‰é¡¹å¼",
+          hard:"å›°éš¾ï¼šé¦–é¡¹ç³»æ•°ä¸ä¸º 1 çš„äºŒæ¬¡ä¸‰é¡¹å¼",
+          expert:"ä¸“å®¶ï¼šç‰¹æ®Šå…¬å¼",
+          hell:"åœ°ç‹±ï¼šå¤šæ­¥åˆ†è§£å’Œåˆ†ç»„",
+          mixed:"æ··åˆï¼šä»Žæ‰€æœ‰éš¾åº¦ä¸­å‡è¡¡å‡ºé¢˜"
         },
-        suggestion:"建议检查：符号、公因式、特殊公式，以及是否还能继续分解。",
-        notes:{gcf:"最大公因式",pair:"寻找配对",ac:"AC 方法",split:"拆中间项",group:"分组分解",formula:"特殊公式",final:"因式分解形式"}
+        suggestion:"å»ºè®®æ£€æŸ¥ï¼šç¬¦å·ã€å…¬å› å¼ã€ç‰¹æ®Šå…¬å¼ï¼Œä»¥åŠæ˜¯å¦è¿˜èƒ½ç»§ç»­åˆ†è§£ã€‚",
+        notes:{gcf:"æœ€å¤§å…¬å› å¼",pair:"å¯»æ‰¾é…å¯¹",ac:"AC æ–¹æ³•",split:"æ‹†ä¸­é—´é¡¹",group:"åˆ†ç»„åˆ†è§£",formula:"ç‰¹æ®Šå…¬å¼",final:"å› å¼åˆ†è§£å½¢å¼"}
       }
     };
 
@@ -788,47 +788,47 @@
       },
       zh: {
         htmlLang:"zh-CN",
-        navPractice:"练习库",
-        navHome:"主页",
-        setupTitle:"开始练习",
-        difficultyLabel:"难度",
-        questionCountLabel:"题目数量",
-        optionCountLabel:"选项数量",
-        timedModeText:"开启计时模式",
-        timedModeHint:"关闭后不会倒计时；开启后每题单独计时。",
-        timerLevelLabel:"计时难度",
-        startBtn:"开始",
-        sampleBtn:"生成一道样题",
-        quitBtn:"结束本轮",
-        nextBtn:"下一题",
-        resultBtn:"查看结果",
-        correctFeedback:"正确！",
-        wrongFeedback:a=>`错误。正确答案是 ${a}。`,
-        timeUpFeedback:a=>`时间到。正确答案是 ${a}。`,
-        solutionTitle:"正确解法",
-        solutionFinal:"答案：",
-        resultTitle:"练习结果",
-        scoreLabel:"正确题数",
-        accuracyLabel:"正确率",
-        wrongLabel:"错题数量",
-        wrongReviewTitle:"错题整理",
-        restartBtn:"再练一轮",
-        reviewWrongBtn:"只练错题同类型",
-        noWrong:"本轮没有错题。",
-        noWrongTip:"非常好，可以尝试更高难度。",
-        yourAnswer:"你的答案",
-        correctAnswer:"正确答案",
-        timeUpAnswer:"未作答（时间到）",
-        sampleTitle:"样题",
-        sampleQuestion:"题目",
-        sampleAnswer:"正确答案",
-        sampleOptions:"选项示例",
-        progress:(a,b)=>`第 ${a} / ${b} 题`,
-        optionCount:n=>`${n} 个选项`,
-        timerDisplay:s=>`剩余时间：${formatTime(s)}`,
-        difficulties:{easy:"简单",medium:"中等",hard:"困难",expert:"专家",hell:"地狱",mixed:"混合"},
-        timerOptions:{timer_easy:"简单：每题 2 分钟",timer_medium:"中等：每题 1 分钟",timer_hard:"困难：每题 30 秒",timer_expert:"专家：每题 15 秒",timer_hell:"地狱：每题 10 秒"},
-        noWrongAlert:"本轮没有错题，不能生成错题同类型练习。",
+        navPractice:"ç»ƒä¹ åº“",
+        navHome:"ä¸»é¡µ",
+        setupTitle:"å¼€å§‹ç»ƒä¹ ",
+        difficultyLabel:"éš¾åº¦",
+        questionCountLabel:"é¢˜ç›®æ•°é‡",
+        optionCountLabel:"é€‰é¡¹æ•°é‡",
+        timedModeText:"å¼€å¯è®¡æ—¶æ¨¡å¼",
+        timedModeHint:"å…³é—­åŽä¸ä¼šå€’è®¡æ—¶ï¼›å¼€å¯åŽæ¯é¢˜å•ç‹¬è®¡æ—¶ã€‚",
+        timerLevelLabel:"è®¡æ—¶éš¾åº¦",
+        startBtn:"å¼€å§‹",
+        sampleBtn:"ç”Ÿæˆä¸€é“æ ·é¢˜",
+        quitBtn:"ç»“æŸæœ¬è½®",
+        nextBtn:"ä¸‹ä¸€é¢˜",
+        resultBtn:"æŸ¥çœ‹ç»“æžœ",
+        correctFeedback:"æ­£ç¡®ï¼",
+        wrongFeedback:a=>`é”™è¯¯ã€‚æ­£ç¡®ç­”æ¡ˆæ˜¯ ${a}ã€‚`,
+        timeUpFeedback:a=>`æ—¶é—´åˆ°ã€‚æ­£ç¡®ç­”æ¡ˆæ˜¯ ${a}ã€‚`,
+        solutionTitle:"æ­£ç¡®è§£æ³•",
+        solutionFinal:"ç­”æ¡ˆï¼š",
+        resultTitle:"ç»ƒä¹ ç»“æžœ",
+        scoreLabel:"æ­£ç¡®é¢˜æ•°",
+        accuracyLabel:"æ­£ç¡®çŽ‡",
+        wrongLabel:"é”™é¢˜æ•°é‡",
+        wrongReviewTitle:"é”™é¢˜æ•´ç†",
+        restartBtn:"å†ç»ƒä¸€è½®",
+        reviewWrongBtn:"åªç»ƒé”™é¢˜åŒç±»åž‹",
+        noWrong:"æœ¬è½®æ²¡æœ‰é”™é¢˜ã€‚",
+        noWrongTip:"éžå¸¸å¥½ï¼Œå¯ä»¥å°è¯•æ›´é«˜éš¾åº¦ã€‚",
+        yourAnswer:"ä½ çš„ç­”æ¡ˆ",
+        correctAnswer:"æ­£ç¡®ç­”æ¡ˆ",
+        timeUpAnswer:"æœªä½œç­”ï¼ˆæ—¶é—´åˆ°ï¼‰",
+        sampleTitle:"æ ·é¢˜",
+        sampleQuestion:"é¢˜ç›®",
+        sampleAnswer:"æ­£ç¡®ç­”æ¡ˆ",
+        sampleOptions:"é€‰é¡¹ç¤ºä¾‹",
+        progress:(a,b)=>`ç¬¬ ${a} / ${b} é¢˜`,
+        optionCount:n=>`${n} ä¸ªé€‰é¡¹`,
+        timerDisplay:s=>`å‰©ä½™æ—¶é—´ï¼š${formatTime(s)}`,
+        difficulties:{easy:"ç®€å•",medium:"ä¸­ç­‰",hard:"å›°éš¾",expert:"ä¸“å®¶",hell:"åœ°ç‹±",mixed:"æ··åˆ"},
+        timerOptions:{timer_easy:"ç®€å•ï¼šæ¯é¢˜ 2 åˆ†é’Ÿ",timer_medium:"ä¸­ç­‰ï¼šæ¯é¢˜ 1 åˆ†é’Ÿ",timer_hard:"å›°éš¾ï¼šæ¯é¢˜ 30 ç§’",timer_expert:"ä¸“å®¶ï¼šæ¯é¢˜ 15 ç§’",timer_hell:"åœ°ç‹±ï¼šæ¯é¢˜ 10 ç§’"},
+        noWrongAlert:"æœ¬è½®æ²¡æœ‰é”™é¢˜ï¼Œä¸èƒ½ç”Ÿæˆé”™é¢˜åŒç±»åž‹ç»ƒä¹ ã€‚",
         ...GAME_TEXT.zh
       }
     };
@@ -871,7 +871,7 @@
     }
 
     function quad(a,b,c){
-      let first = a === 1 ? "x²" : `${a}x²`;
+      let first = a === 1 ? "xÂ²" : `${a}xÂ²`;
       return `${first}${bx(b)}${cterm(c)}`;
     }
 
@@ -907,11 +907,11 @@
         },
         () => {
           const g=randInt(2,8), a=randInt(2,7), b=randInt(1,8);
-          const expr = `${g*a}x² + ${g*b}x`;
+          const expr = `${g*a}xÂ² + ${g*b}x`;
           const d = gcdInt(a,b), G = g*d, ai = a/d, bi = b/d;
           const inner = positiveBinomial(ai, "x", bi);
           const answer = `${G}x(${inner})`;
-          return makeQ("easy","easy-gcf-x",expr,answer,[{line:`GCF = ${G}x`,note:tr().notes.gcf},{line:`${expr} = ${answer}`,note:tr().notes.final}],[`${g}x(${a}x + ${b})`,`${g}(${a}x² + ${b}x)`,`${G}x(${inner.replace(" + "," - ")})`]);
+          return makeQ("easy","easy-gcf-x",expr,answer,[{line:`GCF = ${G}x`,note:tr().notes.gcf},{line:`${expr} = ${answer}`,note:tr().notes.final}],[`${g}x(${a}x + ${b})`,`${g}(${a}xÂ² + ${b}x)`,`${G}x(${inner.replace(" + "," - ")})`]);
         },
         () => {
           const g=randInt(2,6), a=randInt(2,7), b=randInt(1,8);
@@ -926,7 +926,7 @@
         () => {
           const m=randInt(1,8), n=randInt(1,8);
           const b=m+n, c=m*n, expr=quad(1,b,c), answer=`(x + ${m})(x + ${n})`;
-          return makeQ("medium","medium-monic-positive",expr,answer,[{line:`sum = ${b}, product = ${c}`,note:tr().notes.pair},{line:`${m} + ${n} = ${b}, ${m}·${n} = ${c}`,note:""},{line:`${expr} = ${answer}`,note:tr().notes.final}],[`(x + 1)(x + ${c})`,`(x - ${m})(x - ${n})`,`(x + ${m})(x - ${n})`]);
+          return makeQ("medium","medium-monic-positive",expr,answer,[{line:`sum = ${b}, product = ${c}`,note:tr().notes.pair},{line:`${m} + ${n} = ${b}, ${m}Â·${n} = ${c}`,note:""},{line:`${expr} = ${answer}`,note:tr().notes.final}],[`(x + 1)(x + ${c})`,`(x - ${m})(x - ${n})`,`(x + ${m})(x - ${n})`]);
         },
         () => {
           const m=randInt(1,8), n=randInt(1,8);
@@ -943,51 +943,51 @@
         () => {
           const a=randInt(2,6), c=randInt(1,6), b=randInt(1,7), d=randInt(1,7);
           const A=a*c, B=a*d+b*c, C=b*d, expr=quad(A,B,C), answer=`${factorBinomial(a,b)}${factorBinomial(c,d)}`;
-          return makeQ("hard","hard-ac-positive",expr,answer,[{line:`a·c = ${A*C}`,note:tr().notes.ac},{line:`split ${B}x as ${a*d}x + ${b*c}x`,note:tr().notes.split},{line:`${expr} = ${answer}`,note:tr().notes.final}],[`${factorBinomial(a,d)}${factorBinomial(c,b)}`,`${factorBinomial(a,-b)}${factorBinomial(c,-d)}`,`${factorBinomial(a,b)}${factorBinomial(c,-d)}`]);
+          return makeQ("hard","hard-ac-positive",expr,answer,[{line:`aÂ·c = ${A*C}`,note:tr().notes.ac},{line:`split ${B}x as ${a*d}x + ${b*c}x`,note:tr().notes.split},{line:`${expr} = ${answer}`,note:tr().notes.final}],[`${factorBinomial(a,d)}${factorBinomial(c,b)}`,`${factorBinomial(a,-b)}${factorBinomial(c,-d)}`,`${factorBinomial(a,b)}${factorBinomial(c,-d)}`]);
         },
         () => {
           const a=randInt(2,5), c=randInt(1,5), b=randInt(1,6), d=randInt(1,6);
           const A=a*c, B=-(a*d+b*c), C=b*d, expr=quad(A,B,C), answer=`${factorBinomial(a,-b)}${factorBinomial(c,-d)}`;
-          return makeQ("hard","hard-ac-negative",expr,answer,[{line:`a·c = ${A*C}`,note:tr().notes.ac},{line:`split ${B}x as -${a*d}x - ${b*c}x`,note:tr().notes.split},{line:`${expr} = ${answer}`,note:tr().notes.final}],[`${factorBinomial(a,b)}${factorBinomial(c,d)}`,`${factorBinomial(a,-b)}${factorBinomial(c,d)}`,`${factorBinomial(a,d)}${factorBinomial(c,b)}`]);
+          return makeQ("hard","hard-ac-negative",expr,answer,[{line:`aÂ·c = ${A*C}`,note:tr().notes.ac},{line:`split ${B}x as -${a*d}x - ${b*c}x`,note:tr().notes.split},{line:`${expr} = ${answer}`,note:tr().notes.final}],[`${factorBinomial(a,b)}${factorBinomial(c,d)}`,`${factorBinomial(a,-b)}${factorBinomial(c,d)}`,`${factorBinomial(a,d)}${factorBinomial(c,b)}`]);
         }
       ],
       expert: [
         () => {
-          const n=randInt(2,12), expr=`x² - ${n*n}`, answer=`(x - ${n})(x + ${n})`;
-          return makeQ("expert","expert-difference-squares",expr,answer,[{line:`${expr} = x² - ${n}²`,note:tr().notes.formula},{line:`${expr} = ${answer}`,note:tr().notes.final}],[`(x - ${n})²`,`(x + ${n})²`,`x(x - ${n})`]);
+          const n=randInt(2,12), expr=`xÂ² - ${n*n}`, answer=`(x - ${n})(x + ${n})`;
+          return makeQ("expert","expert-difference-squares",expr,answer,[{line:`${expr} = xÂ² - ${n}Â²`,note:tr().notes.formula},{line:`${expr} = ${answer}`,note:tr().notes.final}],[`(x - ${n})Â²`,`(x + ${n})Â²`,`x(x - ${n})`]);
         },
         () => {
-          const n=randInt(2,10), expr=`x² + ${2*n}x + ${n*n}`, answer=`(x + ${n})²`;
-          return makeQ("expert","expert-perfect-square-plus",expr,answer,[{line:`${expr} = x² + 2(${n})x + ${n}²`,note:tr().notes.formula},{line:`${expr} = ${answer}`,note:tr().notes.final}],[`(x - ${n})²`,`(x + ${n})(x + ${2*n})`,`(x + ${n})(x - ${n})`]);
+          const n=randInt(2,10), expr=`xÂ² + ${2*n}x + ${n*n}`, answer=`(x + ${n})Â²`;
+          return makeQ("expert","expert-perfect-square-plus",expr,answer,[{line:`${expr} = xÂ² + 2(${n})x + ${n}Â²`,note:tr().notes.formula},{line:`${expr} = ${answer}`,note:tr().notes.final}],[`(x - ${n})Â²`,`(x + ${n})(x + ${2*n})`,`(x + ${n})(x - ${n})`]);
         },
         () => {
-          const n=randInt(2,10), expr=`x² - ${2*n}x + ${n*n}`, answer=`(x - ${n})²`;
-          return makeQ("expert","expert-perfect-square-minus",expr,answer,[{line:`${expr} = x² - 2(${n})x + ${n}²`,note:tr().notes.formula},{line:`${expr} = ${answer}`,note:tr().notes.final}],[`(x + ${n})²`,`(x - ${n})(x + ${n})`,`(x - ${n})(x - ${2*n})`]);
+          const n=randInt(2,10), expr=`xÂ² - ${2*n}x + ${n*n}`, answer=`(x - ${n})Â²`;
+          return makeQ("expert","expert-perfect-square-minus",expr,answer,[{line:`${expr} = xÂ² - 2(${n})x + ${n}Â²`,note:tr().notes.formula},{line:`${expr} = ${answer}`,note:tr().notes.final}],[`(x + ${n})Â²`,`(x - ${n})(x + ${n})`,`(x - ${n})(x - ${2*n})`]);
         },
         () => {
-          const n=randInt(2,8), expr=`${n*n}x² - 1`, answer=`(${n}x - 1)(${n}x + 1)`;
-          return makeQ("expert","expert-scaled-difference-squares",expr,answer,[{line:`${expr} = (${n}x)² - 1²`,note:tr().notes.formula},{line:`${expr} = ${answer}`,note:tr().notes.final}],[`(${n}x - 1)²`,`(${n}x + 1)²`,`x(${n*n}x - 1)`]);
+          const n=randInt(2,8), expr=`${n*n}xÂ² - 1`, answer=`(${n}x - 1)(${n}x + 1)`;
+          return makeQ("expert","expert-scaled-difference-squares",expr,answer,[{line:`${expr} = (${n}x)Â² - 1Â²`,note:tr().notes.formula},{line:`${expr} = ${answer}`,note:tr().notes.final}],[`(${n}x - 1)Â²`,`(${n}x + 1)Â²`,`x(${n*n}x - 1)`]);
         }
       ],
       hell: [
         () => {
           const n=randInt(2,6), g=randInt(2,5);
-          const expr=`${g}x² + ${2*g*n}x + ${g*n*n}`, answer=`${g}(x + ${n})²`;
-          return makeQ("hell","hell-gcf-perfect-square",expr,answer,[{line:`GCF = ${g}`,note:tr().notes.gcf},{line:`${expr} = ${g}(x² + ${2*n}x + ${n*n})`,note:""},{line:`${expr} = ${answer}`,note:tr().notes.final}],[`(${g}x + ${n})²`,`${g}(x - ${n})²`,`${g}(x + ${n})(x + ${2*n})`]);
+          const expr=`${g}xÂ² + ${2*g*n}x + ${g*n*n}`, answer=`${g}(x + ${n})Â²`;
+          return makeQ("hell","hell-gcf-perfect-square",expr,answer,[{line:`GCF = ${g}`,note:tr().notes.gcf},{line:`${expr} = ${g}(xÂ² + ${2*n}x + ${n*n})`,note:""},{line:`${expr} = ${answer}`,note:tr().notes.final}],[`(${g}x + ${n})Â²`,`${g}(x - ${n})Â²`,`${g}(x + ${n})(x + ${2*n})`]);
         },
         () => {
           const n=randInt(2,8), g=randInt(2,6);
-          const expr=`${g}x² - ${g*n*n}`, answer=`${g}(x - ${n})(x + ${n})`;
-          return makeQ("hell","hell-gcf-difference-squares",expr,answer,[{line:`GCF = ${g}`,note:tr().notes.gcf},{line:`${expr} = ${g}(x² - ${n*n})`,note:""},{line:`${expr} = ${answer}`,note:tr().notes.final}],[`${g}(x - ${n})²`,`${g}(x + ${n})²`,`(${g}x - ${n})(${g}x + ${n})`]);
+          const expr=`${g}xÂ² - ${g*n*n}`, answer=`${g}(x - ${n})(x + ${n})`;
+          return makeQ("hell","hell-gcf-difference-squares",expr,answer,[{line:`GCF = ${g}`,note:tr().notes.gcf},{line:`${expr} = ${g}(xÂ² - ${n*n})`,note:""},{line:`${expr} = ${answer}`,note:tr().notes.final}],[`${g}(x - ${n})Â²`,`${g}(x + ${n})Â²`,`(${g}x - ${n})(${g}x + ${n})`]);
         },
         () => {
           const n=randInt(2,5);
-          const expr=`x³ + ${n}x² - 4x - ${4*n}`, answer=`(x - 2)(x + 2)(x + ${n})`;
-          return makeQ("hell","hell-grouping-cubic",expr,answer,[{line:`x²(x + ${n}) - 4(x + ${n})`,note:tr().notes.group},{line:`(x² - 4)(x + ${n})`,note:tr().notes.group},{line:`${answer}`,note:tr().notes.final}],[`(x² + 4)(x + ${n})`,`(x - 2)²(x + ${n})`,`(x + 2)²(x + ${n})`]);
+          const expr=`xÂ³ + ${n}xÂ² - 4x - ${4*n}`, answer=`(x - 2)(x + 2)(x + ${n})`;
+          return makeQ("hell","hell-grouping-cubic",expr,answer,[{line:`xÂ²(x + ${n}) - 4(x + ${n})`,note:tr().notes.group},{line:`(xÂ² - 4)(x + ${n})`,note:tr().notes.group},{line:`${answer}`,note:tr().notes.final}],[`(xÂ² + 4)(x + ${n})`,`(x - 2)Â²(x + ${n})`,`(x + 2)Â²(x + ${n})`]);
         },
         () => {
-          const n=randInt(2,6), expr=`x² - ${2*n}xy + ${n*n}y²`, answer=`(x - ${n}y)²`;
-          return makeQ("hell","hell-two-variable-square",expr,answer,[{line:`${expr} = x² - 2(${n})xy + (${n}y)²`,note:tr().notes.formula},{line:`${expr} = ${answer}`,note:tr().notes.final}],[`(x + ${n}y)²`,`(x - ${n})(x + ${n})y²`,`(x - y)²`]);
+          const n=randInt(2,6), expr=`xÂ² - ${2*n}xy + ${n*n}yÂ²`, answer=`(x - ${n}y)Â²`;
+          return makeQ("hell","hell-two-variable-square",expr,answer,[{line:`${expr} = xÂ² - 2(${n})xy + (${n}y)Â²`,note:tr().notes.formula},{line:`${expr} = ${answer}`,note:tr().notes.final}],[`(x + ${n}y)Â²`,`(x - ${n})(x + ${n})yÂ²`,`(x - y)Â²`]);
         }
       ]
     };
@@ -1028,7 +1028,7 @@
         q.distractors.forEach(addDistractor);
 
         while(distractors.size < count - 1){
-          addDistractor(choose(["x(x + 1)","(x + 1)(x - 1)","(x + 2)²","(x - 2)²","2(x + 1)"]));
+          addDistractor(choose(["x(x + 1)","(x + 1)(x - 1)","(x + 2)Â²","(x - 2)Â²","2(x + 1)"]));
         }
 
         return shuffle([
@@ -1147,18 +1147,18 @@
       if(!s) return "";
 
       s = s
-        .replace(/−/g, "-")
-        .replace(/×/g, "\\times ")
-        .replace(/·/g, "\\cdot ")
+        .replace(/âˆ’/g, "-")
+        .replace(/Ã—/g, "\\times ")
+        .replace(/Â·/g, "\\cdot ")
         .replace(/\u00a0/g, " ");
 
       const pureText = {
         "No solution": "\\text{No solution}",
         "Infinitely many solutions": "\\text{Infinitely many solutions}",
         "No answer: time is up": "\\text{No answer: time is up}",
-        "无解": "\\text{无解}",
-        "无穷多个解": "\\text{无穷多个解}",
-        "未作答（时间到）": "\\text{未作答（时间到）}"
+        "æ— è§£": "\\text{æ— è§£}",
+        "æ— ç©·å¤šä¸ªè§£": "\\text{æ— ç©·å¤šä¸ªè§£}",
+        "æœªä½œç­”ï¼ˆæ—¶é—´åˆ°ï¼‰": "\\text{æœªä½œç­”ï¼ˆæ—¶é—´åˆ°ï¼‰}"
       };
       if(pureText[s]) return pureText[s];
 
@@ -1187,7 +1187,7 @@
       s = s.replace(/\*/g, "\\cdot ");
       s = s.replace(/\bof\b/g, "\\text{ of }");
       s = s.replace(/%/g, "\\%");
-      s = s.replace(/π/g, "\\text{π}");
+      s = s.replace(/Ï€/g, "\\text{Ï€}");
       s = s.replace(/\?/g, "?");
 
       s = s.replace(/sqrt\(([^()]*)\)/g, (_, inner) => `\\sqrt{${mathToLatex(inner)}}`);
@@ -1203,13 +1203,13 @@
       s = s.replace(/\^\(([^)]+)\)/g, (_, exponent) => `^{${mathToLatex(exponent)}}`);
       s = s.replace(/\^(-?\d+)/g, "^{$1}");
       s = s.replace(/\^([a-zA-Z]+)/g, "^{$1}");
-      s = s.replace(/([a-zA-Z])²/g, "$1^{2}");
-      s = s.replace(/([a-zA-Z])³/g, "$1^{3}");
+      s = s.replace(/([a-zA-Z])Â²/g, "$1^{2}");
+      s = s.replace(/([a-zA-Z])Â³/g, "$1^{3}");
 
       s = s.replace(/x\^\{1\}/g, "x");
       s = s.replace(/x\^\{0\}/g, "1");
       s = s.replace(/\bln\b/g, "\\ln");
-      s = s.replace(/(^|[^A-Za-z])pi(?![A-Za-z])/g, "$1\\text{π}");
+      s = s.replace(/(^|[^A-Za-z])pi(?![A-Za-z])/g, "$1\\text{Ï€}");
 
       return s;
     }
@@ -1217,8 +1217,8 @@
     function shouldRenderMath(expr){
       const s = String(expr ?? "").trim();
       if(!s) return false;
-      if(["No solution","Infinitely many solutions","无解","无穷多个解"].includes(s)) return true;
-      if(/[=^/*+\-()π%²³]/.test(s)) return true;
+      if(["No solution","Infinitely many solutions","æ— è§£","æ— ç©·å¤šä¸ªè§£"].includes(s)) return true;
+      if(/[=^/*+\-()Ï€%Â²Â³]/.test(s)) return true;
       if(/^\s*-?\d+(\.\d+)?\s*$/.test(s)) return true;
       if(isSimpleMonomial(s)) return true;
       if(/^[A-Za-z]\s*\(/.test(s)) return true;
@@ -1475,7 +1475,7 @@
       }
 
       progressText.textContent = tr().progress(currentIndex + 1, quiz.length);
-      difficultyText.textContent = lastDifficulty === "mixed" ? `${tr().difficulties.mixed} · ${tr().difficulties[q.difficulty]}` : tr().difficulties[q.difficulty];
+      difficultyText.textContent = lastDifficulty === "mixed" ? `${tr().difficulties.mixed} Â· ${tr().difficulties[q.difficulty]}` : tr().difficulties[q.difficulty];
       progressBar.style.width = `${(currentIndex / quiz.length) * 100}%`;
       renderMaybeMath(qMain, q.main, true);
       if(q.extra){ renderMaybeMath(qExtra, q.extra, false); } else { qExtra.textContent = ""; }
@@ -1507,8 +1507,8 @@
         feedbackEl.classList.add("good");
       } else {
         const prefix = timeUp
-          ? (lang === "zh" ? "时间到。正确答案是" : "Time is up. The correct answer is")
-          : (lang === "zh" ? "错误。正确答案是" : "Incorrect. The correct answer is");
+          ? (lang === "zh" ? "æ—¶é—´åˆ°ã€‚æ­£ç¡®ç­”æ¡ˆæ˜¯" : "Time is up. The correct answer is")
+          : (lang === "zh" ? "é”™è¯¯ã€‚æ­£ç¡®ç­”æ¡ˆæ˜¯" : "Incorrect. The correct answer is");
         feedbackEl.innerHTML = `${prefix} ${mathSpan(answer, "feedback-math")}.`;
         renderTaggedMath(feedbackEl);
         feedbackEl.classList.add("bad");
@@ -1712,8 +1712,21 @@
     applyLanguage();
 
   </script>
+  <script>
+    window.MCLQuizTool = {
+      gameId: "factoring-practice", course: "algebra-1", balancedMixed: true, avoidConsecutiveTypes: true,
+      builders: { easy: [], medium: [], hard: [], expert: [] },
+      text: {
+        en: { title: "Factoring Practice", toolBadge: "Algebra I", subtitle: "Factor using GCF, trinomial patterns, the AC method, special structures, grouping, and substitution.", note: "Every correct factorization is designed to expand exactly to the displayed polynomial." },
+        zh: { title: "\u56e0\u5f0f\u5206\u89e3\u4e13\u9879\u7ec3\u4e60", toolBadge: "\u4ee3\u6570 I", subtitle: "\u7ec3\u4e60\u6700\u5927\u516c\u56e0\u5f0f\u3001\u4e09\u9879\u5f0f\u7ed3\u6784\u3001AC \u6cd5\u3001\u7279\u6b8a\u7ed3\u6784\u3001\u5206\u7ec4\u4e0e\u4ee3\u6362\u3002", note: "\u6bcf\u4e2a\u6b63\u786e\u56e0\u5f0f\u5f62\u5f0f\u91cd\u65b0\u5c55\u5f00\u540e\u90fd\u5fc5\u987b\u7cbe\u786e\u8fd8\u539f\u539f\u591a\u9879\u5f0f\u3002" }
+      }
+    };
+  </script>
+  <script src="../assets/js/question-template-registry.js?v=20260724.1"></script>
+  <script src="../assets/js/factoring-practice-bank.js?v=20260724.1"></script>
+  <script src="../assets/js/quiz-tool-engine.js?v=20260724.2"></script>
   <script src="../assets/js/tool-modes.js"></script>
-  <script src="../assets/js/report-export.js?v=20260722.1"></script>
+  <script src="../assets/js/report-export.js?v=20260725.2"></script>
 
   <script src="../assets/js/tool-ux.js?v=20260716.2"></script>
   <script src="../assets/js/tool-catalog.js?v=20260716.3"></script>

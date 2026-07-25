@@ -462,12 +462,12 @@
 </style>
   <script src="../assets/js/theme.js?v=20260716.2"></script>
   <link rel="stylesheet" href="../assets/css/quiz-tool.css">
-  <link rel="stylesheet" href="../assets/css/design-system.css?v=20260717.2">
+  <link rel="stylesheet" href="../assets/css/design-system.css?v=20260724.1">
   <script defer src="https://cdn.jsdelivr.net/npm/lucide@0.468.0/dist/umd/lucide.min.js"></script>
 </head>
 <body>
   <nav class="mc-site-shell">
-    <a class="mc-brand" href="../index.html"><span class="mc-brand-mark">∑</span><span>MathComplete Lab</span></a>
+    <a class="mc-brand" href="../index.html"><span class="mc-brand-mark">âˆ‘</span><span>MathComplete Lab</span></a>
     <div class="mc-links">
       <a class="mc-link" href="../practice.html" data-i18n="navPractice">Practice Library</a>
       <a class="mc-link primary" href="../index.html" data-i18n="navHome">Home</a>
@@ -532,7 +532,7 @@
     </section>
   </main>
 
-  <script>
+  <script type="application/json" id="legacy-exponential-functions-script">
     const GAME_TEXT = {
       en: {
         toolBadge: "Algebra II",
@@ -592,58 +592,58 @@
       },
       zh: {
         toolBadge: "Algebra II",
-        title: "指数函数专项练习",
-        subtitle: "练习指数增长、指数衰减、表格、方程、函数变换和实际模型。",
-        note: "这个工具使用随机题型模板。每个主题型下面都有多个子模板，所以不是只换数字，而是同一知识点用不同形式反复训练。",
-        questionTitle: "请阅读题干，并选择正确答案。",
-        promptEvaluate: "计算指数函数的值。",
-        promptIdentifyPart: "识别指数函数中的指定部分。",
-        promptGrowthDecay: "判断函数表示增长还是衰减。",
-        promptWhichExponential: "选择指数函数。",
-        promptWriteEquation: "写出指数函数模型。",
-        promptTableEquation: "找出符合表格的函数。",
-        promptWordValue: "根据文字模型计算指定数值。",
-        promptMissingTable: "求表格中的缺失值。",
-        promptCompare: "比较两个指数函数。",
-        promptTransform: "识别函数变换或函数特征。",
-        promptSolveEquation: "解指数方程。",
-        promptTwoPoints: "求经过给定点的指数函数。",
-        promptPercentModel: "使用百分比增长或衰减模型。",
-        promptFeature: "识别定义域、值域或渐近线。",
-        promptHalfLife: "使用半衰期或倍增时间模型。",
-        promptLongRun: "选择最终增长更快的函数。",
-        promptStatement: "选择正确说法。",
+        title: "æŒ‡æ•°å‡½æ•°ä¸“é¡¹ç»ƒä¹ ",
+        subtitle: "ç»ƒä¹ æŒ‡æ•°å¢žé•¿ã€æŒ‡æ•°è¡°å‡ã€è¡¨æ ¼ã€æ–¹ç¨‹ã€å‡½æ•°å˜æ¢å’Œå®žé™…æ¨¡åž‹ã€‚",
+        note: "è¿™ä¸ªå·¥å…·ä½¿ç”¨éšæœºé¢˜åž‹æ¨¡æ¿ã€‚æ¯ä¸ªä¸»é¢˜åž‹ä¸‹é¢éƒ½æœ‰å¤šä¸ªå­æ¨¡æ¿ï¼Œæ‰€ä»¥ä¸æ˜¯åªæ¢æ•°å­—ï¼Œè€Œæ˜¯åŒä¸€çŸ¥è¯†ç‚¹ç”¨ä¸åŒå½¢å¼åå¤è®­ç»ƒã€‚",
+        questionTitle: "è¯·é˜…è¯»é¢˜å¹²ï¼Œå¹¶é€‰æ‹©æ­£ç¡®ç­”æ¡ˆã€‚",
+        promptEvaluate: "è®¡ç®—æŒ‡æ•°å‡½æ•°çš„å€¼ã€‚",
+        promptIdentifyPart: "è¯†åˆ«æŒ‡æ•°å‡½æ•°ä¸­çš„æŒ‡å®šéƒ¨åˆ†ã€‚",
+        promptGrowthDecay: "åˆ¤æ–­å‡½æ•°è¡¨ç¤ºå¢žé•¿è¿˜æ˜¯è¡°å‡ã€‚",
+        promptWhichExponential: "é€‰æ‹©æŒ‡æ•°å‡½æ•°ã€‚",
+        promptWriteEquation: "å†™å‡ºæŒ‡æ•°å‡½æ•°æ¨¡åž‹ã€‚",
+        promptTableEquation: "æ‰¾å‡ºç¬¦åˆè¡¨æ ¼çš„å‡½æ•°ã€‚",
+        promptWordValue: "æ ¹æ®æ–‡å­—æ¨¡åž‹è®¡ç®—æŒ‡å®šæ•°å€¼ã€‚",
+        promptMissingTable: "æ±‚è¡¨æ ¼ä¸­çš„ç¼ºå¤±å€¼ã€‚",
+        promptCompare: "æ¯”è¾ƒä¸¤ä¸ªæŒ‡æ•°å‡½æ•°ã€‚",
+        promptTransform: "è¯†åˆ«å‡½æ•°å˜æ¢æˆ–å‡½æ•°ç‰¹å¾ã€‚",
+        promptSolveEquation: "è§£æŒ‡æ•°æ–¹ç¨‹ã€‚",
+        promptTwoPoints: "æ±‚ç»è¿‡ç»™å®šç‚¹çš„æŒ‡æ•°å‡½æ•°ã€‚",
+        promptPercentModel: "ä½¿ç”¨ç™¾åˆ†æ¯”å¢žé•¿æˆ–è¡°å‡æ¨¡åž‹ã€‚",
+        promptFeature: "è¯†åˆ«å®šä¹‰åŸŸã€å€¼åŸŸæˆ–æ¸è¿‘çº¿ã€‚",
+        promptHalfLife: "ä½¿ç”¨åŠè¡°æœŸæˆ–å€å¢žæ—¶é—´æ¨¡åž‹ã€‚",
+        promptLongRun: "é€‰æ‹©æœ€ç»ˆå¢žé•¿æ›´å¿«çš„å‡½æ•°ã€‚",
+        promptStatement: "é€‰æ‹©æ­£ç¡®è¯´æ³•ã€‚",
         difficultyOptions: {
-          easy: "简单：代入求值、识别组成部分、判断增长衰减",
-          medium: "中等：百分比模型、表格和基础比较",
-          hard: "困难：函数变换、指数方程、两点建模、函数特征",
-          expert: "专家：复杂方程、半衰期、非连续点、长期增长比较",
-          mixed: "混合：从所有难度中均衡出题"
+          easy: "ç®€å•ï¼šä»£å…¥æ±‚å€¼ã€è¯†åˆ«ç»„æˆéƒ¨åˆ†ã€åˆ¤æ–­å¢žé•¿è¡°å‡",
+          medium: "ä¸­ç­‰ï¼šç™¾åˆ†æ¯”æ¨¡åž‹ã€è¡¨æ ¼å’ŒåŸºç¡€æ¯”è¾ƒ",
+          hard: "å›°éš¾ï¼šå‡½æ•°å˜æ¢ã€æŒ‡æ•°æ–¹ç¨‹ã€ä¸¤ç‚¹å»ºæ¨¡ã€å‡½æ•°ç‰¹å¾",
+          expert: "ä¸“å®¶ï¼šå¤æ‚æ–¹ç¨‹ã€åŠè¡°æœŸã€éžè¿žç»­ç‚¹ã€é•¿æœŸå¢žé•¿æ¯”è¾ƒ",
+          mixed: "æ··åˆï¼šä»Žæ‰€æœ‰éš¾åº¦ä¸­å‡è¡¡å‡ºé¢˜"
         },
-        suggestion: "建议：检查初始值、底数、指数，以及底数是大于 1 还是介于 0 和 1 之间。",
+        suggestion: "å»ºè®®ï¼šæ£€æŸ¥åˆå§‹å€¼ã€åº•æ•°ã€æŒ‡æ•°ï¼Œä»¥åŠåº•æ•°æ˜¯å¤§äºŽ 1 è¿˜æ˜¯ä»‹äºŽ 0 å’Œ 1 ä¹‹é—´ã€‚",
         notes: {
-          substitute: "代入给定的 x 值",
-          exponentFirst: "先计算指数部分",
-          initial: "初始值就是 x = 0 时的函数值",
-          base: "底数表示每一步重复乘上的倍数",
-          growth: "底数大于 1 表示增长",
-          decay: "底数在 0 和 1 之间表示衰减",
-          exponential: "变量必须出现在指数位置",
-          percentGrowth: "增长 r% 表示每次乘以 1 + r",
-          percentDecay: "衰减 r% 表示每次乘以 1 - r",
-          ratio: "用相邻 y 值相除得到共同倍数",
-          table: "使用 y = ab^x，其中 a 来自 x = 0",
-          compare: "在同一个 x 值处分别计算两个函数",
-          shift: "从指数内部和外部常数读取平移",
-          asymptote: "水平渐近线就是竖直平移后的那条线",
-          sameBase: "把两边改写成相同底数",
-          exponentsEqual: "同底且底数为正时，令指数相等",
-          twoPoints: "利用 y 值的比例求 b",
-          model: "先建立模型，再代入时间",
-          halfLife: "每经过一个半衰期，数量乘以 1/2",
-          doubling: "每经过一个倍增时间，数量乘以 2",
-          longRun: "指数增长中，底数更大的函数最终增长更快",
-          combined: "逐条对照 y = a b^(x-h) + k 检查说法"
+          substitute: "ä»£å…¥ç»™å®šçš„ x å€¼",
+          exponentFirst: "å…ˆè®¡ç®—æŒ‡æ•°éƒ¨åˆ†",
+          initial: "åˆå§‹å€¼å°±æ˜¯ x = 0 æ—¶çš„å‡½æ•°å€¼",
+          base: "åº•æ•°è¡¨ç¤ºæ¯ä¸€æ­¥é‡å¤ä¹˜ä¸Šçš„å€æ•°",
+          growth: "åº•æ•°å¤§äºŽ 1 è¡¨ç¤ºå¢žé•¿",
+          decay: "åº•æ•°åœ¨ 0 å’Œ 1 ä¹‹é—´è¡¨ç¤ºè¡°å‡",
+          exponential: "å˜é‡å¿…é¡»å‡ºçŽ°åœ¨æŒ‡æ•°ä½ç½®",
+          percentGrowth: "å¢žé•¿ r% è¡¨ç¤ºæ¯æ¬¡ä¹˜ä»¥ 1 + r",
+          percentDecay: "è¡°å‡ r% è¡¨ç¤ºæ¯æ¬¡ä¹˜ä»¥ 1 - r",
+          ratio: "ç”¨ç›¸é‚» y å€¼ç›¸é™¤å¾—åˆ°å…±åŒå€æ•°",
+          table: "ä½¿ç”¨ y = ab^xï¼Œå…¶ä¸­ a æ¥è‡ª x = 0",
+          compare: "åœ¨åŒä¸€ä¸ª x å€¼å¤„åˆ†åˆ«è®¡ç®—ä¸¤ä¸ªå‡½æ•°",
+          shift: "ä»ŽæŒ‡æ•°å†…éƒ¨å’Œå¤–éƒ¨å¸¸æ•°è¯»å–å¹³ç§»",
+          asymptote: "æ°´å¹³æ¸è¿‘çº¿å°±æ˜¯ç«–ç›´å¹³ç§»åŽçš„é‚£æ¡çº¿",
+          sameBase: "æŠŠä¸¤è¾¹æ”¹å†™æˆç›¸åŒåº•æ•°",
+          exponentsEqual: "åŒåº•ä¸”åº•æ•°ä¸ºæ­£æ—¶ï¼Œä»¤æŒ‡æ•°ç›¸ç­‰",
+          twoPoints: "åˆ©ç”¨ y å€¼çš„æ¯”ä¾‹æ±‚ b",
+          model: "å…ˆå»ºç«‹æ¨¡åž‹ï¼Œå†ä»£å…¥æ—¶é—´",
+          halfLife: "æ¯ç»è¿‡ä¸€ä¸ªåŠè¡°æœŸï¼Œæ•°é‡ä¹˜ä»¥ 1/2",
+          doubling: "æ¯ç»è¿‡ä¸€ä¸ªå€å¢žæ—¶é—´ï¼Œæ•°é‡ä¹˜ä»¥ 2",
+          longRun: "æŒ‡æ•°å¢žé•¿ä¸­ï¼Œåº•æ•°æ›´å¤§çš„å‡½æ•°æœ€ç»ˆå¢žé•¿æ›´å¿«",
+          combined: "é€æ¡å¯¹ç…§ y = a b^(x-h) + k æ£€æŸ¥è¯´æ³•"
         }
       }
     };
@@ -701,51 +701,51 @@
       },
       zh: {
         htmlLang: "zh-CN",
-        navPractice: "练习库",
-        navHome: "首页",
-        setupTitle: "开始练习",
-        difficultyLabel: "难度",
-        questionCountLabel: "题目数量",
-        optionCountLabel: "选项数量",
-        timedModeText: "开启计时模式",
-        timedModeHint: "关闭时没有倒计时；开启后每题都有单独计时。",
-        timerLevelLabel: "计时等级",
-        startBtn: "开始",
-        sampleBtn: "生成样题",
-        quitBtn: "结束本轮",
-        nextBtn: "下一题",
-        resultBtn: "查看结果",
-        correctFeedback: "正确！",
-        solutionTitle: "正确解法",
-        solutionFinal: "答案：",
-        resultTitle: "练习结果",
-        scoreLabel: "正确题数",
-        accuracyLabel: "正确率",
-        wrongLabel: "错题数",
-        wrongReviewTitle: "错题回顾",
-        restartBtn: "重新练习",
-        reviewWrongBtn: "练习相似错题",
-        noWrong: "本轮没有错题。",
-        noWrongTip: "很好，可以尝试更高难度。",
-        noWrongAlert: "没有错题可以复练。",
-        yourAnswer: "你的答案",
-        correctAnswer: "正确答案",
-        timeUpAnswer: "未作答：时间到",
-        sampleTitle: "样题",
-        sampleQuestion: "题目",
-        sampleAnswer: "正确答案",
-        sampleOptions: "样例选项",
-        incorrectPrefix: "错误。正确答案是",
-        timeUpPrefix: "时间到。正确答案是",
-        progress: (a, b) => `第 ${a} / ${b} 题`,
-        optionCount: n => `${n} 个选项`,
-        timerDisplay: s => `剩余时间：${formatTime(s)}`,
-        difficulties: { easy: "简单", medium: "中等", hard: "困难", expert: "专家", mixed: "混合" },
+        navPractice: "ç»ƒä¹ åº“",
+        navHome: "é¦–é¡µ",
+        setupTitle: "å¼€å§‹ç»ƒä¹ ",
+        difficultyLabel: "éš¾åº¦",
+        questionCountLabel: "é¢˜ç›®æ•°é‡",
+        optionCountLabel: "é€‰é¡¹æ•°é‡",
+        timedModeText: "å¼€å¯è®¡æ—¶æ¨¡å¼",
+        timedModeHint: "å…³é—­æ—¶æ²¡æœ‰å€’è®¡æ—¶ï¼›å¼€å¯åŽæ¯é¢˜éƒ½æœ‰å•ç‹¬è®¡æ—¶ã€‚",
+        timerLevelLabel: "è®¡æ—¶ç­‰çº§",
+        startBtn: "å¼€å§‹",
+        sampleBtn: "ç”Ÿæˆæ ·é¢˜",
+        quitBtn: "ç»“æŸæœ¬è½®",
+        nextBtn: "ä¸‹ä¸€é¢˜",
+        resultBtn: "æŸ¥çœ‹ç»“æžœ",
+        correctFeedback: "æ­£ç¡®ï¼",
+        solutionTitle: "æ­£ç¡®è§£æ³•",
+        solutionFinal: "ç­”æ¡ˆï¼š",
+        resultTitle: "ç»ƒä¹ ç»“æžœ",
+        scoreLabel: "æ­£ç¡®é¢˜æ•°",
+        accuracyLabel: "æ­£ç¡®çŽ‡",
+        wrongLabel: "é”™é¢˜æ•°",
+        wrongReviewTitle: "é”™é¢˜å›žé¡¾",
+        restartBtn: "é‡æ–°ç»ƒä¹ ",
+        reviewWrongBtn: "ç»ƒä¹ ç›¸ä¼¼é”™é¢˜",
+        noWrong: "æœ¬è½®æ²¡æœ‰é”™é¢˜ã€‚",
+        noWrongTip: "å¾ˆå¥½ï¼Œå¯ä»¥å°è¯•æ›´é«˜éš¾åº¦ã€‚",
+        noWrongAlert: "æ²¡æœ‰é”™é¢˜å¯ä»¥å¤ç»ƒã€‚",
+        yourAnswer: "ä½ çš„ç­”æ¡ˆ",
+        correctAnswer: "æ­£ç¡®ç­”æ¡ˆ",
+        timeUpAnswer: "æœªä½œç­”ï¼šæ—¶é—´åˆ°",
+        sampleTitle: "æ ·é¢˜",
+        sampleQuestion: "é¢˜ç›®",
+        sampleAnswer: "æ­£ç¡®ç­”æ¡ˆ",
+        sampleOptions: "æ ·ä¾‹é€‰é¡¹",
+        incorrectPrefix: "é”™è¯¯ã€‚æ­£ç¡®ç­”æ¡ˆæ˜¯",
+        timeUpPrefix: "æ—¶é—´åˆ°ã€‚æ­£ç¡®ç­”æ¡ˆæ˜¯",
+        progress: (a, b) => `ç¬¬ ${a} / ${b} é¢˜`,
+        optionCount: n => `${n} ä¸ªé€‰é¡¹`,
+        timerDisplay: s => `å‰©ä½™æ—¶é—´ï¼š${formatTime(s)}`,
+        difficulties: { easy: "ç®€å•", medium: "ä¸­ç­‰", hard: "å›°éš¾", expert: "ä¸“å®¶", mixed: "æ··åˆ" },
         timerOptions: {
-          timer_easy: "简单：每题 2 分钟",
-          timer_medium: "中等：每题 1 分钟",
-          timer_hard: "困难：每题 30 秒",
-          timer_expert: "地狱：每题 15 秒"
+          timer_easy: "ç®€å•ï¼šæ¯é¢˜ 2 åˆ†é’Ÿ",
+          timer_medium: "ä¸­ç­‰ï¼šæ¯é¢˜ 1 åˆ†é’Ÿ",
+          timer_hard: "å›°éš¾ï¼šæ¯é¢˜ 30 ç§’",
+          timer_expert: "åœ°ç‹±ï¼šæ¯é¢˜ 15 ç§’"
         },
         ...GAME_TEXT.zh
       }
@@ -951,11 +951,11 @@
     function contextualFallbacks(q) {
       const growth = textLatex(growthText());
       const decay = textLatex(decayText());
-      const linear = textLatex(lang === "zh" ? "线性" : "Linear");
-      const quadratic = textLatex(lang === "zh" ? "二次" : "Quadratic");
-      const cannotDetermine = textLatex(lang === "zh" ? "无法判断" : "cannot determine");
+      const linear = textLatex(lang === "zh" ? "çº¿æ€§" : "Linear");
+      const quadratic = textLatex(lang === "zh" ? "äºŒæ¬¡" : "Quadratic");
+      const cannotDetermine = textLatex(lang === "zh" ? "æ— æ³•åˆ¤æ–­" : "cannot determine");
 
-      if (q.promptKey === "promptGrowthDecay") return [growth, decay, linear, quadratic, textLatex(lang === "zh" ? "没有变化" : "No change")];
+      if (q.promptKey === "promptGrowthDecay") return [growth, decay, linear, quadratic, textLatex(lang === "zh" ? "æ²¡æœ‰å˜åŒ–" : "No change")];
 
       if (q.promptKey === "promptCompare" || q.promptKey === "promptLongRun" || q.type.includes("long-run")) {
         return [
@@ -982,10 +982,10 @@
       if (q.promptKey === "promptFeature" || q.promptKey === "promptStatement") {
         return [
           `y=0`, `y=1`, `x=0`, `x=1`, `y>0`, `y<0`,
-          textLatex(lang === "zh" ? "定义域是所有实数" : "domain is all real numbers"),
-          textLatex(lang === "zh" ? "值域是 y>0" : "range is y>0"),
-          textLatex(lang === "zh" ? "这是增长函数" : "this is growth"),
-          textLatex(lang === "zh" ? "这是衰减函数" : "this is decay"),
+          textLatex(lang === "zh" ? "å®šä¹‰åŸŸæ˜¯æ‰€æœ‰å®žæ•°" : "domain is all real numbers"),
+          textLatex(lang === "zh" ? "å€¼åŸŸæ˜¯ y>0" : "range is y>0"),
+          textLatex(lang === "zh" ? "è¿™æ˜¯å¢žé•¿å‡½æ•°" : "this is growth"),
+          textLatex(lang === "zh" ? "è¿™æ˜¯è¡°å‡å‡½æ•°" : "this is decay"),
           cannotDetermine
         ];
       }
@@ -1006,13 +1006,13 @@
       return `\\begin{array}{c|${"c".repeat(rows.length)}}x&${rows.map(r => r[0]).join("&")}\\\\\\hline y&${rows.map(r => r[1]).join("&")}\\end{array}`;
     }
     function comparisonLatex(left, rel, right) { return `${left}${rel}${right}`; }
-    function growthText() { return lang === "zh" ? "增长" : "Growth"; }
-    function decayText() { return lang === "zh" ? "衰减" : "Decay"; }
-    function rightText(h) { return lang === "zh" ? `向右 ${h}` : `right ${h}`; }
-    function leftText(h) { return lang === "zh" ? `向左 ${h}` : `left ${h}`; }
-    function upText(k) { return lang === "zh" ? `向上 ${k}` : `up ${k}`; }
-    function downText(k) { return lang === "zh" ? `向下 ${Math.abs(k)}` : `down ${Math.abs(k)}`; }
-    function allRealText() { return lang === "zh" ? "所有实数" : "all real numbers"; }
+    function growthText() { return lang === "zh" ? "å¢žé•¿" : "Growth"; }
+    function decayText() { return lang === "zh" ? "è¡°å‡" : "Decay"; }
+    function rightText(h) { return lang === "zh" ? `å‘å³ ${h}` : `right ${h}`; }
+    function leftText(h) { return lang === "zh" ? `å‘å·¦ ${h}` : `left ${h}`; }
+    function upText(k) { return lang === "zh" ? `å‘ä¸Š ${k}` : `up ${k}`; }
+    function downText(k) { return lang === "zh" ? `å‘ä¸‹ ${Math.abs(k)}` : `down ${Math.abs(k)}`; }
+    function allRealText() { return lang === "zh" ? "æ‰€æœ‰å®žæ•°" : "all real numbers"; }
 
     const BUILDERS = {
       easy: [
@@ -1049,21 +1049,21 @@
         // 2. Identify parts.
         () => {
           const a = randInt(2, 12), b = choose([2, 3, 4, 5, 6]);
-          return makeQuestion("easy", "identify-initial", "promptIdentifyPart", `y=${modelLatex(a, b)}.\\quad ${textLatex(lang === "zh" ? "初始值是多少？" : "What is the initial value?")}`, String(a), [
+          return makeQuestion("easy", "identify-initial", "promptIdentifyPart", `y=${modelLatex(a, b)}.\\quad ${textLatex(lang === "zh" ? "åˆå§‹å€¼æ˜¯å¤šå°‘ï¼Ÿ" : "What is the initial value?")}`, String(a), [
             { line: `y=${a}\\cdot ${b}^{x}`, note: tr().notes.initial },
             { line: `y(0)=${a}\\cdot ${b}^{0}=${a}`, note: tr().notes.initial }
           ], [String(b), String(a * b), "1", String(a + b)]);
         },
         () => {
           const a = randInt(2, 9), b = choose([2, 3, 4, 5, 7]);
-          return makeQuestion("easy", "identify-base", "promptIdentifyPart", `y=${modelLatex(a, b)}.\\quad ${textLatex(lang === "zh" ? "增长因子是多少？" : "What is the growth factor?")}`, String(b), [
+          return makeQuestion("easy", "identify-base", "promptIdentifyPart", `y=${modelLatex(a, b)}.\\quad ${textLatex(lang === "zh" ? "å¢žé•¿å› å­æ˜¯å¤šå°‘ï¼Ÿ" : "What is the growth factor?")}`, String(b), [
             { line: `y=a\\cdot b^x`, note: tr().notes.base },
             { line: `b=${b}`, note: tr().notes.base }
           ], [String(a), String(a * b), String(b - 1), String(a + b)]);
         },
         () => {
           const a = randInt(2, 12), b = choose([2, 3, 5]);
-          return makeQuestion("easy", "identify-yintercept", "promptIdentifyPart", `y=${modelLatex(a, b)}.\\quad ${textLatex(lang === "zh" ? "y 截距是多少？" : "What is the y-intercept?")}`, `\\left(0,${a}\\right)`, [
+          return makeQuestion("easy", "identify-yintercept", "promptIdentifyPart", `y=${modelLatex(a, b)}.\\quad ${textLatex(lang === "zh" ? "y æˆªè·æ˜¯å¤šå°‘ï¼Ÿ" : "What is the y-intercept?")}`, `\\left(0,${a}\\right)`, [
             { line: `x=0`, note: tr().notes.initial },
             { line: `y=${a}\\cdot ${b}^{0}=${a}`, note: tr().notes.initial },
             { line: `\\left(0,${a}\\right)`, note: tr().notes.initial }
@@ -1075,7 +1075,7 @@
           return makeQuestion("easy", "growth-decay-integer-base", "promptGrowthDecay", `y=${modelLatex(a, b)}`, textLatex(growthText()), [
             { line: `${b}>1`, note: tr().notes.growth },
             { line: textLatex(growthText()), note: tr().notes.growth }
-          ], [textLatex(decayText()), textLatex(lang === "zh" ? "线性" : "Linear"), textLatex(lang === "zh" ? "常数" : "Constant")]);
+          ], [textLatex(decayText()), textLatex(lang === "zh" ? "çº¿æ€§" : "Linear"), textLatex(lang === "zh" ? "å¸¸æ•°" : "Constant")]);
         },
         () => {
           const a = randInt(2, 9), pair = choose([[1, 2], [1, 3], [2, 3], [3, 4]]);
@@ -1083,7 +1083,7 @@
           return makeQuestion("easy", "growth-decay-fraction-base", "promptGrowthDecay", `y=${a}\\cdot ${base}^{x}`, textLatex(decayText()), [
             { line: `0<\\frac{${pair[0]}}{${pair[1]}}<1`, note: tr().notes.decay },
             { line: textLatex(decayText()), note: tr().notes.decay }
-          ], [textLatex(growthText()), textLatex(lang === "zh" ? "线性" : "Linear"), textLatex(lang === "zh" ? "二次" : "Quadratic")]);
+          ], [textLatex(growthText()), textLatex(lang === "zh" ? "çº¿æ€§" : "Linear"), textLatex(lang === "zh" ? "äºŒæ¬¡" : "Quadratic")]);
         },
         () => {
           const a = randInt(20, 90), r = choose([5, 10, 15, 20, 25]);
@@ -1092,28 +1092,28 @@
           return makeQuestion("easy", "growth-decay-percent-base", "promptGrowthDecay", `y=${a}(${b})^x`, textLatex(growing ? growthText() : decayText()), [
             { line: growing ? `${b}>1` : `0<${b}<1`, note: growing ? tr().notes.growth : tr().notes.decay },
             { line: textLatex(growing ? growthText() : decayText()), note: growing ? tr().notes.growth : tr().notes.decay }
-          ], [textLatex(growing ? decayText() : growthText()), textLatex(lang === "zh" ? "没有变化" : "No change"), textLatex(lang === "zh" ? "线性" : "Linear")]);
+          ], [textLatex(growing ? decayText() : growthText()), textLatex(lang === "zh" ? "æ²¡æœ‰å˜åŒ–" : "No change"), textLatex(lang === "zh" ? "çº¿æ€§" : "Linear")]);
         },
         // 4. Which one is exponential?
         () => {
           const b = choose([2, 3, 4, 5]), a = randInt(2, 8);
-          return makeQuestion("easy", "which-exponential-basic", "promptWhichExponential", textLatex(lang === "zh" ? "哪一个是指数函数？" : "Which one is exponential?"), `y=${modelLatex(a, b)}`, [
+          return makeQuestion("easy", "which-exponential-basic", "promptWhichExponential", textLatex(lang === "zh" ? "å“ªä¸€ä¸ªæ˜¯æŒ‡æ•°å‡½æ•°ï¼Ÿ" : "Which one is exponential?"), `y=${modelLatex(a, b)}`, [
             { line: `y=${a}\\cdot ${b}^{x}`, note: tr().notes.exponential },
-            { line: textLatex(lang === "zh" ? "变量 x 在指数位置" : "x is in the exponent"), note: tr().notes.exponential }
+            { line: textLatex(lang === "zh" ? "å˜é‡ x åœ¨æŒ‡æ•°ä½ç½®" : "x is in the exponent"), note: tr().notes.exponential }
           ], [`y=${a}x+${b}`, `y=${a}x^${b}`, `y=${b}x^2`, `y=${a}+x^${b}`]);
         },
         () => {
           const b = choose([2, 3, 5]);
-          return makeQuestion("easy", "which-exponential-table-style", "promptWhichExponential", textLatex(lang === "zh" ? "哪一个是指数函数？" : "Which one is exponential?"), `f(x)=${b}^{x}`, [
+          return makeQuestion("easy", "which-exponential-table-style", "promptWhichExponential", textLatex(lang === "zh" ? "å“ªä¸€ä¸ªæ˜¯æŒ‡æ•°å‡½æ•°ï¼Ÿ" : "Which one is exponential?"), `f(x)=${b}^{x}`, [
             { line: `f(x)=${b}^{x}`, note: tr().notes.exponential },
-            { line: textLatex(lang === "zh" ? "底数固定，指数含 x" : "fixed base, x in the exponent"), note: tr().notes.exponential }
+            { line: textLatex(lang === "zh" ? "åº•æ•°å›ºå®šï¼ŒæŒ‡æ•°å« x" : "fixed base, x in the exponent"), note: tr().notes.exponential }
           ], [`f(x)=x^${b}`, `f(x)=${b}x`, `f(x)=x+${b}`, `f(x)=x^2+${b}`]);
         },
         () => {
           const b = choose([2, 3, 4]);
-          return makeQuestion("easy", "which-exponential-decay", "promptWhichExponential", textLatex(lang === "zh" ? "哪一个是指数函数？" : "Which one is exponential?"), `y=${fracBaseLatex(1, b)}^{x}`, [
+          return makeQuestion("easy", "which-exponential-decay", "promptWhichExponential", textLatex(lang === "zh" ? "å“ªä¸€ä¸ªæ˜¯æŒ‡æ•°å‡½æ•°ï¼Ÿ" : "Which one is exponential?"), `y=${fracBaseLatex(1, b)}^{x}`, [
             { line: `y=\\left(\\frac{1}{${b}}\\right)^x`, note: tr().notes.exponential },
-            { line: textLatex(lang === "zh" ? "变量在指数位置，所以是指数函数" : "the variable is in the exponent"), note: tr().notes.exponential }
+            { line: textLatex(lang === "zh" ? "å˜é‡åœ¨æŒ‡æ•°ä½ç½®ï¼Œæ‰€ä»¥æ˜¯æŒ‡æ•°å‡½æ•°" : "the variable is in the exponent"), note: tr().notes.exponential }
           ], [`y=\\frac{1}{${b}}x`, `y=x^{${b}}`, `y=${b}x+1`, `y=x^2-${b}`]);
         }
       ],
@@ -1122,7 +1122,7 @@
         () => {
           const a = choose([50, 80, 100, 200, 500]), r = choose([5, 8, 10, 12, 15, 20]);
           const b = percentBase(r, true);
-          return makeQuestion("medium", "percent-growth-equation", "promptWriteEquation", textLatex(lang === "zh" ? `初始值 ${a}，每期增长 ${r}%` : `Starts at ${a} and grows by ${r}% each period.`), `y=${a}(${b})^t`, [
+          return makeQuestion("medium", "percent-growth-equation", "promptWriteEquation", textLatex(lang === "zh" ? `åˆå§‹å€¼ ${a}ï¼Œæ¯æœŸå¢žé•¿ ${r}%` : `Starts at ${a} and grows by ${r}% each period.`), `y=${a}(${b})^t`, [
             { line: `1+${r}\\%=1+${trimNumber(r / 100)}=${b}`, note: tr().notes.percentGrowth },
             { line: `y=${a}(${b})^t`, note: tr().notes.model }
           ], [`y=${a}(${trimNumber(r / 100)})^t`, `y=${a}(${percentBase(r, false)})^t`, `y=${b}(${a})^t`, `y=${a}+${r}t`]);
@@ -1130,14 +1130,14 @@
         () => {
           const a = choose([100, 250, 400, 800, 1200]), r = choose([5, 10, 15, 20, 25, 30]);
           const b = percentBase(r, false);
-          return makeQuestion("medium", "percent-decay-equation", "promptWriteEquation", textLatex(lang === "zh" ? `初始值 ${a}，每期减少 ${r}%` : `Starts at ${a} and decreases by ${r}% each period.`), `y=${a}(${b})^t`, [
+          return makeQuestion("medium", "percent-decay-equation", "promptWriteEquation", textLatex(lang === "zh" ? `åˆå§‹å€¼ ${a}ï¼Œæ¯æœŸå‡å°‘ ${r}%` : `Starts at ${a} and decreases by ${r}% each period.`), `y=${a}(${b})^t`, [
             { line: `1-${r}\\%=1-${trimNumber(r / 100)}=${b}`, note: tr().notes.percentDecay },
             { line: `y=${a}(${b})^t`, note: tr().notes.model }
           ], [`y=${a}(${trimNumber(r / 100)})^t`, `y=${a}(${percentBase(r, true)})^t`, `y=${b}(${a})^t`, `y=${a}-${r}t`]);
         },
         () => {
           const a = choose([20, 40, 60, 90]), factor = choose([2, 3, 4]);
-          return makeQuestion("medium", "verbal-multiplier-equation", "promptWriteEquation", textLatex(lang === "zh" ? `初始值 ${a}，每期乘以 ${factor}` : `Starts at ${a} and is multiplied by ${factor} each period.`), `y=${a}\\cdot ${factor}^{t}`, [
+          return makeQuestion("medium", "verbal-multiplier-equation", "promptWriteEquation", textLatex(lang === "zh" ? `åˆå§‹å€¼ ${a}ï¼Œæ¯æœŸä¹˜ä»¥ ${factor}` : `Starts at ${a} and is multiplied by ${factor} each period.`), `y=${a}\\cdot ${factor}^{t}`, [
             { line: `b=${factor}`, note: tr().notes.base },
             { line: `y=${a}\\cdot ${factor}^{t}`, note: tr().notes.model }
           ], [`y=${factor}\\cdot ${a}^{t}`, `y=${a}+${factor}t`, `y=${a}${factor}^{t+1}`, `y=${a}(${factor - 1})^t`]);
@@ -1173,7 +1173,7 @@
         () => {
           const a = choose([10, 20, 50, 100]), factor = choose([2, 3]), t = randInt(3, 6);
           const value = a * powInt(factor, t);
-          return makeQuestion("medium", "word-value-doubling", "promptWordValue", textLatex(lang === "zh" ? `${a} 开始，每期乘以 ${factor}，${t} 期后是多少？` : `Starts at ${a}, multiplied by ${factor} each period. Find the value after ${t} periods.`), String(value), [
+          return makeQuestion("medium", "word-value-doubling", "promptWordValue", textLatex(lang === "zh" ? `${a} å¼€å§‹ï¼Œæ¯æœŸä¹˜ä»¥ ${factor}ï¼Œ${t} æœŸåŽæ˜¯å¤šå°‘ï¼Ÿ` : `Starts at ${a}, multiplied by ${factor} each period. Find the value after ${t} periods.`), String(value), [
             { line: `y=${a}\\cdot ${factor}^{t}`, note: tr().notes.model },
             { line: `y=${a}\\cdot ${factor}^{${t}}`, note: tr().notes.substitute },
             { line: `y=${value}`, note: tr().notes.exponentFirst }
@@ -1182,7 +1182,7 @@
         () => {
           const a = choose([160, 240, 320, 640, 960]), d = choose([2, 4]), t = randInt(2, 4);
           const value = a / powInt(d, t);
-          return makeQuestion("medium", "word-value-decay", "promptWordValue", textLatex(lang === "zh" ? `${a} 开始，每期乘以 1/${d}，${t} 期后是多少？` : `Starts at ${a}, multiplied by 1/${d} each period. Find the value after ${t} periods.`), String(value), [
+          return makeQuestion("medium", "word-value-decay", "promptWordValue", textLatex(lang === "zh" ? `${a} å¼€å§‹ï¼Œæ¯æœŸä¹˜ä»¥ 1/${d}ï¼Œ${t} æœŸåŽæ˜¯å¤šå°‘ï¼Ÿ` : `Starts at ${a}, multiplied by 1/${d} each period. Find the value after ${t} periods.`), String(value), [
             { line: `y=${a}\\left(\\frac{1}{${d}}\\right)^t`, note: tr().notes.model },
             { line: `y=${a}\\left(\\frac{1}{${d}}\\right)^{${t}}`, note: tr().notes.substitute },
             { line: `y=${value}`, note: tr().notes.exponentFirst }
@@ -1192,7 +1192,7 @@
           const a = choose([100, 200, 500]), r = choose([10, 20, 25]), t = choose([2, 3]);
           const b = 1 + r / 100;
           const value = trimNumber(a * Math.pow(b, t), 2);
-          return makeQuestion("medium", "word-value-percent-growth", "promptWordValue", textLatex(lang === "zh" ? `${a} 开始，每期增长 ${r}%，${t} 期后是多少？` : `Starts at ${a} and grows by ${r}% each period. Find the value after ${t} periods.`), value, [
+          return makeQuestion("medium", "word-value-percent-growth", "promptWordValue", textLatex(lang === "zh" ? `${a} å¼€å§‹ï¼Œæ¯æœŸå¢žé•¿ ${r}%ï¼Œ${t} æœŸåŽæ˜¯å¤šå°‘ï¼Ÿ` : `Starts at ${a} and grows by ${r}% each period. Find the value after ${t} periods.`), value, [
             { line: `y=${a}(${trimNumber(b)})^t`, note: tr().notes.percentGrowth },
             { line: `y=${a}(${trimNumber(b)})^{${t}}`, note: tr().notes.substitute },
             { line: `y=${value}`, note: tr().notes.exponentFirst }
@@ -1275,10 +1275,10 @@
         },
         () => {
           const a = -choose([1, 2, 3]), b = choose([2, 3]), k = randInt(-5, 5);
-          return makeQuestion("hard", "reflection-feature", "promptTransform", `y=${coefficient(a)}${expTerm(b)}${signedOutside(k)}`, textLatex(lang === "zh" ? "关于 x 轴反射" : "reflection across the x-axis"), [
+          return makeQuestion("hard", "reflection-feature", "promptTransform", `y=${coefficient(a)}${expTerm(b)}${signedOutside(k)}`, textLatex(lang === "zh" ? "å…³äºŽ x è½´åå°„" : "reflection across the x-axis"), [
             { line: `${a}<0`, note: tr().notes.shift },
-            { line: textLatex(lang === "zh" ? "负号在函数外面" : "the negative sign is outside the exponential part"), note: tr().notes.shift }
-          ], [textLatex(lang === "zh" ? "关于 y 轴反射" : "reflection across the y-axis"), `y=${k}`, textLatex(`${upText(k)}`), textLatex(growthText())]);
+            { line: textLatex(lang === "zh" ? "è´Ÿå·åœ¨å‡½æ•°å¤–é¢" : "the negative sign is outside the exponential part"), note: tr().notes.shift }
+          ], [textLatex(lang === "zh" ? "å…³äºŽ y è½´åå°„" : "reflection across the y-axis"), `y=${k}`, textLatex(`${upText(k)}`), textLatex(growthText())]);
         },
         // 2. Same-base exponential equations.
         () => {
@@ -1354,7 +1354,7 @@
           const a = choose([200, 400, 800, 1000]), r = choose([8, 12, 15, 20]), t = choose([2, 3, 4]);
           const b = 1 - r / 100;
           const value = trimNumber(a * Math.pow(b, t), 2);
-          return makeQuestion("hard", "percent-decay-compute", "promptPercentModel", textLatex(lang === "zh" ? `${a} 开始，每期减少 ${r}%，${t} 期后是多少？` : `Starts at ${a}, decreases by ${r}% each period. Find the amount after ${t} periods.`), value, [
+          return makeQuestion("hard", "percent-decay-compute", "promptPercentModel", textLatex(lang === "zh" ? `${a} å¼€å§‹ï¼Œæ¯æœŸå‡å°‘ ${r}%ï¼Œ${t} æœŸåŽæ˜¯å¤šå°‘ï¼Ÿ` : `Starts at ${a}, decreases by ${r}% each period. Find the amount after ${t} periods.`), value, [
             { line: `y=${a}(${trimNumber(b)})^t`, note: tr().notes.percentDecay },
             { line: `y=${a}(${trimNumber(b)})^{${t}}`, note: tr().notes.substitute },
             { line: `y=${value}`, note: tr().notes.model }
@@ -1364,7 +1364,7 @@
           const a = choose([100, 250, 500]), r = choose([6, 9, 12, 18]), t = choose([3, 4, 5]);
           const b = 1 + r / 100;
           const value = trimNumber(a * Math.pow(b, t), 2);
-          return makeQuestion("hard", "percent-growth-compute", "promptPercentModel", textLatex(lang === "zh" ? `${a} 开始，每期增长 ${r}%，${t} 期后是多少？` : `Starts at ${a}, grows by ${r}% each period. Find the amount after ${t} periods.`), value, [
+          return makeQuestion("hard", "percent-growth-compute", "promptPercentModel", textLatex(lang === "zh" ? `${a} å¼€å§‹ï¼Œæ¯æœŸå¢žé•¿ ${r}%ï¼Œ${t} æœŸåŽæ˜¯å¤šå°‘ï¼Ÿ` : `Starts at ${a}, grows by ${r}% each period. Find the amount after ${t} periods.`), value, [
             { line: `y=${a}(${trimNumber(b)})^t`, note: tr().notes.percentGrowth },
             { line: `y=${a}(${trimNumber(b)})^{${t}}`, note: tr().notes.substitute },
             { line: `y=${value}`, note: tr().notes.model }
@@ -1373,18 +1373,18 @@
         () => {
           const r = choose([5, 10, 15, 20, 25]), a = choose([100, 300, 500]);
           const b = percentBase(r, true);
-          return makeQuestion("hard", "percent-find-rate-growth", "promptPercentModel", `y=${a}(${b})^t`, textLatex(lang === "zh" ? `每期增长 ${r}%` : `grows by ${r}% per period`), [
+          return makeQuestion("hard", "percent-find-rate-growth", "promptPercentModel", `y=${a}(${b})^t`, textLatex(lang === "zh" ? `æ¯æœŸå¢žé•¿ ${r}%` : `grows by ${r}% per period`), [
             { line: `${b}=1+${trimNumber(r / 100)}`, note: tr().notes.percentGrowth },
-            { line: textLatex(lang === "zh" ? `增长率是 ${r}%` : `growth rate is ${r}%`), note: tr().notes.percentGrowth }
-          ], [textLatex(lang === "zh" ? `每期减少 ${r}%` : `decreases by ${r}% per period`), textLatex(lang === "zh" ? `每期增长 ${trimNumber(r / 100)}%` : `grows by ${trimNumber(r / 100)}% per period`), textLatex(lang === "zh" ? `每期增长 ${b}%` : `grows by ${b}% per period`), String(b)]);
+            { line: textLatex(lang === "zh" ? `å¢žé•¿çŽ‡æ˜¯ ${r}%` : `growth rate is ${r}%`), note: tr().notes.percentGrowth }
+          ], [textLatex(lang === "zh" ? `æ¯æœŸå‡å°‘ ${r}%` : `decreases by ${r}% per period`), textLatex(lang === "zh" ? `æ¯æœŸå¢žé•¿ ${trimNumber(r / 100)}%` : `grows by ${trimNumber(r / 100)}% per period`), textLatex(lang === "zh" ? `æ¯æœŸå¢žé•¿ ${b}%` : `grows by ${b}% per period`), String(b)]);
         },
         () => {
           const r = choose([5, 10, 15, 20, 30]), a = choose([100, 300, 500]);
           const b = percentBase(r, false);
-          return makeQuestion("hard", "percent-find-rate-decay", "promptPercentModel", `y=${a}(${b})^t`, textLatex(lang === "zh" ? `每期减少 ${r}%` : `decreases by ${r}% per period`), [
+          return makeQuestion("hard", "percent-find-rate-decay", "promptPercentModel", `y=${a}(${b})^t`, textLatex(lang === "zh" ? `æ¯æœŸå‡å°‘ ${r}%` : `decreases by ${r}% per period`), [
             { line: `${b}=1-${trimNumber(r / 100)}`, note: tr().notes.percentDecay },
-            { line: textLatex(lang === "zh" ? `衰减率是 ${r}%` : `decay rate is ${r}%`), note: tr().notes.percentDecay }
-          ], [textLatex(lang === "zh" ? `每期增长 ${r}%` : `grows by ${r}% per period`), textLatex(lang === "zh" ? `每期减少 ${trimNumber(r / 100)}%` : `decreases by ${trimNumber(r / 100)}% per period`), textLatex(lang === "zh" ? `每期减少 ${b}%` : `decreases by ${b}% per period`), String(b)]);
+            { line: textLatex(lang === "zh" ? `è¡°å‡çŽ‡æ˜¯ ${r}%` : `decay rate is ${r}%`), note: tr().notes.percentDecay }
+          ], [textLatex(lang === "zh" ? `æ¯æœŸå¢žé•¿ ${r}%` : `grows by ${r}% per period`), textLatex(lang === "zh" ? `æ¯æœŸå‡å°‘ ${trimNumber(r / 100)}%` : `decreases by ${trimNumber(r / 100)}% per period`), textLatex(lang === "zh" ? `æ¯æœŸå‡å°‘ ${b}%` : `decreases by ${b}% per period`), String(b)]);
         },
         // 5. Features.
         () => {
@@ -1472,7 +1472,7 @@
         () => {
           const a = choose([400, 800, 1200, 1600]), h = choose([2, 4, 6, 8]), cycles = randInt(2, 4), t = h * cycles;
           const value = a / powInt(2, cycles);
-          return makeQuestion("expert", "half-life-exact", "promptHalfLife", textLatex(lang === "zh" ? `初始 ${a}，半衰期 ${h} 小时，${t} 小时后剩多少？` : `Initial amount ${a}, half-life ${h} hours. How much remains after ${t} hours?`), String(value), [
+          return makeQuestion("expert", "half-life-exact", "promptHalfLife", textLatex(lang === "zh" ? `åˆå§‹ ${a}ï¼ŒåŠè¡°æœŸ ${h} å°æ—¶ï¼Œ${t} å°æ—¶åŽå‰©å¤šå°‘ï¼Ÿ` : `Initial amount ${a}, half-life ${h} hours. How much remains after ${t} hours?`), String(value), [
             { line: `\\text{cycles}=\\frac{${t}}{${h}}=${cycles}`, note: tr().notes.halfLife },
             { line: `y=${a}\\left(\\frac12\\right)^{${cycles}}`, note: tr().notes.halfLife },
             { line: `y=${value}`, note: tr().notes.model }
@@ -1481,7 +1481,7 @@
         () => {
           const a = choose([5, 10, 20, 50]), d = choose([3, 4, 6]), cycles = randInt(2, 5), t = d * cycles;
           const value = a * powInt(2, cycles);
-          return makeQuestion("expert", "doubling-time-exact", "promptHalfLife", textLatex(lang === "zh" ? `初始 ${a}，每 ${d} 小时翻倍，${t} 小时后是多少？` : `Initial amount ${a}, doubles every ${d} hours. How much after ${t} hours?`), String(value), [
+          return makeQuestion("expert", "doubling-time-exact", "promptHalfLife", textLatex(lang === "zh" ? `åˆå§‹ ${a}ï¼Œæ¯ ${d} å°æ—¶ç¿»å€ï¼Œ${t} å°æ—¶åŽæ˜¯å¤šå°‘ï¼Ÿ` : `Initial amount ${a}, doubles every ${d} hours. How much after ${t} hours?`), String(value), [
             { line: `\\text{cycles}=\\frac{${t}}{${d}}=${cycles}`, note: tr().notes.doubling },
             { line: `y=${a}\\cdot 2^{${cycles}}`, note: tr().notes.doubling },
             { line: `y=${value}`, note: tr().notes.model }
@@ -1489,14 +1489,14 @@
         },
         () => {
           const a = choose([600, 900, 1500]), h = choose([5, 10, 12]), t = h * choose([2, 3]);
-          return makeQuestion("expert", "half-life-equation", "promptHalfLife", textLatex(lang === "zh" ? `初始 ${a}，半衰期 ${h}，选择模型。` : `Initial amount ${a}, half-life ${h}. Choose the model.`), `y=${a}\\left(\\frac12\\right)^{t/${h}}`, [
+          return makeQuestion("expert", "half-life-equation", "promptHalfLife", textLatex(lang === "zh" ? `åˆå§‹ ${a}ï¼ŒåŠè¡°æœŸ ${h}ï¼Œé€‰æ‹©æ¨¡åž‹ã€‚` : `Initial amount ${a}, half-life ${h}. Choose the model.`), `y=${a}\\left(\\frac12\\right)^{t/${h}}`, [
             { line: `\\frac{t}{${h}}`, note: tr().notes.halfLife },
             { line: `y=${a}\\left(\\frac12\\right)^{t/${h}}`, note: tr().notes.model }
           ], [`y=${a}\\left(2\\right)^{t/${h}}`, `y=${a}\\left(\\frac12\\right)^{${h}t}`, `y=${a}-${h}t`, `y=${h}\\left(\\frac12\\right)^{t/${a}}`]);
         },
         () => {
           const a = choose([20, 40, 60]), d = choose([3, 5, 8]);
-          return makeQuestion("expert", "doubling-equation", "promptHalfLife", textLatex(lang === "zh" ? `初始 ${a}，倍增时间 ${d}，选择模型。` : `Initial amount ${a}, doubling time ${d}. Choose the model.`), `y=${a}\\cdot 2^{t/${d}}`, [
+          return makeQuestion("expert", "doubling-equation", "promptHalfLife", textLatex(lang === "zh" ? `åˆå§‹ ${a}ï¼Œå€å¢žæ—¶é—´ ${d}ï¼Œé€‰æ‹©æ¨¡åž‹ã€‚` : `Initial amount ${a}, doubling time ${d}. Choose the model.`), `y=${a}\\cdot 2^{t/${d}}`, [
             { line: `\\frac{t}{${d}}`, note: tr().notes.doubling },
             { line: `y=${a}\\cdot 2^{t/${d}}`, note: tr().notes.model }
           ], [`y=${a}\\left(\\frac12\\right)^{t/${d}}`, `y=${a}\\cdot 2^{${d}t}`, `y=${a}+2t`, `y=${d}\\cdot 2^{t/${a}}`]);
@@ -1546,59 +1546,59 @@
           return makeQuestion("expert", "long-run-larger-base", "promptLongRun", `f(x)=${modelLatex(a1, b1)},\\quad g(x)=${modelLatex(a2, b2)}`, `g(x)`, [
             { line: `${b2}>${b1}`, note: tr().notes.longRun },
             { line: `g(x)`, note: tr().notes.longRun }
-          ], [`f(x)`, textLatex(lang === "zh" ? "两者一样快" : "same long-run growth"), textLatex(lang === "zh" ? "无法判断" : "cannot determine"), `${a1}`]);
+          ], [`f(x)`, textLatex(lang === "zh" ? "ä¸¤è€…ä¸€æ ·å¿«" : "same long-run growth"), textLatex(lang === "zh" ? "æ— æ³•åˆ¤æ–­" : "cannot determine"), `${a1}`]);
         },
         () => {
           const b1 = choose([2, 3]), b2 = b1 + 1;
           return makeQuestion("expert", "long-run-shift-does-not-win", "promptLongRun", `f(x)=1000\\cdot ${b1}^{x},\\quad g(x)=${b2}^{x}`, `g(x)`, [
             { line: `${b2}>${b1}`, note: tr().notes.longRun },
-            { line: textLatex(lang === "zh" ? "长期看底数更重要" : "the base matters most in the long run"), note: tr().notes.longRun },
+            { line: textLatex(lang === "zh" ? "é•¿æœŸçœ‹åº•æ•°æ›´é‡è¦" : "the base matters most in the long run"), note: tr().notes.longRun },
             { line: `g(x)`, note: tr().notes.longRun }
-          ], [`f(x)`, textLatex(lang === "zh" ? "两者一样快" : "same long-run growth"), `1000`, `${b1}`]);
+          ], [`f(x)`, textLatex(lang === "zh" ? "ä¸¤è€…ä¸€æ ·å¿«" : "same long-run growth"), `1000`, `${b1}`]);
         },
         () => {
           const b1 = choose([2, 3, 4]), b2 = b1 + choose([1, 2]);
           return makeQuestion("expert", "long-run-with-vertical-shift", "promptLongRun", `f(x)=${b1}^{x}+10000,\\quad g(x)=${b2}^{x}`, `g(x)`, [
             { line: `${b2}>${b1}`, note: tr().notes.longRun },
-            { line: textLatex(lang === "zh" ? "常数平移不会改变长期增长速度" : "a constant shift does not change long-run exponential growth"), note: tr().notes.longRun },
+            { line: textLatex(lang === "zh" ? "å¸¸æ•°å¹³ç§»ä¸ä¼šæ”¹å˜é•¿æœŸå¢žé•¿é€Ÿåº¦" : "a constant shift does not change long-run exponential growth"), note: tr().notes.longRun },
             { line: `g(x)`, note: tr().notes.longRun }
-          ], [`f(x)`, textLatex(lang === "zh" ? "两者一样快" : "same long-run growth"), `10000`, `${b1}^{x}`]);
+          ], [`f(x)`, textLatex(lang === "zh" ? "ä¸¤è€…ä¸€æ ·å¿«" : "same long-run growth"), `10000`, `${b1}^{x}`]);
         },
         () => {
           const d1 = choose([2, 3]), d2 = d1 + 2;
           return makeQuestion("expert", "long-run-decay-slower", "promptStatement", `f(x)=100${fracBaseLatex(1, d1)}^x,\\quad g(x)=100${fracBaseLatex(1, d2)}^x`, `f(x)>g(x)\\text{ for large }x`, [
             { line: `\\frac{1}{${d1}}>\\frac{1}{${d2}}`, note: tr().notes.longRun },
             { line: `f(x)\\text{ decays more slowly}`, note: tr().notes.longRun }
-          ], [`g(x)>f(x)\\text{ for large }x`, `f(x)=g(x)\\text{ for all }x`, textLatex(lang === "zh" ? "无法判断" : "cannot determine"), `g(x)\\text{ decays more slowly}`]);
+          ], [`g(x)>f(x)\\text{ for large }x`, `f(x)=g(x)\\text{ for all }x`, textLatex(lang === "zh" ? "æ— æ³•åˆ¤æ–­" : "cannot determine"), `g(x)\\text{ decays more slowly}`]);
         },
         // 5. Combined statements.
         () => {
           const a = choose([2, 3, 4]), b = choose([2, 3, 5]), h = randInt(2, 5), k = randInt(-5, 5);
-          return makeQuestion("expert", "combined-growth-transform", "promptStatement", `y=${a}\\cdot ${b}^{x-${h}}${signedOutside(k)}`, textLatex(lang === "zh" ? `水平渐近线是 y=${k}` : `the horizontal asymptote is y=${k}`), [
+          return makeQuestion("expert", "combined-growth-transform", "promptStatement", `y=${a}\\cdot ${b}^{x-${h}}${signedOutside(k)}`, textLatex(lang === "zh" ? `æ°´å¹³æ¸è¿‘çº¿æ˜¯ y=${k}` : `the horizontal asymptote is y=${k}`), [
             { line: `+${k}`, note: tr().notes.asymptote },
             { line: `y=${k}`, note: tr().notes.asymptote }
-          ], [textLatex(lang === "zh" ? `水平渐近线是 x=${h}` : `the horizontal asymptote is x=${h}`), textLatex(lang === "zh" ? `函数向左 ${h}` : `the graph shifts left ${h}`), textLatex(lang === "zh" ? "这是衰减函数" : "this is decay"), `y>${h}`]);
+          ], [textLatex(lang === "zh" ? `æ°´å¹³æ¸è¿‘çº¿æ˜¯ x=${h}` : `the horizontal asymptote is x=${h}`), textLatex(lang === "zh" ? `å‡½æ•°å‘å·¦ ${h}` : `the graph shifts left ${h}`), textLatex(lang === "zh" ? "è¿™æ˜¯è¡°å‡å‡½æ•°" : "this is decay"), `y>${h}`]);
         },
         () => {
           const a = choose([2, 3, 5]), b = choose([2, 3]), h = randInt(2, 5), k = randInt(-5, 5);
-          return makeQuestion("expert", "combined-shift-direction", "promptStatement", `y=${a}\\cdot ${b}^{x+${h}}${signedOutside(k)}`, textLatex(lang === "zh" ? `图像向左 ${h}` : `the graph shifts left ${h}`), [
+          return makeQuestion("expert", "combined-shift-direction", "promptStatement", `y=${a}\\cdot ${b}^{x+${h}}${signedOutside(k)}`, textLatex(lang === "zh" ? `å›¾åƒå‘å·¦ ${h}` : `the graph shifts left ${h}`), [
             { line: `x+${h}=x-(-${h})`, note: tr().notes.shift },
-            { line: textLatex(lang === "zh" ? `向左 ${h}` : `left ${h}`), note: tr().notes.shift }
-          ], [textLatex(lang === "zh" ? `图像向右 ${h}` : `the graph shifts right ${h}`), textLatex(lang === "zh" ? `水平渐近线是 y=${h}` : `the horizontal asymptote is y=${h}`), textLatex(lang === "zh" ? "这是衰减函数" : "this is decay"), `y<${k}`]);
+            { line: textLatex(lang === "zh" ? `å‘å·¦ ${h}` : `left ${h}`), note: tr().notes.shift }
+          ], [textLatex(lang === "zh" ? `å›¾åƒå‘å³ ${h}` : `the graph shifts right ${h}`), textLatex(lang === "zh" ? `æ°´å¹³æ¸è¿‘çº¿æ˜¯ y=${h}` : `the horizontal asymptote is y=${h}`), textLatex(lang === "zh" ? "è¿™æ˜¯è¡°å‡å‡½æ•°" : "this is decay"), `y<${k}`]);
         },
         () => {
           const a = -choose([1, 2, 3]), b = choose([2, 3, 4]), k = randInt(-4, 6);
           return makeQuestion("expert", "combined-negative-range", "promptStatement", `y=${coefficient(a)}${expTerm(b)}${signedOutside(k)}`, `y<${k}`, [
             { line: `${coefficient(a)}${b}^x<0`, note: tr().notes.combined },
             { line: `y<${k}`, note: tr().notes.combined }
-          ], [`y>${k}`, `y=${k}`, textLatex(lang === "zh" ? "定义域是 x>0" : "domain is x>0"), textLatex(lang === "zh" ? "这是衰减函数" : "this is decay")]);
+          ], [`y>${k}`, `y=${k}`, textLatex(lang === "zh" ? "å®šä¹‰åŸŸæ˜¯ x>0" : "domain is x>0"), textLatex(lang === "zh" ? "è¿™æ˜¯è¡°å‡å‡½æ•°" : "this is decay")]);
         },
         () => {
           const a = choose([3, 4, 5]), d = choose([2, 3, 4]), k = randInt(-3, 5);
-          return makeQuestion("expert", "combined-decay-statement", "promptStatement", `y=${a}${fracBaseLatex(1, d)}^x${signedOutside(k)}`, textLatex(lang === "zh" ? "这是衰减函数" : "this is decay"), [
+          return makeQuestion("expert", "combined-decay-statement", "promptStatement", `y=${a}${fracBaseLatex(1, d)}^x${signedOutside(k)}`, textLatex(lang === "zh" ? "è¿™æ˜¯è¡°å‡å‡½æ•°" : "this is decay"), [
             { line: `0<\\frac{1}{${d}}<1`, note: tr().notes.decay },
-            { line: textLatex(lang === "zh" ? "这是衰减函数" : "this is decay"), note: tr().notes.decay }
-          ], [textLatex(lang === "zh" ? "这是增长函数" : "this is growth"), `y=${d}`, `x=${k}`, textLatex(lang === "zh" ? "初始值是 1/d" : "initial value is 1/d")]);
+            { line: textLatex(lang === "zh" ? "è¿™æ˜¯è¡°å‡å‡½æ•°" : "this is decay"), note: tr().notes.decay }
+          ], [textLatex(lang === "zh" ? "è¿™æ˜¯å¢žé•¿å‡½æ•°" : "this is growth"), `y=${d}`, `x=${k}`, textLatex(lang === "zh" ? "åˆå§‹å€¼æ˜¯ 1/d" : "initial value is 1/d")]);
         }
       ]
     };
@@ -1764,7 +1764,7 @@
         nextBtn.disabled = true;
       }
       progressText.textContent = tr().progress(currentIndex + 1, quiz.length);
-      difficultyText.textContent = lastDifficulty === "mixed" ? `${tr().difficulties.mixed} · ${tr().difficulties[q.difficulty]}` : tr().difficulties[q.difficulty];
+      difficultyText.textContent = lastDifficulty === "mixed" ? `${tr().difficulties.mixed} Â· ${tr().difficulties[q.difficulty]}` : tr().difficulties[q.difficulty];
       progressBar.style.width = `${(currentIndex / quiz.length) * 100}%`;
       qExtra.textContent = tr()[q.promptKey];
       qMain.classList.remove("math-render", "long-text-question");
@@ -1939,8 +1939,22 @@
     window.addEventListener("storage", event => { if (event.key === "mathcomplete_lang") applyLanguage(); });
     applyLanguage();
   </script>
+  <script>
+    window.MCLQuizTool = {
+      gameId: "exponential-functions", course: "algebra-2", balancedMixed: true, avoidConsecutiveTypes: true,
+      builders: { easy: [], medium: [], hard: [], expert: [] },
+      text: {
+        en: { title: "Exponential Functions Practice", toolBadge: "Algebra II", subtitle: "Connect values, growth and decay, transformations, inverse equations, and exponential models.", note: "Question families use distinct representations and reasoning paths, not only new numbers." },
+        zh: { title: "\u6307\u6570\u51fd\u6570\u4e13\u9879\u7ec3\u4e60", toolBadge: "\u4ee3\u6570 II", subtitle: "\u8fde\u63a5\u51fd\u6570\u503c\u3001\u589e\u957f\u4e0e\u8870\u51cf\u3001\u56fe\u50cf\u53d8\u6362\u3001\u53cd\u51fd\u6570\u65b9\u7a0b\u548c\u6307\u6570\u6a21\u578b\u3002", note: "\u9898\u5e93\u4f7f\u7528\u4e0d\u540c\u7684\u8868\u793a\u548c\u63a8\u7406\u8def\u5f84\uff0c\u4e0d\u662f\u53ea\u66f4\u6362\u6570\u5b57\u3002" }
+      }
+    };
+  </script>
+  <script src="../assets/js/question-template-registry.js?v=20260724.1"></script>
+  <script src="../assets/js/semantic-bank-factory.js?v=20260724.3"></script>
+  <script src="../assets/js/exponential-functions-bank.js?v=20260724.1"></script>
+  <script src="../assets/js/quiz-tool-engine.js?v=20260724.2"></script>
   <script src="../assets/js/tool-modes.js"></script>
-  <script src="../assets/js/report-export.js?v=20260722.1"></script>
+  <script src="../assets/js/report-export.js?v=20260725.2"></script>
 
   <script src="../assets/js/tool-ux.js?v=20260716.2"></script>
   <script src="../assets/js/tool-catalog.js?v=20260716.3"></script>

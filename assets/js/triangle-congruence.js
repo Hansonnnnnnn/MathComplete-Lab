@@ -1,7 +1,7 @@
 (function () {
   const GAME_ID = "triangle-congruence";
   const COURSE = "geometry-1";
-  const DIFFICULTIES = ["easy", "medium", "hard", "mixed"];
+  const DIFFICULTIES = ["easy", "medium", "hard", "expert", "mixed"];
   const THEOREMS = ["SSS", "SAS", "ASA", "AAS", "HL"];
   const TIMER_SECONDS = { relaxed: 180, standard: 120, challenge: 75 };
   const $ = id => document.getElementById(id);
@@ -17,6 +17,8 @@
   let questionStart = 0;
   let timerId = null;
   let timeLeft = 0;
+  let proofSelections = [];
+  let activeProofStep = 0;
 
   const els = {
     toolBadge: $("toolBadge"),
@@ -74,10 +76,12 @@
       navHome: "Home",
       badge: "Geometry I",
       title: "Triangle Congruence Proofs",
-      subtitle: "Practice proving triangle congruence with exact diagrams, valid randomized givens, and step-by-step proof tables.",
+      subtitle: "Build valid triangle-congruence proofs from diagram evidence, ordered statements, reasons, and exact vertex correspondence.",
       setupTitle: "Build a Proof Practice Round",
       difficultyLabel: "Difficulty",
       questionCountLabel: "Number of Proofs",
+      modeLabel: "Mode",
+      modeOptions: { learn: "Learn", practice: "Practice", exam: "Exam" },
       timedModeText: "Enable Timed Mode",
       timedModeHint: "Timed mode gives each proof its own countdown.",
       timerLevelLabel: "Timer Level",
@@ -88,7 +92,11 @@
       givens: "Givens",
       target: "Prove",
       theoremTitle: "Congruence Theorem",
-      proofTitle: "Proof Table",
+      proofTitle: "Proof Builder",
+      stepLabel: "Proof step",
+      availableStatements: "Available statements",
+      availableReasons: "Why is this true?",
+      dependencyHint: "Build the proof in logical order. A derived fact can only be used after its prerequisites.",
       statement: "Statement",
       reason: "Reason",
       chooseTheorem: "Choose theorem",
@@ -126,12 +134,14 @@
         easy: "Easy",
         medium: "Medium",
         hard: "Hard",
+        expert: "Expert",
         mixed: "Mixed"
       },
       difficultyOptions: {
         easy: "Easy: direct SSS, SAS, ASA proofs",
         medium: "Medium: shared sides, vertical angles, and parallel-line angle facts",
         hard: "Hard: HL and two-step derived givens",
+        expert: "Expert: proof validation and dependency analysis",
         mixed: "Mixed: balanced proof practice"
       },
       reasons: {
@@ -159,6 +169,8 @@
       setupTitle: "\u5f00\u59cb\u8bc1\u660e\u7ec3\u4e60",
       difficultyLabel: "\u96be\u5ea6",
       questionCountLabel: "\u8bc1\u660e\u9898\u6570\u91cf",
+      modeLabel: "\u6a21\u5f0f",
+      modeOptions: { learn: "\u5b66\u4e60", practice: "\u7ec3\u4e60", exam: "\u8003\u8bd5" },
       timedModeText: "\u5f00\u542f\u8ba1\u65f6\u6a21\u5f0f",
       timedModeHint: "\u8ba1\u65f6\u6a21\u5f0f\u4f1a\u7ed9\u6bcf\u9053\u8bc1\u660e\u9898\u5355\u72ec\u5012\u8ba1\u65f6\u3002",
       timerLevelLabel: "\u8ba1\u65f6\u7b49\u7ea7",
@@ -169,7 +181,11 @@
       givens: "\u5df2\u77e5",
       target: "\u6c42\u8bc1",
       theoremTitle: "\u5168\u7b49\u5224\u5b9a",
-      proofTitle: "\u8bc1\u660e\u8868",
+      proofTitle: "\u8bc1\u660e\u6784\u5efa\u5668",
+      stepLabel: "\u8bc1\u660e\u6b65\u9aa4",
+      availableStatements: "\u53ef\u7528\u7ed3\u8bba",
+      availableReasons: "\u9009\u62e9\u7406\u7531",
+      dependencyHint: "\u8bf7\u6309\u903b\u8f91\u987a\u5e8f\u6784\u5efa\u8bc1\u660e；\u63a8\u5bfc\u7ed3\u8bba\u53ea\u80fd\u5728\u524d\u7f6e\u6761\u4ef6\u6210\u7acb\u540e\u4f7f\u7528。",
       statement: "\u7ed3\u8bba",
       reason: "\u7406\u7531",
       chooseTheorem: "\u9009\u62e9\u5b9a\u7406",
@@ -207,12 +223,14 @@
         easy: "\u7b80\u5355",
         medium: "\u4e2d\u7b49",
         hard: "\u56f0\u96be",
+        expert: "\u4e13\u5bb6",
         mixed: "\u6df7\u5408"
       },
       difficultyOptions: {
         easy: "\u7b80\u5355\uff1a\u76f4\u63a5\u7684 SSS\u3001SAS\u3001ASA \u8bc1\u660e",
         medium: "\u4e2d\u7b49\uff1a\u5171\u8fb9\u3001\u5bf9\u9876\u89d2\u548c\u5e73\u884c\u7ebf\u89d2\u5173\u7cfb",
         hard: "\u56f0\u96be\uff1aHL \u548c\u9700\u8981\u5148\u63a8\u51fa\u5c0f\u7ed3\u8bba\u7684\u9898",
+        expert: "\u4e13\u5bb6\uff1a\u8bc1\u660e\u68c0\u9a8c\u4e0e\u4f9d\u8d56\u5173\u7cfb\u5206\u6790",
         mixed: "\u6df7\u5408\uff1a\u7efc\u5408\u8bc1\u660e\u7ec3\u4e60"
       },
       reasons: {
@@ -238,6 +256,10 @@
 
   function tr() {
     return TEXT[lang] || TEXT.en;
+  }
+
+  function currentProofMode() {
+    return document.getElementById("toolMode")?.value || "practice";
   }
 
   function escapeHtml(value) {
@@ -633,11 +655,90 @@
     if (finalReason !== q.theorem) throw new Error("Theorem does not match proof");
     q.statementOptions = baseStatements(q);
     q.reasonOptions = reasonOptions(q);
+    q.proofGraph = {
+      nodes: q.steps.map((stepItem, index) => ({
+        id: stepItem.id,
+        statement: stepItem.text,
+        reason: stepItem.reason,
+        prerequisites: stepItem.reason === "given" ? [] : q.steps.slice(0, index).filter(item => item.reason !== "given" || index === q.steps.length - 1).map(item => item.id),
+        diagramRefs: stepItem.diagramRefs || [],
+        source: stepItem.reason === "given" ? "given" : "derived"
+      })),
+      correspondence: q.target,
+      finalTheorem: q.theorem,
+      distractors: q.extraStatements || []
+    };
     q.questionKey = `${q.type}|${q.target}|${q.givens.join("|")}`;
     return q;
   }
 
+  function applyScenarioVariant(q, templateId) {
+    const hash = Array.from(templateId).reduce((value, char) => ((value * 33) ^ char.charCodeAt(0)) >>> 0, 5381);
+    const pointIds = Object.keys(q.points);
+    const center = pointIds.reduce((sum, id) => ({ x: sum.x + q.points[id].x, y: sum.y + q.points[id].y }), { x: 0, y: 0 });
+    center.x /= pointIds.length;
+    center.y /= pointIds.length;
+    const angle = ((hash % 7) - 3) * Math.PI / 72;
+    const mirror = hash % 2 ? -1 : 1;
+    pointIds.forEach(id => {
+      const dx = (q.points[id].x - center.x) * mirror;
+      const dy = q.points[id].y - center.y;
+      q.points[id] = {
+        x: Math.max(45, Math.min(675, center.x + dx * Math.cos(angle) - dy * Math.sin(angle))),
+        y: Math.max(45, Math.min(375, center.y + dx * Math.sin(angle) + dy * Math.cos(angle)))
+      };
+    });
+    const topology = hash % 5;
+    const anchors = pointIds.slice(0, Math.min(3, pointIds.length));
+    const extraCount = topology < 2 ? 1 : topology < 4 ? 2 : 3;
+    const available = ["J", "K", "L", "N", "U", "V", "W"].filter(id => !q.points[id]).slice(0, extraCount);
+    available.forEach((id, index) => {
+      const theta = ((hash % 360) + index * 97) * Math.PI / 180;
+      q.points[id] = { x: Math.max(55, Math.min(665, center.x + Math.cos(theta) * (175 + 20 * index))), y: Math.max(55, Math.min(365, center.y + Math.sin(theta) * (125 + 18 * index))) };
+      q.lines.push([anchors[index % anchors.length], id]);
+      q.helperLines = [...(q.helperLines || []), [anchors[index % anchors.length], id]];
+      q.labels.push(id);
+    });
+    q.sceneTopology = `topology-${topology + 1}-${available.length}`;
+    return q;
+  }
+
   function buildQuestion(difficulty) {
+    const registry = window.MCLQuestionTemplates;
+    if (registry?.getTool?.(GAME_ID)) {
+      const templates = registry.templatesFor(GAME_ID, difficulty);
+      if (templates.length) {
+        const template = choice(templates);
+        const registered = registry.build(GAME_ID, template.id, {
+          seed: `${GAME_ID}:${Date.now()}:${Math.random()}`,
+          lang
+        });
+        const kind = registered.audit?.proofKind || "direct-sss";
+        const mappedBuilders = {
+          "direct-sss": () => directTriangle("SSS"),
+          "direct-sas": () => directTriangle("SAS"),
+          "direct-asa": () => directTriangle("ASA"),
+          "direct-aas": () => directTriangle("AAS"),
+          "shared-side-sss": sharedSide,
+          "vertical-sas": verticalAngles,
+          "parallel-asa": parallelAsa,
+          "right-triangle-hl": rightTriangleHl,
+          "midpoint-sas": midpointSas
+        };
+        const q = applyScenarioVariant((mappedBuilders[kind] || mappedBuilders["direct-sss"])(), template.id);
+        const scenarioIndex = templates.indexOf(template);
+        q.difficulty = template.difficulty;
+        q.type = registered.familyId;
+        q.familyId = registered.familyId;
+        q.templateId = registered.templateId;
+        q.taskForm = template.taskForm;
+        q.focusPrompt = registered.audit?.focusPrompt || "";
+        q.geometrySchemaId = registered.parameters?.geometrySchemaId || `triangle-proof-${template.id}`;
+        q.proofScenarioIndex = scenarioIndex;
+        q.questionKey = `${q.questionKey}|${q.geometrySchemaId}`;
+        return q;
+      }
+    }
     const level = difficulty === "mixed" ? choice(["easy", "medium", "hard"]) : difficulty;
     const builders = {
       easy: [() => directTriangle("SSS"), () => directTriangle("SAS"), () => directTriangle("ASA"), () => directTriangle("AAS")],
@@ -714,7 +815,7 @@
     els.progressText.textContent = tr().progress(current + 1, quiz.length);
     els.difficultyText.textContent = tr().difficulties[q.difficulty] || q.difficulty;
     els.progressBar.style.width = `${(current / quiz.length) * 100}%`;
-    els.promptText.textContent = tr().prompt;
+    els.promptText.textContent = q.focusPrompt || tr().prompt;
     els.givenList.innerHTML = `<h3>${escapeHtml(tr().givens)}</h3>` + q.givens.map(g => `<div class="given-item">${escapeHtml(g)}</div>`).join("");
     els.targetBox.innerHTML = `<strong>${escapeHtml(tr().target)}:</strong> ${escapeHtml(q.target)}`;
     renderSvg(q);
@@ -745,43 +846,58 @@
   }
 
   function renderProofTable(q) {
-    els.proofTableBody.innerHTML = q.steps.map((_, index) => {
-      const statementOptions = [`<option value="">${escapeHtml(tr().chooseStatement)}</option>`]
-        .concat(q.statementOptions.map(s => `<option value="${escapeHtml(s.id)}">${escapeHtml(s.text)}</option>`));
-      const reasonOptions = [`<option value="">${escapeHtml(tr().chooseReason)}</option>`]
-        .concat(q.reasonOptions.map(r => `<option value="${escapeHtml(r.id)}">${escapeHtml(r.text)}</option>`));
-      return `<tr class="proof-row" data-row="${index}">
-        <td class="proof-row-number">${index + 1}</td>
-        <td><select class="proof-select" data-statement-row="${index}">${statementOptions.join("")}</select></td>
-        <td><select class="proof-select" data-reason-row="${index}">${reasonOptions.join("")}</select></td>
-      </tr>`;
-    }).join("");
+    proofSelections = q.steps.map((stepItem, index) => {
+      const easyPrefill = q.difficulty === "easy" && index < q.steps.length - 1;
+      const mediumPrefill = q.difficulty === "medium" && stepItem.reason === "given";
+      const expertRepair = q.difficulty === "expert" && q.taskForm === "diagnose";
+      const prefill = easyPrefill || mediumPrefill || expertRepair;
+      return { statementValue: prefill ? stepItem.id : "", reasonValue: prefill ? stepItem.reason : "", locked: prefill, index };
+    });
+    if (q.difficulty === "expert" && q.taskForm === "diagnose" && proofSelections.length) {
+      const repairIndex = Math.max(0, proofSelections.length - 2);
+      proofSelections[repairIndex] = { ...proofSelections[repairIndex], reasonValue: q.reasonOptions.find(item => item.id !== q.steps[repairIndex].reason)?.id || "", locked: false, status: "wrong" };
+    }
+    activeProofStep = Math.max(0, proofSelections.findIndex(item => !item.locked));
+    renderActiveProofStep(q);
+  }
+
+  function renderActiveProofStep(q) {
+    const selection = proofSelections[activeProofStep] || proofSelections[0];
+    const statement = q.statementOptions.find(item => item.id === selection.statementValue);
+    const reason = q.reasonOptions.find(item => item.id === selection.reasonValue);
+    els.proofTableBody.innerHTML = `
+      <div class="proof-step-tabs" role="tablist">${proofSelections.map((item, index) => `<button type="button" role="tab" class="proof-step-tab ${index === activeProofStep ? "active" : ""} ${item.statementValue && item.reasonValue ? "complete" : ""} ${item.status || ""}" data-proof-step="${index}" aria-selected="${index === activeProofStep}">${index + 1}</button>`).join("")}</div>
+      <p class="proof-dependency-hint">${escapeHtml(tr().dependencyHint)}</p>
+      <section class="proof-current-step ${selection.status || ""}" data-row="${activeProofStep}">
+        <div class="proof-current-heading"><span>${escapeHtml(tr().stepLabel)} ${activeProofStep + 1}</span>${selection.locked ? `<span class="proof-given-badge">${escapeHtml(tr().reasons.given)}</span>` : ""}</div>
+        <div class="proof-current-answer"><strong>${escapeHtml(statement?.text || tr().chooseStatement)}</strong><span>${escapeHtml(reason?.text || tr().chooseReason)}</span></div>
+      </section>
+      <div class="proof-palette-group"><h4>${escapeHtml(tr().availableStatements)}</h4><div class="proof-palette" data-proof-statements>${q.statementOptions.map(item => `<button type="button" class="proof-choice-card ${selection.statementValue === item.id ? "selected" : ""}" data-proof-statement="${escapeHtml(item.id)}" ${selection.locked ? "disabled" : ""}>${escapeHtml(item.text)}</button>`).join("")}</div></div>
+      <div class="proof-palette-group"><h4>${escapeHtml(tr().availableReasons)}</h4><div class="proof-palette proof-reason-palette" data-proof-reasons>${q.reasonOptions.map(item => `<button type="button" class="proof-choice-card ${selection.reasonValue === item.id ? "selected" : ""}" data-proof-reason="${escapeHtml(item.id)}" ${selection.locked ? "disabled" : ""}>${escapeHtml(item.text)}</button>`).join("")}</div></div>`;
+    els.proofTableBody.querySelectorAll("[data-proof-step]").forEach(button => button.addEventListener("click", () => { activeProofStep = Number(button.dataset.proofStep); renderActiveProofStep(q); }));
+    els.proofTableBody.querySelectorAll("[data-proof-statement]").forEach(button => button.addEventListener("click", () => { if (answered || selection.locked) return; selection.statementValue = button.dataset.proofStatement; updateLearningStatus(q, selection); renderActiveProofStep(q); }));
+    els.proofTableBody.querySelectorAll("[data-proof-reason]").forEach(button => button.addEventListener("click", () => { if (answered || selection.locked) return; selection.reasonValue = button.dataset.proofReason; updateLearningStatus(q, selection); renderActiveProofStep(q); }));
+  }
+
+  function updateLearningStatus(q, selection) {
+    if (currentProofMode() !== "learn") { selection.status = ""; return; }
+    if (!selection.statementValue || !selection.reasonValue) return;
+    const expected = q.steps[selection.index];
+    selection.status = selection.statementValue === expected.id && selection.reasonValue === expected.reason ? "correct" : "wrong";
   }
 
   function answerState(q) {
-    const requiredPairs = q.steps.map(stepItem => `${stepItem.id}|${stepItem.reason}`);
-    const unusedRequired = new Map();
-    requiredPairs.forEach(pair => unusedRequired.set(pair, (unusedRequired.get(pair) || 0) + 1));
-
-    const rows = q.steps.map((_, index) => {
-      const statementValue = els.proofTableBody.querySelector(`[data-statement-row="${index}"]`)?.value || "";
-      const reasonValue = els.proofTableBody.querySelector(`[data-reason-row="${index}"]`)?.value || "";
-      const pair = `${statementValue}|${reasonValue}`;
-      const pairOk = Boolean(unusedRequired.get(pair));
-      if (pairOk) unusedRequired.set(pair, unusedRequired.get(pair) - 1);
-      return {
-        pairOk,
-        statementValue,
-        reasonValue
-      };
+    const rows = q.steps.map((stepItem, index) => {
+      const selected = proofSelections[index] || {};
+      const statementOk = selected.statementValue === stepItem.id;
+      const reasonOk = selected.reasonValue === stepItem.reason;
+      const prerequisitesOk = (q.proofGraph?.nodes[index]?.prerequisites || []).every(requiredId => q.steps.slice(0, index).some((prior, priorIndex) => prior.id === requiredId && proofSelections[priorIndex]?.statementValue === prior.id && proofSelections[priorIndex]?.reasonValue === prior.reason));
+      return { pairOk: statementOk && reasonOk && prerequisitesOk, statementOk, reasonOk, prerequisitesOk, statementValue:selected.statementValue || "", reasonValue:selected.reasonValue || "" };
     });
-
-    const allRequiredUsed = Array.from(unusedRequired.values()).every(count => count === 0);
-
     return {
       theoremOk: selectedTheorem === q.theorem,
       rows,
-      isCorrect: selectedTheorem === q.theorem && allRequiredUsed && rows.every(r => r.pairOk)
+      isCorrect: selectedTheorem === q.theorem && rows.every(r => r.pairOk)
     };
   }
 
@@ -794,22 +910,46 @@
       return;
     }
     stopTimer();
-    answered = true;
     const state = forceTimeUp ? { theoremOk: false, rows: q.steps.map(() => ({ pairOk: false })), isCorrect: false } : answerState(q);
-    if (state.isCorrect) correct += 1;
+    q.submissionCount = (q.submissionCount || 0) + 1;
+    const firstSubmission = q.submissionCount === 1;
+    const allowPracticeRetry = !forceTimeUp && currentProofMode() === "practice" && !state.isCorrect && firstSubmission;
+    answered = !allowPracticeRetry;
+    if (state.isCorrect && firstSubmission) correct += 1;
     els.feedback.className = `feedback ${state.isCorrect ? "good" : "bad"}`;
-    els.feedback.innerHTML = `${escapeHtml(forceTimeUp ? tr().timeUp : state.isCorrect ? tr().correct : tr().incorrect)}${state.isCorrect ? "" : `<div class="geo-feedback-detail">${escapeHtml(tr().correctAnswer)}: ${escapeHtml(q.theorem)}</div>`}`;
-    els.proofTableBody.querySelectorAll(".proof-row").forEach((row, index) => {
-      const ok = state.rows[index]?.pairOk;
-      row.classList.add(ok ? "correct" : "wrong");
-    });
+    const firstWrong = state.rows.findIndex(row => !row.pairOk);
+    const detail = !state.theoremOk
+      ? `${tr().correctAnswer}: ${q.theorem}`
+      : firstWrong >= 0
+        ? proofErrorMessage(q, state.rows[firstWrong], firstWrong)
+        : "";
+    els.feedback.innerHTML = `${escapeHtml(forceTimeUp ? tr().timeUp : state.isCorrect ? tr().correct : tr().incorrect)}${state.isCorrect ? "" : `<div class="geo-feedback-detail">${escapeHtml(detail)}</div>`}`;
+    proofSelections.forEach((selection, index) => { selection.status = state.rows[index]?.pairOk ? "correct" : "wrong"; });
+    renderActiveProofStep(q);
+    if (allowPracticeRetry) {
+      wrong.push({ q, selectedTheorem: selectedTheorem || "-", forceTimeUp: false });
+      q.firstAttemptRecorded = true;
+      recordAttempt(q, false, false);
+      els.feedback.insertAdjacentHTML("beforeend", `<div class="geo-feedback-detail">${escapeHtml(lang === "zh" ? "你可以修改一次；成绩仍按首次提交计算。" : "You may revise once; scoring still uses the first submission.")}</div>`);
+      els.submitBtn.disabled = false;
+      els.nextBtn.disabled = true;
+      return;
+    }
     showSolution(q);
     els.submitBtn.disabled = true;
     els.nextBtn.disabled = false;
-    if (!state.isCorrect) {
+    if (!state.isCorrect && !q.firstAttemptRecorded) {
       wrong.push({ q, selectedTheorem: selectedTheorem || "-", forceTimeUp });
     }
-    recordAttempt(q, state.isCorrect, forceTimeUp);
+    if (!q.firstAttemptRecorded) recordAttempt(q, state.isCorrect, forceTimeUp);
+  }
+
+  function proofErrorMessage(q, row, index) {
+    if (!row.statementValue || !row.reasonValue) return lang === "zh" ? `第 ${index + 1} 步尚未完成。` : `Step ${index + 1} is incomplete.`;
+    if (!row.statementOk) return lang === "zh" ? `第 ${index + 1} 步的结论与当前证明位置不匹配。` : `Step ${index + 1} uses a statement in the wrong logical position.`;
+    if (!row.reasonOk) return lang === "zh" ? `第 ${index + 1} 步的理由不能支持该结论。` : `The reason in step ${index + 1} does not justify its statement.`;
+    if (!row.prerequisitesOk) return lang === "zh" ? `第 ${index + 1} 步依赖的前置结论尚未建立。` : `Step ${index + 1} depends on a fact that has not been established.`;
+    return lang === "zh" ? "检查顶点对应顺序和全等判定。" : "Check the vertex correspondence and congruence theorem.";
   }
 
   async function recordAttempt(q, isCorrect, forceTimeUp) {
@@ -824,13 +964,13 @@
         questionText: `${tr().givens}: ${q.givens.join("; ")} | ${tr().target}: ${q.target}`,
         questionLatex: "",
         correctAnswerLatex: q.theorem,
-        selectedAnswerLatex: forceTimeUp ? "Time up" : selectedTheorem || "",
+        selectedAnswerLatex: forceTimeUp ? "Time up" : `${selectedTheorem || ""}; ${proofSelections.map(item => `${item.statementValue}:${item.reasonValue}`).join(" | ")}`,
         options: THEOREMS.map(theorem => ({
           label: theorem,
           latex: theorem,
           isCorrect: theorem === q.theorem,
           isSelected: theorem === selectedTheorem
-        })),
+        })).concat(q.steps.map((stepItem,index) => ({label:`Step ${index + 1}: ${stepItem.text} - ${tr().reasons[stepItem.reason] || stepItem.reason}`,latex:stepItem.text,isCorrect:true,isSelected:proofSelections[index]?.statementValue===stepItem.id&&proofSelections[index]?.reasonValue===stepItem.reason}))),
         correctOptionLabel: q.theorem,
         selectedOptionLabel: selectedTheorem || "",
         isCorrect,

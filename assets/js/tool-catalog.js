@@ -88,6 +88,10 @@
     "en": "Trigonometry",
     "zh": "三角函数"
   },
+  "segments-angles": {
+    "en": "Segments & Angles",
+    "zh": "\u7ebf\u6bb5\u4e0e\u89d2"
+  },
   "geometry": {
     "en": "Geometry & Proof",
     "zh": "几何与证明"
@@ -362,8 +366,8 @@
       "zh": "向量运算专项练习"
     },
     "description": {
-      "en": "Practice vector addition, subtraction, scalar multiplication, and linear combinations in 2D and 3D.",
-      "zh": "练习二维和三维向量的加法、减法、标量乘法与线性组合。"
+      "en": "Practice vector components, dot products, projections, equations, span, geometry, and applications.",
+      "zh": "练习向量分量、点积、投影、方程、张成空间、几何关系与应用。"
     },
     "courses": [
       "linear-algebra"
@@ -374,7 +378,7 @@
     },
     "addedAt": "2026-01-01",
     "kind": "standard",
-    "search": "vector operations practice vector addition subtraction scalar multiplication linear combination 2d 3d linear algebra vector-operations 向量 运算 向量加法 向量减法 标量乘法 线性组合 二维 三维 线性代数"
+    "search": "vector operations practice vector addition subtraction scalar multiplication dot product projection span geometry applications linear algebra vector-operations 向量 运算 点积 投影 张成空间 向量几何 应用 线性代数"
   },
   {
     "id": "matrix-multiplication",
@@ -795,6 +799,18 @@
     "search": "geometry formula arena area perimeter circumference volume formulas geometry i geometry-formula 几何 公式 面积 周长 圆周长 体积 几何公式"
   },
   {
+    "id": "midpoints-bisectors-trisectors",
+    "href": "games/midpoints-bisectors-trisectors.html",
+    "title": { "en": "Midpoints, Bisectors & Trisectors", "zh": "\u4e2d\u70b9\u3001\u5e73\u5206\u7ebf\u4e0e\u4e09\u7b49\u5206" },
+    "description": { "en": "Practice exact segment and angle partitions with coordinates, algebra, and interactive diagrams.", "zh": "\u901a\u8fc7\u5750\u6807\u3001\u4ee3\u6570\u548c\u4ea4\u4e92\u56fe\u5f62\u7ec3\u4e60\u7ebf\u6bb5\u4e0e\u89d2\u7684\u7cbe\u786e\u7b49\u5206\u3002" },
+    "courses": ["geometry-1"],
+    "primaryCourse": "geometry-1",
+    "topics": { "geometry-1": "segments-angles" },
+    "addedAt": "2026-07-25",
+    "kind": "geometry",
+    "search": "midpoint segment bisector perpendicular bisector trisector angle bisector angle trisector geometry midpoints-bisectors-trisectors \u4e2d\u70b9 \u7ebf\u6bb5\u5e73\u5206\u7ebf \u5782\u76f4\u5e73\u5206\u7ebf \u89d2\u5e73\u5206\u7ebf \u4e09\u7b49\u5206 \u51e0\u4f55"
+  },
+  {
     "id": "triangle-congruence",
     "href": "games/triangle-congruence.html",
     "title": {
@@ -802,7 +818,7 @@
       "zh": "三角形全等证明"
     },
     "description": {
-      "en": "Prove triangle congruence with exact generated diagrams, theorem selection, and proof-table practice.",
+      "en": "Build ordered triangle-congruence proofs from diagram evidence, reasons, correspondence, and valid criteria.",
       "zh": "用精确生成的几何图、全等判定选择和证明表练习三角形全等。"
     },
     "courses": [
@@ -927,6 +943,47 @@
     "search": "special products practice difference of squares perfect square identities expansion factoring algebra i special-products 特殊乘法公式 平方差 完全平方 展开 因式分解 代数"
   }
 ];
+  const assignmentDefaults = Object.freeze({
+    enabled: true,
+    modes: Object.freeze(["practice", "learn", "exam"]),
+    difficulties: Object.freeze(["easy", "medium", "hard", "expert", "mixed"]),
+    questionCount: Object.freeze({ min: 1, max: 100, default: 10 }),
+    timerLevels: Object.freeze([
+      Object.freeze({ id: "timer_easy", seconds: 120 }),
+      Object.freeze({ id: "timer_medium", seconds: 60 }),
+      Object.freeze({ id: "timer_hard", seconds: 30 }),
+      Object.freeze({ id: "timer_expert", seconds: 15 })
+    ])
+  });
+  const assignmentEnabledToolIds = new Set([
+    "arithmetic-within-10", "arithmetic-within-100", "arithmetic-within-1000", "powers-roots", "gcd-lcm",
+    "set-theory-basics", "exponent-laws", "exponential-functions", "logarithmic-functions", "radical-functions",
+    "advanced-equation-solving", "vector-operations", "matrix-multiplication", "determinant-practice",
+    "completing-the-square", "quadratic-functions", "quadratic-formula", "algebra-expression", "algebra-simplification",
+    "linear-equation", "linear-inequalities", "systems-linear-equations", "slope-from-two-points", "function-evaluation",
+    "factoring-practice", "polynomial-multiplication", "complex-number-operations", "fraction-percent", "geometry-formula",
+    "midpoints-bisectors-trisectors", "triangle-congruence", "derivative-practice", "limits-practice",
+    "integration-practice", "unit-circle-trigonometry", "special-products"
+  ]);
+  const assignmentOverrides = {
+    "function-graph-matching": {
+      reason: "This tool does not yet expose Learn, Practice, and Exam modes."
+    }
+  };
+  tools.forEach(tool => {
+    const override = assignmentOverrides[tool.id] || {};
+    const enabled = assignmentEnabledToolIds.has(tool.id);
+    tool.assignment = Object.freeze({
+      ...assignmentDefaults,
+      ...override,
+      enabled,
+      reason: override.reason || (enabled ? "" : "Assignment capabilities have not been audited for this tool."),
+      modes: Object.freeze([...(override.modes || assignmentDefaults.modes)]),
+      difficulties: Object.freeze([...(override.difficulties || assignmentDefaults.difficulties)]),
+      questionCount: Object.freeze({ ...assignmentDefaults.questionCount, ...(override.questionCount || {}) }),
+      timerLevels: Object.freeze([...(override.timerLevels || assignmentDefaults.timerLevels)].map(level => Object.freeze({ ...level })))
+    });
+  });
   const byId = id => tools.find(tool => tool.id === id) || null;
   const label = value => value?.[localStorage.getItem("mathcomplete_lang") === "zh" ? "zh" : "en"] || "";
   const learningPaths = [];

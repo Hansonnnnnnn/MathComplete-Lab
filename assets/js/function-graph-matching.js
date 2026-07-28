@@ -2,7 +2,7 @@
   const GAME_ID = "function-graph-matching";
   const COURSE = "algebra-2";
   const DIFFICULTIES = ["easy", "medium", "hard", "expert", "mixed"];
-  const TIMER_SECONDS = { relaxed: 240, standard: 150, challenge: 90 };
+  const TIMER_SECONDS = { timer_easy: 120, timer_medium: 60, timer_hard: 30, timer_expert: 15 };
   const VIEW = { xmin: -6, xmax: 6, ymin: -6, ymax: 6, width: 520, height: 400, pad: 34 };
   const $ = id => document.getElementById(id);
 
@@ -17,6 +17,7 @@
   let timerId = null;
   let timeLeft = 0;
   let questionStart = 0;
+  let roundMode = "practice";
 
   const els = {
     toolBadge: $("toolBadge"),
@@ -94,6 +95,7 @@
       timeUp: "Time is up.",
       solutionTitle: "Graph Features",
       resultTitle: "Practice Results",
+      resultTitles: { practice: "Practice Results", learn: "Learning Results", exam: "Exam Results" },
       scoreLabel: "Correct Sets",
       accuracyLabel: "Accuracy",
       wrongLabel: "Sets to Review",
@@ -117,11 +119,7 @@
         expert: "Expert: 6 closely related graphs, piecewise rules, and multi-feature comparisons",
         mixed: "Mixed: balanced graph recognition"
       },
-      timerOptions: {
-        relaxed: "Relaxed: 4 minutes per set",
-        standard: "Standard: 2.5 minutes per set",
-        challenge: "Challenge: 90 seconds per set"
-      }
+      timerOptions: { timer_easy: "2 minutes per set", timer_medium: "1 minute per set", timer_hard: "30 seconds per set", timer_expert: "15 seconds per set" }
     },
     zh: {
       htmlLang: "zh-CN",
@@ -151,6 +149,7 @@
       timeUp: "\u65f6\u95f4\u5230\u3002",
       solutionTitle: "\u56fe\u50cf\u7279\u5f81",
       resultTitle: "\u7ec3\u4e60\u7ed3\u679c",
+      resultTitles: { practice: "\u7ec3\u4e60\u7ed3\u679c", learn: "\u5b66\u4e60\u7ed3\u679c", exam: "\u8003\u8bd5\u7ed3\u679c" },
       scoreLabel: "\u6b63\u786e\u9898\u7ec4",
       accuracyLabel: "\u6b63\u786e\u7387",
       wrongLabel: "\u9700\u8981\u590d\u4e60",
@@ -174,11 +173,7 @@
         expert: "\u4e13\u5bb6\uff1a6 \u5f20\u9ad8\u76f8\u4f3c\u56fe\u50cf\uff0c\u542b\u5206\u6bb5\u89c4\u5219\u4e0e\u591a\u7279\u5f81\u6bd4\u8f83",
         mixed: "\u6df7\u5408\uff1a\u7efc\u5408\u51fd\u6570\u56fe\u50cf\u8bc6\u522b"
       },
-      timerOptions: {
-        relaxed: "\u5bbd\u677e\uff1a\u6bcf\u7ec4 4 \u5206\u949f",
-        standard: "\u6807\u51c6\uff1a\u6bcf\u7ec4 2.5 \u5206\u949f",
-        challenge: "\u6311\u6218\uff1a\u6bcf\u7ec4 90 \u79d2"
-      }
+      timerOptions: { timer_easy: "\u6bcf\u7ec4 2 \u5206\u949f", timer_medium: "\u6bcf\u7ec4 1 \u5206\u949f", timer_hard: "\u6bcf\u7ec4 30 \u79d2", timer_expert: "\u6bcf\u7ec4 15 \u79d2" }
     }
   };
 
@@ -444,7 +439,7 @@
     els.wrongLabel.textContent = tr().wrongLabel;
     els.wrongReviewTitle.textContent = tr().wrongReviewTitle;
     fillSelect(els.difficulty, DIFFICULTIES.map(id => ({ id, text: tr().difficultyOptions[id] })), els.difficulty.value || "medium");
-    fillSelect(els.timerLevel, Object.keys(TIMER_SECONDS).map(id => ({ id, text: tr().timerOptions[id] })), els.timerLevel.value || "standard");
+    fillSelect(els.timerLevel, Object.keys(TIMER_SECONDS).map(id => ({ id, text: tr().timerOptions[id] })), els.timerLevel.value || "timer_medium");
   }
 
   function fillSelect(select, options, currentValue) {
@@ -455,6 +450,7 @@
   function startRound(typesOnly = null) {
     const count = Math.max(1, Math.min(30, Number(els.questionCount.value) || 5));
     const difficulty = els.difficulty.value || "medium";
+    roundMode = window.MCLToolModes?.getMode?.() || document.getElementById("toolMode")?.value || "practice";
     quiz = [];
     for (let i = 0; i < count; i++) {
       let set = buildSet(difficulty);
@@ -628,12 +624,20 @@
     if (isCorrect) correctGroups += 1;
     els.feedback.className = `feedback ${isCorrect ? "good" : "bad"}`;
     els.feedback.textContent = forceTimeUp ? tr().timeUp : isCorrect ? tr().correct : tr().incorrect;
-    markCards(set);
-    showSolution(set);
+    if (roundMode !== "exam") {
+      markCards(set);
+      showSolution(set);
+    }
     els.submitBtn.disabled = true;
     els.nextBtn.disabled = false;
     if (!isCorrect) wrongGroups.push({ set, matches: { ...matches }, forceTimeUp });
     recordAttempt(set, isCorrect, forceTimeUp);
+    if (roundMode === "practice" && isCorrect) {
+      els.solutionBox.classList.add("hidden");
+      window.setTimeout(() => {
+        if (answered && !els.quizCard.classList.contains("hidden")) nextSet();
+      }, 800);
+    }
   }
 
   function markCards(set) {
@@ -670,6 +674,7 @@
         course: COURSE,
         topic: set.functions.map(fn => fn.kind).join(","),
         difficulty: set.difficulty,
+        mode: roundMode,
         questionKey: set.functions.map(fn => fn.expression).join("|"),
         questionText: tr().prompt,
         questionLatex: "",
@@ -696,6 +701,7 @@
     stopTimer();
     els.quizCard.classList.add("hidden");
     els.resultCard.classList.remove("hidden");
+    els.resultTitle.textContent = tr().resultTitles?.[roundMode] || tr().resultTitle;
     els.progressBar.style.width = "100%";
     const total = Math.min(quiz.length, current + (answered ? 1 : 0));
     els.scoreNum.textContent = `${correctGroups}/${total}`;
@@ -730,7 +736,7 @@
   }
 
   function startTimer() {
-    timeLeft = TIMER_SECONDS[els.timerLevel.value] || TIMER_SECONDS.standard;
+    timeLeft = TIMER_SECONDS[els.timerLevel.value] || TIMER_SECONDS.timer_medium;
     els.timerDisplay.classList.remove("hidden", "timer-danger");
     els.timerDisplay.textContent = tr().timerDisplay(timeLeft);
     timerId = window.setInterval(() => {

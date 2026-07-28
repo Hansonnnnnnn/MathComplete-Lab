@@ -30,6 +30,20 @@
     return output;
   }
 
+  function parallelArrows(a, b, count, group) {
+    const dx = b.x - a.x, dy = b.y - a.y, length = Math.hypot(dx, dy) || 1;
+    const ux = dx / length, uy = dy / length, nx = -uy, ny = ux;
+    let output = "";
+    for (let index = 0; index < count; index += 1) {
+      const shift = (index - (count - 1) / 2) * 15;
+      const cx = (a.x + b.x) / 2 + ux * shift, cy = (a.y + b.y) / 2 + uy * shift;
+      const tip = { x: cx + ux * 8, y: cy + uy * 8 };
+      const back = { x: cx - ux * 7, y: cy - uy * 7 };
+      output += `<path class="mcl-geo-mark mcl-geo-parallel-mark mcl-geo-group-${group || 1}" d="M ${back.x + nx * 7} ${back.y + ny * 7} L ${tip.x} ${tip.y} L ${back.x - nx * 7} ${back.y - ny * 7}"/>`;
+    }
+    return output;
+  }
+
   function render(container, scene, context = {}) {
     if (!container || !scene) return null;
     const width = scene.viewBox?.[2] || 720, height = scene.viewBox?.[3] || 420;
@@ -57,6 +71,7 @@
     });
     (scene.marks || []).forEach(mark => {
       if (mark.type === "tick") parts.push(segmentTicks(point(scene, mark.a), point(scene, mark.b), mark.count || 1, mark.group));
+      if (mark.type === "parallel") parts.push(parallelArrows(point(scene, mark.a), point(scene, mark.b), mark.count || 1, mark.group));
       if (mark.type === "right") {
         const v = point(scene, mark.vertex), a = point(scene, mark.a), b = point(scene, mark.b);
         const ua = { x:(a.x-v.x)/(Math.hypot(a.x-v.x,a.y-v.y)||1), y:(a.y-v.y)/(Math.hypot(a.x-v.x,a.y-v.y)||1) };

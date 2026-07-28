@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; font-src 'self' data: https://cdn.jsdelivr.net; img-src 'self' data: blob:; connect-src 'self' https://hcrxxfcvmrjahnjlbjur.supabase.co wss://hcrxxfcvmrjahnjlbjur.supabase.co https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; object-src 'none'; base-uri 'self'; form-action 'self'">
+  <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=()">
+  <title>Converse, Inverse & Contrapositive Practice</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <link rel="stylesheet" href="../assets/css/quiz-tool.css">
+  <link rel="stylesheet" href="../assets/css/design-system.css?v=20260724.1">
+  <link rel="stylesheet" href="../assets/css/conditional-logic.css?v=20260725.2">
+  <script src="../assets/js/theme.js?v=20260716.2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.106.2"></script>
+  <script src="../assets/js/supabase-client.js"></script>
+  <script src="../assets/js/auth.js"></script>
+  <script src="../assets/js/auth-ui.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+</head>
+<body>
+  <nav class="mc-site-shell"><a class="mc-brand" href="../index.html"><span class="mc-brand-mark">&Sigma;</span><span>MathComplete Lab</span></a><div class="mc-links"><a class="mc-link" href="../practice.html" data-i18n="navPractice">Practice Library</a><a class="mc-link primary" href="../index.html" data-i18n="navHome">Home</a></div></nav>
+  <main class="container">
+    <header><div class="eyebrow"><span class="eyebrow-dot"></span><span id="toolBadge"></span></div><h1 id="pageTitle"></h1><p id="pageSubtitle" class="subtitle"></p></header>
+    <section id="setupCard" class="card"><h2 id="setupTitle"></h2><div class="setup-grid">
+      <div><label id="difficultyLabel" for="difficulty"></label><select id="difficulty"></select></div>
+      <div class="mcl-tool-mode-field"><label id="toolModeLabel" for="toolMode">Practice mode</label><select id="toolMode"><option value="practice">Practice Mode</option><option value="learn" selected>Learn Mode</option><option value="exam">Exam Mode</option></select><p class="mcl-tool-mode-hint" id="mclToolModeHint"></p></div>
+      <div><label id="questionCountLabel" for="questionCount"></label><input id="questionCount" type="number" min="1" max="100" value="10"></div>
+      <div><label id="optionCountLabel" for="optionCount"></label><select id="optionCount"></select></div>
+      <div><label class="checkbox-label" for="timedMode"><input id="timedMode" type="checkbox"><span id="timedModeText"></span></label><p id="timedModeHint" class="mini-hint"></p></div>
+      <div><label id="timerLevelLabel" for="timerLevel"></label><select id="timerLevel"></select></div>
+    </div><div class="actions"><button id="startBtn"></button><button id="sampleBtn" class="ghost"></button></div><div id="sampleBox" class="explain-box hidden"></div><div id="noteBox" class="explain-box"></div></section>
+    <section id="quizCard" class="card hidden"><div class="topbar"><div><span class="pill" id="progressText"></span><span class="pill" id="difficultyText"></span><span class="pill timer-pill hidden" id="timerDisplay"></span></div><button id="quitBtn" class="ghost"></button></div><div class="progress-wrap"><div id="progressBar" class="progress"></div></div><div id="questionTitle" class="question-title"></div><div id="questionExtra" class="question-extra"></div><div id="questionMain" class="question-main"></div><div id="questionVisual" class="question-visual hidden"></div><div id="options" class="options"></div><div id="feedback" class="feedback"></div><div id="solutionBox" class="solution-box hidden"></div><div class="actions"><button id="nextBtn" disabled></button></div></section>
+    <section id="resultCard" class="card hidden"><h2 id="resultTitle"></h2><div class="result-grid"><div class="stat"><div id="scoreNum" class="num">0/0</div><div id="scoreLabel" class="label"></div></div><div class="stat"><div id="accuracyNum" class="num">0%</div><div id="accuracyLabel" class="label"></div></div><div class="stat"><div id="wrongNum" class="num">0</div><div id="wrongLabel" class="label"></div></div></div><h3 id="wrongReviewTitle"></h3><div id="wrongList" class="wrong-list"></div><div class="actions" style="margin-top:22px"><button id="restartBtn"></button><button id="reviewWrongBtn" class="secondary"></button></div></section>
+  </main>
+  <script src="../assets/js/conditional-logic.js?v=20260725.1"></script>
+  <script src="../assets/js/question-template-registry.js?v=20260724.2"></script>
+  <script src="../assets/js/conditional-logic-bank.js?v=20260725.1"></script>
+  <script src="../assets/js/quiz-tool-engine.js?v=20260725.2"></script>
+  <script src="../assets/js/tool-modes.js?v=20260717.1"></script>
+  <script src="../assets/js/report-export.js?v=20260725.2"></script>
+  <script src="../assets/js/tool-ux.js?v=20260716.2"></script>
+  <script src="../assets/js/tool-catalog.js?v=20260725.5"></script>
+  <script src="../assets/js/motion.js?v=20260717.3"></script>
+  <script src="../assets/js/site-shell.js?v=20260716.5"></script>
+</body>
+</html>

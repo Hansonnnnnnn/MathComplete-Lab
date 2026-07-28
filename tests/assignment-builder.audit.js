@@ -16,9 +16,9 @@ vm.createContext(context);
 vm.runInContext(catalogSource, context);
 const catalog = context.window.MCLToolCatalog;
 
-assert(catalog.tools.length === 37, `Expected the current 37-tool catalog, found ${catalog.tools.length}.`);
+assert(catalog.tools.length === 39, `Expected the current 39-tool catalog, found ${catalog.tools.length}.`);
 const enabled = catalog.tools.filter(tool => tool.assignment?.enabled);
-assert(enabled.length === 36, `Expected 36 assignment-compatible tools, found ${enabled.length}.`);
+assert(enabled.length === 39, `Expected all 39 tools to be assignment compatible, found ${enabled.length}.`);
 
 for (const tool of catalog.tools) {
   assert(tool.assignment && typeof tool.assignment.enabled === "boolean", `${tool.id} is missing assignment capability metadata.`);
@@ -34,12 +34,21 @@ for (const tool of catalog.tools) {
   assert(html.includes("report-export.js"), `${tool.id} cannot produce the required score PDF.`);
   assert(JSON.stringify(tool.assignment.modes) === JSON.stringify(["practice", "learn", "exam"]), `${tool.id} has an unexpected mode list.`);
   assert(JSON.stringify(tool.assignment.difficulties) === JSON.stringify(["easy", "medium", "hard", "expert", "mixed"]), `${tool.id} has an unexpected difficulty list.`);
-  assert(tool.assignment.questionCount.min === 1 && tool.assignment.questionCount.max === 100, `${tool.id} has an unexpected question range.`);
+  const expectedMax = tool.id === "function-graph-matching" ? 30 : 100;
+  assert(tool.assignment.questionCount.min === 1 && tool.assignment.questionCount.max === expectedMax, `${tool.id} has an unexpected question range.`);
   assert(JSON.stringify(tool.assignment.timerLevels.map(level => level.seconds)) === JSON.stringify([120, 60, 30, 15]), `${tool.id} has an unexpected timer list.`);
 }
 
 const graphTool = catalog.byId("function-graph-matching");
-assert(graphTool && !graphTool.assignment.enabled && graphTool.assignment.reason, "Function Graph Matching must be explicitly excluded until it supports all three modes.");
+assert(graphTool?.assignment.enabled, "Function Graph Matching must be available in the assignment builder.");
+assert(graphTool.assignment.questionCount.default === 5 && graphTool.assignment.questionCount.max === 30, "Function Graph Matching must keep its native 1-30 set range.");
+const graphHtml = fs.readFileSync(path.join(root, graphTool.href), "utf8");
+assert(graphHtml.includes("tool-modes.js"), "Function Graph Matching must load the shared Learn/Practice/Exam controller.");
+
+const parallelTool = catalog.byId("parallel-lines-angle-relationships");
+assert(parallelTool?.assignment.enabled, "Parallel Lines must be available in the assignment builder.");
+assert(parallelTool.primaryCourse === "geometry-1" && parallelTool.courses.includes("algebra-1"), "Parallel Lines has incorrect course placement.");
+assert(parallelTool.topics["geometry-1"] === "segments-angles" && parallelTool.topics["algebra-1"] === "equations", "Parallel Lines has incorrect topic placement.");
 
 for (const api of ["getDraft", "addTask", "updateTask", "removeTask", "moveTask", "validate", "downloadPdf"]) {
   assert(new RegExp(`\\b${api}\\b`).test(builderSource), `Missing assignment builder API: ${api}`);

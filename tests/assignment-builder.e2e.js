@@ -33,10 +33,12 @@ const mobilePreviewPath = path.join(os.tmpdir(), "mcl-assignment-builder-mobile.
 
   await page.goto(baseUrl, { waitUntil: "networkidle" });
   await page.locator("#assignmentForm").waitFor({ state: "visible" });
+  assert.equal(await page.locator('#toolPicker option[value="parallel-lines-angle-relationships"]').count(), 1);
   assert.equal(await page.locator("#assignmentTitle").inputValue(), "Math Practice Assignment");
   await page.fill("#studentName", "Jordan Lee");
   await page.fill("#assignmentTitle", "Algebra review");
   await page.fill("#dueDate", "2026-07-30");
+  await page.selectOption("#toolPicker", "function-graph-matching");
   await page.click("#addTaskButton");
 
   assert.equal(await page.locator(".mcl-task-card").count(), 1);
@@ -51,7 +53,8 @@ const mobilePreviewPath = path.join(os.tmpdir(), "mcl-assignment-builder-mobile.
   const countInput = page.locator('[data-task-field="questionCount"]');
   await countInput.fill("250");
   await countInput.dispatchEvent("change");
-  assert.equal(await countInput.inputValue(), "100");
+  assert.equal(await countInput.inputValue(), "30");
+  assert.equal((await page.evaluate(() => window.MCLAssignmentBuilder.getDraft())).tasks[0].toolId, "function-graph-matching");
   await page.screenshot({ path: desktopPreviewPath, fullPage: true });
   await page.setViewportSize({ width: 390, height: 844 });
   assert.equal(await page.locator("body").evaluate(node => node.scrollWidth <= node.clientWidth), true);

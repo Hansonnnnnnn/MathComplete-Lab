@@ -203,6 +203,17 @@
     "midpoints-bisectors-trisectors": `
       <path d="M8 49h54M35 15v48" /><path d="M29 44v10M41 44v10" class="mcl-math-visual__secondary" />
       <path d="M72 56L91 13l24 43M91 13L95 56" /><path d="M83 31A15 15 0 0 1 93 29M93 29A15 15 0 0 1 102 34" class="mcl-math-visual__secondary" />`,
+    "conditional-logic": `
+      <circle cx="20" cy="18" r="10" /><circle cx="100" cy="18" r="10" />
+      <circle cx="20" cy="52" r="10" /><circle cx="100" cy="52" r="10" />
+      <text x="16" y="22">p</text><text x="96" y="22">q</text><text x="12" y="56">\u00acp</text><text x="92" y="56">\u00acq</text>
+      <path d="M32 18h55m-7-5 7 5-7 5M88 52H33m7-5-7 5 7 5" class="mcl-math-visual__secondary" />
+      <path d="M94 27L29 45m7-7-7 7 10 2" class="mcl-math-visual__axis" />`,
+    "parallel-lines-angle-relationships": `
+      <path d="M8 17h104M8 53h104M33 65L87 6" />
+      <path d="M50 13l5 4-5 4M66 49l5 4-5 4" class="mcl-math-visual__secondary" />
+      <path d="M42 17A13 13 0 0 1 48 27M72 43A13 13 0 0 1 78 53" class="mcl-math-visual__secondary" />
+      <circle cx="43" cy="17" r="3" class="mcl-math-visual__fill" /><circle cx="76" cy="53" r="3" class="mcl-math-visual__fill" />`,
     "triangle-congruence": `
       <path d="M8 54L32 13l24 41zM65 54l23-41 24 41z" />
       <path d="M18 37l7 4M96 40l7-4M38 31h7M76 31h7" class="mcl-math-visual__secondary" />

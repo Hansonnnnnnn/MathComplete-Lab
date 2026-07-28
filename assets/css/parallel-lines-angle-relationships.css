@@ -1,0 +1,100 @@
+.mcl-line-angle-response {
+  display: grid;
+  gap: 14px;
+}
+
+.mcl-line-angle-instruction,
+.mcl-line-angle-required {
+  margin: 0;
+  color: var(--mcl-text-soft);
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.mcl-line-angle-required { color: var(--mcl-bad); }
+.mcl-line-angle-grid { display: grid; gap: 10px; }
+.question-visual .mcl-geometry-scene { aspect-ratio: 12 / 7; }
+.mcl-line-angle-actions,
+.mcl-line-angle-targets,
+.mcl-line-angle-token-bank,
+.mcl-line-angle-sequence { display: flex; flex-wrap: wrap; gap: 8px; }
+
+.mcl-line-angle-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(210px, .8fr);
+  align-items: center;
+  gap: 14px;
+  min-height: 64px;
+  padding: 12px 14px;
+  border: 1px solid var(--mcl-border);
+  border-radius: 8px;
+  background: var(--mcl-surface);
+  color: var(--mcl-text);
+}
+
+.mcl-line-angle-row.is-correct { border-color: var(--mcl-good); box-shadow: inset 4px 0 0 var(--mcl-good); }
+.mcl-line-angle-row.is-wrong { border-color: var(--mcl-bad); box-shadow: inset 4px 0 0 var(--mcl-bad); }
+.mcl-line-angle-row-label { min-width: 0; font-weight: 700; line-height: 1.45; overflow-wrap: anywhere; }
+
+.mcl-line-angle-select,
+.mcl-line-angle-input,
+.mcl-line-angle-target,
+.mcl-line-angle-token,
+.mcl-line-angle-sequence-item,
+.mcl-line-angle-clear,
+.mcl-line-angle-submit {
+  min-height: 44px;
+  border: 1px solid var(--mcl-border-strong);
+  border-radius: 8px;
+  padding: 9px 13px;
+  background: var(--mcl-surface-raised, var(--mcl-surface));
+  color: var(--mcl-text);
+  font: inherit;
+  font-weight: 700;
+}
+
+.mcl-line-angle-select,
+.mcl-line-angle-input { width: 100%; }
+.mcl-line-angle-target,
+.mcl-line-angle-token,
+.mcl-line-angle-sequence-item,
+.mcl-line-angle-clear,
+.mcl-line-angle-submit { cursor: pointer; }
+.mcl-line-angle-target.is-selected,
+.mcl-line-angle-token.is-used { border-color: var(--mcl-accent); background: var(--mcl-accent-soft); }
+.mcl-line-angle-token.is-used { opacity: .58; }
+.mcl-line-angle-target.is-correct { border-color: var(--mcl-good); background: var(--mcl-good-soft); }
+.mcl-line-angle-target.is-wrong { border-color: var(--mcl-bad); background: var(--mcl-bad-soft); }
+
+.mcl-line-angle-sequence {
+  min-height: 62px;
+  align-items: center;
+  padding: 10px;
+  border: 1px dashed var(--mcl-border-strong);
+  border-radius: 8px;
+}
+
+.mcl-line-angle-sequence-empty { color: var(--mcl-text-soft); }
+.mcl-line-angle-sequence-item { background: var(--mcl-accent-soft); }
+.mcl-line-angle-submit { border-color: var(--mcl-accent); background: var(--mcl-accent); color: #fff; }
+.mcl-line-angle-submit:disabled,
+.mcl-line-angle-clear:disabled,
+.mcl-line-angle-token:disabled,
+.mcl-line-angle-target:disabled,
+.mcl-line-angle-select:disabled,
+.mcl-line-angle-input:disabled { cursor: default; }
+
+body.mcl-tool-exam .mcl-line-angle-row.is-correct,
+body.mcl-tool-exam .mcl-line-angle-row.is-wrong { border-color: var(--mcl-border); box-shadow: none; }
+
+@media (max-width: 640px) {
+  .mcl-line-angle-row { grid-template-columns: 1fr; align-items: stretch; }
+  .mcl-line-angle-targets,
+  .mcl-line-angle-actions { display: grid; grid-template-columns: 1fr; }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .mcl-line-angle-row,
+  .mcl-line-angle-target,
+  .mcl-line-angle-token { transition: border-color 150ms ease, background-color 150ms ease, opacity 150ms ease; }
+}

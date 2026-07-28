@@ -92,6 +92,10 @@
     "en": "Segments & Angles",
     "zh": "\u7ebf\u6bb5\u4e0e\u89d2"
   },
+  "logic-reasoning": {
+    "en": "Logic & Reasoning",
+    "zh": "\u903b\u8f91\u4e0e\u63a8\u7406"
+  },
   "geometry": {
     "en": "Geometry & Proof",
     "zh": "几何与证明"
@@ -811,6 +815,48 @@
     "search": "midpoint segment bisector perpendicular bisector trisector angle bisector angle trisector geometry midpoints-bisectors-trisectors \u4e2d\u70b9 \u7ebf\u6bb5\u5e73\u5206\u7ebf \u5782\u76f4\u5e73\u5206\u7ebf \u89d2\u5e73\u5206\u7ebf \u4e09\u7b49\u5206 \u51e0\u4f55"
   },
   {
+    "id": "conditional-logic",
+    "href": "games/conditional-logic.html",
+    "title": {
+      "en": "Converse, Inverse & Contrapositive Practice",
+      "zh": "\u9006\u547d\u9898\u3001\u5426\u547d\u9898\u4e0e\u9006\u5426\u547d\u9898\u4e13\u9879\u7ec3\u4e60"
+    },
+    "description": {
+      "en": "Build conditional statements, precise negations, counterexamples, and necessary or sufficient reasoning.",
+      "zh": "\u7ec3\u4e60\u6761\u4ef6\u547d\u9898\u3001\u7cbe\u786e\u5426\u5b9a\u3001\u53cd\u4f8b\u4ee5\u53ca\u5145\u5206\u5fc5\u8981\u6761\u4ef6\u63a8\u7406\u3002"
+    },
+    "courses": ["geometry-1", "algebra-1"],
+    "primaryCourse": "geometry-1",
+    "topics": {
+      "geometry-1": "logic-reasoning",
+      "algebra-1": "logic-reasoning"
+    },
+    "addedAt": "2026-07-25",
+    "kind": "standard",
+    "search": "conditional logic converse inverse contrapositive negation truth table counterexample sufficient necessary biconditional geometry algebra conditional-logic \u6761\u4ef6\u547d\u9898 \u9006\u547d\u9898 \u5426\u547d\u9898 \u9006\u5426\u547d\u9898 \u5426\u5b9a \u53cd\u4f8b \u5145\u5206\u6761\u4ef6 \u5fc5\u8981\u6761\u4ef6 \u903b\u8f91"
+  },
+  {
+    "id": "parallel-lines-angle-relationships",
+    "href": "games/parallel-lines-angle-relationships.html",
+    "title": {
+      "en": "Parallel Lines, Transversals & Angle Relationships Practice",
+      "zh": "平行线、截线与角关系专项练习"
+    },
+    "description": {
+      "en": "Classify angle pairs, solve exact angle equations, and use valid converses to prove lines parallel.",
+      "zh": "辨认角对、求解精确角度方程，并使用有效逆定理证明直线平行。"
+    },
+    "courses": ["geometry-1", "algebra-1"],
+    "primaryCourse": "geometry-1",
+    "topics": {
+      "geometry-1": "segments-angles",
+      "algebra-1": "equations"
+    },
+    "addedAt": "2026-07-25",
+    "kind": "geometry",
+    "search": "parallel lines transversal angle relationships corresponding alternate interior exterior same side converse geometry algebra equations parallel-lines-angle-relationships 平行线 截线 同位角 内错角 外错角 同旁内角 逆定理 角关系 几何 代数"
+  },
+  {
     "id": "triangle-congruence",
     "href": "games/triangle-congruence.html",
     "title": {
@@ -962,12 +1008,12 @@
     "completing-the-square", "quadratic-functions", "quadratic-formula", "algebra-expression", "algebra-simplification",
     "linear-equation", "linear-inequalities", "systems-linear-equations", "slope-from-two-points", "function-evaluation",
     "factoring-practice", "polynomial-multiplication", "complex-number-operations", "fraction-percent", "geometry-formula",
-    "midpoints-bisectors-trisectors", "triangle-congruence", "derivative-practice", "limits-practice",
-    "integration-practice", "unit-circle-trigonometry", "special-products"
+    "midpoints-bisectors-trisectors", "conditional-logic", "parallel-lines-angle-relationships", "triangle-congruence", "derivative-practice", "limits-practice",
+    "integration-practice", "unit-circle-trigonometry", "special-products", "function-graph-matching"
   ]);
   const assignmentOverrides = {
     "function-graph-matching": {
-      reason: "This tool does not yet expose Learn, Practice, and Exam modes."
+      questionCount: { min: 1, max: 30, default: 5 }
     }
   };
   tools.forEach(tool => {

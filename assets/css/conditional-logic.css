@@ -1,0 +1,167 @@
+.mcl-logic-response {
+  display: grid;
+  gap: 14px;
+}
+
+.mcl-logic-instruction,
+.mcl-logic-required {
+  margin: 0;
+  color: var(--mcl-text-soft, #5b6b82);
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.mcl-logic-required {
+  color: var(--mcl-bad, #b42318);
+}
+
+.mcl-logic-grid {
+  display: grid;
+  gap: 10px;
+}
+
+.mcl-logic-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(180px, 0.72fr);
+  align-items: center;
+  gap: 14px;
+  min-height: 64px;
+  padding: 12px 14px;
+  border: 1px solid var(--mcl-border, #d7dfeb);
+  border-radius: 8px;
+  background: var(--mcl-surface, #fff);
+  color: var(--mcl-text, #14233d);
+}
+
+.mcl-logic-row.is-correct {
+  border-color: #2f855a;
+  box-shadow: inset 4px 0 0 #2f855a;
+}
+
+.mcl-logic-row.is-wrong {
+  border-color: #c24135;
+  box-shadow: inset 4px 0 0 #c24135;
+}
+
+.mcl-logic-row-label {
+  min-width: 0;
+  font-weight: 700;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.mcl-logic-select,
+.mcl-logic-truth-button,
+.mcl-logic-token,
+.mcl-logic-submit,
+.mcl-logic-clear {
+  min-height: 44px;
+  font: inherit;
+  font-weight: 700;
+}
+
+.mcl-logic-select {
+  width: 100%;
+  padding: 9px 38px 9px 11px;
+  border: 1px solid var(--mcl-border-strong, #cbd5e1);
+  border-radius: 8px;
+  background: var(--mcl-surface-raised, var(--mcl-surface, #fff));
+  color: var(--mcl-text, #14233d);
+}
+
+.mcl-logic-truth-controls,
+.mcl-logic-token-bank,
+.mcl-logic-actions,
+.mcl-logic-sequence {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.mcl-logic-truth-button,
+.mcl-logic-token,
+.mcl-logic-clear {
+  padding: 9px 14px;
+  border: 1px solid var(--mcl-border-strong, #cbd5e1);
+  border-radius: 8px;
+  background: var(--mcl-surface-raised, var(--mcl-surface, #fff));
+  color: var(--mcl-text, #14233d);
+  cursor: pointer;
+}
+
+.mcl-logic-truth-button[aria-pressed="true"],
+.mcl-logic-token.is-used {
+  border-color: var(--mcl-accent, #315eea);
+  background: var(--mcl-accent-soft, #eaf0ff);
+  color: var(--mcl-text, #14233d);
+}
+
+.mcl-logic-token.is-used {
+  opacity: 0.58;
+}
+
+.mcl-logic-sequence {
+  min-height: 60px;
+  padding: 10px;
+  border: 1px dashed var(--mcl-border-strong, #9aa9bd);
+  border-radius: 8px;
+  align-items: center;
+}
+
+.mcl-logic-sequence-empty {
+  color: var(--mcl-text-soft, #5b6b82);
+}
+
+.mcl-logic-sequence-item {
+  padding: 8px 10px;
+  border-radius: 6px;
+  background: var(--mcl-accent-soft, #eaf0ff);
+  color: var(--mcl-text, #14233d);
+  font-weight: 700;
+}
+
+.mcl-logic-submit {
+  padding: 10px 18px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: var(--mcl-accent, #315eea);
+  color: #fff;
+  cursor: pointer;
+}
+
+.mcl-logic-submit:disabled,
+.mcl-logic-clear:disabled,
+.mcl-logic-token:disabled,
+.mcl-logic-truth-button:disabled,
+.mcl-logic-select:disabled {
+  cursor: default;
+}
+
+[data-theme="dark"] .mcl-logic-row,
+[data-theme="dark"] .mcl-logic-select,
+[data-theme="dark"] .mcl-logic-truth-button,
+[data-theme="dark"] .mcl-logic-token,
+[data-theme="dark"] .mcl-logic-clear {
+  color: #f4f7ff;
+}
+
+body.mcl-tool-exam .mcl-logic-row.is-correct,
+body.mcl-tool-exam .mcl-logic-row.is-wrong {
+  border-color: var(--mcl-border, #d7dfeb);
+  box-shadow: none;
+}
+
+@media (max-width: 640px) {
+  .mcl-logic-row {
+    grid-template-columns: 1fr;
+    align-items: stretch;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .mcl-logic-row,
+  .mcl-logic-token,
+  .mcl-logic-truth-button {
+    transition: border-color 150ms ease, background-color 150ms ease, opacity 150ms ease;
+  }
+}

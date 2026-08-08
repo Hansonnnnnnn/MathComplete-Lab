@@ -226,7 +226,7 @@
           if (!correctKey) throw new Error("missing answer");
           const distractorKeys = (first.distractors || []).map(answerKey).filter(Boolean);
           const uniqueDistractors = new Set(distractorKeys.filter(key => key !== correctKey));
-          if (uniqueDistractors.size < 5) throw new Error(`only ${uniqueDistractors.size} unique distractors; 5 required for six-choice mode`);
+          if (!first.interaction && uniqueDistractors.size < 5) throw new Error(`only ${uniqueDistractors.size} unique distractors; 5 required for six-choice mode`);
           const snapshot = stableString({
             main: first.main,
             plain: first.plain,

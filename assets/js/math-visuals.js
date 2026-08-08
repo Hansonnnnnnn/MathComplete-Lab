@@ -189,6 +189,15 @@
       <circle cx="91" cy="51" r="4" class="mcl-math-visual__secondary mcl-math-visual__fill" />
       <text x="101" y="47">Re</text><text x="64" y="12">Im</text>
       <text x="96" y="17" class="mcl-math-visual__label">z</text><text x="96" y="58" class="mcl-math-visual__label mcl-math-visual__secondary">z̄</text>`,
+    "number-systems-classification": `
+      <ellipse cx="60" cy="34" rx="53" ry="27" />
+      <ellipse cx="55" cy="34" rx="39" ry="21" class="mcl-math-visual__axis" />
+      <ellipse cx="49" cy="34" rx="25" ry="15" class="mcl-math-visual__secondary" />
+      <ellipse cx="44" cy="34" rx="12" ry="9" class="mcl-math-visual__secondary mcl-math-visual__soft" />
+      <text x="39" y="38" class="mcl-math-visual__label">Z</text>
+      <text x="62" y="38" class="mcl-math-visual__label">Q</text>
+      <text x="91" y="38" class="mcl-math-visual__label">R</text>
+      <circle cx="104" cy="15" r="4" class="mcl-math-visual__secondary mcl-math-visual__fill" />`,
     "fraction-percent": `
       <circle cx="35" cy="34" r="24" />
       <path d="M35 34V10A24 24 0 0 1 59 34z" class="mcl-math-visual__secondary mcl-math-visual__soft" />

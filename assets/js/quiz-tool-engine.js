@@ -263,6 +263,7 @@
       suggestion: question.suggestion || "",
       visual: question.visual || null,
       interaction: question.interaction || null,
+      extraLatex: question.extraLatex || "",
       audit: question.audit || null,
       familyId: question.familyId || question.type || "",
       conceptId: question.conceptId || "",
@@ -281,7 +282,7 @@
         })
       };
     }
-    q.options = makeOptions(q, Number(elements.optionCount.value || 4));
+    q.options = q.interaction ? [] : makeOptions(q, Number(elements.optionCount.value || 4));
     return q;
   }
 
@@ -375,7 +376,7 @@
           raw.difficulty = raw.difficulty || real;
           const q = finalizeQuestion(raw);
           const expectedOptions = Number(elements.optionCount.value || 4);
-          if (q.options.length !== expectedOptions) continue;
+          if (!q.interaction && q.options.length !== expectedOptions) continue;
           if (typeof config.validateQuestion === "function" && !config.validateQuestion(q, helpers)) continue;
           if (!forcedType || q.familyId === forcedType || q.type === forcedType) return q;
         }
@@ -390,7 +391,7 @@
       raw.difficulty = raw.difficulty || real;
       const q = finalizeQuestion(raw);
       const expectedOptions = Number(elements.optionCount.value || 4);
-      if (q.options.length !== expectedOptions) continue;
+      if (!q.interaction && q.options.length !== expectedOptions) continue;
       if (typeof config.validateQuestion === "function" && !config.validateQuestion(q, helpers)) continue;
       if (!forcedType || q.type === forcedType) return q;
     }
@@ -414,6 +415,11 @@
       let question = generateQuestion(level);
       if (config.avoidConsecutiveTypes && questions.length && question.type === questions.at(-1).type) {
         for (let attempt = 0; attempt < 20 && question.type === questions.at(-1).type; attempt++) {
+          question = generateQuestion(level);
+        }
+      }
+      if (typeof config.validateSequenceCandidate === "function") {
+        for (let attempt = 0; attempt < 30 && !config.validateSequenceCandidate(question, questions, helpers); attempt += 1) {
           question = generateQuestion(level);
         }
       }
@@ -521,7 +527,8 @@
     const specificPrompt = q.prompt || tr()[q.promptKey] || "";
     elements.qTitle.textContent = specificPrompt || tr().questionTitle;
     elements.qExtra.textContent = "";
-    elements.qExtra.classList.add("hidden");
+    elements.qExtra.classList.toggle("hidden", !q.extraLatex);
+    if (q.extraLatex) renderLatex(elements.qExtra, q.extraLatex, true);
     elements.qMain.classList.toggle("long-question", isLongQuestion(q.main));
     elements.qMain.classList.toggle("text-question", isTextQuestion(q.main));
     renderLatex(elements.qMain, q.main, true);
@@ -614,6 +621,13 @@
     const reportedOptions = optionPayload(q, selected);
     const reportedCorrectLabel = reportedOptions.find(option => option.isCorrect)?.label || "";
     const reportedSelectedLabel = reportedOptions.find(option => option.isSelected)?.label || "";
+    const interactionReport = q.interaction && config.interactionAdapter?.reportData
+      ? (config.interactionAdapter.reportData(q, selected, interactionController) || {})
+      : {};
+    const reportParameters = {
+      ...(q.parameters || {}),
+      ...(interactionReport.parameters || {})
+    };
     void window.MCLProgress?.recordGameAttempt?.({
       gameId: config.gameId,
       question: {
@@ -625,7 +639,7 @@
         templateId: q.templateId,
         templateVersion: q.templateVersion,
         seed: q.seed,
-        parameters: q.parameters
+        parameters: reportParameters
       },
       course: config.course,
       topic: q.familyId || q.type,
@@ -634,7 +648,7 @@
       templateId: q.templateId,
       templateVersion: q.templateVersion,
       seed: q.seed,
-      parameters: q.parameters,
+      parameters: reportParameters,
       correctAnswer: correctDisplay,
       selectedAnswer: selectedDisplay,
       options: reportedOptions,
@@ -646,7 +660,8 @@
       suggestion: q.suggestion,
       visual: q.visual,
       isCorrect,
-      timeUp
+      timeUp,
+      ...(interactionReport.payload || {})
     });
   }
 
@@ -824,8 +839,11 @@
   function showSample() {
     const q = generateQuestion(elements.difficulty.value || "medium");
     const correct = answerToString(q.answer);
+    const sampleOptions = q.options.length
+      ? `<br>${tr().sampleOptions}: ${q.options.map(item => mathSpan(answerToString(item), "sample-math")).join(" ")}`
+      : "";
     elements.sampleBox.classList.remove("hidden");
-    elements.sampleBox.innerHTML = `<strong>${tr().sampleTitle}:</strong><br>${tr().sampleQuestion}: ${mathSpan(q.plain, "sample-math")}<br>${q.visual ? '<div class="sample-visual"></div>' : ""}${q.prompt || tr()[q.promptKey] || ""}<br>${tr().sampleAnswer}: ${mathSpan(correct, "sample-math")}<br>${tr().sampleOptions}: ${q.options.map(item => mathSpan(answerToString(item), "sample-math")).join(" ")}`;
+    elements.sampleBox.innerHTML = `<strong>${tr().sampleTitle}:</strong><br>${tr().sampleQuestion}: ${mathSpan(q.plain, "sample-math")}<br>${q.visual ? '<div class="sample-visual"></div>' : ""}${q.prompt || tr()[q.promptKey] || ""}<br>${tr().sampleAnswer}: ${mathSpan(correct, "sample-math")}${sampleOptions}`;
     renderTaggedMath(elements.sampleBox);
     if (q.visual && typeof config.renderVisual === "function") {
       config.renderVisual(elements.sampleBox.querySelector(".sample-visual"), q.visual, { lang, question: q, mode: "sample" });

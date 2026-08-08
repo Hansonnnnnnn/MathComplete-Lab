@@ -84,6 +84,10 @@
     "en": "Complex Numbers",
     "zh": "复数"
   },
+  "number-systems": {
+    "en": "Number Systems",
+    "zh": "数系分类"
+  },
   "trigonometry": {
     "en": "Trigonometry",
     "zh": "三角函数"
@@ -692,8 +696,8 @@
       "zh": "因式分解"
     },
     "description": {
-      "en": "Practice factoring with GCF, trinomials, AC method, special products, and grouping.",
-      "zh": "练习提公因式、二次三项式、AC 方法、特殊公式和分组因式分解。"
+      "en": "Factor integer polynomials completely with trinomials, grouping, cube identities, coefficient fills, and error diagnosis.",
+      "zh": "练习整系数多项式的完全因式分解，包括三项式、分组、立方公式、系数填空和错误诊断。"
     },
     "courses": [
       "algebra-1",
@@ -706,7 +710,7 @@
     },
     "addedAt": "2026-01-01",
     "kind": "standard",
-    "search": "factoring practice factor gcf trinomials ac method special products grouping algebra i algebra ii factoring-practice 因式分解 提公因式 二次三项式 ac方法 特殊公式 分组分解 代数"
+    "search": "factoring practice factor gcf trinomials ac method special products cubes grouping coefficient fill error diagnosis algebra i algebra ii factoring-practice 因式分解 提公因式 二次三项式 立方和 立方差 系数填空 错误诊断 分组分解 代数"
   },
   {
     "id": "polynomial-multiplication",
@@ -755,6 +759,30 @@
     "addedAt": "2026-07-17",
     "kind": "standard",
     "search": "complex number operations add subtract multiply divide conjugate imaginary unit exact fractions standard form algebra ii precalculus complex-number-operations 复数 四则运算 加法 减法 乘法 除法 共轭 虚数单位 标准形式 代数二 预备微积分"
+  },
+  {
+    "id": "number-systems-classification",
+    "href": "games/number-systems-classification.html",
+    "title": {
+      "en": "Number Systems Classification Practice",
+      "zh": "数系分类专项练习"
+    },
+    "description": {
+      "en": "Simplify exact expressions and identify the single outsider among natural, whole, integer, rational, irrational, real, imaginary, and complex values.",
+      "zh": "精确化简表达式，并在自然数、非负整数、整数、有理数、无理数、实数、纯虚数和非实复数中找出唯一异类项。"
+    },
+    "courses": [
+      "algebra-2",
+      "precalculus"
+    ],
+    "primaryCourse": "algebra-2",
+    "topics": {
+      "algebra-2": "number-systems",
+      "precalculus": "number-systems"
+    },
+    "addedAt": "2026-08-03",
+    "kind": "standard",
+    "search": "number systems classification natural whole integer rational irrational real pure imaginary non-real complex exact simplify algebra ii precalculus number-systems-classification 数系 分类 自然数 非负整数 整数 有理数 无理数 实数 纯虚数 非实复数 精确化简 代数二 预备微积分"
   },
   {
     "id": "fraction-percent",
@@ -1007,7 +1035,7 @@
     "advanced-equation-solving", "vector-operations", "matrix-multiplication", "determinant-practice",
     "completing-the-square", "quadratic-functions", "quadratic-formula", "algebra-expression", "algebra-simplification",
     "linear-equation", "linear-inequalities", "systems-linear-equations", "slope-from-two-points", "function-evaluation",
-    "factoring-practice", "polynomial-multiplication", "complex-number-operations", "fraction-percent", "geometry-formula",
+    "factoring-practice", "polynomial-multiplication", "complex-number-operations", "number-systems-classification", "fraction-percent", "geometry-formula",
     "midpoints-bisectors-trisectors", "conditional-logic", "parallel-lines-angle-relationships", "triangle-congruence", "derivative-practice", "limits-practice",
     "integration-practice", "unit-circle-trigonometry", "special-products", "function-graph-matching"
   ]);

@@ -16,9 +16,9 @@ vm.createContext(context);
 vm.runInContext(catalogSource, context);
 const catalog = context.window.MCLToolCatalog;
 
-assert(catalog.tools.length === 39, `Expected the current 39-tool catalog, found ${catalog.tools.length}.`);
+assert(catalog.tools.length === 40, `Expected the current 40-tool catalog, found ${catalog.tools.length}.`);
 const enabled = catalog.tools.filter(tool => tool.assignment?.enabled);
-assert(enabled.length === 39, `Expected all 39 tools to be assignment compatible, found ${enabled.length}.`);
+assert(enabled.length === 40, `Expected all 40 tools to be assignment compatible, found ${enabled.length}.`);
 
 for (const tool of catalog.tools) {
   assert(tool.assignment && typeof tool.assignment.enabled === "boolean", `${tool.id} is missing assignment capability metadata.`);
@@ -49,6 +49,11 @@ const parallelTool = catalog.byId("parallel-lines-angle-relationships");
 assert(parallelTool?.assignment.enabled, "Parallel Lines must be available in the assignment builder.");
 assert(parallelTool.primaryCourse === "geometry-1" && parallelTool.courses.includes("algebra-1"), "Parallel Lines has incorrect course placement.");
 assert(parallelTool.topics["geometry-1"] === "segments-angles" && parallelTool.topics["algebra-1"] === "equations", "Parallel Lines has incorrect topic placement.");
+
+const numberSystemsTool = catalog.byId("number-systems-classification");
+assert(numberSystemsTool?.assignment.enabled, "Number Systems Classification must be available in the assignment builder.");
+assert(numberSystemsTool.primaryCourse === "algebra-2" && numberSystemsTool.courses.includes("precalculus"), "Number Systems Classification has incorrect course placement.");
+assert(numberSystemsTool.topics["algebra-2"] === "number-systems" && numberSystemsTool.topics.precalculus === "number-systems", "Number Systems Classification has incorrect topic placement.");
 
 for (const api of ["getDraft", "addTask", "updateTask", "removeTask", "moveTask", "validate", "downloadPdf"]) {
   assert(new RegExp(`\\b${api}\\b`).test(builderSource), `Missing assignment builder API: ${api}`);

@@ -1,0 +1,38 @@
+.number-systems-tool .question-main {
+  max-width: 980px;
+  font-size: clamp(1.45rem, 2.2vw, 2rem);
+  line-height: 1.45;
+}
+
+.number-systems-tool .options {
+  align-items: stretch;
+}
+
+.number-systems-tool .option {
+  min-height: 86px;
+  font-size: 1.25rem;
+}
+
+.number-systems-tool .solution-chain {
+  display: grid;
+  gap: 8px;
+}
+
+.number-systems-tool .chain-line {
+  grid-template-columns: minmax(130px, 0.32fr) minmax(0, 1fr);
+  align-items: start;
+}
+
+.number-systems-tool .chain-note {
+  line-height: 1.55;
+}
+
+@media (max-width: 680px) {
+  .number-systems-tool .option {
+    min-height: 70px;
+  }
+
+  .number-systems-tool .chain-line {
+    grid-template-columns: 1fr;
+  }
+}

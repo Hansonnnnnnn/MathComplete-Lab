@@ -1,0 +1,180 @@
+.mcl-factor-fill {
+  display: grid;
+  gap: 18px;
+  width: 100%;
+  color: var(--mcl-text, #14233d);
+}
+
+.mcl-factor-fill-instruction,
+.mcl-factor-required,
+.mcl-factor-preview > span {
+  margin: 0;
+  color: var(--mcl-text-soft, #45566c);
+  font-size: 0.95rem;
+  font-weight: 650;
+}
+
+.mcl-factor-equation {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  min-height: 104px;
+  padding: 18px;
+  overflow-x: auto;
+  border: 1px solid var(--mcl-border, #cbd5e1);
+  border-radius: 8px;
+  background: var(--mcl-surface-muted, #f8fafc);
+}
+
+.mcl-factor-preview-math .katex {
+  color: var(--mcl-text, #14233d);
+  font-size: 1.25em;
+}
+
+.mcl-factor-equals,
+.mcl-factor-paren,
+.mcl-factor-slot-operator,
+.mcl-factor-slot-variable,
+.mcl-factor-fixed-power {
+  color: var(--mcl-text, #14233d);
+  font-family: KaTeX_Main, "Times New Roman", serif;
+  font-weight: 600;
+}
+
+.mcl-factor-equals,
+.mcl-factor-paren {
+  font-size: 2rem;
+}
+
+.mcl-factor-editor,
+.mcl-factor-edit-group,
+.mcl-factor-slot-wrap {
+  display: inline-flex;
+  align-items: center;
+}
+
+.mcl-factor-editor {
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.mcl-factor-edit-group {
+  position: relative;
+  gap: 3px;
+}
+
+.mcl-factor-slot-wrap {
+  gap: 3px;
+}
+
+.mcl-factor-slot-operator,
+.mcl-factor-slot-variable {
+  font-size: 1.5rem;
+}
+
+.mcl-factor-fixed-power {
+  align-self: flex-start;
+  margin-left: 1px;
+  font-size: 0.9rem;
+}
+
+.mcl-factor-slot {
+  width: 58px;
+  min-height: 48px;
+  padding: 8px 6px;
+  border: 2px solid var(--mcl-border-strong, #94a3b8);
+  border-radius: 6px;
+  background: var(--mcl-surface, #fff);
+  color: var(--mcl-text-strong, #0f172a);
+  font: 700 1.1rem/1.2 var(--mcl-font-sans, system-ui, sans-serif);
+  text-align: center;
+}
+
+.mcl-factor-slot:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--mcl-action, #3157d5) 32%, transparent);
+  outline-offset: 2px;
+  border-color: var(--mcl-action, #3157d5);
+}
+
+.mcl-factor-slot.is-invalid,
+.mcl-factor-slot.is-wrong {
+  border-color: var(--mcl-danger, #b42318);
+  background: color-mix(in srgb, var(--mcl-danger, #b42318) 8%, var(--mcl-surface, #fff));
+}
+
+.mcl-factor-slot.is-correct {
+  border-color: var(--mcl-success, #166534);
+  background: color-mix(in srgb, var(--mcl-success, #166534) 8%, var(--mcl-surface, #fff));
+}
+
+.mcl-factor-preview {
+  display: grid;
+  gap: 8px;
+  min-height: 86px;
+  padding: 14px 16px;
+  border-left: 3px solid var(--mcl-accent, #0f9f8f);
+  background: var(--mcl-surface-muted, #f8fafc);
+}
+
+.mcl-factor-preview-math {
+  min-height: 42px;
+  overflow-x: auto;
+}
+
+.mcl-factor-required {
+  color: var(--mcl-danger, #b42318);
+}
+
+.mcl-factor-submit {
+  justify-self: start;
+  min-height: 46px;
+  padding: 10px 18px;
+  border: 1px solid var(--mcl-action, #3157d5);
+  border-radius: 7px;
+  background: var(--mcl-action, #3157d5);
+  color: #fff;
+  font: 700 0.95rem/1.2 var(--mcl-font-sans, system-ui, sans-serif);
+  cursor: pointer;
+}
+
+.mcl-factor-submit:disabled {
+  border-color: var(--mcl-border, #cbd5e1);
+  background: var(--mcl-disabled, #94a3b8);
+  color: var(--mcl-disabled-text, #f8fafc);
+  cursor: not-allowed;
+}
+
+[data-theme="dark"] .mcl-factor-slot {
+  background: #101827;
+  color: #f8fafc;
+}
+
+[data-theme="dark"] .mcl-factor-preview-math .katex,
+[data-theme="dark"] .mcl-factor-equals,
+[data-theme="dark"] .mcl-factor-paren,
+[data-theme="dark"] .mcl-factor-slot-operator,
+[data-theme="dark"] .mcl-factor-slot-variable,
+[data-theme="dark"] .mcl-factor-fixed-power {
+  color: #f8fafc;
+}
+
+@media (max-width: 640px) {
+  .mcl-factor-equation {
+    justify-content: flex-start;
+    padding: 14px 10px;
+  }
+
+  .mcl-factor-preview-math .katex {
+    font-size: 1.05em;
+  }
+
+  .mcl-factor-slot {
+    width: 50px;
+  }
+
+  .mcl-factor-slot-operator,
+  .mcl-factor-slot-variable {
+    font-size: 1.25rem;
+  }
+}

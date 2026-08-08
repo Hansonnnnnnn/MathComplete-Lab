@@ -77,6 +77,11 @@
           selectedTag: "\u4f60\u7684\u9009\u62e9",
           suggestion: "\u590d\u4e60\u5efa\u8bae",
           correctOptionTag: "\u6b63\u786e\u9009\u9879",
+          optionAnalysis: "\u9010\u9879\u5206\u7c7b\u89e3\u6790",
+          coefficientDetails: "\u7cfb\u6570\u586b\u7a7a\u8bb0\u5f55",
+          coefficientTuple: "\u8f93\u5165\u7cfb\u6570",
+          normalizedFactorization: "\u89c4\u8303\u5316\u56e0\u5f0f",
+          formulaReference: "\u53c2\u8003\u516c\u5f0f",
           correctTag: "\u6b63\u786e",
           wrongTag: "\u9519\u8bef",
           blank: "\u672a\u4f5c\u7b54",
@@ -130,6 +135,11 @@
           selectedTag: "Your choice",
           suggestion: "Review suggestion",
           correctOptionTag: "Correct choice",
+          optionAnalysis: "Option-by-option classification",
+          coefficientDetails: "Coefficient-fill record",
+          coefficientTuple: "Entered coefficients",
+          normalizedFactorization: "Normalized factorization",
+          formulaReference: "Formula reference",
           correctTag: "Correct",
           wrongTag: "Incorrect",
           blank: "No answer",
@@ -515,6 +525,39 @@
     }
   }
 
+  function optionAnalysisHtml(item, t) {
+    const rows = item.parameters?.optionAnalysis;
+    if (!Array.isArray(rows) || !rows.length) return "";
+    return `<div class="mcl-report-segment mcl-report-option-analysis">
+      <div class="mcl-report-field-label">${escapeHtml(t.optionAnalysis)}</div>
+      <div class="mcl-report-analysis-rows">${rows.map(row => `<div class="mcl-report-analysis-row">
+        <span class="mcl-report-analysis-label">${escapeHtml(row.label || "")}</span>
+        <span class="mcl-report-analysis-math">${renderMath(row.analysisLatex || `${row.latex}=${row.simplifiedLatex || row.latex}`, t.blank)}</span>
+        <span class="mcl-report-analysis-text">${escapeHtml(row.explanation || "")}</span>
+      </div>`).join("")}</div>
+    </div>`;
+  }
+
+  function factoringDetailsHtml(item, t) {
+    const parameters = item.parameters || {};
+    const reference = parameters.formulaReference
+      ? `<div class="mcl-report-segment mcl-report-formula-reference"><div class="mcl-report-field-label">${escapeHtml(t.formulaReference)}</div>${renderMath(parameters.formulaReference, t.blank)}</div>`
+      : "";
+    if (parameters.interactionKind !== "coefficient-fill") return reference;
+    const definitions = Array.isArray(parameters.slotDefinitions) ? parameters.slotDefinitions : [];
+    const values = parameters.studentCoefficients || {};
+    const feedback = parameters.slotFeedback || {};
+    const tuple = definitions.map(slot => {
+      const state = feedback[slot.id] ? "mcl-report-coefficient-correct" : "mcl-report-coefficient-wrong";
+      return `<span class="mcl-report-coefficient ${state}">${escapeHtml(slot.id)} = ${escapeHtml(values[slot.id] ?? "-")}</span>`;
+    }).join("");
+    return `${reference}<div class="mcl-report-segment mcl-report-coefficient-details">
+      <div class="mcl-report-field-label">${escapeHtml(t.coefficientDetails)}</div>
+      <div class="mcl-report-coefficient-row"><span>${escapeHtml(t.coefficientTuple)}</span><div>${tuple}</div></div>
+      <div class="mcl-report-coefficient-row"><span>${escapeHtml(t.normalizedFactorization)}</span><strong>${renderMath(parameters.studentFactorLatex || item.selectedAnswerLatex, t.blank)}</strong></div>
+    </div>`;
+  }
+
   function reportItemHtml(item, t, options = {}) {
     const resultClass = item.isCorrect ? "mcl-report-status-correct" : "mcl-report-status-incorrect";
     const resultText = item.isCorrect ? t.correctTag : t.wrongTag;
@@ -531,6 +574,8 @@
           ${visualHtml(item, options.language)}
         </div>
         ${optionsHtml(item, t, segmented)}
+        ${optionAnalysisHtml(item, t)}
+        ${factoringDetailsHtml(item, t)}
         <div class="mcl-report-segment mcl-report-answer-block">
           <div class="mcl-report-answer-row"><span>${escapeHtml(t.yourAnswer)}</span><strong>${renderMath(item.selectedAnswerLatex, t.blank)}</strong></div>
           <div class="mcl-report-answer-row"><span>${escapeHtml(t.correctAnswer)}</span><strong>${renderMath(item.correctAnswerLatex, t.blank)}</strong></div>
@@ -607,6 +652,19 @@
       .mcl-report-choice-badge-correct { color:var(--mclr-good) !important; }
       .mcl-report-choice-badge-selected { color:var(--mclr-bad) !important; }
       .mcl-report-choice-badge-selected-correct { color:var(--mclr-good) !important; }
+      .mcl-report-option-analysis { display:grid; gap:6px; }
+      .mcl-report-formula-reference,.mcl-report-coefficient-details { display:grid; gap:7px; padding:9px 10px; border:1px solid var(--mclr-line); background:#f8fafc !important; }
+      .mcl-report-formula-reference .mcl-report-math { color:var(--mclr-ink) !important; }
+      .mcl-report-coefficient-row { display:grid; grid-template-columns:150px minmax(0,1fr); gap:12px; align-items:start; color:var(--mclr-ink) !important; font-size:11px; }
+      .mcl-report-coefficient-row > span { color:var(--mclr-muted) !important; font-weight:700; }
+      .mcl-report-coefficient-row > div { display:flex; flex-wrap:wrap; gap:5px; }
+      .mcl-report-coefficient { padding:3px 6px; border:1px solid var(--mclr-line); background:#fff !important; color:var(--mclr-ink) !important; font-weight:700; }
+      .mcl-report-coefficient-correct { border-color:var(--mclr-good); color:var(--mclr-good) !important; }
+      .mcl-report-coefficient-wrong { border-color:var(--mclr-bad); color:var(--mclr-bad) !important; }
+      .mcl-report-analysis-rows { border-top:1px solid var(--mclr-line); }
+      .mcl-report-analysis-row { display:grid; grid-template-columns:24px minmax(90px,.28fr) minmax(0,1fr); gap:8px; align-items:start; padding:7px 9px; border-right:1px solid var(--mclr-line); border-bottom:1px solid var(--mclr-line); border-left:1px solid var(--mclr-line); background:#fff !important; color:var(--mclr-ink) !important; break-inside:avoid; }
+      .mcl-report-analysis-label { font-weight:700; }
+      .mcl-report-analysis-text { color:var(--mclr-muted) !important; font-size:10px; line-height:1.45; }
       .mcl-report-answer-block { display:grid; gap:0; border-top:1px solid var(--mclr-line); }
       .mcl-report-answer-row { display:grid; grid-template-columns:150px minmax(0,1fr); gap:12px; padding:7px 0; border-bottom:1px solid var(--mclr-line); }
       .mcl-report-answer-row > span,.mcl-report-suggestion > span { color:var(--mclr-muted) !important; font-size:11px; font-weight:700; }

@@ -150,7 +150,7 @@
         <div class="mcl-continue-panel__label">${recentAttempt ? t.continue : t.start}</div>
         <h2>${esc(continueTitle)}</h2>
         <p>${esc(continueTool.description[lang()] || continueTool.description.en)}</p>
-        <div class="actions" style="margin-top:16px"><a class="button primary" href="${esc(continueTool.href)}">${t.open}</a></div>
+        <div class="actions"><a class="button primary" href="${esc(continueTool.href)}">${t.open}</a></div>
       </aside>
     </section>
 

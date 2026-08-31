@@ -56,6 +56,8 @@
   }
 
   function setupPointerTrail() {
+    const page = (location.pathname.split("/").pop() || "index.html").toLowerCase();
+    if (page !== "index.html" && page !== "practice.html") return;
     const finePointer = window.matchMedia("(pointer: fine) and (hover: hover)");
     if (!motionAllowed() || !finePointer.matches || window.innerWidth < 768) return;
 

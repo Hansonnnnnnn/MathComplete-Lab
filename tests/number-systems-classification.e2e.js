@@ -31,6 +31,26 @@ async function startRound(page, { mode, difficulty, questions = 1, choices = 6 }
     contentType: "application/javascript",
     body: "window.MCLAuth={initialize:async()=>({status:'anonymous',user:null}),getState:()=>({status:'anonymous',user:null}),subscribe:()=>()=>{},pageUrl:value=>value};"
   }));
+  await page.route(/cdn\.jsdelivr\.net/, route => {
+    const isStyle = route.request().resourceType() === "stylesheet";
+    const katexStub = `window.katex={
+      render(value,target){
+        target.replaceChildren();
+        const root=document.createElement('span');
+        root.className='katex';
+        const visual=document.createElement('span');
+        visual.className='katex-html';
+        visual.textContent=String(value ?? '');
+        root.append(visual);
+        target.append(root);
+      },
+      renderToString(value){return '<span class="katex"><span class="katex-html">'+String(value ?? '')+'</span></span>';}
+    };`;
+    route.fulfill({
+      contentType: isStyle ? "text/css" : "application/javascript",
+      body: isStyle ? "" : (/katex/i.test(route.request().url()) ? katexStub : "")
+    });
+  });
 
   await page.goto(baseUrl, { waitUntil: "networkidle" });
   await page.waitForFunction(() => typeof window.katex?.render === "function");
@@ -84,8 +104,24 @@ async function startRound(page, { mode, difficulty, questions = 1, choices = 6 }
   await startRound(page, { mode: "learn", difficulty: "mixed", choices: 6 });
   await page.waitForTimeout(400);
   assert.equal(await page.locator("body").evaluate(node => node.scrollWidth <= node.clientWidth), true, "Mobile viewport has horizontal overflow");
-  const contrast = await page.locator("#questionMain").evaluate(node => ({ color: getComputedStyle(node).color, background: getComputedStyle(node.closest(".card")).backgroundColor, opacity: getComputedStyle(node.closest(".card")).opacity }));
-  assert.deepEqual(contrast, { color: "rgb(237, 243, 251)", background: "rgb(18, 30, 49)", opacity: "1" }, "Dark-theme question surface does not use the high-contrast palette");
+  const contrast = await page.locator("#questionMain").evaluate(node => {
+    const parse = value => (value.match(/[\d.]+/g) || []).slice(0, 3).map(Number);
+    const luminance = value => {
+      const channels = parse(value).map(channel => {
+        const normalized = channel / 255;
+        return normalized <= 0.03928 ? normalized / 12.92 : ((normalized + 0.055) / 1.055) ** 2.4;
+      });
+      return 0.2126 * channels[0] + 0.7152 * channels[1] + 0.0722 * channels[2];
+    };
+    const card = node.closest(".card");
+    const color = getComputedStyle(node).color;
+    const background = getComputedStyle(card).backgroundColor;
+    const light = Math.max(luminance(color), luminance(background));
+    const dark = Math.min(luminance(color), luminance(background));
+    return { color, background, opacity: getComputedStyle(card).opacity, ratio: (light + 0.05) / (dark + 0.05) };
+  });
+  assert.equal(contrast.opacity, "1", "Dark-theme question surface is translucent");
+  assert.ok(contrast.ratio >= 7, `Dark-theme question contrast is too low: ${contrast.ratio.toFixed(2)}:1`);
   await page.screenshot({ path: mobileShot, fullPage: true });
 
   await page.evaluate(() => localStorage.setItem("mathcomplete_lang", "zh"));

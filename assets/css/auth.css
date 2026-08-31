@@ -34,7 +34,7 @@
 .auth-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; margin-bottom: 24px; padding: 4px; border-radius: 8px; background: var(--mcl-surface-muted); }
 .auth-tab { min-height: 40px; border: 1px solid transparent; border-radius: 6px; color: var(--mcl-text-soft); background: transparent; cursor: pointer; font-size: 14px; font-weight: 600; }
 .auth-tab.active { color: var(--mcl-text); border-color: var(--mcl-border); background: var(--mcl-surface); box-shadow: var(--mcl-shadow-sm); }
-.auth-card h2 { margin: 0 0 6px; font-size: 24px !important; }
+.auth-card h2 { margin: 0 0 6px; font-size: 24px; }
 .auth-card__lead { margin: 0 0 20px; font-size: 14px; }
 
 .auth-social-button, .auth-primary-button, .auth-secondary-button, .auth-danger-button {
@@ -55,8 +55,8 @@
 }
 .auth-social-button:hover, .auth-secondary-button:hover { background: var(--mcl-surface-muted); border-color: var(--mcl-border-strong); }
 .auth-social-button svg { width: 19px; height: 19px; }
-.auth-primary-button { color: var(--mcl-on-accent); border-color: var(--mcl-accent); background: var(--mcl-accent); }
-.auth-primary-button:hover { background: var(--mcl-accent-strong); }
+.auth-primary-button { color: var(--mcl-on-accent); border-color: var(--mcl-action); background: var(--mcl-action); }
+.auth-primary-button:hover { border-color: var(--mcl-action-strong); background: var(--mcl-action-strong); }
 .auth-danger-button { color: #fff; border-color: var(--mcl-bad); background: var(--mcl-bad); }
 .auth-card button:disabled { opacity: 0.55; cursor: not-allowed; }
 
@@ -111,7 +111,7 @@
 
 .auth-simple-page { width: min(520px, calc(100% - 32px)); margin: 0 auto; padding: 56px 0 80px; }
 .auth-simple-card { padding: 28px; border: 1px solid var(--mcl-border); border-radius: 8px; background: var(--mcl-surface); box-shadow: var(--mcl-shadow-md); }
-.auth-simple-card h1 { margin: 0 0 10px; font-size: 28px !important; }
+.auth-simple-card h1 { margin: 0 0 10px; font-size: 28px; }
 .auth-status-icon { width: 44px; height: 44px; display: grid; place-items: center; margin-bottom: 18px; border-radius: 8px; color: var(--mcl-accent); background: var(--mcl-accent-soft); }
 .auth-status-icon svg { width: 22px; height: 22px; }
 
@@ -125,7 +125,7 @@
 .account-nav a:hover { color: var(--mcl-text); background: var(--mcl-surface-muted); }
 .account-content { display: grid; gap: 22px; }
 .account-section { padding: 22px; border: 1px solid var(--mcl-border); border-radius: 8px; background: var(--mcl-surface); }
-.account-section h2 { margin: 0 0 5px; font-size: 20px !important; }
+.account-section h2 { margin: 0 0 5px; font-size: 20px; }
 .account-section > p { margin: 0 0 18px; font-size: 13px; }
 .account-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 13px 0; border-top: 1px solid var(--mcl-border); }
 .account-row:first-of-type { border-top: 0; }
@@ -140,13 +140,13 @@
 
 .legal-page { width: min(820px, calc(100% - 32px)); margin: 0 auto; padding: 46px 0 80px; }
 .legal-page h1 { margin-bottom: 8px; }
-.legal-page h2 { margin-top: 30px; font-size: 20px !important; }
+.legal-page h2 { margin-top: 30px; font-size: 20px; }
 .legal-page p, .legal-page li { color: var(--mcl-text-soft); }
 
 @media (max-width: 820px) {
   .auth-layout { grid-template-columns: 1fr; gap: 26px; }
   .auth-intro { padding-top: 0; }
-  .auth-intro h1 { font-size: 34px !important; }
+  .auth-intro h1 { font-size: 34px; }
   .auth-benefits { display: none; }
   .account-grid { grid-template-columns: 1fr; }
   .account-nav { position: static; display: flex; overflow-x: auto; padding-bottom: 4px; }

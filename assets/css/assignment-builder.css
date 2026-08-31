@@ -6,7 +6,7 @@
 .mcl-assignment-heading { max-width: 760px; margin-bottom: 34px; }
 .mcl-assignment-heading h1 { margin: 10px 0 12px; font-size: clamp(2.25rem, 5vw, 4.25rem); }
 .mcl-assignment-heading p { margin: 0; color: var(--mcl-text-muted); font-size: 18px; line-height: 1.7; }
-.mcl-eyebrow { color: var(--mcl-accent); font-size: 13px; font-weight: 800; text-transform: uppercase; }
+.mcl-eyebrow { color: var(--mcl-accent); font-size: 13px; font-weight: 700; text-transform: uppercase; }
 
 .mcl-assignment-loading,
 .mcl-assignment-section,
@@ -22,7 +22,7 @@
 .mcl-section-heading > div { display: flex; align-items: center; gap: 12px; }
 .mcl-section-heading h2 { margin: 0; font-size: 22px; }
 .mcl-section-heading p { max-width: 470px; margin: 2px 0 0; color: var(--mcl-text-muted); text-align: right; }
-.mcl-section-index { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: var(--mcl-accent-soft); color: var(--mcl-accent); font-weight: 800; }
+.mcl-section-index { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: var(--mcl-accent-soft); color: var(--mcl-accent); font-weight: 700; }
 
 .mcl-assignment-fields { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
 .mcl-field { display: grid; gap: 7px; min-width: 0; }
@@ -54,8 +54,8 @@
 .mcl-button:hover:not(:disabled) { border-color: var(--mcl-accent); color: var(--mcl-accent); }
 .mcl-button:focus-visible { outline: 3px solid var(--mcl-focus); outline-offset: 2px; }
 .mcl-button:disabled { opacity: .5; cursor: not-allowed; }
-.mcl-button--primary { border-color: var(--mcl-accent); background: var(--mcl-accent); color: #fff; }
-.mcl-button--primary:hover:not(:disabled) { background: var(--mcl-accent-strong); color: #fff; }
+.mcl-button--primary { border-color: var(--mcl-action); background: var(--mcl-action); color: var(--mcl-on-accent); }
+.mcl-button--primary:hover:not(:disabled) { border-color: var(--mcl-action-strong); background: var(--mcl-action-strong); color: var(--mcl-on-accent); }
 
 .mcl-task-empty { display: grid; justify-items: center; gap: 6px; padding: 42px 18px; color: var(--mcl-text-muted); text-align: center; border-bottom: 1px solid var(--mcl-border); }
 .mcl-task-empty svg { width: 28px; height: 28px; color: var(--mcl-accent); }
@@ -64,7 +64,7 @@
 .mcl-task-card { border: 1px solid var(--mcl-border); border-radius: 8px; background: var(--mcl-surface); overflow: hidden; }
 .mcl-task-card__header { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 14px 16px; border-bottom: 1px solid var(--mcl-border); }
 .mcl-task-card__identity { display: flex; align-items: center; min-width: 0; gap: 12px; }
-.mcl-task-number { flex: 0 0 auto; color: var(--mcl-accent); font-weight: 850; }
+.mcl-task-number { flex: 0 0 auto; color: var(--mcl-accent); font-weight: 700; }
 .mcl-task-card__identity strong { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .mcl-task-card__identity small { color: var(--mcl-text-muted); }
 .mcl-task-card__tools { display: flex; gap: 4px; }
@@ -73,7 +73,7 @@
 .mcl-icon-action:focus-visible { outline: 3px solid var(--mcl-focus); }
 .mcl-icon-action:disabled { opacity: .35; cursor: not-allowed; }
 .mcl-icon-action svg { width: 18px; height: 18px; }
-.mcl-assignment-icon-fallback { font-size: 10px; font-weight: 850; letter-spacing: 0; }
+.mcl-assignment-icon-fallback { font-size: 10px; font-weight: 700; letter-spacing: 0; }
 .mcl-icon-action--danger:hover { color: var(--mcl-danger, #b42318); }
 .mcl-task-card__body { display: grid; grid-template-columns: 1fr 1fr 130px 1.1fr; gap: 14px; padding: 16px; }
 .mcl-task-note { grid-column: 1 / -1; }
@@ -103,14 +103,14 @@
   text-shadow: none !important;
   filter: none !important;
 }
-.mcl-assignment-pdf-brand { color: #1e4b7a; font-size: 15px; font-weight: 800; }
+.mcl-assignment-pdf-brand { color: #1e4b7a; font-size: 15px; font-weight: 700; }
 .mcl-assignment-pdf-document-id { position: absolute; top: 44px; right: 52px; color: #52647a; font-size: 11px; text-align: right; }
 .mcl-assignment-pdf-title { margin: 34px 0 5px; color: #14233d; font-size: 34px; line-height: 1.15; }
 .mcl-assignment-pdf-subtitle { margin: 0 0 28px; color: #45566c; font-size: 19px; font-weight: 650; }
 .mcl-assignment-pdf-info { display: grid; grid-template-columns: 1fr 1fr; border-top: 2px solid #1e4b7a; border-left: 1px solid #cbd5e1; }
 .mcl-assignment-pdf-info > div { min-height: 62px; padding: 11px 13px; border-right: 1px solid #cbd5e1; border-bottom: 1px solid #cbd5e1; }
 .mcl-assignment-pdf-info--no-teacher > div:first-child { grid-column: 1 / -1; }
-.mcl-assignment-pdf-label { display: block; margin-bottom: 5px; color: #52647a; font-size: 10px; font-weight: 800; text-transform: uppercase; }
+.mcl-assignment-pdf-label { display: block; margin-bottom: 5px; color: #52647a; font-size: 10px; font-weight: 700; text-transform: uppercase; }
 .mcl-assignment-pdf-value { color: #14233d; font-size: 15px; font-weight: 700; overflow-wrap: anywhere; }
 .mcl-assignment-pdf-notes { margin-top: 18px; padding: 12px 14px; border-left: 3px solid #148a7a; background: #eef8f6; color: #20364e; font-size: 13px; line-height: 1.55; white-space: pre-wrap; }
 .mcl-assignment-pdf-section-title { margin: 24px 0 12px; padding-bottom: 8px; border-bottom: 2px solid #14233d; color: #14233d; font-size: 22px; }
@@ -120,7 +120,7 @@
 .mcl-assignment-pdf-task h3 { margin: 0; color: #14233d; font-size: 17px; line-height: 1.35; }
 .mcl-assignment-pdf-task h3 .mcl-assignment-pdf-task-number { color: #1e4b7a !important; }
 .mcl-assignment-pdf-url { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 7px; margin-top: 7px; color: #45566c; font-size: 11px; line-height: 1.35; }
-.mcl-assignment-pdf-url > span { font-weight: 800; }
+.mcl-assignment-pdf-url > span { font-weight: 700; }
 .mcl-assignment-pdf-link { color: #0b5cad; font-size: 11px; font-weight: 700; text-decoration: underline; overflow-wrap: anywhere; word-break: break-all; }
 .mcl-assignment-pdf-settings { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; margin: 11px 0; background: #cbd5e1; border: 1px solid #cbd5e1; }
 .mcl-assignment-pdf-settings > div { padding: 8px 9px; background: #f8fafc; }

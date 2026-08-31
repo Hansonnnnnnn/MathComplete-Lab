@@ -124,8 +124,8 @@
   padding: 10px 18px;
   border: 1px solid transparent;
   border-radius: 8px;
-  background: var(--mcl-accent, #315eea);
-  color: #fff;
+  background: var(--mcl-action, #315eea);
+  color: var(--mcl-on-accent, #fff);
   cursor: pointer;
 }
 

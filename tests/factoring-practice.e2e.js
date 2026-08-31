@@ -114,7 +114,18 @@ let browser;
   assert.equal(await page.locator("body").evaluate(node => node.scrollWidth <= node.clientWidth), true, "mobile page overflows horizontally");
   const contrast = await page.locator(".mcl-factor-preview-math").evaluate(node => getComputedStyle(node).color);
   assert.notEqual(contrast, "rgba(0, 0, 0, 0)");
-  assert.equal(await page.locator(".mcl-factor-equation").evaluate(node => getComputedStyle(node).backgroundColor), "rgb(23, 37, 58)", "dark-theme coefficient editor uses a light surface");
+  const editorSurface = await page.locator(".mcl-factor-equation").evaluate(node => ({
+    actual: getComputedStyle(node).backgroundColor,
+    expected: (() => {
+      const probe = document.createElement("span");
+      probe.style.backgroundColor = "var(--mcl-surface-muted)";
+      document.body.append(probe);
+      const value = getComputedStyle(probe).backgroundColor;
+      probe.remove();
+      return value;
+    })()
+  }));
+  assert.equal(editorSurface.actual, editorSurface.expected, "dark-theme coefficient editor does not use the shared muted surface");
   assert.equal(await slots.evaluateAll(nodes => nodes.every(node => Math.min(node.getBoundingClientRect().width, node.getBoundingClientRect().height) >= 44)), true, "coefficient slots are too small for touch input");
 
   await page.click("#nextBtn");

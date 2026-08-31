@@ -76,7 +76,7 @@
 
 .mcl-line-angle-sequence-empty { color: var(--mcl-text-soft); }
 .mcl-line-angle-sequence-item { background: var(--mcl-accent-soft); }
-.mcl-line-angle-submit { border-color: var(--mcl-accent); background: var(--mcl-accent); color: #fff; }
+.mcl-line-angle-submit { border-color: var(--mcl-action); background: var(--mcl-action); color: var(--mcl-on-accent); }
 .mcl-line-angle-submit:disabled,
 .mcl-line-angle-clear:disabled,
 .mcl-line-angle-token:disabled,
